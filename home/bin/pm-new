@@ -1,0 +1,198 @@
+#!/bin/bash
+# Interactive project management scaffolding
+# Creates tmux launcher and aliases via Ansible
+
+set -e
+
+OMARCHY_DIR="$HOME/Omarchy"
+PROJECTS_DIR="$HOME/Projects"
+PM_DIR="$OMARCHY_DIR/projects"
+
+# Convert to kebab-case: "My Cool App" -> "my-cool-app"
+to_kebab() {
+    echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//'
+}
+
+echo "=== New Project Setup ==="
+echo ""
+
+# 1. Project display name
+read -p "Project name (e.g., 'UK Biobank'): " DISPLAY_NAME
+if [ -z "$DISPLAY_NAME" ]; then
+    echo "Error: Project name is required"
+    exit 1
+fi
+
+KEBAB_NAME=$(to_kebab "$DISPLAY_NAME")
+
+# 2. PM dir name
+read -p "Project management dir name [$KEBAB_NAME]: " PM_NAME
+PM_NAME="${PM_NAME:-$KEBAB_NAME}"
+
+if [ -d "$PM_DIR/$PM_NAME" ]; then
+    echo "Error: Project '$PM_NAME' already exists in ProjectManagement"
+    exit 1
+fi
+
+# 3. Project type (ask early to set context)
+echo ""
+echo "Project types:"
+echo "  1) utility  - Basic (default)"
+echo "  2) laravel  - Laravel/PHP"
+echo "  3) python   - Python"
+echo "  4) rstats   - R/Statistics"
+echo ""
+read -p "Type [1-4, default=1]: " TYPE_CHOICE
+
+case "$TYPE_CHOICE" in
+    2) PROJECT_TYPE="laravel" ;;
+    3) PROJECT_TYPE="python" ;;
+    4) PROJECT_TYPE="rstats" ;;
+    *) PROJECT_TYPE="utility" ;;
+esac
+
+# 4. Link to project directory?
+PROJECT_PATH=""
+GITHUB_REPO=""
+CREATE_EMPTY_DIR=""
+echo ""
+echo "Link to a project directory?"
+echo "  - Will search ~/Projects for existing projects"
+echo "  - Can clone from GitHub or create empty directory"
+echo ""
+read -p "Link to project? [Y/n]: " LINK_PROJECT
+if [[ ! "$LINK_PROJECT" =~ ^[Nn] ]]; then
+    # Look for ~/Projects/{kebab}
+    if [ -d "$PROJECTS_DIR/$KEBAB_NAME" ]; then
+        read -p "Found ~/Projects/$KEBAB_NAME - use this? [Y/n]: " USE_FOUND
+        if [[ ! "$USE_FOUND" =~ ^[Nn] ]]; then
+            PROJECT_PATH="$PROJECTS_DIR/$KEBAB_NAME"
+        else
+            read -p "Project dir name in ~/Projects: " CUSTOM_DIR
+            if [ -n "$CUSTOM_DIR" ]; then
+                if [ -d "$PROJECTS_DIR/$CUSTOM_DIR" ]; then
+                    PROJECT_PATH="$PROJECTS_DIR/$CUSTOM_DIR"
+                else
+                    echo "Directory doesn't exist: $PROJECTS_DIR/$CUSTOM_DIR"
+                    exit 1
+                fi
+            fi
+        fi
+    else
+        read -p "~/Projects/$KEBAB_NAME doesn't exist. Create? [Y/n]: " CREATE_DIR
+        if [[ ! "$CREATE_DIR" =~ ^[Nn] ]]; then
+            read -p "Clone from GitHub? (e.g., 'user/repo') or press Enter for empty dir: " GITHUB_REPO
+            if [ -n "$GITHUB_REPO" ]; then
+                PROJECT_PATH="$PROJECTS_DIR/$KEBAB_NAME"
+                # Clone will happen in Ansible
+            else
+                read -p "Directory name [$KEBAB_NAME]: " DIR_NAME
+                DIR_NAME="${DIR_NAME:-$KEBAB_NAME}"
+                PROJECT_PATH="$PROJECTS_DIR/$DIR_NAME"
+                CREATE_EMPTY_DIR="$PROJECT_PATH"
+            fi
+        fi
+    fi
+fi
+
+# 5. Alias
+echo ""
+echo "Alias creates: tm{alias} (tmux), pm{alias} (cd to PM dir), p{alias} (cd to project)"
+read -p "Alias (e.g., 'hl' creates tmhl, pmhl, phl): " PROJECT_ALIAS
+if [ -z "$PROJECT_ALIAS" ]; then
+    echo "Error: Alias is required"
+    exit 1
+fi
+
+# Summary
+echo ""
+echo "=== Summary ==="
+echo "Name:     $DISPLAY_NAME"
+echo "Type:     $PROJECT_TYPE"
+echo "PM dir:   ~/ProjectManagement/$PM_NAME"
+if [ -n "$PROJECT_PATH" ]; then
+    if [ -n "$GITHUB_REPO" ]; then
+        echo "Project:  $PROJECT_PATH (clone from github.com/$GITHUB_REPO)"
+    else
+        echo "Project:  $PROJECT_PATH"
+    fi
+    echo "Aliases:  tm$PROJECT_ALIAS, pm$PROJECT_ALIAS, p$PROJECT_ALIAS"
+else
+    echo "Project:  (none)"
+    echo "Aliases:  tm$PROJECT_ALIAS, pm$PROJECT_ALIAS"
+fi
+echo ""
+read -p "Create? [Y/n]: " CONFIRM
+if [[ "$CONFIRM" =~ ^[Nn] ]]; then
+    echo "Cancelled."
+    exit 0
+fi
+
+# 6. Run Ansible
+echo ""
+echo "Creating project..."
+
+# Build ansible command
+ANSIBLE_CMD="ansible-playbook -i \"$OMARCHY_DIR/ansible/inventory.yml\" \
+    \"$OMARCHY_DIR/ansible/playbook.yml\" \
+    --vault-password-file ~/.vault_pass \
+    --limit \"$(cat ~/.machine)\" \
+    --tags new-project \
+    -e \"project_name=$PM_NAME\" \
+    -e \"project_alias=$PROJECT_ALIAS\" \
+    -e \"project_type=$PROJECT_TYPE\""
+
+if [ -n "$PROJECT_PATH" ]; then
+    ANSIBLE_CMD="$ANSIBLE_CMD -e \"project_path=$PROJECT_PATH\""
+else
+    ANSIBLE_CMD="$ANSIBLE_CMD -e \"project_path=\""
+fi
+
+if [ -n "$GITHUB_REPO" ]; then
+    ANSIBLE_CMD="$ANSIBLE_CMD -e \"github_repo=$GITHUB_REPO\""
+fi
+
+if [ -n "$CREATE_EMPTY_DIR" ]; then
+    ANSIBLE_CMD="$ANSIBLE_CMD -e \"create_project_dir=$CREATE_EMPTY_DIR\""
+fi
+
+eval $ANSIBLE_CMD
+
+# 7. Success message
+echo ""
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║  Project '$DISPLAY_NAME' created!                            "
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+echo "📁 DIRECTORIES"
+echo "   Project Management: ~/ProjectManagement/$PM_NAME"
+echo "                       (repo: ~/Omarchy/projects/$PM_NAME)"
+if [ -n "$PROJECT_PATH" ]; then
+    if [ -n "$GITHUB_REPO" ]; then
+        echo "   Project Code:       $PROJECT_PATH (cloned from github.com/$GITHUB_REPO)"
+    elif [ -n "$CREATE_EMPTY_DIR" ]; then
+        echo "   Project Code:       $PROJECT_PATH (created)"
+    else
+        echo "   Project Code:       $PROJECT_PATH"
+    fi
+fi
+echo ""
+echo "⌨️  ALIASES (available after: source ~/.aliases)"
+echo "   tm$PROJECT_ALIAS  →  Launch tmux session for this project"
+echo "   pm$PROJECT_ALIAS  →  cd to project management dir"
+if [ -n "$PROJECT_PATH" ]; then
+    echo "   p$PROJECT_ALIAS   →  cd to project code"
+else
+    echo "   p$PROJECT_ALIAS   →  Run launcher.sh"
+fi
+echo ""
+echo "📝 FILES CREATED"
+echo "   ~/Omarchy/projects/$PM_NAME/tmux.sh      (tmux session launcher)"
+echo "   ~/Omarchy/projects/$PM_NAME/launcher.sh  (project bootstrap)"
+echo "   ~/.aliases                                (updated with new aliases)"
+echo ""
+
+# 8. Reload aliases and cd to ProjectManagement dir
+echo "Reloading aliases and changing to ~/ProjectManagement/$PM_NAME..."
+source ~/.aliases
+cd "$HOME/ProjectManagement/$PM_NAME" && exec $SHELL

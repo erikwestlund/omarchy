@@ -12,7 +12,7 @@
 }
 
 window#waybar {
-  background-color: rgba(30, 30, 46, 0.96);
+  background-color: rgba(30, 30, 46, 0.75);
   border-radius: 8px;
   margin: 2px 16px 2px 16px;
   padding: 0;

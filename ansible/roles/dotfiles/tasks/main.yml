@@ -167,12 +167,21 @@
     scope: user
     daemon_reload: true
 
-# Theme installation
-- name: Install theme from git URL
-  ansible.builtin.command:
-    cmd: "omarchy-theme-install {{ theme_git_url }}"
-  when: theme_git_url is defined
-  changed_when: true
+# Theme setup
+- name: Ensure omarchy current directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/omarchy/current"
+    state: directory
+    mode: '0755'
+  when: theme_name is defined
+
+- name: Set current theme symlink
+  ansible.builtin.file:
+    src: "{{ ansible_facts.env.HOME }}/.config/omarchy/themes/{{ theme_name }}"
+    dest: "{{ ansible_facts.env.HOME }}/.config/omarchy/current/theme"
+    state: link
+    force: true
+  when: theme_name is defined
 
 - name: Set theme background
   ansible.builtin.file:

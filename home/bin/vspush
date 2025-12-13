@@ -1,0 +1,35 @@
+#!/bin/bash
+# Push VS Code settings from Omarchy repo to system
+# Usage: vspush
+
+set -e
+
+REPO_DIR="$HOME/Omarchy/config/vscode"
+VSCODE_DIR="$HOME/.config/Code/User"
+
+if [[ ! -d "$REPO_DIR" ]]; then
+    echo "Error: Repo vscode config not found at $REPO_DIR"
+    exit 1
+fi
+
+mkdir -p "$VSCODE_DIR"
+
+# Copy settings
+if [[ -f "$REPO_DIR/settings.json" ]]; then
+    cp "$REPO_DIR/settings.json" "$VSCODE_DIR/settings.json"
+    echo "Pushed settings.json"
+fi
+
+if [[ -f "$REPO_DIR/keybindings.json" ]]; then
+    cp "$REPO_DIR/keybindings.json" "$VSCODE_DIR/keybindings.json"
+    echo "Pushed keybindings.json"
+fi
+
+# Copy snippets if they exist
+if [[ -d "$REPO_DIR/snippets" ]]; then
+    mkdir -p "$VSCODE_DIR/snippets"
+    cp -r "$REPO_DIR/snippets/"* "$VSCODE_DIR/snippets/"
+    echo "Pushed snippets"
+fi
+
+echo "VS Code settings pushed from repo to system"

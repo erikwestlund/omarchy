@@ -819,18 +819,42 @@ Reload config with `prefix + r`.
 
 ## Project Management
 
-Projects use a consistent structure for launching dev environments.
+Projects use a consistent structure for launching dev environments. Managed via Ansible.
 
 ### Structure
 
 ```
-~/ProjectManagement/
-└── {project}/
-    └── tmux.sh          # Tmux session launcher
+~/Omarchy/ProjectManagement/     # Source (in repo)
+~/ProjectManagement/             # Deployed (synced by Ansible)
+    └── {project}/
+        └── tmux.sh              # Tmux session launcher
 
-~/Projects/
-└── {project}/           # Actual project code
+~/Projects/                      # Actual project code
+    └── {project}/
 ```
+
+### Creating a New Project
+
+Interactive scaffolding via Ansible:
+
+```bash
+pm-new
+```
+
+Prompts for:
+- **Name**: Project name (e.g., `myapp`)
+- **Alias**: Short alias (e.g., `ma`)
+- **Type**: `utility`, `laravel`, `python`, `rstats`
+- **Path**: Project directory (default: `~/Projects/{name}`)
+
+### Project Types
+
+| Type | Extra Windows |
+|------|---------------|
+| `utility` | Basic: zsh, claude, codex, project |
+| `laravel` | + docker, npm, artisan, tinker |
+| `python` | + python repl (with venv) |
+| `rstats` | + R console |
 
 ### Aliases
 
@@ -838,24 +862,20 @@ Projects use a consistent structure for launching dev environments.
 |-------|--------|
 | `tm{alias}` | Launch/attach tmux session |
 | `pm{alias}` | cd to ~/ProjectManagement/{project} |
+| `p{alias}` | cd to project directory |
+| `pm-sync` | Sync ProjectManagement + aliases |
+| `pm-new` | Create new project (interactive) |
 
-Example: `tmom` launches Omarchy tmux, `pmom` goes to its management dir.
+Examples:
+- `tmom` - Launch Omarchy tmux
+- `pmom` - cd to Omarchy project management
+- `pom` - cd to ~/Omarchy
 
 ### Tmux Script Pattern
 
 Scripts use auto-incrementing `TABNO` for easy reordering:
 
 ```bash
-#!/bin/bash
-SESSION="myproject"
-PROJECT_DIR="$HOME/Projects/myproject"
-
-tmux has-session -t $SESSION 2>/dev/null
-if [ $? = 0 ]; then
-    tmux attach-session -t $SESSION
-    exit 0
-fi
-
 TABNO=1
 
 # --- zsh ---
@@ -866,25 +886,16 @@ TABNO=$((TABNO+1))
 tmux new-window -t $SESSION:$TABNO -n "claude-o" -c "$PROJECT_DIR"
 tmux send-keys -t $SESSION:$TABNO "claude --model opus" C-m
 TABNO=$((TABNO+1))
-
-# --- claude-s ---
-tmux new-window -t $SESSION:$TABNO -n "claude-s" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "claude --model sonnet" C-m
-TABNO=$((TABNO+1))
-
-# ... more windows ...
-
-tmux select-window -t $SESSION:1
-tmux attach-session -t $SESSION
 ```
 
-To reorder windows, just cut/paste the blocks - TABNO auto-increments.
+To reorder: cut/paste blocks - TABNO auto-increments.
 
 ### Current Projects
 
-| Project | Alias | Path |
-|---------|-------|------|
-| Omarchy | om | ~/Omarchy |
+| Project | Alias | Type | Path |
+|---------|-------|------|------|
+| Omarchy | om | utility | ~/Omarchy |
+| Homelab | hl | utility | ~/Projects/homelab |
 
 ## Reference
 

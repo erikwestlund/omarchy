@@ -1,0 +1,71 @@
+[user]
+	name = Erik Westlund
+	email = edbwestlund@gmail.com
+
+[init]
+	defaultBranch = main
+
+[core]
+	editor = vim
+	excludesfile = ~/.gitignore_global
+	autocrlf = input
+	ignorecase = false
+
+[color]
+	ui = auto
+	diff = auto
+	status = auto
+	branch = auto
+
+[pull]
+	rebase = false
+
+[push]
+	default = current
+
+[merge]
+	ff = only
+
+[alias]
+	# Status
+	s = status
+
+	# Adding
+	a = add
+
+	# Commits
+	c = commit -v
+	cm = commit -m
+	ca = commit -a -v
+	cam = commit -a -m
+	amend = commit --amend
+
+	# Branches
+	b = branch
+	co = checkout
+	cob = checkout -b
+
+	# Diffs
+	d = diff
+	dc = diff --cached
+	ds = diff --stat
+
+	# Push/Pull
+	p = push
+	l = pull
+
+	# Logs
+	log = log --oneline --decorate --graph
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+
+	# Useful extras
+	undo = reset HEAD~1 --mixed
+	unstage = reset HEAD --
+	last = log -1 HEAD
+	aliases = config --get-regexp alias
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

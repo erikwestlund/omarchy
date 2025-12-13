@@ -148,6 +148,10 @@ aur_packages:
   # Benchmarking
   - geekbench
 
+# Theme settings
+theme_name: base-theme
+theme_background: 1.png
+
 
 # Config directories to sync (config/ -> ~/.config/)
 config_dirs:
@@ -168,6 +172,7 @@ home_dotfiles:
   - .aliases
   - .bashrc.local
   - .cheatsheet
+  - .gitconfig
   - .tmux.conf
 
 # Web apps (installed as desktop entries)

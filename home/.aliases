@@ -1,5 +1,8 @@
 # Omarchy aliases (Arch Linux)
 
+# Fix terminal type for SSH (ghostty compatibility)
+alias ssh='TERM=xterm-256color ssh'
+
 # Easier navigation
 alias ..="cd .."
 alias ...="cd ../.."
@@ -73,6 +76,14 @@ alias c="tr -d '\n' | xclip -selection clipboard"
 # Intuitive map function
 alias map="xargs -n1"
 
+# HTTP method aliases (using curl)
+alias GET='curl -s -X GET'
+alias HEAD='curl -s -I'
+alias POST='curl -s -X POST'
+alias PUT='curl -s -X PUT'
+alias DELETE='curl -s -X DELETE'
+alias OPTIONS='curl -s -X OPTIONS'
+
 # Volume control (requires pamixer or amixer)
 alias stfu="pamixer -m"
 alias pumpitup="pamixer --set-volume 100"
@@ -98,6 +109,7 @@ alias gcam="git commit -a -m"
 alias gm="git commit --amend --verbose"
 alias grao="git remote add origin"
 alias gac="git add . && git commit -am"
+alias wippush="git add . && git commit -m 'wip' && git push"
 
 alias gd="git diff"
 alias gds="git diff --stat"
@@ -163,6 +175,15 @@ alias tmls="tmux ls"
 # NeoVim
 alias nv="nvim"
 
+# VS Code sync (repo <-> system)
+alias vspush="~/bin/vspush"
+alias vspull="~/bin/vspull"
+
+# Python virtual environment
+alias pvenv=". venv/bin/activate"
+alias pym="python manage.py"
+alias rundj="python manage.py runserver"
+
 # Arch Linux package management (pacman/yay)
 alias pac="sudo pacman"
 alias pacs="sudo pacman -S"
@@ -183,10 +204,29 @@ alias secrets-pull="~/bin/secrets-pull"
 alias secrets-push="~/bin/secrets-push"
 alias vault-push='source ~/.config/secrets/config && rclone copy ~/Omarchy/ansible/vault/secrets.yml :b2,account=$B2_KEY_ID,key=$B2_APP_KEY:$B2_BUCKET/bootstrap/ && echo "Vault pushed to B2"'
 
+# Project management
+alias pm-sync="om --tags projects,dotfiles"
+
 # Project shortcuts
-# p{alias}  = launch project | pm{alias} = project management dir | tm{alias} = tmux
+# tm{alias} = tmux | pm{alias} = project management dir | p{alias} = project dir
+
+# BEGIN PROJECT omarchy
 alias tmom="~/ProjectManagement/omarchy/tmux.sh"
 alias pmom="cd ~/ProjectManagement/omarchy"
+alias pom="cd ~/Omarchy"
+# END PROJECT omarchy
 
+# Z.ai API endpoint wrapper for Claude
+zai() {
+    ANTHROPIC_BASE_URL=https://api.z.ai/api/anthropic \
+    ANTHROPIC_AUTH_TOKEN=$Z_API_KEY \
+    claude "$@"
+}
+
+# BEGIN PROJECT homelab
+alias tmhl="~/ProjectManagement/homelab/tmux.sh"
+alias pmhl="cd ~/ProjectManagement/homelab"
+alias phl="cd /home/erik/Projects/homelab"
+# END PROJECT homelab
 # Auto-generated project aliases
 [ -f ~/.config/projects/aliases ] && source ~/.config/projects/aliases

@@ -39,3 +39,7 @@
 
     - role: webapps
       tags: webapps
+
+    - role: projects
+      tags: new-project
+      when: project_name is defined
