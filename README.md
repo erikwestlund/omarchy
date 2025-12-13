@@ -9,30 +9,28 @@ Personal configuration for [Omarchy](https://omarchy.com) (Arch Linux + Hyprland
 git clone https://github.com/erikwestlund/omarchy ~/Omarchy
 cd ~/Omarchy
 
-# 2. Install Ansible (required to run playbook)
+# 2. Add to .bashrc (one-time, everything else is managed)
+echo '[ -f ~/.bashrc.local ] && source ~/.bashrc.local' >> ~/.bashrc
+
+# 3. Install Ansible (required to run playbook)
 yay -S ansible
 
-# 3. Install Ansible collections
-ansible-galaxy collection install -r ansible/requirements.yml
+# 4. Install Ansible collections
+ansible-galaxy collection install community.general
 
-# 4. Set up passwordless sudo (required for AUR helpers)
+# 5. Set up passwordless sudo (required for AUR helpers)
 echo "$USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/nopasswd
 sudo chmod 440 /etc/sudoers.d/nopasswd
 
-# 5. Set up vault password
+# 6. Set up vault password
 echo "your-secret-password" > ~/.vault_pass
 chmod 600 ~/.vault_pass
 
-# 6. Identify this machine (used by om-* aliases)
+# 7. Identify this machine (used by om-* aliases)
 echo "desktop" > ~/.machine    # or "laptop" for Framework laptop
 chmod 600 ~/.machine
 
-# 7. Create and encrypt your vault (B2 + age credentials)
-cp ansible/vault/secrets.yml.example ansible/vault/secrets.yml
-nano ansible/vault/secrets.yml    # Add B2 key ID, app key, bucket, age keys
-ansible-vault encrypt ansible/vault/secrets.yml
-
-# 8. Run the playbook (will pull secrets from B2 automatically)
+# 8. Download vault from B2 and run playbook (see Secrets section)
 om    # Uses ~/.machine to determine target
 ```
 
@@ -249,6 +247,20 @@ B2 Bucket (erik-secrets)
 
 ~/.secrets/
     └── Local decrypted secrets (symlinked to ~/.ssh, ~/.aws, etc.)
+```
+
+### Vault Template
+
+```yaml
+---
+# Backblaze B2 credentials
+vault_b2_key_id: "your-b2-key-id"
+vault_b2_app_key: "your-b2-application-key"
+vault_b2_bucket: "your-bucket-name"
+
+# Age encryption key (generate with: age-keygen)
+vault_age_secret_key: "AGE-SECRET-KEY-1XXXXXXX..."
+vault_age_public_key: "age1xxxxxxx..."
 ```
 
 ### First-Time Setup
@@ -787,6 +799,92 @@ Hyprland window rules should float it. Check if it's on another workspace. Try `
 | `~/ISOs/Win11.iso` | Windows 11 ISO |
 | `~/ISOs/virtio-win.iso` | VirtIO guest drivers |
 | `config/hypr/looknfeel.conf` | FreeRDP window rules |
+
+## Tmux
+
+Tmux is configured with sensible defaults in `home/.tmux.conf`.
+
+### Configuration
+
+| Setting | Value | Why |
+|---------|-------|-----|
+| `base-index` | 1 | Windows start at 1 (easier to reach than 0) |
+| `pane-base-index` | 1 | Panes also start at 1 |
+| `renumber-windows` | on | Closing a window renumbers remaining |
+| `history-limit` | 10000 | Larger scrollback buffer |
+| `mouse` | on | Mouse support enabled |
+| `escape-time` | 0 | No delay for escape key |
+
+Reload config with `prefix + r`.
+
+## Project Management
+
+Projects use a consistent structure for launching dev environments.
+
+### Structure
+
+```
+~/ProjectManagement/
+└── {project}/
+    └── tmux.sh          # Tmux session launcher
+
+~/Projects/
+└── {project}/           # Actual project code
+```
+
+### Aliases
+
+| Alias | Action |
+|-------|--------|
+| `tm{alias}` | Launch/attach tmux session |
+| `pm{alias}` | cd to ~/ProjectManagement/{project} |
+
+Example: `tmom` launches Omarchy tmux, `pmom` goes to its management dir.
+
+### Tmux Script Pattern
+
+Scripts use auto-incrementing `TABNO` for easy reordering:
+
+```bash
+#!/bin/bash
+SESSION="myproject"
+PROJECT_DIR="$HOME/Projects/myproject"
+
+tmux has-session -t $SESSION 2>/dev/null
+if [ $? = 0 ]; then
+    tmux attach-session -t $SESSION
+    exit 0
+fi
+
+TABNO=1
+
+# --- zsh ---
+tmux new-session -d -s $SESSION -n "zsh" -c "$PROJECT_DIR"
+TABNO=$((TABNO+1))
+
+# --- claude-o ---
+tmux new-window -t $SESSION:$TABNO -n "claude-o" -c "$PROJECT_DIR"
+tmux send-keys -t $SESSION:$TABNO "claude --model opus" C-m
+TABNO=$((TABNO+1))
+
+# --- claude-s ---
+tmux new-window -t $SESSION:$TABNO -n "claude-s" -c "$PROJECT_DIR"
+tmux send-keys -t $SESSION:$TABNO "claude --model sonnet" C-m
+TABNO=$((TABNO+1))
+
+# ... more windows ...
+
+tmux select-window -t $SESSION:1
+tmux attach-session -t $SESSION
+```
+
+To reorder windows, just cut/paste the blocks - TABNO auto-increments.
+
+### Current Projects
+
+| Project | Alias | Path |
+|---------|-------|------|
+| Omarchy | om | ~/Omarchy |
 
 ## Reference
 

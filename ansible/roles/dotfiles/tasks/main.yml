@@ -81,13 +81,6 @@
     label: "{{ item.item }}"
   when: item.stat.exists and item.stat.isreg
 
-- name: Ensure .bashrc sources .aliases
-  ansible.builtin.lineinfile:
-    path: "{{ ansible_facts.env.HOME }}/.bashrc"
-    line: '[ -f ~/.aliases ] && source ~/.aliases'
-    create: true
-    mode: '0644'
-
 - name: Ensure .bashrc sources .bashrc.local
   ansible.builtin.lineinfile:
     path: "{{ ansible_facts.env.HOME }}/.bashrc"

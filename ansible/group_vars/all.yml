@@ -48,6 +48,7 @@ pacman_packages:
 
   # Shell
   - zsh
+  - tmux
 
   # Fonts
   - inter-font
@@ -167,6 +168,7 @@ home_dotfiles:
   - .aliases
   - .bashrc.local
   - .cheatsheet
+  - .tmux.conf
 
 # Web apps (installed as desktop entries)
 webapps:
