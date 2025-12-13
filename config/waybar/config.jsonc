@@ -1,0 +1,223 @@
+{
+  "reload_style_on_change": true,
+  "layer": "top",
+  "position": "top",
+  "spacing": 0,
+  "height": 22,
+  "margin-left": 2,
+  "margin-right": 2,
+  "margin-bottom": 2,
+  "modules-left": [
+    "custom/ws-U",
+    "custom/ws-1",
+    "custom/ws-2",
+    "custom/ws-3",
+    "custom/ws-4",
+    "custom/ws-5",
+    "custom/ws-6",
+    "custom/ws-7",
+    "custom/ws-8",
+    "custom/ws-9",
+    "custom/ws-10",
+    "custom/ws-11",
+    "custom/ws-12"
+  ],
+  "modules-center": ["custom/media", "custom/update", "custom/screenrecording-indicator"],
+  "modules-right": [
+    "group/tray-expander",
+    "bluetooth",
+    "network",
+    "pulseaudio",
+    "cpu",
+    "custom/weather",
+    "clock"
+  ],
+
+  "custom/connectivity": {
+    "exec": "~/.config/waybar/scripts/connectivity.sh",
+    "return-type": "json",
+    "interval": 5,
+    "on-click": "blueman-manager",
+    "on-click-right": "pavucontrol"
+  },
+
+  "custom/ws-U": {
+    "exec": "~/.config/waybar/scripts/workspace.sh U",
+    "return-type": "json",
+    "on-click": "hyprctl dispatch workspace name:U"
+  },
+  "custom/ws-1": {
+    "exec": "~/.config/waybar/scripts/workspace.sh 1",
+    "return-type": "json",
+    "on-click": "hyprctl dispatch workspace 1"
+  },
+  "custom/ws-2": {
+    "exec": "~/.config/waybar/scripts/workspace.sh 2",
+    "return-type": "json",
+    "on-click": "hyprctl dispatch workspace 2"
+  },
+  "custom/ws-3": {
+    "exec": "~/.config/waybar/scripts/workspace.sh 3",
+    "return-type": "json",
+    "on-click": "hyprctl dispatch workspace 3"
+  },
+  "custom/ws-4": {
+    "exec": "~/.config/waybar/scripts/workspace.sh 4",
+    "return-type": "json",
+    "on-click": "hyprctl dispatch workspace 4"
+  },
+  "custom/ws-5": {
+    "exec": "~/.config/waybar/scripts/workspace.sh 5",
+    "return-type": "json",
+    "on-click": "hyprctl dispatch workspace 5"
+  },
+  "custom/ws-6": {
+    "exec": "~/.config/waybar/scripts/workspace.sh 6",
+    "return-type": "json",
+    "on-click": "hyprctl dispatch workspace 6"
+  },
+  "custom/ws-7": {
+    "exec": "~/.config/waybar/scripts/workspace.sh 7",
+    "return-type": "json",
+    "on-click": "hyprctl dispatch workspace 7"
+  },
+  "custom/ws-8": {
+    "exec": "~/.config/waybar/scripts/workspace.sh 8",
+    "return-type": "json",
+    "on-click": "hyprctl dispatch workspace 8"
+  },
+  "custom/ws-9": {
+    "exec": "~/.config/waybar/scripts/workspace.sh 9",
+    "return-type": "json",
+    "on-click": "hyprctl dispatch workspace 9"
+  },
+  "custom/ws-10": {
+    "exec": "~/.config/waybar/scripts/workspace.sh 10",
+    "return-type": "json",
+    "on-click": "hyprctl dispatch workspace 10"
+  },
+  "custom/ws-11": {
+    "exec": "~/.config/waybar/scripts/workspace.sh 11",
+    "return-type": "json",
+    "on-click": "hyprctl dispatch workspace 11"
+  },
+  "custom/ws-12": {
+    "exec": "~/.config/waybar/scripts/workspace.sh 12",
+    "return-type": "json",
+    "on-click": "hyprctl dispatch workspace 12"
+  },
+
+  "custom/omarchy": {
+    "format": "<span font='omarchy'>\ue900</span>",
+    "on-click": "omarchy-menu",
+    "on-click-right": "xdg-terminal-exec",
+    "tooltip-format": "Omarchy Menu\n\nSuper + Alt + Space"
+  },
+  "custom/update": {
+    "format": "",
+    "exec": "omarchy-update-available",
+    "on-click": "omarchy-launch-floating-terminal-with-presentation omarchy-update",
+    "tooltip-format": "Omarchy update available",
+    "signal": 7,
+    "interval": 21600
+  },
+
+  "cpu": {
+    "interval": 5,
+    "format": "󰍛 ",
+    "on-click": "omarchy-launch-or-focus-tui btop"
+  },
+  "custom/sysinfo": {
+    "exec": "~/.config/waybar/scripts/sysinfo.sh",
+    "return-type": "json",
+    "interval": 5,
+    "on-click": "omarchy-launch-or-focus-tui btop"
+  },
+  "clock": {
+    "format": "{:%b %d %I:%M %p}",
+    "format-alt": "{:%A %d %B %Y}",
+    "tooltip": false,
+    "on-click-right": "omarchy-launch-floating-terminal-with-presentation omarchy-tz-select"
+  },
+  "custom/weather": {
+    "exec": "curl -s 'wttr.in/?format=%c%t&u' | sed 's/+//' | sed 's/$/ /'",
+    "interval": 1800,
+    "tooltip": false
+  },
+  "custom/media": {
+    "exec": "~/.config/waybar/scripts/media.sh",
+    "return-type": "json",
+    "interval": 3,
+    "tooltip": false,
+    "on-click": "playerctl play-pause"
+  },
+  "network": {
+    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+    "format": "{icon}",
+    "format-wifi": "{icon}",
+    "format-ethernet": "󰀂",
+    "format-disconnected": "󰤮",
+    "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-disconnected": "Disconnected",
+    "interval": 3,
+    "on-click": "omarchy-launch-wifi"
+  },
+  "battery": {
+    "format": "{capacity}% {icon} ",
+    "format-discharging": "{icon} ",
+    "format-charging": "{icon} ",
+    "format-plugged": " ",
+    "format-icons": {
+      "charging": ["󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
+      "default": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
+    },
+    "format-full": "󰂅 ",
+    "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
+    "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
+    "interval": 5,
+    "on-click": "omarchy-menu power",
+    "states": {
+      "warning": 20,
+      "critical": 10
+    }
+  },
+  "bluetooth": {
+    "format": "󰂯  ",
+    "format-disabled": "󰂲  ",
+    "format-connected": "󰂱  ",
+    "format-no-controller": "",
+    "tooltip-format": "Devices connected: {num_connections}",
+    "on-click": "omarchy-launch-bluetooth"
+  },
+  "pulseaudio": {
+    "format": "󰕾 ",
+    "on-click": "omarchy-launch-or-focus-tui wiremix",
+    "on-click-right": "pamixer -t",
+    "tooltip-format": "Playing at {volume}%",
+    "scroll-step": 5,
+    "format-muted": "󰖁 "
+  },
+  "group/tray-expander": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 600,
+      "children-class": "tray-group-item"
+    },
+    "modules": ["custom/expand-icon", "tray"]
+  },
+  "custom/expand-icon": {
+    "format": "",
+    "tooltip": false
+  },
+  "custom/screenrecording-indicator": {
+    "on-click": "omarchy-cmd-screenrecord",
+    "exec": "$OMARCHY_PATH/default/waybar/indicators/screen-recording.sh",
+    "signal": 8,
+    "return-type": "json"
+  },
+  "tray": {
+    "icon-size": 12,
+    "spacing": 17
+  }
+}

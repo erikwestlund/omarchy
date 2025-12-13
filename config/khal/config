@@ -1,0 +1,28 @@
+[calendars]
+
+[[google]]
+path = ~/.local/share/vdirsyncer/calendars/google/*
+type = discover
+color = auto
+
+# Uncomment when outlook is configured in vdirsyncer:
+# [[outlook]]
+# path = ~/.local/share/vdirsyncer/calendars/outlook/*
+# type = discover
+# color = dark blue
+
+[locale]
+timeformat = %H:%M
+dateformat = %Y-%m-%d
+longdateformat = %Y-%m-%d
+datetimeformat = %Y-%m-%d %H:%M
+longdatetimeformat = %Y-%m-%d %H:%M
+
+# First day of week: 0 = Monday, 6 = Sunday
+firstweekday = 0
+
+[default]
+# Default calendar for new events
+default_calendar = google
+
+highlight_event_days = true

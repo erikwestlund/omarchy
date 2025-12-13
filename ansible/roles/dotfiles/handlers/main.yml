@@ -1,0 +1,9 @@
+---
+- name: Reload hyprland
+  ansible.builtin.command: hyprctl reload
+  changed_when: true
+
+- name: reload udev rules
+  ansible.builtin.shell: udevadm control --reload-rules && udevadm trigger
+  become: true
+  changed_when: true

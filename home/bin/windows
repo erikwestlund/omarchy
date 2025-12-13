@@ -1,0 +1,28 @@
+#!/bin/bash
+# Windows VM launcher
+export LIBVIRT_DEFAULT_URI="qemu:///system"
+
+# Start VM if not running
+if ! virsh list --state-running --name | grep -q "RDPWindows"; then
+    notify-send "Windows VM" "Starting VM..." -t 5000
+    virsh start RDPWindows >/dev/null 2>&1
+    sleep 10
+fi
+
+# Wait for RDP to be ready
+for i in {1..30}; do
+    if timeout 1 bash -c ">/dev/tcp/192.168.122.50/3389" 2>/dev/null; then
+        break
+    fi
+    sleep 1
+done
+
+# Connect via RDP with home drive mounted
+exec xfreerdp3 /v:192.168.122.50 "/u:Erik Westlund" /p:password \
+    /cert:ignore \
+    /size:1430x930 \
+    /smart-sizing:2860x1860 \
+    /gfx:AVC444 \
+    -grab-keyboard \
+    /drive:home,/home/erik \
+    /title:"Windows VM"

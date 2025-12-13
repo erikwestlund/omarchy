@@ -1,0 +1,193 @@
+---
+# Shared configuration for all hosts
+
+# Repository paths (playbook_dir is ansible/, so go up one level)
+omarchy_repo: "{{ playbook_dir | dirname }}"
+config_src: "{{ omarchy_repo }}/config"
+home_src: "{{ omarchy_repo }}/home"
+
+# Packages installed via pacman (official repos)
+pacman_packages:
+  # Core utilities
+  - coreutils
+  - findutils
+  - grep
+  - sed
+  - rsync
+  - rclone
+  - age
+  - htop
+  - tree
+  - openssh
+  - gnupg
+  - wget
+  - curl
+
+  # Archive tools
+  - p7zip
+  - pigz
+
+  # Network
+  - iperf3
+  - lynx
+
+  # Hardware/Thunderbolt
+  - bolt
+
+  # Development
+  - cmake
+  - pkg-config
+  - imagemagick
+  - ffmpeg
+  - yt-dlp
+  - python-pip
+  - nodejs
+  - npm
+  - jq
+  - socat
+
+  # Shell
+  - zsh
+
+  # Fonts
+  - inter-font
+  - ttf-font-awesome
+
+  # Git
+  - git-lfs
+
+  # R and stats
+  - r
+  - gcc-fortran
+
+  # LaTeX (minimal for Quarto)
+  - texlive-basic
+  - texlive-latex
+  - texlive-latexrecommended
+  - texlive-latexextra
+  - texlive-fontsrecommended
+  - texlive-xetex
+  - texlive-bibtexextra
+
+  # Browsers
+  - firefox
+
+  # Media
+  - vlc
+
+  # Screenshots
+  - flameshot
+
+  # Clipboard
+  - cliphist
+  - wl-clipboard
+  - wtype
+
+  # Bluetooth
+  - bluez-utils
+
+  # Dark/light mode
+  - darkman
+  - geoclue
+
+  # Wayland debugging
+  - wev
+
+  # Logitech devices
+  - solaar
+
+  # Virtualization
+  - libvirt
+  - qemu-full
+  - virt-manager
+  - virt-viewer
+  - dnsmasq
+  - bridge-utils
+  - edk2-ovmf
+  - freerdp
+
+  # Calendar
+  - vdirsyncer
+  - khal
+
+# Packages installed via AUR (yay)
+aur_packages:
+  # Dev tools
+  - visual-studio-code-bin
+  - openai-codex-bin
+  - nvm
+  - tableplus
+  - sublime-merge
+  - insomnia-bin
+  - ansible
+  - doctl-bin
+
+  # Communication
+  - slack-desktop
+  - zoom
+
+  # R ecosystem
+  - rstudio-desktop-bin
+  - quarto-cli-bin
+  - positron-ide-devel-bin
+
+  # Browser
+  - google-chrome
+
+  # Research
+  - zotero
+
+  # Hyprland utilities
+  - hyprswitch
+
+  # Calendar
+  - morgen-bin
+  - gcalcli
+
+  # Benchmarking
+  - geekbench
+
+
+# Config directories to sync (config/ -> ~/.config/)
+config_dirs:
+  - darkman
+  - ghostty
+  - hypr
+  - khal
+  - omarchy
+  - projects
+  - solaar
+  - systemd
+  - vdirsyncer
+  - waybar
+  - wireplumber
+
+# Home dotfiles to sync (home/.foo -> ~/.foo)
+home_dotfiles:
+  - .aliases
+  - .bashrc.local
+  - .cheatsheet
+
+# Web apps (installed as desktop entries)
+webapps:
+  - name: Outlook
+    url: "https://outlook.office.com/mail/0/?culture=en-us&country=us"
+  - name: Work Day
+    url: "https://outlook.office.com/calendar/view/day"
+  - name: Work Week
+    url: "https://outlook.office.com/calendar/view/workweek"
+  - name: Word
+    url: "https://word.cloud.microsoft"
+    icon: microsoft-word.webp
+  - name: Excel
+    url: "https://excel.cloud.microsoft"
+    icon: microsoft-excel.webp
+  - name: PowerPoint
+    url: "https://powerpoint.cloud.microsoft.com"
+    icon: microsoft-powerpoint.webp
+  - name: Teams
+    url: "https://teams.microsoft.com"
+    icon: microsoft-teams.webp
+  - name: Claude
+    url: "https://claude.ai/new"
+    icon: claude-ai-light.webp

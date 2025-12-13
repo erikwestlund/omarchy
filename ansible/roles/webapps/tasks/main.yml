@@ -1,0 +1,29 @@
+---
+# Install web apps as desktop entries
+
+- name: Ensure applications directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.local/share/applications"
+    state: directory
+    mode: '0755'
+
+- name: Ensure icons directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.local/share/applications/icons"
+    state: directory
+    mode: '0755'
+
+- name: Copy webapp icons
+  ansible.builtin.copy:
+    src: "icons/"
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/icons/"
+    mode: '0644'
+
+- name: Create webapp desktop entries
+  ansible.builtin.template:
+    src: webapp.desktop.j2
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/{{ item.name }}.desktop"
+    mode: '0755'
+  loop: "{{ webapps }}"
+  loop_control:
+    label: "{{ item.name }}"

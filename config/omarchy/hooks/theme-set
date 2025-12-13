@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# This hook runs after any theme is set via Super+Ctrl+Shift+Space
+# $1 = theme name (e.g., "rainynight")
+#
+# Use this for customizations that can't be done via config file overrides.
+# Most customizations should go in your config files instead:
+#   - ~/.config/hypr/looknfeel.conf (borders, gaps, rounding)
+#   - ~/.config/waybar/style.css (fonts, colors after @import)
+#   - ~/.config/wofi/style.css (launcher styling)
+
+THEME_NAME="$1"
+
+# Example: notify which theme was applied
+# notify-send "Theme changed" "$THEME_NAME"
+
+# Example: restart waybar to ensure CSS changes take effect
+# killall -SIGUSR2 waybar
+
+# Add your post-theme customizations below:

@@ -1,0 +1,6 @@
+[Unit]
+Description=Sync Google Calendar agenda
+
+[Service]
+Type=oneshot
+ExecStart=/home/erik/bin/agenda-sync

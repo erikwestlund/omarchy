@@ -1,0 +1,20 @@
+#!/bin/bash
+# Sync Omarchy configuration via Ansible
+# Auto-detects host from hostname
+
+REPO="$HOME/Omarchy"
+INVENTORY="$REPO/ansible/inventory.yml"
+PLAYBOOK="$REPO/ansible/playbook.yml"
+
+# Map hostname to inventory host
+case "$(hostname)" in
+    omadesktop*) HOST="desktop" ;;
+    omalaptop*)  HOST="laptop" ;;
+    *)
+        echo "Unknown host: $(hostname)"
+        exit 1
+        ;;
+esac
+
+# Pass through any ansible-playbook arguments (like --tags)
+ansible-playbook -i "$INVENTORY" "$PLAYBOOK" --limit "$HOST" "$@"

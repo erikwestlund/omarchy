@@ -1,0 +1,33 @@
+---
+# Framework laptop configuration
+
+# Show battery indicator in waybar
+show_battery: true
+
+# Waybar positioning (move down for rounded display)
+waybar_json_margin_top: 6
+waybar_json_margin_x: 4
+# Border radius: top-left top-right bottom-right bottom-left
+waybar_border_radius: "12px 12px 6px 6px"
+
+# Window gaps to align with waybar
+hypr_gaps_out: 4
+
+# Keyboard setup: framework, logitech, or none
+keyboard_setup: framework
+
+# Framework-specific settings
+is_framework: true
+
+# Theme
+theme_git_url: "https://github.com/atif-1402/omarchy-rainynight-theme.git"
+theme_background: "1.png"
+
+# Power management (laptop uses power-profiles-daemon instead of fixed governor)
+# NOTE: Do NOT set cpu_governor here - let power-profiles-daemon manage it dynamically
+use_power_profiles_daemon: true
+
+# Additional laptop-specific packages (merged with all.yml)
+extra_pacman_packages:
+  - power-profiles-daemon
+  - brightnessctl

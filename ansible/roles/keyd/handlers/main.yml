@@ -1,0 +1,5 @@
+---
+- name: Reload keyd
+  become: true
+  ansible.builtin.command: keyd reload
+  changed_when: true

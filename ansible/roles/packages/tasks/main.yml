@@ -1,0 +1,70 @@
+---
+# Install packages via pacman and AUR
+
+- name: Wait for pacman lock to be released
+  become: true
+  ansible.builtin.shell: |
+    while [ -f /var/lib/pacman/db.lck ]; do
+      sleep 1
+    done
+  changed_when: false
+
+- name: Install pacman packages
+  become: true
+  community.general.pacman:
+    name: "{{ pacman_packages + (extra_pacman_packages | default([])) }}"
+    state: present
+    update_cache: true
+  retries: 3
+  delay: 5
+  register: pacman_result
+  until: pacman_result is succeeded
+
+- name: Allow passwordless sudo
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/nopasswd
+    mode: '0440'
+    content: |
+      {{ ansible_facts.env.USER }} ALL=(ALL) NOPASSWD: ALL
+    validate: 'visudo -cf %s'
+
+- name: Install AUR packages via yay
+  kewlfft.aur.aur:
+    name: "{{ aur_packages + (extra_aur_packages | default([])) }}"
+    use: yay
+    state: present
+  retries: 3
+  delay: 5
+  register: aur_result
+  until: aur_result is succeeded
+
+- name: Set up NVM directory
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.nvm"
+    state: directory
+    mode: '0755'
+
+- name: Configure git defaults
+  community.general.git_config:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    scope: global
+  loop:
+    - { name: 'init.defaultBranch', value: 'main' }
+    - { name: 'pull.rebase', value: 'false' }
+
+- name: Create common directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ ansible_facts.env.HOME }}/Projects"
+    - "{{ ansible_facts.env.HOME }}/Screenshots"
+
+- name: Ensure SSH directory exists with correct permissions
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.ssh"
+    state: directory
+    mode: '0700'

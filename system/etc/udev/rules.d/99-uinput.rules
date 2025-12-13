@@ -1,0 +1,2 @@
+# Allow input group to access uinput (for Solaar and similar tools)
+KERNEL=="uinput", SUBSYSTEM=="misc", MODE="0660", GROUP="input"

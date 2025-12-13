@@ -1,0 +1,10 @@
+# Darkman configuration
+# Set location manually (Boston)
+lat: 42.36
+lng: -71.06
+
+# Portal integration (exposes preference to apps via XDG portal)
+portal: true
+
+# D-Bus API
+dbusserver: true

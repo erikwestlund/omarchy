@@ -1,0 +1,10 @@
+---
+- name: Update hwdb
+  become: true
+  ansible.builtin.command: systemd-hwdb update
+  changed_when: true
+
+- name: Trigger udev
+  become: true
+  ansible.builtin.command: udevadm trigger -s input
+  changed_when: true

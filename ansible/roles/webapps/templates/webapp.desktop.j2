@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name={{ item.name }}
+Comment={{ item.name }}
+Exec=omarchy-launch-webapp {{ item.url }}
+Terminal=false
+Type=Application
+Icon={{ ansible_facts.env.HOME }}/.local/share/applications/icons/{{ item.icon | default(item.name + '.png') }}
+StartupNotify=true

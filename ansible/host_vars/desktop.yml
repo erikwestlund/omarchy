@@ -1,0 +1,40 @@
+---
+# Desktop configuration
+
+# Keyboard setup: framework, logitech, or none
+keyboard_setup: logitech
+
+# Not a Framework laptop
+is_framework: false
+
+# Hyprland look and feel overrides
+hypr_gaps_in: 3
+hypr_gaps_out: 3
+hypr_rounding: 12
+hypr_blur_enabled: true
+
+# Waybar border radius to match windows
+waybar_border_radius: "12px"
+
+# Waybar styling for 6K display
+waybar_margin_left: 64
+waybar_margin_right: 64
+waybar_margin_top: 8
+waybar_margin_bottom: 6
+waybar_font_size: 14
+waybar_icon_spacing: 12
+# Waybar JSON config overrides
+waybar_json_margin_x: 5
+waybar_json_margin_top: 5
+waybar_json_height: 28
+
+# Theme
+theme_git_url: "https://github.com/atif-1402/omarchy-rainynight-theme.git"
+theme_background: "1.png"
+
+# CPU governor (performance for desktop)
+cpu_governor: performance
+
+# Additional desktop-specific packages (merged with all.yml)
+# extra_pacman_packages: []
+# extra_aur_packages: []

@@ -1,0 +1,54 @@
+---
+# Configure keyd for keyboard remapping
+
+- name: Install keyd
+  become: true
+  community.general.pacman:
+    name: keyd
+    state: present
+
+- name: Create Framework keyd config
+  become: true
+  ansible.builtin.template:
+    src: framework.conf.j2
+    dest: /etc/keyd/default.conf
+    mode: '0644'
+  when: keyboard_setup == 'framework'
+  notify: Reload keyd
+
+- name: Create Logitech Bolt keyd config
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/keyd/logitech.conf
+    mode: '0644'
+    content: |
+      [ids]
+      # Logitech Bolt USB Receiver
+      046d:c548
+
+      [main]
+      # No remapping - keys work as labeled
+  notify: Reload keyd
+
+- name: Create mac-like shortcuts config
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/keyd/mac-shortcuts.conf
+    mode: '0644'
+    content: |
+      [ids]
+      *
+
+      [main]
+
+      [meta]
+      # Mac-like shortcuts: Super+key -> Ctrl+key
+      a = C-a
+  notify: Reload keyd
+
+- name: Enable and start keyd
+  become: true
+  ansible.builtin.systemd:
+    name: keyd
+    enabled: true
+    state: started

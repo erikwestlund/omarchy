@@ -1,0 +1,41 @@
+---
+# Omarchy Ansible Playbook
+# Usage:
+#   ansible-playbook ansible/playbook.yml --ask-vault-pass
+#   ansible-playbook ansible/playbook.yml --ask-vault-pass --tags packages
+#   ansible-playbook ansible/playbook.yml --ask-vault-pass --limit laptop
+
+- name: Configure Omarchy
+  hosts: all
+  connection: local
+  gather_facts: true
+
+  vars_files:
+    - vault/secrets.yml
+
+  pre_tasks:
+    - name: Detect Framework laptop
+      ansible.builtin.set_fact:
+        is_framework: "{{ ansible_facts['board_vendor'] | default('') == 'Framework' }}"
+      tags: always
+
+  roles:
+    - role: packages
+      tags: packages
+
+    - role: dotfiles
+      tags: dotfiles
+
+    - role: keyd
+      tags: keyd
+      when: keyboard_setup | default('none') != 'none'
+
+    - role: framework
+      tags: framework
+      when: is_framework | default(false)
+
+    - role: secrets
+      tags: secrets
+
+    - role: webapps
+      tags: webapps

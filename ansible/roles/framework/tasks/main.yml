@@ -1,0 +1,22 @@
+---
+# Framework laptop specific configuration
+
+- name: Create hwdb directory
+  become: true
+  ansible.builtin.file:
+    path: /etc/udev/hwdb.d
+    state: directory
+    mode: '0755'
+
+- name: Configure Framework keyboard hwdb (rfkill -> F10)
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/udev/hwdb.d/90-framework-toprow.hwdb
+    mode: '0644'
+    content: |
+      evdev:name:FRMW0001:00 32AC:0006:*
+       KEYBOARD_KEY_100c6=f10
+       KEYBOARD_KEY_100e8=f9
+  notify:
+    - Update hwdb
+    - Trigger udev

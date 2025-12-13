@@ -1,0 +1,10 @@
+#!/bin/bash
+# Show agenda from cache (synced every 5 minutes)
+
+CACHE_FILE="$HOME/.cache/agenda"
+
+if [[ -f "$CACHE_FILE" ]]; then
+    cat "$CACHE_FILE"
+else
+    echo "Agenda not yet synced. Run: agenda-sync"
+fi

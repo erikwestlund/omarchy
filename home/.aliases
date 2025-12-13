@@ -1,0 +1,185 @@
+# Omarchy aliases (Arch Linux)
+
+# Easier navigation
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ~="cd ~"
+alias -- -="cd -"
+
+# Shortcuts
+alias dl="cd ~/Downloads"
+alias dt="cd ~/Desktop"
+alias projects="cd ~/Projects"
+
+# Omarchy
+alias omarchy="cd ~/Omarchy"
+alias oma="cd ~/Omarchy"
+alias Omarchy="cd ~/Omarchy"
+alias Oma="cd ~/Omarchy"
+om() { ansible-playbook -i ~/Omarchy/ansible/inventory.yml ~/Omarchy/ansible/playbook.yml --vault-password-file ~/.vault_pass --limit "$(cat ~/.machine)" "$@"; }
+alias om-laptop="ansible-playbook -i ~/Omarchy/ansible/inventory.yml ~/Omarchy/ansible/playbook.yml --vault-password-file ~/.vault_pass --limit laptop"
+alias om-desktop="ansible-playbook -i ~/Omarchy/ansible/inventory.yml ~/Omarchy/ansible/playbook.yml --vault-password-file ~/.vault_pass --limit desktop"
+alias om-config='om --tags dotfiles'
+alias om-packages='om --tags packages'
+alias om-webapps='om --tags webapps'
+alias om-apps='om --tags packages,webapps'
+alias om-software='om --tags packages,webapps'
+alias om-secrets='om --tags secrets'
+alias om-keyd='om --tags keyd'
+alias om-all='om'
+
+# Ansible
+alias ap="ansible-playbook"
+alias vault-edit="ansible-vault edit ~/Omarchy/ansible/vault/secrets.yml --vault-password-file ~/.vault_pass"
+
+# Calendar (khal + vdirsyncer)
+alias calsync="vdirsyncer sync"
+alias cal="khal calendar"
+alias agenda="khal list today 7d"
+alias today="khal list today today"
+
+# ls with color (GNU ls)
+alias ls="ls --color=auto"
+alias l="ls -lF"
+alias la="ls -lAF"
+alias lsd="ls -lF | grep --color=never '^d'"
+
+# Colored grep
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+# Enable aliases to be sudo'ed
+alias sudo='sudo '
+
+# Get week number
+alias week='date +%V'
+
+# IP addresses
+alias myip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias localip="hostname -I | awk '{print \$1}'"
+
+# Flush DNS cache (systemd-resolved)
+alias flushdns="sudo systemd-resolve --flush-caches"
+
+# Clipboard (requires xclip)
+alias clip="xclip -selection clipboard"
+alias c="tr -d '\n' | xclip -selection clipboard"
+
+# Intuitive map function
+alias map="xargs -n1"
+
+# Volume control (requires pamixer or amixer)
+alias stfu="pamixer -m"
+alias pumpitup="pamixer --set-volume 100"
+
+# Lock screen (requires i3lock, swaylock, or similar)
+alias afk="loginctl lock-session"
+
+# Reload the shell
+alias reload="exec ${SHELL} -l"
+
+# Print each PATH entry on a separate line
+alias path='echo -e ${PATH//:/\\n}'
+
+# Git shortcuts
+alias g="git"
+ghclone() { git clone "git@github.com:$1.git" "${2:-$(basename $1)}"; }  # Usage: ghclone user/repo [dir]
+alias ga="git add"
+alias gap="git add -p"
+alias gc="git commit --verbose"
+alias gca="git commit -a --verbose"
+alias gcm="git commit -m"
+alias gcam="git commit -a -m"
+alias gm="git commit --amend --verbose"
+alias grao="git remote add origin"
+alias gac="git add . && git commit -am"
+
+alias gd="git diff"
+alias gds="git diff --stat"
+alias gdc="git diff --cached"
+
+alias gs="git status"
+alias s="git status"
+
+alias gsv="git status -v"
+alias gb="git branch"
+
+alias gco="git checkout"
+alias co="git checkout"
+
+alias gcob="git checkout -b"
+
+alias ac="git add . && git commit -am"
+
+# Push
+alias gpushdev="git push origin dev"
+alias pushdev="git push origin dev"
+alias gpushstaging="git push origin staging"
+alias pushstaging="git push origin staging"
+alias gpushmaster="git push origin master"
+alias pushmaster="git push origin master"
+alias gpushmain="git push origin main"
+alias pushmain="git push origin main"
+alias gpushall="git push --all origin"
+alias pushall="git push --all origin"
+
+# Pull
+alias gpulldev="git pull origin dev"
+alias pulldev="git pull origin dev"
+alias gpullstaging="git pull origin staging"
+alias pullstaging="git pull origin staging"
+alias gpullmaster="git pull origin master"
+alias pullmaster="git pull origin master"
+alias gpullmain="git pull origin main"
+alias pullmain="git pull origin main"
+
+# Docker aliases
+alias d="docker"
+alias dc="docker compose"
+alias dcu="docker compose up"
+alias dcd="docker compose down"
+alias dcb="docker compose build"
+alias dps="docker ps"
+alias dpsa="docker ps -a"
+alias di="docker images"
+alias dls="docker container ls"
+alias dlsa="docker container ls -a"
+alias dclean="docker system prune -f"
+alias dcleanall="docker system prune -a -f"
+
+# Tmux aliases
+alias tmnew="tmux new -s"
+alias tma="tmux attach -t"
+alias tmd="tmux detach"
+alias tmk="tmux kill-session -t"
+alias tmkk="tmux kill-server"
+alias tmls="tmux ls"
+
+# NeoVim
+alias nv="nvim"
+
+# Arch Linux package management (pacman/yay)
+alias pac="sudo pacman"
+alias pacs="sudo pacman -S"
+alias pacr="sudo pacman -R"
+alias pacrs="sudo pacman -Rs"
+alias pacu="sudo pacman -Syu"
+alias pacq="pacman -Q"
+alias pacqs="pacman -Qs"
+alias pacss="pacman -Ss"
+
+# yay (AUR helper)
+alias yays="yay -S"
+alias yayu="yay -Syu"
+alias yayss="yay -Ss"
+
+# Secrets management
+alias secrets-pull="~/bin/secrets-pull"
+alias secrets-push="~/bin/secrets-push"
+alias vault-push='source ~/.config/secrets/config && rclone copy ~/Omarchy/ansible/vault/secrets.yml :b2,account=$B2_KEY_ID,key=$B2_APP_KEY:$B2_BUCKET/bootstrap/ && echo "Vault pushed to B2"'
+
+# Project tmux sessions (auto-generated by proj command)
+[ -f ~/.config/projects/aliases ] && source ~/.config/projects/aliases

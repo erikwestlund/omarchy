@@ -1,0 +1,196 @@
+---
+# Sync dotfiles from repo to system
+
+- name: Check which config directories exist
+  ansible.builtin.stat:
+    path: "{{ config_src }}/{{ item }}"
+  loop: "{{ config_dirs }}"
+  register: config_dir_stats
+
+- name: Sync config directories to ~/.config/
+  ansible.builtin.copy:
+    src: "{{ config_src }}/{{ item.item }}/"
+    dest: "{{ ansible_facts.env.HOME }}/.config/{{ item.item }}/"
+    mode: preserve
+  loop: "{{ config_dir_stats.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when: item.stat.exists and item.stat.isdir
+  register: config_sync_results
+
+- name: Deploy host-specific Hyprland config
+  ansible.builtin.template:
+    src: looknfeel-host.conf.j2
+    dest: "{{ ansible_facts.env.HOME }}/.config/hypr/looknfeel-host.conf"
+    mode: '0644'
+  register: hypr_host_config
+
+- name: Deploy host-specific Waybar CSS
+  ansible.builtin.template:
+    src: waybar-host.css.j2
+    dest: "{{ ansible_facts.env.HOME }}/.config/waybar/waybar-host.css"
+    mode: '0644'
+  register: waybar_host_config
+
+- name: Update waybar config.jsonc margins and height
+  ansible.builtin.replace:
+    path: "{{ ansible_facts.env.HOME }}/.config/waybar/config.jsonc"
+    regexp: '"margin-left": \d+'
+    replace: '"margin-top": {{ waybar_json_margin_top | default(2) }},\n  "margin-left": {{ waybar_json_margin_x | default(2) }}'
+  when: waybar_json_margin_x is defined or waybar_json_margin_top is defined
+
+- name: Update waybar config.jsonc margin-right
+  ansible.builtin.replace:
+    path: "{{ ansible_facts.env.HOME }}/.config/waybar/config.jsonc"
+    regexp: '"margin-right": \d+'
+    replace: '"margin-right": {{ waybar_json_margin_x | default(2) }}'
+  when: waybar_json_margin_x is defined
+
+- name: Update waybar config.jsonc height
+  ansible.builtin.replace:
+    path: "{{ ansible_facts.env.HOME }}/.config/waybar/config.jsonc"
+    regexp: '"height": \d+'
+    replace: '"height": {{ waybar_json_height | default(22) }}'
+  when: waybar_json_height is defined
+
+- name: Add battery module to waybar on laptops
+  ansible.builtin.replace:
+    path: "{{ ansible_facts.env.HOME }}/.config/waybar/config.jsonc"
+    regexp: '"cpu",(\s*)"custom/weather"'
+    replace: '"cpu",\1"battery",\1"custom/weather"'
+  when: show_battery | default(false)
+
+- name: Reload hyprland if config changed
+  ansible.builtin.command: hyprctl reload
+  when: (config_sync_results.results | selectattr('item.item', 'equalto', 'hypr') | selectattr('changed', 'true') | list | length > 0) or (hypr_host_config is defined and hypr_host_config.changed)
+  changed_when: true
+
+- name: Check which home dotfiles exist
+  ansible.builtin.stat:
+    path: "{{ home_src }}/{{ item }}"
+  loop: "{{ home_dotfiles }}"
+  register: home_file_stats
+
+- name: Sync home dotfiles to ~/
+  ansible.builtin.copy:
+    src: "{{ home_src }}/{{ item.item }}"
+    dest: "{{ ansible_facts.env.HOME }}/{{ item.item }}"
+    mode: preserve
+  loop: "{{ home_file_stats.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when: item.stat.exists and item.stat.isreg
+
+- name: Ensure .bashrc sources .aliases
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_facts.env.HOME }}/.bashrc"
+    line: '[ -f ~/.aliases ] && source ~/.aliases'
+    create: true
+    mode: '0644'
+
+- name: Ensure .bashrc sources .bashrc.local
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_facts.env.HOME }}/.bashrc"
+    line: '[ -f ~/.bashrc.local ] && source ~/.bashrc.local'
+    create: true
+    mode: '0644'
+
+- name: Sync ~/bin scripts
+  ansible.builtin.copy:
+    src: "{{ home_src }}/bin/"
+    dest: "{{ ansible_facts.env.HOME }}/bin/"
+    mode: '0755'
+
+- name: Ensure ~/bin is in PATH
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_facts.env.HOME }}/.bashrc"
+    line: 'export PATH="$HOME/bin:$PATH"'
+    create: true
+    mode: '0644'
+
+- name: Make hypr scripts executable
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/hypr/scripts"
+    mode: '0755'
+    recurse: true
+  when: config_sync_results.results | selectattr('item.item', 'equalto', 'hypr') | list | length > 0
+
+- name: Check if system directory exists
+  ansible.builtin.stat:
+    path: "{{ playbook_dir }}/../system"
+  register: system_dir_stat
+
+- name: Sync system files (requires become)
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../system/"
+    dest: "/"
+    mode: preserve
+  become: true
+  when: system_dir_stat.stat.exists and system_dir_stat.stat.isdir
+  notify: reload udev rules
+
+- name: Deploy CPU governor systemd service
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/cpu-governor.service
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=Set CPU governor to {{ cpu_governor }}
+      After=multi-user.target
+
+      [Service]
+      Type=oneshot
+      ExecStart=/bin/sh -c 'echo {{ cpu_governor }} | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
+      RemainAfterExit=yes
+
+      [Install]
+      WantedBy=multi-user.target
+  become: true
+  when: cpu_governor is defined
+
+- name: Enable CPU governor service
+  ansible.builtin.systemd:
+    name: cpu-governor.service
+    enabled: true
+    state: started
+    daemon_reload: true
+  become: true
+  when: cpu_governor is defined
+
+# Laptop power management via power-profiles-daemon
+- name: Enable power-profiles-daemon
+  ansible.builtin.systemd:
+    name: power-profiles-daemon.service
+    enabled: true
+    state: started
+  become: true
+  when: use_power_profiles_daemon | default(false)
+
+- name: Enable agenda sync timer
+  ansible.builtin.systemd:
+    name: agenda-sync.timer
+    enabled: true
+    state: started
+    scope: user
+    daemon_reload: true
+
+# Theme installation
+- name: Install theme from git URL
+  ansible.builtin.command:
+    cmd: "omarchy-theme-install {{ theme_git_url }}"
+  when: theme_git_url is defined
+  changed_when: true
+
+- name: Set theme background
+  ansible.builtin.file:
+    src: "{{ ansible_facts.env.HOME }}/.config/omarchy/current/theme/backgrounds/{{ theme_background }}"
+    dest: "{{ ansible_facts.env.HOME }}/.config/omarchy/current/background"
+    state: link
+    force: true
+  when: theme_background is defined
+
+- name: Ensure Screenshots directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/Screenshots"
+    state: directory
+    mode: '0755'
