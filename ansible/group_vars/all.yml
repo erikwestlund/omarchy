@@ -31,6 +31,7 @@ pacman_packages:
   - iperf3
   - lynx
   - tailscale
+  - syncthing
 
   # Hardware/Thunderbolt
   - bolt
@@ -152,6 +153,15 @@ aur_packages:
 # Theme settings
 theme_name: base-theme
 theme_background: 1.png
+
+# Syncthing server (192.168.1.12) - separate VM, backs up to NAS
+syncthing_server_device_id: "6Y6GSBL-C5MTNSQ-P2PDN32-4B6UKWU-TAW6WXB-QPJQHZ3-RJGJHXY-HPWKEQL"
+syncthing_server_lan_address: "tcp://syncthing.lan:22000"
+syncthing_server_ddns_address: "tcp://erikwestlund.ddns.net:22000"
+
+# Syncthing folders
+syncthing_documents_folder_id: "wnxm2-mc6e2"
+syncthing_work_folder_id: "ihqpn-t2a9u"
 
 
 # Config directories to sync (config/ -> ~/.config/)

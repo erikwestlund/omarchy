@@ -25,6 +25,13 @@ shell-integration-features = no-cursor,ssh-env
 # Keyboard bindings
 keybind = shift+insert=paste_from_clipboard
 keybind = control+insert=copy_to_clipboard
+
+# Chrome-style tabs
+keybind = ctrl+shift+n=new_tab
+keybind = ctrl+shift+w=close_tab
+keybind = ctrl+shift+t=toggle_tab_overview
+keybind = ctrl+tab=next_tab
+keybind = ctrl+shift+tab=previous_tab
 keybind = super+control+shift+alt+arrow_down=resize_split:down,100
 keybind = super+control+shift+alt+arrow_up=resize_split:up,100
 keybind = super+control+shift+alt+arrow_left=resize_split:left,100

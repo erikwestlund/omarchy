@@ -75,3 +75,10 @@
     name: tailscaled
     enabled: true
     state: started
+
+- name: Enable and start Syncthing user service
+  ansible.builtin.systemd:
+    name: syncthing
+    scope: user
+    enabled: true
+    state: started

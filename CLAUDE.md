@@ -63,6 +63,13 @@ ansible-playbook ansible/playbook.yml --tags secrets    # Just secrets
 - **Super + Ctrl + Shift + Space** - Theme switcher
 - Updates via menu, not `pacman -Syu` directly
 
+## Home Infrastructure
+
+- **NAS** (192.168.1.10) - Storage server, CIFS shares via autofs at `~/NAS/`
+- **Syncthing VM** (192.168.1.12 / syncthing.lan / erikwestlund.ddns.net) - File sync server, backs up to NAS for redundancy
+
+These are separate systems. The `nas` Ansible role handles NAS mounts, `syncthing` role handles sync config.
+
 ## Notes
 
 - This is Arch Linux, not macOS

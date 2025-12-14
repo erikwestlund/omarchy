@@ -1,60 +1,23 @@
-# Omarchy Cheatsheet
-
-## Window Management
-Super + Return          Terminal
-Super + Space           App launcher
-Super + Alt + Space     Omarchy menu
-Super + Q               Close window
-Super + F               Fullscreen
-Super + V               Float toggle
-
-## Workspaces (F-keys)
-F1-F12                  Switch workspace
-Alt + F1-F12            Move window to workspace*
-Ctrl + F1-F12           Launch workspace
-Super + grave           Utility workspace
-*Alt+F9 broken by Framework EC - use Super+Shift+9
-
-## Workspaces (number keys)
-Super + Alt + 1-0,-,=   Switch to workspace 1-12
-Super + Shift + 1-0,-,= Move window to workspace 1-12
-
-## Navigation (vim-style)
-Super + H/J/K/L         Focus left/down/up/right
-Super + Shift + H/J/K/L Swap window (if window exists in that direction)
-Super + Shift + ,/.     Resize width
-Super + Shift + [/]     Resize height
-Alt + J                 Toggle split (horizontal ↔ vertical)
-Super + Shift + D       Toggle layout (dwindle ↔ master)
-Fn + Left/Right         Beginning/end of line
-
-## Screenshots
-Super + Ctrl + 2        Full screen
-Super + Ctrl + 3        Selection
-
-## Apps
-Super + Shift + T       Terminal
-Super + Shift + B       Browser
-Super + Shift + N       Editor
-Super + Shift + F       File manager
-Super + Shift + S       Music (Spotify)
-Super + Shift + M       Activity (btop)
-Super + Shift + A       ChatGPT
-Super + Shift + E       Email
-Super + Shift + /       1Password
-
-## Audio
-Super + Ctrl + A        Switch audio output
-
-## Secrets & Config
-vault-edit              Edit Ansible vault
-secrets-pull            Pull & decrypt from B2
-secrets-push            Encrypt & push to B2
-om-secrets              Deploy secrets to system
-om                      Run full Ansible playbook
-om-config               Sync dotfiles only
-
-## Other
-Alt + K                 Show all hotkeys
-Super + Alt + H         This cheatsheet
-Super + Alt + J         Agenda (3 days)
+┌─ Windows ─────────────────────┬─ Apps ────────────────────────┬─ Tmux ────────────────────────┐
+│ Super+Return    Terminal      │ Super+Shift+T  Terminal       │ Shift+←/→      Prev/next win  │
+│ Super+Space     Launcher      │ Super+Shift+B  Browser        │ Alt+←/→        Prev/next win  │
+│ Super+Alt+Space Omarchy menu  │ Super+Shift+N  Editor         │ Prefix+Tab     Next window    │
+│ Super+Q         Close         │ Super+Shift+F  Files          │ Prefix+>/<     Next/prev sess │
+│ Super+F         Fullscreen    │ Super+Shift+S  Spotify        ├─ Ghostty ─────────────────────┤
+│ Super+V         Float toggle  │ Alt+Shift+F    Toggle float   │ Ctrl+Shift+N   New tab        │
+│                               │ Super+Shift+A  ChatGPT        │ Ctrl+Shift+W   Close tab      │
+├─ Workspaces ──────────────────┤ Super+Shift+E  Email          ├─ Screenshots ─────────────────┤
+│ F1-F12          Switch        │ Super+Shift+/  1Password      │ Super+Ctrl+2   Full screen    │
+│ Alt+F1-F12      Move window   │                               │ Super+Ctrl+3   Selection      │
+│ Ctrl+F1-F12     Launch        ├─ Navigation (vim) ────────────┤ Super+Ctrl+A   Audio switch   │
+│ Super+grave     Utility       │ Super+HJKL     Focus          │                               │
+│ Super+Alt+1-0   Switch 1-10   │ Super+Shift+HJKL  Swap        ├─ Config ──────────────────────┤
+│ Super+Shift+1-0 Move 1-10     │ Super+Shift+,/.   Width       │ vault-edit     Edit vault     │
+│                               │ Super+Shift+[/]   Height      │ secrets-pull   Pull from B2   │
+│ *Alt+F9 broken - use S+Sh+9   │ Alt+J          Toggle split   │ om-sync        Git pull       │
+│                               │ Super+Shift+D  Toggle layout  │ om             Full playbook  │
+├─ Help ────────────────────────┤ Fn+←/→         Line start/end │ om-config      Dotfiles only  │
+│ Alt+K           All hotkeys   │                               │                               │
+│ Super+Alt+H     Cheatsheet    │                               │                               │
+│ Super+Alt+J     Agenda        │                               │                               │
+└───────────────────────────────┴───────────────────────────────┴───────────────────────────────┘

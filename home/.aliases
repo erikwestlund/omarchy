@@ -34,6 +34,7 @@ alias om-software='om --tags packages,webapps'
 alias om-secrets='om --tags secrets'
 alias om-keyd='om --tags keyd'
 alias om-all='om'
+alias om-sync='git -C ~/Omarchy pull'
 
 # Ansible
 alias ap="ansible-playbook"

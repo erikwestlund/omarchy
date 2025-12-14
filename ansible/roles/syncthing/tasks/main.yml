@@ -1,0 +1,84 @@
+---
+# Syncthing configuration
+# Connects to Syncthing server VM (separate from NAS)
+
+- name: Wait for Syncthing to be ready
+  ansible.builtin.command: syncthing cli show system
+  register: syncthing_status
+  until: syncthing_status.rc == 0
+  retries: 10
+  delay: 2
+  changed_when: false
+
+- name: Check if Syncthing server device exists
+  ansible.builtin.command: syncthing cli config devices list
+  register: syncthing_devices
+  changed_when: false
+
+- name: Add Syncthing server device
+  ansible.builtin.command: >
+    syncthing cli config devices add
+    --device-id {{ syncthing_server_device_id }}
+    --name "Syncthing Server"
+  when: syncthing_server_device_id not in syncthing_devices.stdout
+
+- name: Get current server addresses
+  ansible.builtin.command: syncthing cli config devices {{ syncthing_server_device_id }} dump-json
+  register: server_device_config
+  changed_when: false
+  when: syncthing_server_device_id in syncthing_devices.stdout or syncthing_devices.changed is defined
+
+- name: Add LAN address if missing
+  ansible.builtin.command: >
+    syncthing cli config devices {{ syncthing_server_device_id }} addresses add "{{ syncthing_server_lan_address }}"
+  when: >
+    server_device_config.stdout is defined and
+    syncthing_server_lan_address not in server_device_config.stdout
+
+- name: Add DDNS address if missing
+  ansible.builtin.command: >
+    syncthing cli config devices {{ syncthing_server_device_id }} addresses add "{{ syncthing_server_ddns_address }}"
+  when: >
+    server_device_config.stdout is defined and
+    syncthing_server_ddns_address not in server_device_config.stdout
+
+# Folder configuration
+- name: Check existing folders
+  ansible.builtin.command: syncthing cli config folders list
+  register: syncthing_folders
+  changed_when: false
+
+- name: Add Documents folder
+  ansible.builtin.command: >
+    syncthing cli config folders add
+    --id "{{ syncthing_documents_folder_id }}"
+    --label "Documents"
+    --path ~/Documents
+  when: syncthing_documents_folder_id not in syncthing_folders.stdout
+
+- name: Associate Documents with server
+  ansible.builtin.command: >
+    syncthing cli config folders {{ syncthing_documents_folder_id }} devices add
+    --device-id {{ syncthing_server_device_id }}
+  when: syncthing_documents_folder_id not in syncthing_folders.stdout
+
+- name: Add Work folder
+  ansible.builtin.command: >
+    syncthing cli config folders add
+    --id "{{ syncthing_work_folder_id }}"
+    --label "Work"
+    --path ~/Work
+  when: syncthing_work_folder_id not in syncthing_folders.stdout
+
+- name: Associate Work with server
+  ansible.builtin.command: >
+    syncthing cli config folders {{ syncthing_work_folder_id }} devices add
+    --device-id {{ syncthing_server_device_id }}
+  when: syncthing_work_folder_id not in syncthing_folders.stdout
+
+- name: Create .stignore for Work (ignore OneDrive mount)
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/Work/.stignore"
+    content: "OneDrive\n"
+    mode: '0644'
+    force: false

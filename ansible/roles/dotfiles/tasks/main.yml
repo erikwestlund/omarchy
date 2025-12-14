@@ -88,6 +88,12 @@
     create: true
     mode: '0644'
 
+- name: Sync SSH config
+  ansible.builtin.copy:
+    src: "{{ home_src }}/.ssh/config"
+    dest: "{{ ansible_facts.env.HOME }}/.ssh/config"
+    mode: '0600'
+
 - name: Remove old ~/bin if exists
   ansible.builtin.file:
     path: "{{ ansible_facts.env.HOME }}/bin"

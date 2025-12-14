@@ -43,6 +43,9 @@
     - role: nas
       tags: nas
 
+    - role: syncthing
+      tags: syncthing
+
     - role: projects
       tags: new-project
       when: project_name is defined
