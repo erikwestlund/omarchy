@@ -68,3 +68,10 @@
     path: "{{ ansible_facts.env.HOME }}/.ssh"
     state: directory
     mode: '0700'
+
+- name: Enable and start Tailscale
+  become: true
+  ansible.builtin.systemd:
+    name: tailscaled
+    enabled: true
+    state: started

@@ -30,6 +30,7 @@ pacman_packages:
   # Network
   - iperf3
   - lynx
+  - tailscale
 
   # Hardware/Thunderbolt
   - bolt

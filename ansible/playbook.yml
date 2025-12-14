@@ -40,6 +40,9 @@
     - role: webapps
       tags: webapps
 
+    - role: nas
+      tags: nas
+
     - role: projects
       tags: new-project
       when: project_name is defined

@@ -52,3 +52,29 @@
     name: keyd
     enabled: true
     state: started
+
+- name: Add user to keyd group (for keyd-application-mapper)
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_user_id }}"
+    groups: keyd
+    append: true
+
+- name: Create keyd user config directory
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/keyd"
+    state: directory
+    mode: '0755'
+
+- name: Deploy keyd app-specific config
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.config/keyd/app.conf"
+    mode: '0644'
+    content: |
+      # keyd app-specific bindings (via keyd-application-mapper)
+      # Chrome only: t, r, w
+
+      [chromium]
+      meta.t = C-t
+      meta.r = C-r
+      meta.w = C-w

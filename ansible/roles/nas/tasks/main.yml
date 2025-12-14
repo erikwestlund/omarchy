@@ -1,0 +1,60 @@
+---
+# NAS auto-mount via autofs
+
+- name: Install autofs and cifs-utils
+  become: true
+  kewlfft.aur.aur:
+    name:
+      - autofs
+      - cifs-utils
+    state: present
+
+- name: Create credentials file
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/nas-creds
+    mode: '0600'
+    content: |
+      username={{ nas_erik_username }}
+      password={{ nas_erik_password }}
+
+- name: Create NAS mount point in home
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/NAS"
+    state: directory
+    mode: '0755'
+
+- name: Ensure autofs maps directory exists
+  become: true
+  ansible.builtin.file:
+    path: /etc/autofs/auto.master.d
+    state: directory
+    mode: '0755'
+
+- name: Configure autofs master for NAS
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/autofs/auto.master.d/nas.autofs
+    mode: '0644'
+    content: |
+      {{ ansible_facts.env.HOME }}/NAS /etc/autofs/auto.nas --timeout=300 --browse
+  notify: Restart autofs
+
+- name: Configure NAS auto-mount map
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/autofs/auto.nas
+    mode: '0644'
+    content: |
+      # Explicit mounts: local_name  options  //server/share
+      UnifiDrive  -fstype=cifs,credentials=/etc/nas-creds,uid=erik,gid=erik,iocharset=utf8  ://192.168.1.10/Personal-Drive
+      Media  -fstype=cifs,credentials=/etc/nas-creds,uid=erik,gid=erik,iocharset=utf8  ://192.168.1.10/Media
+  notify: Restart autofs
+
+- name: Enable and start autofs
+  become: true
+  ansible.builtin.systemd:
+    name: autofs
+    enabled: true
+    state: started
+    daemon_reload: true

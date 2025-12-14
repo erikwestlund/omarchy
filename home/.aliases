@@ -176,8 +176,8 @@ alias tmls="tmux ls"
 alias nv="nvim"
 
 # VS Code sync (repo <-> system)
-alias vspush="~/bin/vspush"
-alias vspull="~/bin/vspull"
+alias vspush="~/.bin/vspush"
+alias vspull="~/.bin/vspull"
 
 # Python virtual environment
 alias pvenv=". venv/bin/activate"
@@ -200,8 +200,8 @@ alias yayu="yay -Syu"
 alias yayss="yay -Ss"
 
 # Secrets management
-alias secrets-pull="~/bin/secrets-pull"
-alias secrets-push="~/bin/secrets-push"
+alias secrets-pull="~/.bin/secrets-pull"
+alias secrets-push="~/.bin/secrets-push"
 alias vault-push='source ~/.config/secrets/config && rclone copy ~/Omarchy/ansible/vault/secrets.yml :b2,account=$B2_KEY_ID,key=$B2_APP_KEY:$B2_BUCKET/bootstrap/ && echo "Vault pushed to B2"'
 
 # Project management

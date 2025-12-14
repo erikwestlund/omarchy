@@ -26,10 +26,12 @@
   "modules-center": ["custom/media", "custom/update", "custom/screenrecording-indicator"],
   "modules-right": [
     "group/tray-expander",
+    "custom/tailscale",
     "bluetooth",
     "network",
     "pulseaudio",
     "cpu",
+    "battery",
     "custom/weather",
     "clock"
   ],
@@ -144,7 +146,7 @@
     "exec": "curl -s 'wttr.in/?format=%c%t&u' | sed 's/+//' | sed 's/$/ /'",
     "interval": 1800,
     "tooltip": false,
-    "on-click": "xdg-open 'https://wttr.in'"
+    "on-click": "xdg-open 'https://weather.apple.com'"
   },
   "custom/media": {
     "exec": "~/.config/waybar/scripts/media.sh",
@@ -152,6 +154,12 @@
     "interval": 3,
     "tooltip": false,
     "on-click": "playerctl play-pause"
+  },
+  "custom/tailscale": {
+    "exec": "~/.config/waybar/scripts/tailscale.sh",
+    "return-type": "json",
+    "interval": 10,
+    "tooltip": true
   },
   "network": {
     "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
