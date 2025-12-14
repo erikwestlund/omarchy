@@ -2,11 +2,11 @@
 # NAS auto-mount via autofs
 
 - name: Install autofs and cifs-utils
-  become: true
   kewlfft.aur.aur:
     name:
       - autofs
       - cifs-utils
+    use: yay
     state: present
 
 - name: Create credentials file

@@ -27,7 +27,12 @@
       046d:c548
 
       [main]
-      # No remapping - keys work as labeled
+      # Swap Alt and Super (Meta)
+      leftalt = leftmeta
+      leftmeta = leftalt
+      rightalt = rightmeta
+      rightmeta = rightalt
+  when: keyboard_setup == 'logitech'
   notify: Reload keyd
 
 - name: Create mac-like shortcuts config
