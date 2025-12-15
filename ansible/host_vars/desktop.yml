@@ -28,8 +28,8 @@ waybar_json_margin_x: 5
 waybar_json_margin_top: 5
 waybar_json_height: 28
 
-# Theme
-theme_git_url: "https://github.com/atif-1402/omarchy-rainynight-theme.git"
+# Theme - using local base-theme (no remote fetch)
+# theme_git_url: commented out to use local base-theme
 theme_background: "1.png"
 
 # CPU governor (performance for desktop)

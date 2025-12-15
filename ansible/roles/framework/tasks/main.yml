@@ -8,15 +8,23 @@
     state: directory
     mode: '0755'
 
-- name: Configure Framework keyboard hwdb (rfkill -> F10)
-  become: true
-  ansible.builtin.copy:
-    dest: /etc/udev/hwdb.d/90-framework-toprow.hwdb
-    mode: '0644'
-    content: |
-      evdev:name:FRMW0001:00 32AC:0006:*
-       KEYBOARD_KEY_100c6=f10
-       KEYBOARD_KEY_100e8=f9
-  notify:
-    - Update hwdb
-    - Trigger udev
+# F-key remapping DISABLED - using media keys directly, Super+number for workspaces
+# - name: Configure Framework keyboard hwdb (rfkill -> F10)
+#   become: true
+#   ansible.builtin.copy:
+#     dest: /etc/udev/hwdb.d/90-framework-toprow.hwdb
+#     mode: '0644'
+#     content: |
+#       # Framework hotkeys - remap rfkill to F10
+#       # FRMW0001 = older Intel boards
+#       # FRMW0004 = AMD Ryzen AI 300 (Strix Point)
+#       evdev:name:FRMW0001:00 32AC:0006:*
+#        KEYBOARD_KEY_100c6=f10
+#        KEYBOARD_KEY_100e8=f9
+#
+#       evdev:name:FRMW0004:00 32AC:0006*
+#        KEYBOARD_KEY_100c6=f10
+#        KEYBOARD_KEY_100e8=f9
+#   notify:
+#     - Update hwdb
+#     - Trigger udev

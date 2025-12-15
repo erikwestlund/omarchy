@@ -82,3 +82,18 @@
     content: "OneDrive\n"
     mode: '0644'
     force: false
+
+# Chromium profile sync
+- name: Add Chromium folder
+  ansible.builtin.command: >
+    syncthing cli config folders add
+    --id "chromium"
+    --label "Chromium Profile"
+    --path ~/.config/chromium/Default
+  when: "'chromium' not in syncthing_folders.stdout"
+
+- name: Associate Chromium with server
+  ansible.builtin.command: >
+    syncthing cli config folders chromium devices add
+    --device-id {{ syncthing_server_device_id }}
+  when: "'chromium' not in syncthing_folders.stdout"

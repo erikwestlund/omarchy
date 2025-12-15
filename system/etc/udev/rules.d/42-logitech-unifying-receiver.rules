@@ -1,0 +1,20 @@
+# Logitech Unifying Receiver and Bolt Receiver
+# Allow input group to access Logitech receivers for Solaar
+
+# Unifying Receiver
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c52b", MODE="0660", GROUP="input"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c532", MODE="0660", GROUP="input"
+
+# Bolt Receiver (your device - 046d:C548)
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c548", MODE="0660", GROUP="input"
+
+# Nano Receiver
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c534", MODE="0660", GROUP="input"
+
+# Other Logitech receivers
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c52f", MODE="0660", GROUP="input"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c539", MODE="0660", GROUP="input"
+
+# Lightspeed Receiver
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c541", MODE="0660", GROUP="input"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c545", MODE="0660", GROUP="input"

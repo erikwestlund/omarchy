@@ -8,7 +8,8 @@ show_battery: true
 waybar_json_margin_top: 6
 waybar_json_margin_x: 4
 # Border radius: top-left top-right bottom-right bottom-left
-waybar_border_radius: "12px 12px 6px 6px"
+# Top corners larger to match Framework display curve
+waybar_border_radius: "16px 16px 12px 12px"
 
 # Window gaps to align with waybar
 hypr_gaps_out: 4
@@ -19,8 +20,8 @@ keyboard_setup: framework
 # Framework-specific settings
 is_framework: true
 
-# Theme
-theme_git_url: "https://github.com/atif-1402/omarchy-rainynight-theme.git"
+# Theme - using local base-theme (no remote fetch)
+# theme_git_url: commented out to use local base-theme
 theme_background: "1.png"
 
 # Power management (laptop uses power-profiles-daemon instead of fixed governor)

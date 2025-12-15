@@ -166,6 +166,7 @@ syncthing_work_folder_id: "ihqpn-t2a9u"
 
 # Config directories to sync (config/ -> ~/.config/)
 config_dirs:
+  - chromium
   - darkman
   - ghostty
   - hypr

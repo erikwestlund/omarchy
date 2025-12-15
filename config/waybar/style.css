@@ -41,10 +41,10 @@ window#waybar {
 #custom-ws-10,
 #custom-ws-11,
 #custom-ws-12 {
-  padding: 0px 3px 1px 3px;
+  padding: 0px 6px 1px 6px;
   margin: 3px 0px;
-  border-radius: 6px;
-  min-width: 12px;
+  border-radius: 16px;
+  min-width: 16px;
   font-family: 'Inter', sans-serif;
   font-size: 10px;
   font-weight: 500;
@@ -199,7 +199,7 @@ tooltip {
 #custom-weather {
   font-size: 10px;
   color: #bdd4ff;
-  margin: 1px 12px 0 8px;
+  margin: 0 12px 0 8px;
   padding: 0;
 }
 

@@ -143,10 +143,10 @@
     "on-click-right": "omarchy-launch-floating-terminal-with-presentation omarchy-tz-select"
   },
   "custom/weather": {
-    "exec": "curl -s 'wttr.in/?format=%c%t&u' | sed 's/+//' | sed 's/$/ /'",
-    "interval": 1800,
+    "exec": "~/.config/waybar/scripts/weather.sh",
+    "interval": 300,
     "tooltip": false,
-    "on-click": "xdg-open 'https://weather.apple.com'"
+    "on-click": "xdg-open \"https://wttr.in/$(cat /tmp/weather_location 2>/dev/null || echo Milton,MA)\""
   },
   "custom/media": {
     "exec": "~/.config/waybar/scripts/media.sh",

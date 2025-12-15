@@ -1,0 +1,10 @@
+# Framework hotkeys - remap rfkill to F10
+# FRMW0001 = older Intel boards
+# FRMW0004 = AMD Ryzen AI 300 (Strix Point)
+evdev:name:FRMW0001:00 32AC:0006:*
+ KEYBOARD_KEY_100c6=f10
+ KEYBOARD_KEY_100e8=f9
+
+evdev:name:FRMW0004:00 32AC:0006*
+ KEYBOARD_KEY_100c6=f10
+ KEYBOARD_KEY_100e8=f9
