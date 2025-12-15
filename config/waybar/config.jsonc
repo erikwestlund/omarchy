@@ -26,6 +26,7 @@
   "modules-center": ["custom/media", "custom/update", "custom/screenrecording-indicator"],
   "modules-right": [
     "group/tray-expander",
+    "custom/vpn",
     "custom/tailscale",
     "bluetooth",
     "network",
@@ -154,6 +155,15 @@
     "interval": 3,
     "tooltip": false,
     "on-click": "playerctl play-pause"
+  },
+  "custom/vpn": {
+    "exec": "~/.config/waybar/scripts/vpn.sh",
+    "return-type": "json",
+    "interval": 10,
+    "signal": 9,
+    "tooltip": true,
+    "on-click": "jhvpn-up",
+    "on-click-right": "jhvpn-down"
   },
   "custom/tailscale": {
     "exec": "~/.config/waybar/scripts/tailscale.sh",

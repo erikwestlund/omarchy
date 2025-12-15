@@ -1,0 +1,10 @@
+---
+# Configure Pulse Secure VPN
+
+- name: Install sudoers rule for pulsesecure
+  become: true
+  ansible.builtin.copy:
+    src: pulsesecure-sudoers
+    dest: /etc/sudoers.d/pulsesecure
+    mode: '0440'
+    validate: /usr/sbin/visudo -cf %s

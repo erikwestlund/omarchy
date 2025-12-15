@@ -1,0 +1,6 @@
+#!/bin/bash
+# Show/toggle the Pulse Secure window
+
+# Move from special workspace to current workspace and focus
+hyprctl dispatch movetoworkspace e+0,class:pulseUI
+hyprctl dispatch focuswindow class:pulseUI

@@ -32,6 +32,8 @@ pacman_packages:
   - lynx
   - tailscale
   - syncthing
+  - openconnect
+  - webkit2gtk
 
   # Hardware/Thunderbolt
   - bolt
@@ -149,6 +151,9 @@ aur_packages:
 
   # Benchmarking
   - geekbench
+
+  # VPN
+  - pulse-secure
 
 # Theme settings
 theme_name: base-theme

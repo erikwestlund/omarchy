@@ -82,3 +82,10 @@
     scope: user
     enabled: true
     state: started
+
+- name: Enable and start Pulse Secure VPN service
+  become: true
+  ansible.builtin.systemd:
+    name: pulsesecure
+    enabled: true
+    state: started

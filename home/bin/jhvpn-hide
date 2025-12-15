@@ -1,0 +1,4 @@
+#!/bin/bash
+# Hide the Pulse Secure window to special workspace
+
+hyprctl dispatch movetoworkspacesilent special,class:pulseUI

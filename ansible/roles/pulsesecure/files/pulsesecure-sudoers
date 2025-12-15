@@ -1,0 +1,4 @@
+# Allow user to manage pulsesecure service without password
+erik ALL=(ALL) NOPASSWD: /usr/bin/systemctl start pulsesecure
+erik ALL=(ALL) NOPASSWD: /usr/bin/systemctl stop pulsesecure
+erik ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart pulsesecure

@@ -1,0 +1,14 @@
+#!/bin/bash
+# Disconnect from JH VPN (Pulse Secure)
+
+echo "Stopping Pulse Secure service..."
+sudo systemctl stop pulsesecure
+
+echo "Killing Pulse UI..."
+# Kill all pulse-related processes
+killall -9 pulseUI 2>/dev/null
+killall -9 pulsesvc 2>/dev/null
+
+echo "VPN disconnected"
+# Signal waybar to update
+pkill -RTMIN+9 waybar 2>/dev/null
