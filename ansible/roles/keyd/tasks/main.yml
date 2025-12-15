@@ -49,6 +49,12 @@
       [meta]
       # Mac-like shortcuts: Super+key -> Ctrl+key
       a = C-a
+      f = C-f
+      t = C-t
+      r = C-r
+
+      [meta+alt]
+      l = C-l
   notify: Reload keyd
 
 - name: Enable and start keyd
