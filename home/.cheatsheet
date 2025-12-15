@@ -5,18 +5,18 @@
 │ Super+Q         Close         │ Super+Shift+F  Files          │ Prefix+>/<     Next/prev sess │
 │ Super+F         Fullscreen    │ Super+Shift+S  Spotify        ├─ Ghostty ─────────────────────┤
 │ Super+V         Float toggle  │ Alt+Shift+F    Toggle float   │ Ctrl+Shift+N   New tab        │
-│                               │ Super+Shift+A  ChatGPT        │ Ctrl+Shift+W   Close tab      │
-├─ Workspaces ──────────────────┤ Super+Shift+E  Email          ├─ Screenshots ─────────────────┤
-│ Super+1-9,0     Switch 1-10   │ Super+Shift+/  1Password      │ Super+Ctrl+2   Full screen    │
-│ Super+Shift+1-0 Move window   │                               │ Super+Ctrl+3   Selection      │
-│ Super+grave     Utility       ├─ Navigation (vim) ────────────┤ Super+Ctrl+A   Audio switch   │
-│                               │ Super+HJKL     Focus          │                               │
-├─ Media (top row, no Fn) ──────┤ Super+Shift+HJKL  Swap        ├─ Config ──────────────────────┤
-│ Mute/Vol+/-     Direct        │ Super+Shift+,/.   Width       │ vault-edit     Edit vault     │
-│ Bright+/-       Direct        │ Super+Shift+[/]   Height      │ secrets-pull   Pull from B2   │
-│ Prev/Play/Next  Direct        │ Alt+J          Toggle split   │ om-sync        Git pull       │
-├─ Help ────────────────────────┤ Super+Shift+D  Toggle layout  │ om             Full playbook  │
-│ Alt+K           All hotkeys   │ Fn+←/→         Line start/end │ om-config      Dotfiles only  │
-│ Super+Alt+H     Cheatsheet    │                               │                               │
+│                               │ Ctrl+Shift+A   ChatGPT        │ Ctrl+Shift+W   Close tab      │
+├─ Workspaces ──────────────────┤ Alt+Shift+C    Claude         ├─ Screenshots ─────────────────┤
+│ Super+1-9,0     Switch 1-10   │ Super+Shift+E  Email          │ Super+Ctrl+2   Full screen    │
+│ Super+Shift+1-0 Move window   │ Super+Shift+/  1Password      │ Super+Ctrl+3   Selection      │
+│ Super+grave     Utility       │                               │ Super+Ctrl+A   Audio switch   │
+│                               ├─ Navigation (vim) ────────────┤                               │
+├─ Media (top row, no Fn) ──────┤ Super+HJKL     Focus          ├─ Config ──────────────────────┤
+│ Mute/Vol+/-     Direct        │ Super+Shift+HJKL  Swap        │ vault-edit     Edit vault     │
+│ Bright+/-       Direct        │ Super+Shift+,/.   Width       │ secrets-pull   Pull from B2   │
+│ Prev/Play/Next  Direct        │ Super+Shift+[/]   Height      │ om-sync        Git pull       │
+├─ Help ────────────────────────┤ Alt+J          Toggle split   │ om             Full playbook  │
+│ Alt+K           All hotkeys   │ Super+Shift+D  Toggle layout  │ om-config      Dotfiles only  │
+│ Super+Alt+H     Cheatsheet    │ Fn+←/→         Line start/end │                               │
 │ Super+Alt+J     Agenda        │                               │                               │
 └───────────────────────────────┴───────────────────────────────┴───────────────────────────────┘

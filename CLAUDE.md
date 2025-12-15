@@ -28,19 +28,25 @@ omarchy/
 
 ## Workflow
 
+**Ansible is the source of truth.** Running ansible MUST always return the machine to the desired state defined in this repo. If something on the system differs from what ansible would deploy, the repo/ansible config needs updating.
+
 1. Edit files in this repo
 2. Sync to system using Ansible:
 
 ```bash
-# Sync everything
-ansible-playbook ansible/playbook.yml
+# Run from any directory using ANSIBLE_CONFIG
+ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l laptop
 
 # Sync specific tags only
-ansible-playbook ansible/playbook.yml --tags dotfiles   # Just config files
-ansible-playbook ansible/playbook.yml --tags packages   # Just packages
-ansible-playbook ansible/playbook.yml --tags keyd       # Just keyboard
-ansible-playbook ansible/playbook.yml --tags secrets    # Just secrets
+ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l laptop --tags dotfiles
+ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l laptop --tags packages
+ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l laptop --tags keyd
+ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l laptop --tags secrets
 ```
+
+**Note:** Vault password file must exist at `/home/erik/.vault_pass` (configured in ansible.cfg).
+
+**Iterative debugging:** When testing changes, you can copy files directly to the system (e.g., `sudo cp` for /etc files) without running full ansible. But always update the repo first, and ensure ansible would deploy the same result. You don't need to run all roles - use `--tags` to run only what's needed.
 
 3. Changes go:
    - `home/.foo` → `~/.foo`
