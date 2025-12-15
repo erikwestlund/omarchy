@@ -1,0 +1,30 @@
+---
+# Chromium profile sync configuration
+
+- name: Ensure Chromium Default profile directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/chromium/Default"
+    state: directory
+    mode: '0700'
+
+- name: Deploy Syncthing ignore file for Chromium
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../config/chromium/Default/.stignore"
+    dest: "{{ ansible_facts.env.HOME }}/.config/chromium/Default/.stignore"
+    mode: '0644'
+
+- name: Find Syncthing conflict files
+  ansible.builtin.find:
+    paths: "{{ ansible_facts.env.HOME }}/.config/chromium/Default"
+    patterns: "*.sync-conflict-*"
+    recurse: true
+  register: chromium_conflicts
+
+- name: Clean up Syncthing conflicts
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ chromium_conflicts.files }}"
+  loop_control:
+    label: "{{ item.path | basename }}"
+  when: chromium_conflicts.files | length > 0

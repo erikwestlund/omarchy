@@ -41,12 +41,18 @@ f12 = media
 [alt]
 p = f9
 
-# Mac-style shortcuts: Meta+key → Ctrl+key (global)
 [meta]
-a = C-a
-f = C-f
-t = C-t
-r = C-r
+# System-wide shortcuts
+{% for shortcut in keyd_system_shortcuts.meta %}
+{{ shortcut.key }} = {{ shortcut.action }}
+{% endfor %}
+
+[meta+shift]
+{% for shortcut in keyd_system_shortcuts.meta_shift %}
+{{ shortcut.key }} = {{ shortcut.action }}
+{% endfor %}
 
 [meta+alt]
-l = C-l
+{% for shortcut in keyd_system_shortcuts.meta_alt %}
+{{ shortcut.key }} = {{ shortcut.action }}
+{% endfor %}

@@ -1,0 +1,7 @@
+# keyd app-specific bindings (via keyd-application-mapper)
+# Browser-specific shortcuts only
+
+[chromium]
+{% for shortcut in keyd_browser_shortcuts %}
+meta.{{ shortcut.key }} = {{ shortcut.action }}
+{% endfor %}

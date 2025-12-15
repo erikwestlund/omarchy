@@ -1,53 +1,15 @@
-// Syncthing ignore file for Chromium profile
-// Sync: Bookmarks, Extensions, Preferences, History
-// Exclude: caches, site data, session data
+// Syncthing ignore - whitelist approach
+// ONLY sync: Bookmarks and Extensions
 
-// === LARGE SITE DATA (not needed) ===
-WebStorage
-IndexedDB
-File System
-Local Storage
-Session Storage
-Shared Dictionary
+// Ignore everything first
+*
 
-// === CACHE DIRECTORIES ===
-Cache
-Code Cache
-GPUCache
-GrShaderCache
-DawnGraphiteCache
-DawnWebGPUCache
-Service Worker
-ShaderCache
-blob_storage
+// Un-ignore Bookmarks
+!Bookmarks
+!Bookmarks.bak
 
-// === SESSION DATA (conflicts if Chromium open on multiple machines) ===
-Sessions
-Current Session
-Current Tabs
-Last Session
-Last Tabs
-
-// === DATABASE JOURNALS (transient) ===
-*-journal
-*-wal
-*.tmp
-*.log
-
-// === LOCK FILES ===
-Singleton*
-lockfile
-LOCK
-
-// === COOKIES (session-specific) ===
-Cookies
-Cookies-journal
-
-// === OTHER TRANSIENT ===
-Visited Links
-Network Action Predictor
-Network Action Predictor-journal
-Reporting and NEL
-Reporting and NEL-journal
-DIPS
-DIPS-wal
+// Un-ignore Extensions
+!Extensions
+!Extensions/**
+!Extension State
+!Extension State/**

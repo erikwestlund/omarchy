@@ -1,0 +1,21 @@
+---
+# Mac-like keyboard shortcuts
+# These are shared across all keyboard configs
+
+# System-wide shortcuts (applied to all apps)
+keyd_system_shortcuts:
+  meta:
+    - { key: a, action: "C-a" }      # Select all
+    - { key: f, action: "C-f" }      # Find
+  meta_shift:
+    - { key: a, action: "C-S-a" }    # Shift variant
+    - { key: f, action: "C-S-f" }    # Shift variant
+  meta_alt:
+    - { key: l, action: "C-l" }      # Address bar (browser)
+
+# Browser-only shortcuts (via keyd-application-mapper)
+# Note: Multi-modifier combos (like meta+alt) must be in main keyd config,
+# not app.conf, since keyd bind doesn't support chained modifiers
+keyd_browser_shortcuts:
+  - { key: w, action: "C-w" }        # Close tab
+  - { key: t, action: "C-t" }        # New tab

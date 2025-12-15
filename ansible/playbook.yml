@@ -46,6 +46,9 @@
     - role: syncthing
       tags: syncthing
 
+    - role: chromium
+      tags: chromium
+
     - role: projects
       tags: new-project
       when: project_name is defined

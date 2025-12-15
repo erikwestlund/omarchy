@@ -1,0 +1,26 @@
+[ids]
+# Logitech Bolt USB Receiver
+046d:c548
+
+[main]
+# Swap Alt and Super (Meta)
+leftalt = leftmeta
+leftmeta = leftalt
+rightalt = rightmeta
+rightmeta = rightalt
+
+[meta]
+# System-wide shortcuts
+{% for shortcut in keyd_system_shortcuts.meta %}
+{{ shortcut.key }} = {{ shortcut.action }}
+{% endfor %}
+
+[meta+shift]
+{% for shortcut in keyd_system_shortcuts.meta_shift %}
+{{ shortcut.key }} = {{ shortcut.action }}
+{% endfor %}
+
+[meta+alt]
+{% for shortcut in keyd_system_shortcuts.meta_alt %}
+{{ shortcut.key }} = {{ shortcut.action }}
+{% endfor %}
