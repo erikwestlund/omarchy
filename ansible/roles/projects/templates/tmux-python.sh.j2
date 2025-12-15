@@ -18,8 +18,8 @@ fi
 # Start window numbering at 1
 TABNO=1
 
-# --- zsh ---
-tmux new-session -d -s $SESSION -n "zsh" -c "$PROJECT_DIR"
+# --- bash ---
+tmux new-session -d -s $SESSION -n "bash" -c "$PROJECT_DIR"
 tmux send-keys -t $SESSION:$TABNO "[ -d .venv ] && source .venv/bin/activate" C-m
 TABNO=$((TABNO+1))
 

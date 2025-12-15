@@ -165,6 +165,11 @@ window#waybar {
   padding: 0;
 }
 
+#custom-connectivity {
+  margin: 0;
+  padding: 0;
+}
+
 #custom-omarchy {
   margin: 0;
   padding: 0;
@@ -199,8 +204,9 @@ tooltip {
 #custom-weather {
   font-size: 10px;
   color: #bdd4ff;
-  margin: 0 12px 0 8px;
+  margin: 0;
   padding: 0;
+  margin-bottom: 1px;
 }
 
 #custom-media {

@@ -18,8 +18,8 @@ fi
 # Start window numbering at 1
 TABNO=1
 
-# --- zsh ---
-tmux new-session -d -s $SESSION -n "zsh" -c "$PROJECT_DIR"
+# --- bash ---
+tmux new-session -d -s $SESSION -n "bash" -c "$PROJECT_DIR"
 TABNO=$((TABNO+1))
 
 # --- claude-o (opus) ---

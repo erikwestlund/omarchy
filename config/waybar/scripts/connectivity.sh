@@ -35,5 +35,5 @@ fi
 # Sysinfo (CPU icon)
 sys="󰍛"
 
-# 4 spaces between each icon, 2 trailing for weather gap
-echo "{\"text\": \"$bt    $net    $audio    $sys  \", \"class\": \"connectivity\"}"
+# Single space between icons, no trailing gap
+echo "{\"text\": \"$bt $net $audio $sys\", \"class\": \"connectivity\"}"

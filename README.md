@@ -851,7 +851,7 @@ Prompts for:
 
 | Type | Extra Windows |
 |------|---------------|
-| `utility` | Basic: zsh, claude, codex, project |
+| `utility` | Basic: bash, claude, codex, project |
 | `laravel` | + docker, npm, artisan, tinker |
 | `python` | + python repl (with venv) |
 | `rstats` | + R console |
@@ -878,8 +878,8 @@ Scripts use auto-incrementing `TABNO` for easy reordering:
 ```bash
 TABNO=1
 
-# --- zsh ---
-tmux new-session -d -s $SESSION -n "zsh" -c "$PROJECT_DIR"
+# --- bash ---
+tmux new-session -d -s $SESSION -n "bash" -c "$PROJECT_DIR"
 TABNO=$((TABNO+1))
 
 # --- claude-o ---
