@@ -16,7 +16,7 @@ alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
 alias projects="cd ~/Projects"
 alias p="cd ~/Projects"
-alias pm="cd ~/ProjectManagement"
+alias pm="cd ~/Omarchy/projects"
 
 # Omarchy
 alias omarchy="cd ~/Omarchy"
@@ -212,8 +212,8 @@ alias pm-sync="om --tags projects,dotfiles"
 # tm{alias} = tmux | pm{alias} = project management dir | p{alias} = project dir
 
 # BEGIN PROJECT omarchy
-alias tmom="~/ProjectManagement/omarchy/tmux.sh"
-alias pmom="cd ~/ProjectManagement/omarchy"
+alias tmom="~/Omarchy/projects/omarchy/tmux.sh"
+alias pmom="cd ~/Omarchy/projects/omarchy"
 alias pom="cd ~/Omarchy"
 # END PROJECT omarchy
 
@@ -225,8 +225,8 @@ zai() {
 }
 
 # BEGIN PROJECT homelab
-alias tmhl="~/ProjectManagement/homelab/tmux.sh"
-alias pmhl="cd ~/ProjectManagement/homelab"
+alias tmhl="~/Omarchy/projects/homelab/tmux.sh"
+alias pmhl="cd ~/Omarchy/projects/homelab"
 alias phl="cd /home/erik/Projects/homelab"
 # END PROJECT homelab
 # Auto-generated project aliases

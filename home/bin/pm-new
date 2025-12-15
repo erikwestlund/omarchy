@@ -30,7 +30,7 @@ read -p "Project management dir name [$KEBAB_NAME]: " PM_NAME
 PM_NAME="${PM_NAME:-$KEBAB_NAME}"
 
 if [ -d "$PM_DIR/$PM_NAME" ]; then
-    echo "Error: Project '$PM_NAME' already exists in ProjectManagement"
+    echo "Error: Project '$PM_NAME' already exists in ~/Omarchy/projects"
     exit 1
 fi
 
@@ -109,7 +109,7 @@ echo ""
 echo "=== Summary ==="
 echo "Name:     $DISPLAY_NAME"
 echo "Type:     $PROJECT_TYPE"
-echo "PM dir:   ~/ProjectManagement/$PM_NAME"
+echo "PM dir:   ~/Omarchy/projects/$PM_NAME"
 if [ -n "$PROJECT_PATH" ]; then
     if [ -n "$GITHUB_REPO" ]; then
         echo "Project:  $PROJECT_PATH (clone from github.com/$GITHUB_REPO)"
@@ -165,8 +165,7 @@ echo "║  Project '$DISPLAY_NAME' created!                            "
 echo "╚══════════════════════════════════════════════════════════════╝"
 echo ""
 echo "📁 DIRECTORIES"
-echo "   Project Management: ~/ProjectManagement/$PM_NAME"
-echo "                       (repo: ~/Omarchy/projects/$PM_NAME)"
+echo "   Project Management: ~/Omarchy/projects/$PM_NAME"
 if [ -n "$PROJECT_PATH" ]; then
     if [ -n "$GITHUB_REPO" ]; then
         echo "   Project Code:       $PROJECT_PATH (cloned from github.com/$GITHUB_REPO)"
@@ -192,7 +191,7 @@ echo "   ~/Omarchy/projects/$PM_NAME/launcher.sh  (project bootstrap)"
 echo "   ~/.aliases                                (updated with new aliases)"
 echo ""
 
-# 8. Reload aliases and cd to ProjectManagement dir
-echo "Reloading aliases and changing to ~/ProjectManagement/$PM_NAME..."
+# 8. Reload aliases and cd to project management dir
+echo "Reloading aliases and changing to ~/Omarchy/projects/$PM_NAME..."
 source ~/.aliases
-cd "$HOME/ProjectManagement/$PM_NAME" && exec $SHELL
+cd "$HOME/Omarchy/projects/$PM_NAME" && exec $SHELL
