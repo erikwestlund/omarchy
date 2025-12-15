@@ -152,6 +152,11 @@ window#waybar {
   margin-top: 1px;
 }
 
+#battery {
+  font-family: 'JetBrainsMono Nerd Font', sans-serif;
+  min-width: 12px;
+}
+
 #tray {
   margin: 0;
   padding: 0;

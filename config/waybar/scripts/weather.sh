@@ -19,7 +19,5 @@ else
     echo "$location" > "$CACHE_FILE"
 fi
 
-# Get weather for location (no emoji, with spacing)
-echo -n "  "
-curl -s --max-time 5 "wttr.in/${location}?format=%t&u" 2>/dev/null | sed 's/+//' | tr -d '\n'
-echo "  "
+# Get weather for location
+echo "$(curl -s --max-time 5 "wttr.in/${location}?format=%t&u" 2>/dev/null | sed 's/+//')  "
