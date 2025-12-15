@@ -20,4 +20,5 @@ else
 fi
 
 # Get weather for location
-echo "$(curl -s --max-time 5 "wttr.in/${location}?format=%t&u" 2>/dev/null | sed 's/+//')  "
+temp=$(curl -s --max-time 5 "wttr.in/${location}?format=%t&u" 2>/dev/null | sed 's/+//')
+echo "$temp "
