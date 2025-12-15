@@ -23,9 +23,9 @@ alias omarchy="cd ~/Omarchy"
 alias oma="cd ~/Omarchy"
 alias Omarchy="cd ~/Omarchy"
 alias Oma="cd ~/Omarchy"
-om() { ansible-playbook -i ~/Omarchy/ansible/inventory.yml ~/Omarchy/ansible/playbook.yml --vault-password-file ~/.vault_pass --limit "$(cat ~/.machine)" "$@"; }
-alias om-laptop="ansible-playbook -i ~/Omarchy/ansible/inventory.yml ~/Omarchy/ansible/playbook.yml --vault-password-file ~/.vault_pass --limit laptop"
-alias om-desktop="ansible-playbook -i ~/Omarchy/ansible/inventory.yml ~/Omarchy/ansible/playbook.yml --vault-password-file ~/.vault_pass --limit desktop"
+om() { ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l "$(cat ~/.machine)" "$@"; }
+alias om-laptop="ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l laptop"
+alias om-desktop="ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l desktop"
 alias om-config='om --tags dotfiles'
 alias om-packages='om --tags packages'
 alias om-webapps='om --tags webapps'

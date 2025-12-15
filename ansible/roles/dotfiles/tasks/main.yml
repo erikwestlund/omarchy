@@ -1,6 +1,12 @@
 ---
 # Sync dotfiles from repo to system
 
+- name: Create machine identifier file
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.machine"
+    content: "{{ inventory_hostname }}"
+    mode: '0644'
+
 - name: Check which config directories exist
   ansible.builtin.stat:
     path: "{{ config_src }}/{{ item }}"
