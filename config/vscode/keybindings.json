@@ -1,5 +1,10 @@
 // Place your key bindings in this file to override the defaults
 [
+    // Linux: Super+, for settings
+    {
+        "key": "meta+,",
+        "command": "workbench.action.openSettings"
+    },
     {
         "key": "cmd+o",
         "command": "composerMode.chat"

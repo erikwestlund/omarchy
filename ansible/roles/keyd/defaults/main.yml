@@ -1,57 +1,15 @@
 ---
 # Mac-like keyboard shortcuts
 # These are shared across all keyboard configs
-# Maps Meta+key → Ctrl+key for common shortcuts
 
 # System-wide shortcuts (applied to all apps)
 keyd_system_shortcuts:
   meta:
-    # Basic editing
     - { key: a, action: "C-a" }      # Select all
-    - { key: c, action: "C-c" }      # Copy
-    - { key: v, action: "C-v" }      # Paste
-    - { key: x, action: "C-x" }      # Cut
-    - { key: z, action: "C-z" }      # Undo
-    - { key: s, action: "C-s" }      # Save
     - { key: f, action: "C-f" }      # Find
-    - { key: g, action: "C-g" }      # Find next
-    - { key: h, action: "C-h" }      # Replace (VS Code)
-    - { key: w, action: "C-w" }      # Close tab/window
-    - { key: n, action: "C-n" }      # New
-    - { key: o, action: "C-o" }      # Open
-    - { key: p, action: "C-p" }      # Quick open / Print
-    - { key: b, action: "C-b" }      # Toggle sidebar
-    - { key: e, action: "C-e" }      # Recent files
-    - { key: d, action: "C-d" }      # Select word / Add selection
-    - { key: l, action: "C-l" }      # Go to line / Address bar
-    - { key: k, action: "C-k" }      # Command chord start
-    - { key: j, action: "C-j" }      # Toggle panel
-    - { key: "/", action: "C-/" }    # Toggle comment
-    - { key: "[", action: "C-[" }    # Outdent
-    - { key: "]", action: "C-]" }    # Indent
-    - { key: "`", action: "C-`" }    # Toggle terminal
-    - { key: "\\", action: "C-\\" }  # Split editor
   meta_shift:
     - { key: a, action: "C-S-a" }    # Shift variant
-    - { key: c, action: "C-S-c" }    # Shift variant
-    - { key: v, action: "C-S-v" }    # Paste without formatting
-    - { key: z, action: "C-S-z" }    # Redo
-    - { key: s, action: "C-S-s" }    # Save as
-    - { key: f, action: "C-S-f" }    # Find in files
-    - { key: g, action: "C-S-g" }    # Find previous
-    - { key: h, action: "C-S-h" }    # Replace in files
-    - { key: n, action: "C-S-n" }    # New window
-    - { key: p, action: "C-S-p" }    # Command palette
-    - { key: e, action: "C-S-e" }    # Explorer
-    - { key: d, action: "C-S-d" }    # Debug
-    - { key: x, action: "C-S-x" }    # Extensions
-    - { key: k, action: "C-S-k" }    # Delete line
-    - { key: l, action: "C-S-l" }    # Select all occurrences
-    - { key: o, action: "C-S-o" }    # Go to symbol
-    - { key: "[", action: "C-S-[" }  # Fold
-    - { key: "]", action: "C-S-]" }  # Unfold
-    - { key: "`", action: "C-S-`" }  # New terminal
-    - { key: "\\", action: "C-S-\\" }  # Jump to bracket
+    - { key: f, action: "C-S-f" }    # Shift variant
   meta_alt:
     - { key: l, action: "C-l" }      # Address bar (browser)
 
