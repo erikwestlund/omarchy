@@ -204,9 +204,6 @@ alias yayss="yay -Ss"
 alias secrets-pull="~/.bin/secrets-pull"
 alias secrets-push="~/.bin/secrets-push"
 
-# Sync scripts
-alias photos-sync="~/.bin/photos-sync"
-alias scans-sync="~/.bin/scans-sync"
 alias vault-push='source ~/.config/secrets/config && rclone copy ~/Omarchy/ansible/vault/secrets.yml :b2,account=$B2_KEY_ID,key=$B2_APP_KEY:$B2_BUCKET/bootstrap/ && echo "Vault pushed to B2"'
 
 # Project management

@@ -19,3 +19,5 @@ keyd_system_shortcuts:
 keyd_browser_shortcuts:
   - { key: w, action: "C-w" }        # Close tab
   - { key: t, action: "C-t" }        # New tab
+  - { key: r, action: "C-r" }        # Refresh
+  - { key: q, action: "C-S-w" }      # Close window

@@ -172,7 +172,7 @@ syncthing_documents_folder_id: "erik-documents"
 syncthing_work_folder_id: "erik-work"
 syncthing_desktop_folder_id: "erik-desktop"
 syncthing_screenshots_folder_id: "erik-screenshots"
-syncthing_scans_folder_id: "erik-scans"
+syncthing_scans_folder_id: "scans"
 syncthing_chromium_folder_id: "erik-chromium"
 syncthing_photos_folder_id: "erik-photos"
 
