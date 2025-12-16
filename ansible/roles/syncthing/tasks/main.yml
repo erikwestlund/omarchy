@@ -125,13 +125,19 @@
     --device-id {{ syncthing_server_device_id }}
   when: syncthing_scans_folder_id not in syncthing_folders.stdout
 
-# Chromium profile sync
-- name: Add Chromium folder
+# Chromium bookmarks sync (just bookmarks, not full profile)
+- name: Ensure Chromium sync directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/Sync/Chromium"
+    state: directory
+    mode: '0755'
+
+- name: Add Chromium folder to Syncthing
   ansible.builtin.command: >
     syncthing cli config folders add
     --id "{{ syncthing_chromium_folder_id }}"
-    --label "Chromium"
-    --path ~/.config/chromium/Default
+    --label "Chromium Bookmarks"
+    --path ~/Sync/Chromium
   when: syncthing_chromium_folder_id not in syncthing_folders.stdout
 
 - name: Associate Chromium with server
@@ -139,6 +145,38 @@
     syncthing cli config folders {{ syncthing_chromium_folder_id }} devices add
     --device-id {{ syncthing_server_device_id }}
   when: syncthing_chromium_folder_id not in syncthing_folders.stdout
+
+- name: Ensure Chromium Default directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/chromium/Default"
+    state: directory
+    mode: '0755'
+
+- name: Check if Bookmarks is already a symlink
+  ansible.builtin.stat:
+    path: "{{ ansible_facts.env.HOME }}/.config/chromium/Default/Bookmarks"
+  register: bookmarks_stat
+
+- name: Backup existing Bookmarks file if not a symlink
+  ansible.builtin.copy:
+    src: "{{ ansible_facts.env.HOME }}/.config/chromium/Default/Bookmarks"
+    dest: "{{ ansible_facts.env.HOME }}/.config/chromium/Default/Bookmarks.pre-sync-backup"
+    remote_src: true
+    mode: '0600'
+  when: bookmarks_stat.stat.exists and not bookmarks_stat.stat.islnk
+
+- name: Remove existing Bookmarks file if not a symlink
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/chromium/Default/Bookmarks"
+    state: absent
+  when: bookmarks_stat.stat.exists and not bookmarks_stat.stat.islnk
+
+- name: Create Bookmarks symlink to Sync folder
+  ansible.builtin.file:
+    src: "{{ ansible_facts.env.HOME }}/Sync/Chromium/Bookmarks"
+    dest: "{{ ansible_facts.env.HOME }}/.config/chromium/Default/Bookmarks"
+    state: link
+    force: true
 
 # Photos sync
 - name: Ensure Photos directory exists
