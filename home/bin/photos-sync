@@ -1,0 +1,13 @@
+#!/bin/bash
+# Sync photos from NAS to local ~/Photos
+# One-way sync: NAS is source of truth
+
+SOURCE=~/NAS/Photos/library/admin/
+
+# Check if NAS is accessible
+if ! ls "$SOURCE" >/dev/null 2>&1; then
+    echo "NAS not accessible, skipping sync"
+    exit 0
+fi
+
+rsync -av --delete "$SOURCE" ~/Photos/

@@ -1,0 +1,6 @@
+[Unit]
+Description=Sync photos from NAS
+
+[Service]
+Type=oneshot
+ExecStart=%h/.bin/photos-sync
