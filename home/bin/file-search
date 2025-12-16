@@ -1,0 +1,25 @@
+#!/bin/bash
+# Spotlight-style file search using fd and walker
+# Edit ~/.config/file-search/paths to add/remove search locations
+
+CONFIG=~/.config/file-search/paths
+
+# Read paths from config, expand ~, filter existing dirs
+paths=()
+while IFS= read -r line; do
+    expanded="${line/#\~/$HOME}"
+    [[ -d "$expanded" ]] && paths+=("$expanded")
+done < "$CONFIG"
+
+# Search with fd
+selected=$(fd --type f --exclude .git --exclude node_modules --exclude .cache -d 4 . "${paths[@]}" 2>/dev/null | \
+    walker --dmenu -p "Files:")
+
+[ -z "$selected" ] && exit 0
+
+# --reveal flag opens in file manager instead
+if [[ "$1" == "--reveal" ]]; then
+    nautilus --select "$selected"
+else
+    xdg-open "$selected"
+fi

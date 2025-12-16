@@ -1,0 +1,11 @@
+#!/bin/bash
+# Quick calculator - enter expression, result copied to clipboard
+
+expr=$(echo "" | walker --dmenu -p "Calc:")
+[ -z "$expr" ] && exit 0
+
+result=$(qalc -t "$expr" 2>/dev/null)
+[ -z "$result" ] && exit 1
+
+echo -n "$result" | wl-copy
+notify-send "Calculator" "$expr = $result" -t 2000

@@ -155,6 +155,9 @@ aur_packages:
   # VPN
   - pulse-secure
 
+  # Remote desktop
+  - icaclient
+
 # Theme settings
 theme_name: base-theme
 theme_background: 1.png
@@ -165,8 +168,11 @@ syncthing_server_lan_address: "tcp://syncthing.lan:22000"
 syncthing_server_ddns_address: "tcp://erikwestlund.ddns.net:22000"
 
 # Syncthing folders
-syncthing_documents_folder_id: "wnxm2-mc6e2"
-syncthing_work_folder_id: "ihqpn-t2a9u"
+syncthing_documents_folder_id: "documents"
+syncthing_work_folder_id: "work"
+syncthing_desktop_folder_id: "desktop"
+syncthing_screenshots_folder_id: "screenshots"
+syncthing_scans_folder_id: "scans"
 
 
 # Config directories to sync (config/ -> ~/.config/)

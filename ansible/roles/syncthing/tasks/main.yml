@@ -83,6 +83,48 @@
     mode: '0644'
     force: false
 
+- name: Add Desktop folder
+  ansible.builtin.command: >
+    syncthing cli config folders add
+    --id "{{ syncthing_desktop_folder_id }}"
+    --label "Desktop"
+    --path ~/Desktop
+  when: syncthing_desktop_folder_id not in syncthing_folders.stdout
+
+- name: Associate Desktop with server
+  ansible.builtin.command: >
+    syncthing cli config folders {{ syncthing_desktop_folder_id }} devices add
+    --device-id {{ syncthing_server_device_id }}
+  when: syncthing_desktop_folder_id not in syncthing_folders.stdout
+
+- name: Add Screenshots folder
+  ansible.builtin.command: >
+    syncthing cli config folders add
+    --id "{{ syncthing_screenshots_folder_id }}"
+    --label "Screenshots"
+    --path ~/Screenshots
+  when: syncthing_screenshots_folder_id not in syncthing_folders.stdout
+
+- name: Associate Screenshots with server
+  ansible.builtin.command: >
+    syncthing cli config folders {{ syncthing_screenshots_folder_id }} devices add
+    --device-id {{ syncthing_server_device_id }}
+  when: syncthing_screenshots_folder_id not in syncthing_folders.stdout
+
+- name: Add Scans folder
+  ansible.builtin.command: >
+    syncthing cli config folders add
+    --id "{{ syncthing_scans_folder_id }}"
+    --label "Scans"
+    --path ~/Scans
+  when: syncthing_scans_folder_id not in syncthing_folders.stdout
+
+- name: Associate Scans with server
+  ansible.builtin.command: >
+    syncthing cli config folders {{ syncthing_scans_folder_id }} devices add
+    --device-id {{ syncthing_server_device_id }}
+  when: syncthing_scans_folder_id not in syncthing_folders.stdout
+
 # Chromium profile sync
 - name: Add Chromium folder
   ansible.builtin.command: >

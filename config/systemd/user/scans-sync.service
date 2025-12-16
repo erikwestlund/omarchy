@@ -1,0 +1,6 @@
+[Unit]
+Description=Sync scans from Google Drive
+
+[Service]
+Type=oneshot
+ExecStart=%h/.bin/scans-sync

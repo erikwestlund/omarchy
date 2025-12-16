@@ -1,0 +1,6 @@
+#!/bin/bash
+# Sync scans from Google Drive to local ~/Scans
+# One-way sync: Google Drive is source of truth for new scans
+# After local sync, Syncthing handles distribution to other devices
+
+rclone copy google-drive:Scans ~/Scans --verbose
