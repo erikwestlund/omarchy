@@ -128,7 +128,7 @@
 # Chromium bookmarks sync (just bookmarks, not full profile)
 - name: Ensure Chromium sync directory exists
   ansible.builtin.file:
-    path: "{{ ansible_facts.env.HOME }}/Sync/Chromium"
+    path: "{{ ansible_facts.env.HOME }}/.sync/Chromium"
     state: directory
     mode: '0755'
 
@@ -137,7 +137,7 @@
     syncthing cli config folders add
     --id "{{ syncthing_chromium_folder_id }}"
     --label "Chromium Bookmarks"
-    --path ~/Sync/Chromium
+    --path ~/.sync/Chromium
   when: syncthing_chromium_folder_id not in syncthing_folders.stdout
 
 - name: Associate Chromium with server
@@ -173,7 +173,7 @@
 
 - name: Create Bookmarks symlink to Sync folder
   ansible.builtin.file:
-    src: "{{ ansible_facts.env.HOME }}/Sync/Chromium/Bookmarks"
+    src: "{{ ansible_facts.env.HOME }}/.sync/Chromium/Bookmarks"
     dest: "{{ ansible_facts.env.HOME }}/.config/chromium/Default/Bookmarks"
     state: link
     force: true
