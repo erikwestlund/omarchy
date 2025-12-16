@@ -1,6 +1,8 @@
 #!/bin/bash
 # Connect to JH VPN using Pulse Secure client
 
+JH_VPN_URL="{{ jh_vpn_url }}"
+
 # Check if UI is already running - just show it
 if pgrep -f "pulseUI" > /dev/null 2>&1; then
     echo "Pulse UI already running, showing window..."
@@ -16,7 +18,7 @@ if ! systemctl is-active --quiet pulsesecure; then
 fi
 
 echo "Launching Pulse Secure..."
-/opt/pulsesecure/bin/pulseUI &
+/opt/pulsesecure/bin/pulselauncher -U "$JH_VPN_URL" &
 disown
 
 echo "Complete authentication in the Pulse window."

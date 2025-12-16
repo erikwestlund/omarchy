@@ -8,3 +8,9 @@
     dest: /etc/sudoers.d/pulsesecure
     mode: '0440'
     validate: /usr/sbin/visudo -cf %s
+
+- name: Deploy jhvpn-up script
+  ansible.builtin.template:
+    src: jhvpn-up.j2
+    dest: "{{ ansible_facts.env.HOME }}/.bin/jhvpn-up"
+    mode: '0755'

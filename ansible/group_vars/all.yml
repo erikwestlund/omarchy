@@ -158,6 +158,9 @@ aur_packages:
   # Remote desktop
   - icaclient
 
+# JHU VPN configuration
+jh_vpn_url: "https://vpn.jh.edu"
+
 # Theme settings
 theme_name: base-theme
 theme_background: 1.png

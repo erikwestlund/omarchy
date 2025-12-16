@@ -1,26 +1,18 @@
 #!/bin/bash
 # JHU VPN menu - smart options based on VPN state
 
-# Check if pulsesecure service is active
-if systemctl is-active --quiet pulsesecure; then
-    # VPN is up - check if window is hidden (on special workspace)
-    workspace_id=$(hyprctl clients -j | jq -r '.[] | select(.class == "pulseUI") | .workspace.id')
-
-    if [[ "$workspace_id" -lt 0 ]]; then
-        # Window is hidden (special workspace)
-        action=$(echo -e "Down\nShow Client" | walker --dmenu -p "JHU VPN:")
-    else
-        # Window is visible
-        action=$(echo -e "Down\nHide Client" | walker --dmenu -p "JHU VPN:")
-    fi
+# Check if VPN tunnel is actually established (tun interface exists)
+if ip link show tun0 &>/dev/null; then
+    # VPN is up
+    action=$(echo -e "Down\nHide\nKill" | walker --dmenu -p "JHU VPN:")
 else
-    # VPN is down - show connect option only
-    action=$(echo -e "Up" | walker --dmenu -p "JHU VPN:")
+    # VPN is down
+    action=$(echo -e "Up\nHide\nKill" | walker --dmenu -p "JHU VPN:")
 fi
 
 case "$action" in
     Up) ~/.bin/jhvpn-up ;;
     Down) ~/.bin/jhvpn-down ;;
-    "Show Client") ~/.bin/jhvpn-show ;;
-    "Hide Client") ~/.bin/jhvpn-hide ;;
+    Hide) ~/.bin/jhvpn-hide ;;
+    Kill) killall pulseUI pulselauncher 2>/dev/null ;;
 esac

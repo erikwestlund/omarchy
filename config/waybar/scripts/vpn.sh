@@ -1,7 +1,8 @@
 #!/bin/bash
 # Waybar module for JH VPN status (Pulse Secure)
 
-if pgrep -f "pulsesvc" > /dev/null 2>&1; then
+# Check if VPN tunnel is actually established (tun interface exists)
+if ip link show tun0 &>/dev/null; then
     # VPN is connected
     echo '{"text": "󰖂", "tooltip": "JH VPN Connected", "class": "connected"}'
 else
