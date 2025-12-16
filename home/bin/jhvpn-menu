@@ -4,15 +4,16 @@
 # Check if VPN tunnel is actually established (tun interface exists)
 if ip link show tun0 &>/dev/null; then
     # VPN is up
-    action=$(echo -e "Down\nHide\nKill" | walker --dmenu -p "JHU VPN:")
+    action=$(echo -e "Down\nShow\nHide\nKill" | walker --dmenu -p "JHU VPN:")
 else
     # VPN is down
-    action=$(echo -e "Up\nHide\nKill" | walker --dmenu -p "JHU VPN:")
+    action=$(echo -e "Up\nShow\nHide\nKill" | walker --dmenu -p "JHU VPN:")
 fi
 
 case "$action" in
     Up) ~/.bin/jhvpn-up ;;
     Down) ~/.bin/jhvpn-down ;;
+    Show) ~/.bin/jhvpn-show ;;
     Hide) ~/.bin/jhvpn-hide ;;
     Kill) killall pulseUI pulselauncher 2>/dev/null ;;
 esac

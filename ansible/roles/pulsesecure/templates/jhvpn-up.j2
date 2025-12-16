@@ -3,22 +3,32 @@
 
 JH_VPN_URL="{{ jh_vpn_url }}"
 
-# Check if UI is already running - just show it
-if pgrep -f "pulseUI" > /dev/null 2>&1; then
+# If UI already running, just show it
+if pgrep -f pulseUI > /dev/null 2>&1; then
     echo "Pulse UI already running, showing window..."
     ~/.bin/jhvpn-show
     exit 0
 fi
 
-# Ensure pulsesecure service is running
+# Make sure service is running
 if ! systemctl is-active --quiet pulsesecure; then
     echo "Starting Pulse Secure service..."
     sudo systemctl start pulsesecure
-    sleep 1
+    sleep 5
 fi
 
 echo "Launching Pulse Secure..."
-/opt/pulsesecure/bin/pulselauncher -U "$JH_VPN_URL" &
+/opt/pulsesecure/bin/pulseUI &
 disown
+
+# Wait for UI to start, then show window
+for i in {1..10}; do
+    if pgrep -f pulseUI > /dev/null 2>&1; then
+        sleep 1
+        ~/.bin/jhvpn-show
+        break
+    fi
+    sleep 1
+done
 
 echo "Complete authentication in the Pulse window."
