@@ -13,16 +13,16 @@
     src: framework.conf.j2
     dest: /etc/keyd/default.conf
     mode: '0644'
-  when: keyboard_setup == 'framework'
+  when: "'framework' in keyboards | default([])"
   notify: Reload keyd
 
-- name: Create Logitech Bolt keyd config
+- name: Create Logitech keyd config (machine-specific)
   become: true
   ansible.builtin.template:
-    src: logitech.conf.j2
+    src: "logitech-{{ inventory_hostname }}.conf.j2"
     dest: /etc/keyd/logitech.conf
     mode: '0644'
-  when: keyboard_setup == 'logitech'
+  when: "'logitech' in keyboards | default([])"
   notify: Reload keyd
 
 - name: Remove legacy mac-shortcuts.conf

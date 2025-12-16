@@ -1,8 +1,9 @@
 ---
 # Desktop configuration
 
-# Keyboard setup: framework, logitech, or none
-keyboard_setup: logitech
+# Keyboards connected to this machine (configs deployed for each)
+keyboards:
+  - logitech
 
 # Not a Framework laptop
 is_framework: false
