@@ -28,7 +28,7 @@
 
     - role: keyd
       tags: keyd
-      when: keyboard_setup | default('none') != 'none'
+      when: keyboards | default([]) | length > 0
 
     - role: framework
       tags: framework

@@ -14,8 +14,10 @@ waybar_border_radius: "16px 16px 12px 12px"
 # Window gaps to align with waybar
 hypr_gaps_out: 4
 
-# Keyboard setup: framework, logitech, or none
-keyboard_setup: framework
+# Keyboards connected to this machine (configs deployed for each)
+keyboards:
+  - framework
+  - logitech
 
 # Framework-specific settings
 is_framework: true
