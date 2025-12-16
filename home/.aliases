@@ -33,6 +33,8 @@ alias om-apps='om --tags packages,webapps'
 alias om-software='om --tags packages,webapps'
 alias om-secrets='om --tags secrets'
 alias om-keyd='om --tags keyd'
+alias vscode-sync='om --tags vscode'
+alias vscode-sync-ext='om --tags vscode -e "vscode_install_extensions=true"'
 alias om-all='om'
 alias om-sync='git -C ~/Omarchy pull'
 
@@ -230,5 +232,15 @@ alias tmhl="~/Omarchy/projects/homelab/tmux.sh"
 alias pmhl="cd ~/Omarchy/projects/homelab"
 alias phl="cd /home/erik/Projects/homelab"
 # END PROJECT homelab
+# BEGIN PROJECT framework
+alias tmfw="~/Omarchy/projects/framework/tmux.sh"
+alias pmfw="cd ~/Omarchy/projects/framework"
+alias pfw="cd /home/erik/Projects/framework"
+# END PROJECT framework
+# BEGIN PROJECT framework-site
+alias tmfwsite="~/Omarchy/projects/framework-site/tmux.sh"
+alias pmfwsite="cd ~/Omarchy/projects/framework-site"
+alias pfwsite="cd /home/erik/Projects/framework-website"
+# END PROJECT framework-site
 # Auto-generated project aliases
 [ -f ~/.config/projects/aliases ] && source ~/.config/projects/aliases

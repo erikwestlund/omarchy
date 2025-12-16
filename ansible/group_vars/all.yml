@@ -123,6 +123,8 @@ aur_packages:
   - visual-studio-code-bin
   - openai-codex-bin
   - nvm
+  - nodejs-nodemon
+  - nodejs-vite
   - tableplus
   - sublime-merge
   - insomnia-bin
@@ -202,6 +204,7 @@ home_dotfiles:
   - .bashrc.local
   - .cheatsheet
   - .gitconfig
+  - .Renviron
   - .tmux.conf
 
 # Web apps (installed as desktop entries)

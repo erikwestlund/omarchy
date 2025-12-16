@@ -1,0 +1,2 @@
+# R environment configuration
+R_LIBS_USER=~/.R/library

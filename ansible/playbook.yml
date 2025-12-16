@@ -26,6 +26,9 @@
     - role: dotfiles
       tags: dotfiles
 
+    - role: vscode
+      tags: vscode
+
     - role: keyd
       tags: keyd
       when: keyboards | default([]) | length > 0

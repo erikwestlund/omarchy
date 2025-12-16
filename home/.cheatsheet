@@ -19,4 +19,6 @@
 │ Alt+K           All hotkeys   │ Super+Shift+D  Toggle layout  │ secrets-pull   Pull from B2   │
 │ Super+Alt+H     Cheatsheet    │ Fn+←/→         Line start/end │ om-sync        Git pull       │
 │ Super+Alt+J     Agenda        │                               │ om             Full playbook  │
+│                               │                               │ vscode-sync    Sync VS Code   │
+│                               │                               │ vscode-sync-ext + extensions  │
 └───────────────────────────────┴───────────────────────────────┴───────────────────────────────┘

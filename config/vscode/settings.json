@@ -1,18 +1,112 @@
 {
-  "workbench.colorTheme": "Default Dark Modern",
-  "editor.fontFamily": "'JetBrainsMono Nerd Font', 'Droid Sans Mono', 'monospace'",
-  "editor.fontSize": 14,
-  "editor.tabSize": 2,
-  "editor.formatOnSave": true,
-  "editor.minimap.enabled": false,
-  "editor.wordWrap": "on",
-  "editor.bracketPairColorization.enabled": true,
-  "editor.guides.bracketPairs": true,
-  "files.autoSave": "onFocusChange",
-  "files.trimTrailingWhitespace": true,
-  "files.insertFinalNewline": true,
-  "terminal.integrated.fontFamily": "'JetBrainsMono Nerd Font'",
-  "terminal.integrated.fontSize": 14,
-  "window.titleBarStyle": "custom",
-  "telemetry.telemetryLevel": "off"
+    "window.commandCenter": true,
+    "files.associations": {
+        "*.rmd": "markdown"
+    },
+    "[php]": {
+        "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+    },
+    "php.format.rules.arrayInitializersNewLineBeforeFirstElement": true,
+    "terminal.integrated.suggest.builtinCompletions": {
+        "pwshCode": true,
+        "pwshGit": true
+    },
+    "terminal.integrated.fontFamily": "Fira Code",
+    "terminal.integrated.fontSize": 12,
+    "terminal.integrated.gpuAcceleration": "on",
+    "terminal.integrated.tabs.enabled": true,
+    "terminal.integrated.tabs.location": "left",
+    "terminal.integrated.tabs.focusMode": "singleClick",
+    "terminal.integrated.profiles.enabled": true,
+    "terminal.integrated.profiles.osx": {
+        "Better Shoes (zsh)": {
+            "path": "/opt/homebrew/bin/zsh",
+            "args": [
+                "-c",
+                "cd ${workspaceFolder} && /opt/homebrew/bin/zsh"
+            ],
+            "icon": "terminal-zsh",
+            "group": "better-shoes",
+            "overrideName": true
+        },
+        "Framework (zsh)": {
+            "path": "/opt/homebrew/bin/zsh",
+            "args": [
+                "-c",
+                "cd ${workspaceFolder}/../framework && /opt/homebrew/bin/zsh"
+            ],
+            "icon": "terminal-zsh",
+            "group": "framework",
+            "overrideName": true
+        },
+        "NA Accord (tmux)": {
+            "path": "/opt/homebrew/bin/zsh",
+            "args": [
+                "-c",
+                "cd ${workspaceFolder} && tmux attach -t na || (./start_dev.sh && tmux attach -t na)"
+            ],
+            "icon": "terminal-tmux",
+            "group": "na",
+            "overrideName": true
+        }
+    },
+    "terminal.integrated.tabs.showActiveTerminal": "always",
+    "[r]": {
+        "rterm.mac": "/usr/local/bin/R",
+        "rterm.option": [
+            "--no-save",
+            "--no-restore"
+        ],
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false,
+        "editor.defaultFormatter": "REditorSupport.r",
+        "lsp.enabled": true,
+        "linting.enable": true,
+        "linting.lintOnSave": true,
+        "linting.lintr.options": {
+            "indent_by": 2
+        },
+        "plot.useHttpgd": true,
+        "sessionInit": true,
+        "initPath": "~/.vscode-R/init.R",
+        "sessionWatcher.enabled": true,
+        "sessionWatcher.syncEnvironments": true,
+        "bracketedPaste": true,
+        "workspaceViewer.enabled": true,
+        "lsp.diagnostics": true,
+        "rterm.enabled": true,
+        "alwaysUseActiveTerminal": true,
+        "lsp.path": "/usr/local/bin/R",
+        "lsp.args": [
+            "--no-save",
+            "--no-restore"
+        ],
+        "lsp.useGlobalR": true
+    },
+    "workbench.colorCustomizations": {
+        "terminal.background": "#1a1b26",
+        "terminal.foreground": "#a9b1d6",
+        "terminal.ansiBlack": "#24283b",
+        "terminal.ansiBlue": "#7aa2f7",
+        "terminal.ansiBrightBlack": "#414868",
+        "terminal.ansiBrightBlue": "#7aa2f7",
+        "terminal.ansiBrightCyan": "#7dcfff",
+        "terminal.ansiBrightGreen": "#9ece6a",
+        "terminal.ansiBrightMagenta": "#bb9af7",
+        "terminal.ansiBrightRed": "#f7768e",
+        "terminal.ansiBrightWhite": "#c0caf5",
+        "terminal.ansiBrightYellow": "#e0af68",
+        "terminal.ansiCyan": "#7dcfff",
+        "terminal.ansiGreen": "#9ece6a",
+        "terminal.ansiMagenta": "#bb9af7",
+        "terminal.ansiRed": "#f7768e",
+        "terminal.ansiWhite": "#c0caf5",
+        "terminal.ansiYellow": "#e0af68"
+    },
+    "workbench.colorTheme": "null",
+    "terminal.integrated.enableMultiLinePasteWarning": false,
+    "quarto.preview.inBrowser": true,
+    "quarto.render.previewType": "external",
+    "editor.minimap.enabled": false
 }

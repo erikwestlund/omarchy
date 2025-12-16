@@ -83,8 +83,9 @@ if [[ ! "$LINK_PROJECT" =~ ^[Nn] ]]; then
         if [[ ! "$CREATE_DIR" =~ ^[Nn] ]]; then
             read -p "Clone from GitHub? (e.g., 'user/repo') or press Enter for empty dir: " GITHUB_REPO
             if [ -n "$GITHUB_REPO" ]; then
-                PROJECT_PATH="$PROJECTS_DIR/$KEBAB_NAME"
-                # Clone will happen in Ansible
+                read -p "Directory name [$KEBAB_NAME]: " DIR_NAME
+                DIR_NAME="${DIR_NAME:-$KEBAB_NAME}"
+                PROJECT_PATH="$PROJECTS_DIR/$DIR_NAME"
             else
                 read -p "Directory name [$KEBAB_NAME]: " DIR_NAME
                 DIR_NAME="${DIR_NAME:-$KEBAB_NAME}"

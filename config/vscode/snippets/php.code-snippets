@@ -1,0 +1,9 @@
+{
+    "PHP $this->": {
+        "prefix": "th",
+        "body": [
+            "\\$this->"
+        ],
+        "description": "Insert $this->"
+    }
+}

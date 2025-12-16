@@ -1,0 +1,81 @@
+---
+# VS Code / Positron settings sync via symlinks
+
+# VS Code
+- name: Ensure VS Code User directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/Code/User"
+    state: directory
+    mode: '0755'
+
+- name: Remove existing VS Code settings files (to replace with symlinks)
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/Code/User/{{ item }}"
+    state: absent
+  loop:
+    - settings.json
+    - keybindings.json
+    - snippets
+  when: vscode_force_symlinks | default(true)
+
+- name: Symlink VS Code settings
+  ansible.builtin.file:
+    src: "{{ config_src }}/vscode/{{ item }}"
+    dest: "{{ ansible_facts.env.HOME }}/.config/Code/User/{{ item }}"
+    state: link
+    force: true
+  loop:
+    - settings.json
+    - keybindings.json
+    - snippets
+
+# Positron
+- name: Check if Positron is installed
+  ansible.builtin.stat:
+    path: "{{ ansible_facts.env.HOME }}/.config/Positron"
+  register: positron_dir
+
+- name: Ensure Positron User directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/Positron/User"
+    state: directory
+    mode: '0755'
+  when: positron_dir.stat.exists
+
+- name: Remove existing Positron settings files (to replace with symlinks)
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/Positron/User/{{ item }}"
+    state: absent
+  loop:
+    - settings.json
+    - keybindings.json
+    - snippets
+  when: positron_dir.stat.exists and (vscode_force_symlinks | default(true))
+
+- name: Symlink Positron settings
+  ansible.builtin.file:
+    src: "{{ config_src }}/vscode/{{ item }}"
+    dest: "{{ ansible_facts.env.HOME }}/.config/Positron/User/{{ item }}"
+    state: link
+    force: true
+  loop:
+    - settings.json
+    - keybindings.json
+    - snippets
+  when: positron_dir.stat.exists
+
+# Extensions (optional - run with -e "vscode_install_extensions=true")
+- name: Read extensions list
+  ansible.builtin.slurp:
+    src: "{{ config_src }}/vscode/extensions.txt"
+  register: extensions_file
+  when: vscode_install_extensions | default(false)
+
+- name: Install VS Code extensions
+  ansible.builtin.command:
+    cmd: "code --install-extension {{ item }}"
+  loop: "{{ (extensions_file.content | b64decode).split('\n') | select('match', '.+') | list }}"
+  register: ext_result
+  changed_when: "'was successfully installed' in ext_result.stdout"
+  failed_when: false
+  when: vscode_install_extensions | default(false)
