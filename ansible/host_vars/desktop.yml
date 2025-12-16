@@ -39,3 +39,19 @@ cpu_governor: performance
 # Additional desktop-specific packages (merged with all.yml)
 # extra_pacman_packages: []
 # extra_aur_packages: []
+
+# Virtual machines
+vms:
+  - name: win11
+    desktop_name: Windows
+    desktop_filename: windows-11-vm
+    icon: "{{ ansible_facts.env.HOME }}/.local/share/applications/icons/windows.png"
+    exec: "{{ ansible_facts.env.HOME }}/.bin/windows"
+    keywords: windows;
+    os_variant: win11
+    ram_mb: 16384
+    vcpus: 4
+    disk_size_gb: 250
+    iso: "{{ ansible_facts.env.HOME }}/NAS/ISOs/win-11.iso"
+    virtio_iso: "{{ ansible_facts.env.HOME }}/NAS/ISOs/virtio-win.iso"
+    tpm: true

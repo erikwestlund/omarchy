@@ -51,6 +51,7 @@
       Media  -fstype=cifs,credentials=/etc/nas-creds,uid=erik,gid=erik,iocharset=utf8  ://192.168.1.10/Media
       iCloudBackupErik  -fstype=cifs,credentials=/etc/nas-creds,uid=erik,gid=erik,iocharset=utf8  ://192.168.1.10/iCloudBackupErik
       Photos  -fstype=cifs,credentials=/etc/nas-creds,uid=erik,gid=erik,iocharset=utf8  ://192.168.1.10/Photos
+      ISOs  -fstype=cifs,credentials=/etc/nas-creds,uid=erik,gid=erik,iocharset=utf8  ://192.168.1.10/ISOs
   notify: Restart autofs
 
 - name: Enable and start autofs

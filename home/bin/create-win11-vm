@@ -1,0 +1,83 @@
+#!/bin/bash
+# Create Windows 11 VM with QEMU/libvirt
+# Requirements: libvirt, qemu, virt-install, OVMF (UEFI), swtpm (TPM)
+
+set -e
+
+VM_NAME="win11"
+RAM_MB=16384
+VCPUS=4
+DISK_SIZE_GB=250
+DISK_PATH="/var/lib/libvirt/images/${VM_NAME}.qcow2"
+WIN_ISO="${HOME}/NAS/ISOs/win-11.iso"
+VIRTIO_ISO="${HOME}/NAS/ISOs/virtio-win.iso"
+
+# Check if ISO exists
+if [[ ! -f "$WIN_ISO" ]]; then
+    echo "Error: Windows ISO not found at $WIN_ISO"
+    exit 1
+fi
+
+# Ensure libvirtd is running
+if ! systemctl is-active --quiet libvirtd; then
+    echo "Starting libvirtd..."
+    sudo systemctl start libvirtd
+fi
+
+# Ensure default network is active
+if ! sudo virsh net-info default &>/dev/null; then
+    echo "Creating default network..."
+    sudo virsh net-define /usr/share/libvirt/networks/default.xml
+fi
+if [[ $(sudo virsh net-info default | grep "Active:" | awk '{print $2}') != "yes" ]]; then
+    echo "Starting default network..."
+    sudo virsh net-start default
+    sudo virsh net-autostart default
+fi
+
+# Check if VM already exists
+if sudo virsh dominfo "$VM_NAME" &>/dev/null; then
+    echo "VM '$VM_NAME' already exists. Use 'virsh undefine $VM_NAME --nvram' to remove it first."
+    exit 1
+fi
+
+# Build virt-install command
+VIRT_INSTALL_CMD=(
+    sudo virt-install
+    --name "$VM_NAME"
+    --ram "$RAM_MB"
+    --vcpus "$VCPUS"
+    --os-variant win11
+    --disk "path=$DISK_PATH,size=$DISK_SIZE_GB,format=qcow2,bus=virtio"
+    --cdrom "$WIN_ISO"
+    --network network=default,model=virtio
+    --graphics spice,listen=none
+    --video qxl
+    --channel spicevmc,target.type=virtio,target.name=com.redhat.spice.0
+    --boot uefi
+    --tpm backend.type=emulator,backend.version=2.0,model=tpm-tis
+    --cpu host-passthrough
+)
+
+# Add virtio drivers ISO if available
+if [[ -f "$VIRTIO_ISO" ]]; then
+    VIRT_INSTALL_CMD+=(--disk "path=$VIRTIO_ISO,device=cdrom")
+    echo "Including virtio drivers ISO"
+else
+    echo "Note: virtio-win.iso not found. Download from:"
+    echo "  https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso"
+    echo "  Save to: $VIRTIO_ISO"
+fi
+
+echo "Creating Windows 11 VM..."
+echo "  Name: $VM_NAME"
+echo "  RAM: ${RAM_MB}MB"
+echo "  CPUs: $VCPUS"
+echo "  Disk: ${DISK_SIZE_GB}GB at $DISK_PATH"
+echo ""
+
+"${VIRT_INSTALL_CMD[@]}"
+
+echo ""
+echo "VM created! Connect with: virt-manager or virt-viewer $VM_NAME"
+echo "Or use Remote Desktop after Windows is installed."

@@ -1,28 +1,83 @@
 #!/bin/bash
-# Windows VM launcher
+# Windows VM launcher - connects via RDP for best experience
 export LIBVIRT_DEFAULT_URI="qemu:///system"
 
-# Start VM if not running
-if ! virsh list --state-running --name | grep -q "RDPWindows"; then
-    notify-send "Windows VM" "Starting VM..." -t 5000
-    virsh start RDPWindows >/dev/null 2>&1
-    sleep 10
+VM_NAME="win11"
+RDP_PORT=3389
+
+# Kill any existing RDP connection to avoid "too many connections"
+pkill -f "xfreerdp.*$VM_NAME\|xfreerdp.*192.168.122" 2>/dev/null
+
+# RDP credentials (deployed by ansible from vault)
+RDP_CREDS_FILE="$HOME/.config/windows-vm/rdp-creds"
+if [[ -f "$RDP_CREDS_FILE" ]]; then
+    source "$RDP_CREDS_FILE"
+else
+    RDP_USER="erik"
+    RDP_PASS=""  # Will prompt if not set
 fi
 
-# Wait for RDP to be ready
-for i in {1..30}; do
-    if timeout 1 bash -c ">/dev/tcp/192.168.122.50/3389" 2>/dev/null; then
-        break
+# Start VM if not running
+if ! virsh list --state-running --name | grep -q "$VM_NAME"; then
+    notify-send "Windows VM" "Starting VM..." -t 3000
+    virsh start "$VM_NAME" >/dev/null 2>&1
+    # Wait for VM to boot
+    sleep 5
+fi
+
+# Get VM IP address (try multiple methods)
+get_vm_ip() {
+    # Try virsh domifaddr first
+    local ip=$(virsh domifaddr "$VM_NAME" 2>/dev/null | awk '/ipv4/ {print $4}' | cut -d'/' -f1)
+    if [[ -n "$ip" ]]; then
+        echo "$ip"
+        return
     fi
+
+    # Try DHCP leases
+    ip=$(sudo virsh net-dhcp-leases default 2>/dev/null | grep -i "$(virsh domiflist "$VM_NAME" | awk 'NR>2 {print $5}')" | awk '{print $5}' | cut -d'/' -f1)
+    if [[ -n "$ip" ]]; then
+        echo "$ip"
+        return
+    fi
+
+    # Try ARP table
+    local mac=$(virsh domiflist "$VM_NAME" 2>/dev/null | awk 'NR>2 {print $5}')
+    if [[ -n "$mac" ]]; then
+        ip=$(ip neigh | grep -i "$mac" | awk '{print $1}')
+        echo "$ip"
+    fi
+}
+
+VM_IP=$(get_vm_ip)
+
+# Wait for IP if not available yet
+attempts=0
+while [[ -z "$VM_IP" ]] && [[ $attempts -lt 30 ]]; do
     sleep 1
+    VM_IP=$(get_vm_ip)
+    ((attempts++))
 done
 
-# Connect via RDP with home drive mounted
-exec xfreerdp3 /v:192.168.122.50 "/u:Erik Westlund" /p:password \
-    /cert:ignore \
-    /size:1430x930 \
-    /smart-sizing:2860x1860 \
-    /gfx:AVC444 \
-    -grab-keyboard \
-    /drive:home,/home/erik \
-    /title:"Windows VM"
+if [[ -z "$VM_IP" ]]; then
+    notify-send "Windows VM" "Could not get VM IP, falling back to SPICE viewer" -t 5000
+    exec virt-viewer --attach -c qemu:///system "$VM_NAME"
+fi
+
+# Wait for RDP port to be available
+attempts=0
+while ! nc -z "$VM_IP" "$RDP_PORT" 2>/dev/null && [[ $attempts -lt 30 ]]; do
+    sleep 1
+    ((attempts++))
+done
+
+if nc -z "$VM_IP" "$RDP_PORT" 2>/dev/null; then
+    # Connect via RDP (empty domain for local account)
+    # /dynamic-resolution allows window resize to change remote resolution
+    # /scale:180 for HiDPI displays (140 or 180 are valid, not 200)
+    exec xfreerdp3 /v:"$VM_IP" /u:"$RDP_USER" /p:"$RDP_PASS" /d: \
+        /dynamic-resolution /scale:180 +clipboard /cert:ignore
+else
+    notify-send "Windows VM" "RDP not available, using SPICE viewer" -t 5000
+    exec virt-viewer --attach -c qemu:///system "$VM_NAME"
+fi

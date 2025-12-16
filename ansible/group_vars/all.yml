@@ -109,7 +109,9 @@ pacman_packages:
   - dnsmasq
   - bridge-utils
   - edk2-ovmf
+  - swtpm
   - freerdp
+  - openbsd-netcat
 
   # Calendar
   - vdirsyncer

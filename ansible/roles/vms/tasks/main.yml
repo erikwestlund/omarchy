@@ -1,0 +1,143 @@
+---
+# VM provisioning with libvirt/QEMU
+
+- name: Add user to libvirt groups
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_facts.env.USER }}"
+    groups:
+      - libvirt
+      - libvirt-qemu
+    append: true
+
+# Migration: rename old VM name to new standardized name
+- name: Check for legacy RDPWindows VM
+  ansible.builtin.command: virsh dominfo RDPWindows
+  register: legacy_vm_check
+  failed_when: false
+  changed_when: false
+
+- name: Rename RDPWindows to win11
+  ansible.builtin.command: virsh domrename RDPWindows win11
+  when: legacy_vm_check.rc == 0
+
+- name: Remove old Windows desktop entries
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.local/share/applications/{{ item }}"
+    state: absent
+  loop:
+    - windows-vm.desktop
+    - win11-vm.desktop
+    - Win11.desktop
+
+- name: Ensure applications icons directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.local/share/applications/icons"
+    state: directory
+    mode: '0755'
+
+- name: Sync VM icons
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../home/.local/share/applications/icons/"
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/icons/"
+    mode: '0644'
+  failed_when: false
+
+- name: Ensure libvirtd is running
+  become: true
+  ansible.builtin.systemd:
+    name: libvirtd
+    state: started
+    enabled: true
+
+- name: Ensure default network exists
+  become: true
+  ansible.builtin.command: virsh net-define /usr/share/libvirt/networks/default.xml
+  register: net_define
+  failed_when: false
+  changed_when: net_define.rc == 0
+
+- name: Ensure default network is active
+  become: true
+  ansible.builtin.command: virsh net-start default
+  register: net_start
+  failed_when: false
+  changed_when: net_start.rc == 0
+
+- name: Autostart default network
+  become: true
+  ansible.builtin.command: virsh net-autostart default
+  register: net_autostart
+  failed_when: false
+  changed_when: net_autostart.rc == 0
+
+# UFW firewall rules for libvirt NAT network
+- name: Check if UFW is active
+  become: true
+  ansible.builtin.command: ufw status
+  register: ufw_status
+  failed_when: false
+  changed_when: false
+
+- name: Allow libvirt DHCP/DNS on virbr0
+  become: true
+  ansible.builtin.shell: |
+    ufw allow in on virbr0
+    ufw allow out on virbr0
+    ufw route allow in on virbr0
+    ufw route allow out on virbr0
+  when: ufw_status.rc == 0 and 'active' in ufw_status.stdout
+
+- name: Enable UFW forwarding for libvirt
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/ufw/sysctl.conf
+    regexp: '^net/ipv4/ip_forward='
+    line: 'net/ipv4/ip_forward=1'
+    create: true
+    mode: '0644'
+  when: ufw_status.rc == 0 and 'active' in ufw_status.stdout
+
+- name: Ensure VM disk directory exists
+  become: true
+  ansible.builtin.file:
+    path: "{{ vm_disk_path }}"
+    state: directory
+    mode: '0755'
+
+# Deploy Windows VM RDP credentials if vault variables are set
+- name: Ensure windows-vm config directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/windows-vm"
+    state: directory
+    mode: '0700'
+  when: vault_windows_vm_password is defined
+
+- name: Deploy Windows VM RDP credentials
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.config/windows-vm/rdp-creds"
+    mode: '0600'
+    content: |
+      RDP_USER="{{ vault_windows_vm_user | default('erik') }}"
+      RDP_PASS="{{ vault_windows_vm_password }}"
+  no_log: true
+  when: vault_windows_vm_password is defined
+
+- name: Check for virtio ISO
+  ansible.builtin.stat:
+    path: "{{ ansible_facts.env.HOME }}/NAS/ISOs/virtio-win.iso"
+  register: virtio_iso_stat
+
+- name: Download virtio drivers if missing
+  ansible.builtin.get_url:
+    url: "{{ virtio_iso_url }}"
+    dest: "{{ ansible_facts.env.HOME }}/NAS/ISOs/virtio-win.iso"
+    mode: '0644'
+  when: not virtio_iso_stat.stat.exists
+
+- name: Create VMs
+  ansible.builtin.include_tasks: create_vm.yml
+  loop: "{{ vms }}"
+  loop_control:
+    loop_var: vm
+  when: vms | length > 0

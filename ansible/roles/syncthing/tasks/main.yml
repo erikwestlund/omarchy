@@ -48,6 +48,34 @@
   register: syncthing_folders
   changed_when: false
 
+# Ensure all sync directories exist with .stfolder markers
+- name: Ensure sync directories exist
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - Documents
+    - Work
+    - Desktop
+    - Screenshots
+    - Scans
+    - Photos
+
+- name: Create .stfolder markers for all sync directories
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/{{ item }}/.stfolder"
+    state: touch
+    mode: '0644'
+  loop:
+    - Documents
+    - Work
+    - Desktop
+    - Screenshots
+    - Scans
+    - Photos
+  changed_when: false
+
 - name: Add Documents folder
   ansible.builtin.command: >
     syncthing cli config folders add
@@ -132,6 +160,13 @@
     state: directory
     mode: '0755'
 
+- name: Create Syncthing folder marker for Chromium
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.sync/Chromium/.stfolder"
+    state: touch
+    mode: '0644'
+  changed_when: false
+
 - name: Add Chromium folder to Syncthing
   ansible.builtin.command: >
     syncthing cli config folders add
@@ -145,6 +180,12 @@
     syncthing cli config folders {{ syncthing_chromium_folder_id }} devices add
     --device-id {{ syncthing_server_device_id }}
   when: syncthing_chromium_folder_id not in syncthing_folders.stdout
+
+- name: Ensure Chromium folder path is correct
+  ansible.builtin.command: >
+    syncthing cli config folders {{ syncthing_chromium_folder_id }} path set ~/.sync/Chromium
+  when: syncthing_chromium_folder_id in syncthing_folders.stdout
+  changed_when: false
 
 - name: Ensure Chromium Default directory exists
   ansible.builtin.file:
@@ -177,14 +218,9 @@
     dest: "{{ ansible_facts.env.HOME }}/.config/chromium/Default/Bookmarks"
     state: link
     force: true
+    follow: false
 
 # Photos sync
-- name: Ensure Photos directory exists
-  ansible.builtin.file:
-    path: "{{ ansible_facts.env.HOME }}/Photos"
-    state: directory
-    mode: '0755'
-
 - name: Add Photos folder
   ansible.builtin.command: >
     syncthing cli config folders add
