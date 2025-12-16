@@ -1,0 +1,10 @@
+[Unit]
+Description=Sync photos from NAS every hour
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=15min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
