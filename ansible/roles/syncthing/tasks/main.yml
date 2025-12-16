@@ -129,13 +129,34 @@
 - name: Add Chromium folder
   ansible.builtin.command: >
     syncthing cli config folders add
-    --id "chromium"
-    --label "Chromium Profile"
+    --id "{{ syncthing_chromium_folder_id }}"
+    --label "Chromium"
     --path ~/.config/chromium/Default
-  when: "'chromium' not in syncthing_folders.stdout"
+  when: syncthing_chromium_folder_id not in syncthing_folders.stdout
 
 - name: Associate Chromium with server
   ansible.builtin.command: >
-    syncthing cli config folders chromium devices add
+    syncthing cli config folders {{ syncthing_chromium_folder_id }} devices add
     --device-id {{ syncthing_server_device_id }}
-  when: "'chromium' not in syncthing_folders.stdout"
+  when: syncthing_chromium_folder_id not in syncthing_folders.stdout
+
+# Photos sync
+- name: Ensure Photos directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/Photos"
+    state: directory
+    mode: '0755'
+
+- name: Add Photos folder
+  ansible.builtin.command: >
+    syncthing cli config folders add
+    --id "{{ syncthing_photos_folder_id }}"
+    --label "Photos"
+    --path ~/Photos
+  when: syncthing_photos_folder_id not in syncthing_folders.stdout
+
+- name: Associate Photos with server
+  ansible.builtin.command: >
+    syncthing cli config folders {{ syncthing_photos_folder_id }} devices add
+    --device-id {{ syncthing_server_device_id }}
+  when: syncthing_photos_folder_id not in syncthing_folders.stdout

@@ -167,12 +167,14 @@ syncthing_server_device_id: "6Y6GSBL-C5MTNSQ-P2PDN32-4B6UKWU-TAW6WXB-QPJQHZ3-RJG
 syncthing_server_lan_address: "tcp://syncthing.lan:22000"
 syncthing_server_ddns_address: "tcp://erikwestlund.ddns.net:22000"
 
-# Syncthing folders
-syncthing_documents_folder_id: "documents"
-syncthing_work_folder_id: "work"
-syncthing_desktop_folder_id: "desktop"
-syncthing_screenshots_folder_id: "screenshots"
-syncthing_scans_folder_id: "scans"
+# Syncthing folders (namespaced for multi-user server)
+syncthing_documents_folder_id: "erik-documents"
+syncthing_work_folder_id: "erik-work"
+syncthing_desktop_folder_id: "erik-desktop"
+syncthing_screenshots_folder_id: "erik-screenshots"
+syncthing_scans_folder_id: "erik-scans"
+syncthing_chromium_folder_id: "erik-chromium"
+syncthing_photos_folder_id: "erik-photos"
 
 
 # Config directories to sync (config/ -> ~/.config/)
