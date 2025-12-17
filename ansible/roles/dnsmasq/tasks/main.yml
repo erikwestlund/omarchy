@@ -1,0 +1,54 @@
+---
+# Configure dnsmasq for local development .test domains
+
+- name: Ensure dnsmasq is installed
+  become: true
+  community.general.pacman:
+    name: dnsmasq
+    state: present
+
+- name: Create dnsmasq.d directory
+  become: true
+  ansible.builtin.file:
+    path: /etc/dnsmasq.d
+    state: directory
+    mode: '0755'
+
+- name: Configure dnsmasq to include conf-dir
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/dnsmasq.conf
+    regexp: '^#?conf-dir=/etc/dnsmasq.d'
+    line: 'conf-dir=/etc/dnsmasq.d/,*.conf'
+    state: present
+  notify: Restart dnsmasq
+
+- name: Deploy dnsmasq dev domains config
+  become: true
+  ansible.builtin.template:
+    src: dnsmasq-dev.conf.j2
+    dest: /etc/dnsmasq.d/dev.conf
+    mode: '0644'
+  notify: Restart dnsmasq
+
+- name: Create systemd-resolved drop-in directory
+  become: true
+  ansible.builtin.file:
+    path: /etc/systemd/resolved.conf.d
+    state: directory
+    mode: '0755'
+
+- name: Configure systemd-resolved for .test domains
+  become: true
+  ansible.builtin.template:
+    src: resolved-test.conf.j2
+    dest: /etc/systemd/resolved.conf.d/test-domains.conf
+    mode: '0644'
+  notify: Restart systemd-resolved
+
+- name: Enable and start dnsmasq
+  become: true
+  ansible.builtin.systemd:
+    name: dnsmasq
+    enabled: true
+    state: started

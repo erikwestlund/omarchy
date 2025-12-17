@@ -18,19 +18,16 @@ DOCKER_COMPOSE=true
 echo "Stopping $PROJECT_NAME..."
 
 {% if docker_compose | default(false) | bool %}
-# Stop Docker services
-if [ -f "$PROJECT_DIR/docker-compose.dev.yml" ]; then
-    echo "Stopping Docker services..."
-    (cd "$PROJECT_DIR" && docker compose -f docker-compose.dev.yml down)
-elif [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+# Stop Docker services (docker-compose.yml = dev, docker-compose.prod.yml = prod)
+if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
     echo "Stopping Docker services..."
     (cd "$PROJECT_DIR" && docker compose down)
 fi
 {% else %}
 # Stop Docker services (if configured)
-# if [ -f "$PROJECT_DIR/docker-compose.dev.yml" ]; then
+# if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
 #     echo "Stopping Docker services..."
-#     (cd "$PROJECT_DIR" && docker compose -f docker-compose.dev.yml down)
+#     (cd "$PROJECT_DIR" && docker compose down)
 # fi
 {% endif %}
 

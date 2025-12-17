@@ -1,7 +1,7 @@
 {
 	"folders": [
 		{
-			"path": "{{ project_path }}"
+			"path": "/home/erik/Projects/mh-missing-data"
 		}
 	],
 	"settings": {

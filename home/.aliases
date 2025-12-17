@@ -264,4 +264,11 @@ alias tmna="~/Omarchy/projects/naaccord-data-depot/tmux.sh"
 alias pmna="cd ~/Omarchy/projects/naaccord-data-depot"
 alias na="cd /home/erik/Projects/naaccord-data-depot"
 # END PROJECT naaccord-data-depot
+# BEGIN PROJECT mh-missing-data
+alias pmhmi="~/Omarchy/projects/mh-missing-data/launch"
+alias pkmhmi="~/Omarchy/projects/mh-missing-data/kill"
+alias tmmhmi="~/Omarchy/projects/mh-missing-data/tmux.sh"
+alias pmmhmi="cd ~/Omarchy/projects/mh-missing-data"
+alias mhmi="cd /home/erik/Projects/mh-missing-data"
+# END PROJECT mh-missing-data
 # Auto-generated project aliases

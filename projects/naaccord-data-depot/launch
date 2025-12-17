@@ -1,18 +1,24 @@
 #!/bin/bash
 # Launch script for naaccord-data-depot
 
-set -e
+# === Helper Functions ===
+# Check if a window of given class exists on a workspace
+has_window_on_ws() {
+    local ws="$1"
+    local class="$2"
+    hyprctl clients -j | jq -e --arg ws "$ws" --arg class "$class" \
+        '.[] | select(.workspace.id == ($ws | tonumber) and (.class | ascii_downcase | contains($class | ascii_downcase)))' > /dev/null 2>&1
+}
 
 # === Project Config ===
 PROJECT_NAME="naaccord-data-depot"
 PROJECT_DIR="/home/erik/Projects/naaccord-data-depot"
 WORKSPACE_FILE="$HOME/Omarchy/projects/naaccord-data-depot/naaccord-data-depot.code-workspace"
 EDITOR="/usr/bin/code"
-DEFAULT_WS=1
+DEFAULT_WS=4
 DOCKER_COMPOSE=true
-VIEW_URL="http://localhost:3000"
+VIEW_URL="http://naaccord.test"
 USE_SPLIT=false
-LAYOUT="dwindle"
 
 # === Parse Arguments ===
 WS=${1:-$DEFAULT_WS}
@@ -34,39 +40,42 @@ echo "Launching $PROJECT_NAME in workspace $WS..."
 # Switch to workspace
 hyprctl dispatch workspace $WS
 
-# Set layout
-if [ -n "$LAYOUT" ]; then
-    echo "Setting layout to $LAYOUT..."
-    hyprctl keyword general:layout $LAYOUT
-fi
-
-# Start Docker services
+# Start Docker services (docker-compose.yml = dev, docker-compose.prod.yml = prod)
 if [ "$DOCKER_COMPOSE" = "true" ]; then
-    if [ -f "$PROJECT_DIR/docker-compose.dev.yml" ]; then
-        echo "Starting Docker services (dev)..."
-        (cd "$PROJECT_DIR" && docker compose -f docker-compose.dev.yml up -d)
-    elif [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+    if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
         echo "Starting Docker services..."
-        (cd "$PROJECT_DIR" && docker compose up -d)
+        (cd "$PROJECT_DIR" && docker compose up -d) || echo "Warning: Docker compose failed - continuing anyway"
     fi
 fi
 
-# Launch editor (use hyprctl exec with workspace rule for reliable placement)
-echo "Opening $EDITOR..."
-hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
+# Launch editor (skip if already open on workspace)
+if has_window_on_ws "$WS" "code"; then
+    echo "Editor already open on workspace $WS, skipping..."
+else
+    echo "Opening $EDITOR..."
+    hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
+fi
 
-# Open browser
+# Open browser (skip if already open on workspace)
 if [ -n "$VIEW_URL" ]; then
     echo "Waiting for services to start..."
     sleep 3
 
     if [ "$USE_SPLIT" = "true" ]; then
         VIEW_WS=$((WS + 1))
-        echo "Opening view in workspace $VIEW_WS..."
-        hyprctl dispatch exec "[workspace $VIEW_WS silent]" "xdg-open '$VIEW_URL'"
+        if has_window_on_ws "$VIEW_WS" "chromium"; then
+            echo "Browser already open on workspace $VIEW_WS, skipping..."
+        else
+            echo "Opening view in workspace $VIEW_WS..."
+            hyprctl dispatch exec "[workspace $VIEW_WS silent]" "chromium --new-window '$VIEW_URL'"
+        fi
     else
-        echo "Opening view..."
-        hyprctl dispatch exec "[workspace $WS silent]" "xdg-open '$VIEW_URL'"
+        if has_window_on_ws "$WS" "chromium"; then
+            echo "Browser already open on workspace $WS, skipping..."
+        else
+            echo "Opening view..."
+            hyprctl dispatch exec "[workspace $WS silent]" "chromium --new-window '$VIEW_URL'"
+        fi
     fi
 fi
 

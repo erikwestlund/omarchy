@@ -46,8 +46,7 @@
     },
     "workbench.colorTheme": "Catppuccin Mocha",
     "terminal.integrated.enableMultiLinePasteWarning": false,
-    "quarto.preview.inBrowser": true,
-    "quarto.render.previewType": "external",
+    "quarto.render.previewType": "internal",
     "editor.minimap.enabled": false,
     "workbench.iconTheme": "catppuccin-mocha"
 }

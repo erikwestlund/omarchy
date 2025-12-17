@@ -1,0 +1,51 @@
+#!/bin/bash
+# Launch script for mh-missing-data
+
+# === Project Config ===
+PROJECT_NAME="mh-missing-data"
+PROJECT_DIR="/home/erik/Projects/mh-missing-data"
+WORKSPACE_FILE="$HOME/Omarchy/projects/mh-missing-data/mh-missing-data.code-workspace"
+EDITOR="/usr/share/positron/bin/positron"
+DEFAULT_WS=1
+# DOCKER_COMPOSE=false
+# VIEW_URL=""
+# USE_SPLIT=false
+
+# === Parse Arguments ===
+WS=${1:-$DEFAULT_WS}
+
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: launch [WORKSPACE]"
+    echo ""
+    echo "  WORKSPACE  Workspace number (default: $DEFAULT_WS)"
+    echo ""
+    echo "Examples:"
+    echo "  launch      # Opens in workspace $DEFAULT_WS"
+    echo "  launch 3    # Opens in workspace 3"
+    exit 0
+fi
+
+# === Launch ===
+echo "Launching $PROJECT_NAME in workspace $WS..."
+
+# Switch to workspace
+hyprctl dispatch workspace $WS
+
+# Start Docker services (if configured)
+# if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+#     echo "Starting Docker services..."
+#     (cd "$PROJECT_DIR" && docker compose up -d)
+# fi
+
+# Launch editor (use hyprctl exec with workspace rule for reliable placement)
+echo "Opening $EDITOR..."
+hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
+
+# Open view in split workspace (if configured)
+# if [ "$USE_SPLIT" = "true" ] && [ -n "$VIEW_URL" ]; then
+#     VIEW_WS=$((WS + 1))
+#     echo "Opening view in workspace $VIEW_WS..."
+#     hyprctl dispatch exec "[workspace $VIEW_WS silent]" "xdg-open '$VIEW_URL'"
+# fi
+
+echo "Done! $PROJECT_NAME launched in workspace $WS"

@@ -1,5 +1,5 @@
-// Positron Keybindings - Linux/Hyprland
-// Based on VS Code keybindings
+// VS Code Keybindings - Linux/Hyprland
+// Built from scratch
 [
     // Terminal toggle
     { "key": "ctrl+t", "command": "workbench.action.terminal.toggleTerminal" },
@@ -7,17 +7,26 @@
     // Go to symbol (Super+R)
     { "key": "ctrl+r", "command": "workbench.action.gotoSymbol" },
 
-    // Line editing (Super+Shift/Alt)
+    // Line editing
     { "key": "ctrl+k", "command": "editor.action.deleteLines", "when": "editorTextFocus && !editorReadonly" },
     { "key": "ctrl+d", "command": "editor.action.copyLinesDownAction", "when": "editorTextFocus && !editorReadonly" },
-    { "key": "alt+up", "command": "editor.action.moveLinesUpAction", "when": "editorTextFocus && !editorReadonly" },
-    { "key": "alt+down", "command": "editor.action.moveLinesDownAction", "when": "editorTextFocus && !editorReadonly" },
-    { "key": "cmd+alt+up", "command": "editor.action.moveLinesUpAction", "when": "editorTextFocus && !editorReadonly" },
-    { "key": "cmd+alt+down", "command": "editor.action.moveLinesDownAction", "when": "editorTextFocus && !editorReadonly" },
+
+    // Multi-cursor select next match (Super+D)
+    { "key": "meta+d", "command": "editor.action.addSelectionToNextFindMatch", "when": "editorTextFocus" },
     { "key": "ctrl+alt+l", "command": "editor.action.formatDocument", "when": "editorTextFocus && !editorReadonly" },
 
+    // Navigation: Ctrl+Up/Down = Page, Alt+Up/Down = Doc start/end
+    { "key": "ctrl+up", "command": "cursorPageUp", "when": "editorTextFocus" },
+    { "key": "ctrl+down", "command": "cursorPageDown", "when": "editorTextFocus" },
+    { "key": "ctrl+shift+up", "command": "cursorPageUpSelect", "when": "editorTextFocus" },
+    { "key": "ctrl+shift+down", "command": "cursorPageDownSelect", "when": "editorTextFocus" },
+    { "key": "alt+up", "command": "cursorTop", "when": "editorTextFocus" },
+    { "key": "alt+down", "command": "cursorBottom", "when": "editorTextFocus" },
+    { "key": "alt+shift+up", "command": "editor.action.moveLinesUpAction", "when": "editorTextFocus && !editorReadonly" },
+    { "key": "alt+shift+down", "command": "editor.action.moveLinesDownAction", "when": "editorTextFocus && !editorReadonly" },
+
     // R pipe operator (Super+Alt+M)
-    { "key": "meta+alt+m", "command": "type", "args": { "text": " |> " }, "when": "editorTextFocus" },
+    { "key": "ctrl+alt+m", "command": "type", "args": { "text": " |> " }, "when": "editorTextFocus" },
 
     // Hide panel
     { "key": "ctrl+j", "command": "workbench.action.togglePanel" },
@@ -33,10 +42,10 @@
     { "key": "ctrl+alt+[", "command": "workbench.action.terminal.focusPrevious", "when": "terminalFocus" },
     { "key": "ctrl+alt+]", "command": "workbench.action.terminal.focusNext", "when": "terminalFocus" },
 
-    // Sidebar views (Super+Alt+X/E/B)
-    { "key": "meta+alt+x", "command": "workbench.view.extensions" },
+    // Sidebar views (Super+Alt+X/E/B) - keyd-application-mapper converts meta→ctrl
+    { "key": "alt+meta+x", "command": "workbench.view.extensions" },
     { "key": "ctrl+alt+e", "command": "workbench.view.explorer" },
-    { "key": "meta+alt+b", "command": "workbench.action.toggleAuxiliaryBar" },
+    { "key": "ctrl+alt+b", "command": "workbench.action.toggleAuxiliaryBar" },
 
     // Focus editor (Super+E via keyd -> Ctrl+E)
     { "key": "ctrl+e", "command": "workbench.action.focusActiveEditorGroup" },
@@ -44,10 +53,13 @@
     // Kill terminal with Super+W (via keyd -> Ctrl+W)
     { "key": "ctrl+w", "command": "workbench.action.terminal.kill", "when": "terminalFocus" },
 
+    // Paste in terminal with Ctrl+V (normally requires Ctrl+Shift+V)
+    { "key": "ctrl+v", "command": "workbench.action.terminal.paste", "when": "terminalFocus" },
+
     // New terminal/editor with Super+Alt+N - unbind defaults first
-    { "key": "meta+alt+n", "command": "-aichat.newchataction" },
-    { "key": "meta+alt+n", "command": "workbench.action.terminal.newInActiveWorkspace", "when": "terminalFocus" },
-    { "key": "meta+alt+n", "command": "workbench.action.files.newUntitledFile", "when": "!terminalFocus" },
+    { "key": "alt+meta+n", "command": "-aichat.newchataction" },
+    { "key": "alt+meta+n", "command": "workbench.action.terminal.newInActiveWorkspace", "when": "terminalFocus" },
+    { "key": "alt+meta+n", "command": "workbench.action.files.newUntitledFile", "when": "!terminalFocus" },
 
     // Tab switching with Ctrl+1-9, Ctrl+0 for tab 10
     { "key": "ctrl+1", "command": "workbench.action.openEditorAtIndex1" },

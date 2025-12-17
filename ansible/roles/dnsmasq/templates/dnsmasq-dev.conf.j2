@@ -1,0 +1,23 @@
+# dnsmasq configuration for local development domains
+# Managed by Ansible - do not edit directly
+
+# Listen only on localhost, non-standard port (systemd-resolved uses 53)
+listen-address={{ dnsmasq_interface }}
+port={{ dnsmasq_port }}
+
+# Don't read /etc/resolv.conf - we only handle .test domains
+no-resolv
+
+# Don't poll /etc/resolv.conf for changes
+no-poll
+
+# Resolve all .test domains to localhost
+address=/.test/127.0.0.1
+
+# Specific domain entries (if you need different IPs for specific domains)
+{% for domain in dev_domains %}
+# {{ domain }} -> 127.0.0.1
+{% endfor %}
+
+# Log queries for debugging (comment out in production)
+# log-queries

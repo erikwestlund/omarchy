@@ -1,0 +1,63 @@
+---
+# Snapper configuration for BTRFS snapshots
+
+- name: Ensure snapper is installed
+  pacman:
+    name: snapper
+    state: present
+  become: true
+
+- name: Deploy snapper home config
+  template:
+    src: home.j2
+    dest: /etc/snapper/configs/home
+    owner: root
+    group: root
+    mode: "0640"
+  become: true
+
+- name: Deploy frequent snapshot timer
+  template:
+    src: snapper-timeline-frequent.timer.j2
+    dest: /etc/systemd/system/snapper-timeline-frequent.timer
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  notify: reload systemd
+
+- name: Deploy frequent snapshot service
+  template:
+    src: snapper-timeline-frequent.service.j2
+    dest: /etc/systemd/system/snapper-timeline-frequent.service
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  notify: reload systemd
+
+- name: Disable default hourly timeline timer
+  systemd:
+    name: snapper-timeline.timer
+    enabled: false
+    state: stopped
+  become: true
+
+- name: Enable frequent snapshot timer
+  systemd:
+    name: snapper-timeline-frequent.timer
+    enabled: true
+    state: started
+  become: true
+
+- name: Enable snapper cleanup timer
+  systemd:
+    name: snapper-cleanup.timer
+    enabled: true
+    state: started
+  become: true
+
+- name: Sync ACL for snapshots directory
+  command: snapper -c home set-config SYNC_ACL=yes
+  become: true
+  changed_when: false

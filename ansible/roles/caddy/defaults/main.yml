@@ -1,0 +1,6 @@
+---
+# Development sites to proxy
+# Maps .test domains to localhost ports
+dev_sites:
+  - domain: naaccord.test
+    port: 8000

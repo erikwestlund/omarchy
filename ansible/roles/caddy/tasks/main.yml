@@ -1,0 +1,23 @@
+---
+# Configure Caddy reverse proxy for local development
+
+- name: Install caddy
+  become: true
+  community.general.pacman:
+    name: caddy
+    state: present
+
+- name: Deploy Caddyfile
+  become: true
+  ansible.builtin.template:
+    src: Caddyfile.j2
+    dest: /etc/caddy/Caddyfile
+    mode: '0644'
+  notify: Restart caddy
+
+- name: Enable and start caddy
+  become: true
+  ansible.builtin.systemd:
+    name: caddy
+    enabled: true
+    state: started

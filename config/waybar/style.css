@@ -219,6 +219,7 @@ tooltip {
   color: #bdd4ff;
   margin: 0;
   padding: 0;
+  margin-bottom: 2px;
 }
 
 #custom-media.spotify {

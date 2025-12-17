@@ -33,6 +33,7 @@
     "pulseaudio",
     "cpu",
     "battery",
+    "custom/darkman",
     "custom/weather",
     "clock"
   ],
@@ -128,7 +129,7 @@
 
   "cpu": {
     "interval": 5,
-    "format": "󰍛 ",
+    "format": "󰍛   ",
     "on-click": "omarchy-launch-or-focus-tui btop"
   },
   "custom/sysinfo": {
@@ -142,6 +143,13 @@
     "format-alt": "{:%A %d %B %Y}",
     "tooltip": false,
     "on-click-right": "omarchy-launch-floating-terminal-with-presentation omarchy-tz-select"
+  },
+  "custom/darkman": {
+    "exec": "~/.config/waybar/scripts/darkman.sh",
+    "return-type": "json",
+    "interval": 5,
+    "on-click": "darkman toggle",
+    "tooltip": true
   },
   "custom/weather": {
     "exec": "~/.config/waybar/scripts/weather.sh",

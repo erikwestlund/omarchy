@@ -1,0 +1,13 @@
+---
+# Default variables for dnsmasq role
+
+# Port for dnsmasq to listen on (avoid conflict with systemd-resolved on 53)
+dnsmasq_port: 5353
+
+# Interface to bind to
+dnsmasq_interface: "127.0.0.1"
+
+# Development domains to resolve to localhost
+# Each project can add its domain here
+dev_domains:
+  - naaccord.test

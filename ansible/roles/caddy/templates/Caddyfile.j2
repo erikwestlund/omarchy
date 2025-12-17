@@ -1,0 +1,18 @@
+# Caddy reverse proxy for local development
+# Managed by Ansible - do not edit directly
+
+# Global options
+{
+	# Disable HTTPS for local .test domains
+	auto_https off
+	# Listen on port 80
+	http_port 80
+}
+
+{% for site in dev_sites %}
+# {{ site.domain }}
+http://{{ site.domain }} {
+	reverse_proxy localhost:{{ site.port }}
+}
+
+{% endfor %}

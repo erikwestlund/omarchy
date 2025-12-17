@@ -1,0 +1,54 @@
+# subvolume to snapshot
+SUBVOLUME="/home"
+
+# filesystem type
+FSTYPE="btrfs"
+
+# btrfs qgroup for space aware cleanup algorithms
+QGROUP=""
+
+# fraction or absolute size of the filesystems space the snapshots may use
+SPACE_LIMIT="0.5"
+
+# fraction or absolute size of the filesystems space that should be free
+FREE_LIMIT="0.2"
+
+# users and groups allowed to work with config
+ALLOW_USERS="erik"
+ALLOW_GROUPS=""
+
+# sync users and groups from ALLOW_USERS and ALLOW_GROUPS to .snapshots
+SYNC_ACL="yes"
+
+# start comparing pre- and post-snapshot in background after creating
+BACKGROUND_COMPARISON="yes"
+
+# run daily number cleanup
+NUMBER_CLEANUP="yes"
+
+# limit for number cleanup
+NUMBER_MIN_AGE="1800"
+NUMBER_LIMIT="50"
+NUMBER_LIMIT_IMPORTANT="10"
+
+# create timeline snapshots
+TIMELINE_CREATE="yes"
+
+# cleanup timeline snapshots after some time
+TIMELINE_CLEANUP="yes"
+
+# limits for timeline cleanup
+# MIN_AGE of 3600 keeps all snapshots < 1 hour old (our 5-min snapshots)
+TIMELINE_MIN_AGE="3600"
+TIMELINE_LIMIT_HOURLY="12"
+TIMELINE_LIMIT_DAILY="10"
+TIMELINE_LIMIT_WEEKLY="0"
+TIMELINE_LIMIT_MONTHLY="12"
+TIMELINE_LIMIT_QUARTERLY="0"
+TIMELINE_LIMIT_YEARLY="0"
+
+# cleanup empty pre-post-pairs
+EMPTY_PRE_POST_CLEANUP="yes"
+
+# limits for empty pre-post-pair cleanup
+EMPTY_PRE_POST_MIN_AGE="3600"

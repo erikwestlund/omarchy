@@ -4,5 +4,11 @@
 			"path": "/home/erik/Projects/tnt-syphilis"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"workbench.colorTheme": "Catppuccin Mocha",
+		"workbench.iconTheme": "catppuccin-perfect-mocha",
+		"terminal.integrated.env.linux": {
+			"TERM": "xterm-256color"
+		}
+	}
 }

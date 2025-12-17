@@ -1,0 +1,7 @@
+[Unit]
+Description=Frequent Timeline Snapshot
+Documentation=man:snapper(8) man:snapper-configs(5)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/snapper --config home create --cleanup-algorithm timeline --description "timeline"

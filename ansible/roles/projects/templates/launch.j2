@@ -1,7 +1,14 @@
 #!/bin/bash
 # Launch script for {{ project_name }}
 
-set -e
+# === Helper Functions ===
+# Check if a window of given class exists on a workspace
+has_window_on_ws() {
+    local ws="$1"
+    local class="$2"
+    hyprctl clients -j | jq -e --arg ws "$ws" --arg class "$class" \
+        '.[] | select(.workspace.id == ($ws | tonumber) and (.class | ascii_downcase | contains($class | ascii_downcase)))' > /dev/null 2>&1
+}
 
 # === Project Config ===
 PROJECT_NAME="{{ project_name }}"
@@ -57,41 +64,60 @@ echo "Launching $PROJECT_NAME in workspace $WS..."
 hyprctl dispatch workspace $WS
 
 {% if docker_compose | default(false) | bool %}
-# Start Docker services
-if [ -f "$PROJECT_DIR/docker-compose.dev.yml" ]; then
+# Start Docker services (docker-compose.yml = dev, docker-compose.prod.yml = prod)
+if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
     echo "Starting Docker services..."
-    (cd "$PROJECT_DIR" && docker compose -f docker-compose.dev.yml up -d)
-elif [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
-    echo "Starting Docker services..."
-    (cd "$PROJECT_DIR" && docker compose up -d)
+    (cd "$PROJECT_DIR" && docker compose up -d) || echo "Warning: Docker compose failed - continuing anyway"
 fi
 {% else %}
 # Start Docker services (if configured)
-# if [ -f "$PROJECT_DIR/docker-compose.dev.yml" ]; then
+# if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
 #     echo "Starting Docker services..."
-#     (cd "$PROJECT_DIR" && docker compose -f docker-compose.dev.yml up -d)
+#     (cd "$PROJECT_DIR" && docker compose up -d)
 # fi
 {% endif %}
 
-# Launch editor (use hyprctl exec with workspace rule for reliable placement)
-echo "Opening $EDITOR..."
+# Launch editor (skip if already open on workspace)
 {% if project_editor | default('vscode') == 'neovim' %}
-hyprctl dispatch exec "[workspace $WS silent]" "ghostty -e nvim '$PROJECT_DIR'"
-{% elif project_editor | default('vscode') in ['vscode', 'positron'] and project_path | length > 0 %}
-hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
+if has_window_on_ws "$WS" "ghostty"; then
+    echo "Editor already open on workspace $WS, skipping..."
+else
+    echo "Opening $EDITOR..."
+    hyprctl dispatch exec "[workspace $WS silent]" "ghostty -e nvim '$PROJECT_DIR'"
+fi
+{% elif project_editor | default('vscode') in ['vscode', 'positron'] %}
+if has_window_on_ws "$WS" "code"; then
+    echo "Editor already open on workspace $WS, skipping..."
+else
+    echo "Opening $EDITOR..."
+{% if project_path | length > 0 %}
+    hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
 {% else %}
+    hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$PROJECT_DIR'"
+{% endif %}
+fi
+{% else %}
+echo "Opening $EDITOR..."
 hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$PROJECT_DIR'"
 {% endif %}
 
 {% if view_url | default('') | length > 0 %}
-# Open view in split workspace
+# Open view in split workspace (skip if browser already open)
 if [ "$USE_SPLIT" = "true" ]; then
     VIEW_WS=$((WS + 1))
-    echo "Opening view in workspace $VIEW_WS..."
-    hyprctl dispatch exec "[workspace $VIEW_WS silent]" "xdg-open '$VIEW_URL'"
+    if has_window_on_ws "$VIEW_WS" "chromium"; then
+        echo "Browser already open on workspace $VIEW_WS, skipping..."
+    else
+        echo "Opening view in workspace $VIEW_WS..."
+        hyprctl dispatch exec "[workspace $VIEW_WS silent]" "chromium --new-window '$VIEW_URL'"
+    fi
 else
-    echo "Opening view..."
-    hyprctl dispatch exec "[workspace $WS silent]" "xdg-open '$VIEW_URL'"
+    if has_window_on_ws "$WS" "chromium"; then
+        echo "Browser already open on workspace $WS, skipping..."
+    else
+        echo "Opening view..."
+        hyprctl dispatch exec "[workspace $WS silent]" "chromium --new-window '$VIEW_URL'"
+    fi
 fi
 {% else %}
 # Open view in split workspace (if configured)

@@ -26,6 +26,9 @@
     - role: dotfiles
       tags: dotfiles
 
+    - role: snapper
+      tags: snapper
+
     - role: vscode
       tags: vscode
 
@@ -49,8 +52,17 @@
     - role: syncthing
       tags: syncthing
 
+    - role: sshd
+      tags: sshd
+
     - role: chromium
       tags: chromium
+
+    - role: dnsmasq
+      tags: dnsmasq
+
+    - role: caddy
+      tags: caddy
 
     - role: pulsesecure
       tags: pulsesecure

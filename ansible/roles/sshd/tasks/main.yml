@@ -1,0 +1,22 @@
+---
+# SSH server configuration
+# Enables sshd and manages authorized_keys
+
+- name: Enable and start sshd
+  ansible.builtin.systemd:
+    name: sshd
+    enabled: true
+    state: started
+  become: true
+
+- name: Ensure .ssh directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.ssh"
+    state: directory
+    mode: '0700'
+
+- name: Deploy authorized_keys
+  ansible.builtin.copy:
+    src: authorized_keys
+    dest: "{{ ansible_facts.env.HOME }}/.ssh/authorized_keys"
+    mode: '0600'

@@ -1,21 +1,19 @@
 #!/bin/bash
-# Kill script for naaccord-data-depot
+# Kill script for mh-missing-data
 
 # === Project Config ===
-PROJECT_NAME="naaccord-data-depot"
-PROJECT_DIR="/home/erik/Projects/naaccord-data-depot"
-EDITOR="code"
-DOCKER_COMPOSE=true
+PROJECT_NAME="mh-missing-data"
+PROJECT_DIR="/home/erik/Projects/mh-missing-data"
+EDITOR="positron"
+# DOCKER_COMPOSE=false
 
 echo "Stopping $PROJECT_NAME..."
 
-# Stop Docker services (docker-compose.yml = dev, docker-compose.prod.yml = prod)
-if [ "$DOCKER_COMPOSE" = "true" ]; then
-    if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
-        echo "Stopping Docker services..."
-        (cd "$PROJECT_DIR" && docker compose down)
-    fi
-fi
+# Stop Docker services (if configured)
+# if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+#     echo "Stopping Docker services..."
+#     (cd "$PROJECT_DIR" && docker compose down)
+# fi
 
 # Close editor windows for this project
 echo "Closing $EDITOR..."
