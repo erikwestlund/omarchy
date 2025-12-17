@@ -169,6 +169,10 @@ jh_vpn_url: "https://vpn.jh.edu"
 theme_name: base-theme
 theme_background: 1.png
 
+# NAS credentials (mapped from vault)
+nas_erik_username: "{{ vault_nas_erik_username }}"
+nas_erik_password: "{{ vault_nas_erik_password }}"
+
 # Syncthing server (192.168.1.12) - separate VM, backs up to NAS
 syncthing_server_device_id: "6Y6GSBL-C5MTNSQ-P2PDN32-4B6UKWU-TAW6WXB-QPJQHZ3-RJGJHXY-HPWKEQL"
 syncthing_server_lan_address: "tcp://syncthing.lan:22000"
