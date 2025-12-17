@@ -47,7 +47,7 @@
     dest: "{{ omarchy_repo }}/projects/{{ project_name }}/kill"
     mode: '0755'
 
-- name: Add project aliases to .aliases
+- name: Add project aliases to .aliases (with project dir)
   ansible.builtin.blockinfile:
     path: "{{ omarchy_repo }}/home/.aliases"
     marker: "# {mark} PROJECT {{ project_name }}"
@@ -57,9 +57,20 @@
       alias pk{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/kill"
       alias tm{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/tmux.sh"
       alias pm{{ project_alias }}="cd ~/Omarchy/projects/{{ project_name }}"
-{% if project_path | length > 0 %}
       alias {{ project_alias }}="cd {{ project_path }}"
-{% endif %}
+  when: project_path | length > 0
+
+- name: Add project aliases to .aliases (no project dir)
+  ansible.builtin.blockinfile:
+    path: "{{ omarchy_repo }}/home/.aliases"
+    marker: "# {mark} PROJECT {{ project_name }}"
+    insertbefore: "# Auto-generated project aliases"
+    block: |
+      alias p{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/launch"
+      alias pk{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/kill"
+      alias tm{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/tmux.sh"
+      alias pm{{ project_alias }}="cd ~/Omarchy/projects/{{ project_name }}"
+  when: project_path | length == 0
 
 - name: Sync aliases to home
   ansible.builtin.copy:
