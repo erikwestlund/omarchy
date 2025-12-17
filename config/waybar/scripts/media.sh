@@ -50,8 +50,8 @@ else
     display="$title"
 fi
 
-# Truncate at 32 characters with ellipsis
-if [ ${#display} -gt 32 ]; then
+# Truncate on laptop only (desktop has more space)
+if [ "$(cat ~/.machine 2>/dev/null)" != "desktop" ] && [ ${#display} -gt 32 ]; then
     display="${display:0:32}..."
 fi
 

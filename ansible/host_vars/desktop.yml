@@ -25,14 +25,14 @@ hypr_blur_enabled: true
 waybar_border_radius: "12px"
 
 # Waybar styling for 6K display
-waybar_margin_left: 64
-waybar_margin_right: 64
-waybar_margin_top: 8
-waybar_margin_bottom: 6
+waybar_margin_left: 0
+waybar_margin_right: 0
+waybar_margin_top: 0
+waybar_margin_bottom: 0
 waybar_font_size: 14
 waybar_icon_spacing: 12
 # Waybar JSON config overrides
-waybar_json_margin_x: 5
+waybar_json_margin_x: 3
 waybar_json_margin_top: 5
 waybar_json_height: 28
 
