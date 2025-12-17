@@ -1,0 +1,56 @@
+#!/bin/bash
+# Launch script for tnt-syphilis
+
+set -e
+
+# === Project Config ===
+PROJECT_NAME="tnt-syphilis"
+PROJECT_DIR="/home/erik/Projects/tnt-syphilis"
+WORKSPACE_FILE="$HOME/Omarchy/projects/tnt-syphilis/tnt-syphilis.code-workspace"
+EDITOR="/usr/share/positron/bin/positron"
+DEFAULT_WS=7
+USE_SPLIT=false
+# DOCKER_COMPOSE=false
+# VIEW_URL=""
+
+# === Parse Arguments ===
+WS=${1:-$DEFAULT_WS}
+
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: launch [WORKSPACE]"
+    echo ""
+    echo "  WORKSPACE  Workspace number (default: $DEFAULT_WS)"
+    echo ""
+    echo "Examples:"
+    echo "  launch      # Opens in workspace $DEFAULT_WS"
+    echo "  launch 3    # Opens in workspace 3"
+    exit 0
+fi
+
+# === Launch ===
+echo "Launching $PROJECT_NAME in workspace $WS..."
+
+# Switch to workspace
+hyprctl dispatch workspace $WS
+
+# Start Docker services (if configured)
+# if [ "$DOCKER_COMPOSE" = "true" ] && [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+#     echo "Starting Docker services..."
+#     (cd "$PROJECT_DIR" && docker compose up -d)
+# fi
+
+# Launch editor (use hyprctl exec with workspace rule for reliable placement)
+echo "Opening $EDITOR..."
+hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
+
+# Open view in split workspace (if configured)
+# if [ "$USE_SPLIT" = "true" ] && [ -n "$VIEW_URL" ]; then
+#     VIEW_WS=$((WS + 1))
+#     echo "Opening view in workspace $VIEW_WS..."
+#     hyprctl dispatch workspace $VIEW_WS
+#     xdg-open "$VIEW_URL" &
+#     sleep 0.5
+#     hyprctl dispatch workspace $WS
+# fi
+
+echo "Done! $PROJECT_NAME launched in workspace $WS"

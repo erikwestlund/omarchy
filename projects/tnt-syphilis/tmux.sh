@@ -1,8 +1,8 @@
 #!/bin/bash
-# Tmux session for Omarchy
+# Tmux session for tnt-syphilis (rstats)
 
-SESSION="om"
-PROJECT_DIR="$HOME/Omarchy"
+SESSION="tnt"
+PROJECT_DIR="/home/erik/Projects/tnt-syphilis"
 
 # Check if session already exists
 tmux has-session -t $SESSION 2>/dev/null
@@ -36,6 +36,11 @@ TABNO=$((TABNO+1))
 # --- codex-gpt (high reasoning) ---
 tmux new-window -t $SESSION:$TABNO -n "codex-gpt" -c "$PROJECT_DIR"
 tmux send-keys -t $SESSION:$TABNO "codex --model gpt-5.1 -c model_reasoning_effort=\"high\"" C-m
+TABNO=$((TABNO+1))
+
+# --- R ---
+tmux new-window -t $SESSION:$TABNO -n "R" -c "$PROJECT_DIR"
+tmux send-keys -t $SESSION:$TABNO "R" C-m
 TABNO=$((TABNO+1))
 
 # --- project ---

@@ -1,0 +1,41 @@
+#!/bin/bash
+# Kill script for naaccord-data-depot
+
+# === Project Config ===
+PROJECT_NAME="naaccord-data-depot"
+PROJECT_DIR="/home/erik/Projects/naaccord-data-depot"
+EDITOR="code"
+DOCKER_COMPOSE=true
+
+echo "Stopping $PROJECT_NAME..."
+
+# Stop Docker services
+if [ "$DOCKER_COMPOSE" = "true" ]; then
+    if [ -f "$PROJECT_DIR/docker-compose.dev.yml" ]; then
+        echo "Stopping Docker services..."
+        (cd "$PROJECT_DIR" && docker compose -f docker-compose.dev.yml down)
+    elif [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+        echo "Stopping Docker services..."
+        (cd "$PROJECT_DIR" && docker compose down)
+    fi
+fi
+
+# Close editor windows for this project
+echo "Closing $EDITOR..."
+case "$EDITOR" in
+    positron)
+        EDITOR_ADDRS=$(hyprctl clients -j | jq -r '.[] | select(.class | test("positron|Positron")) | select(.title | contains("'"$PROJECT_NAME"'")) | .address')
+        ;;
+    code|vscode)
+        EDITOR_ADDRS=$(hyprctl clients -j | jq -r '.[] | select(.class | test("code|Code")) | select(.title | contains("'"$PROJECT_NAME"'")) | .address')
+        ;;
+    neovim)
+        EDITOR_ADDRS=$(hyprctl clients -j | jq -r '.[] | select(.class | test("ghostty")) | select(.title | contains("nvim")) | .address')
+        ;;
+esac
+
+for addr in $EDITOR_ADDRS; do
+    hyprctl dispatch closewindow "address:$addr" 2>/dev/null
+done
+
+echo "Done! $PROJECT_NAME stopped."

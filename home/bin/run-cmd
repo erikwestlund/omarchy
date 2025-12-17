@@ -1,0 +1,10 @@
+#!/bin/bash
+# Quick command runner with alias support
+# Uses walker for input, runs through interactive shell
+
+cmd=$(walker --dmenu -p "Run:")
+[ -z "$cmd" ] && exit 0
+
+# Run through interactive bash, disown to detach without new session
+bash -ic "$cmd" &
+disown

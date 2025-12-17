@@ -13,9 +13,9 @@
 │                       ├─ Config ──────────────┤ Super+Ctrl+S Search   │ Super+Alt+[/] Prev/Nxt│                       │
 ├─ Media (no Fn) ───────┤ vault-edit Edit vault │ Super+Ctrl+C Calc     │ Super+Alt+N New       │                       │
 │ Mute/Vol+/-  Direct   │ secrets-pull Pull B2  │ Super+Ctrl+J VPN      │ Ctrl+K     Delete line│                       │
-│ Bright+/-    Direct   │ om-sync    Git pull   │                       │ Ctrl+D     Duplicate  │                       │
-│ Prev/Play/Nx Direct   │ om         Playbook   │                       │ Alt+↑/↓    Move line  │                       │
-├─ Help ────────────────┤                       │                       │ Super+Alt+L Format    │                       │
+│ Bright+/-    Direct   │ om-sync    Git pull   ├─ Text (keyd) ─────────┤ Ctrl+D     Duplicate  │                       │
+│ Prev/Play/Nx Direct   │ om         Playbook   │ Opt+Sh+←/→ Line sel  │ Alt+↑/↓    Move line  │                       │
+├─ Help ────────────────┤                       │ Opt+Enter  C-Enter   │ Super+Alt+L Format    │                       │
 │ Alt+K        Hotkeys  │                       │                       │ Super+B    Sidebar    │                       │
 │ Super+Alt+H  Cheatsht │                       │                       │ Super+Alt+B Aux bar   │                       │
 │ Super+Alt+J  Agenda   │                       │                       │ Super+Alt+E Explorer  │                       │

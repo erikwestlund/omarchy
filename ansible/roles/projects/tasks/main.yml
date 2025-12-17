@@ -47,6 +47,17 @@
     dest: "{{ omarchy_repo }}/projects/{{ project_name }}/kill"
     mode: '0755'
 
+- name: Convert project name to kebab-case for workspace file
+  ansible.builtin.set_fact:
+    workspace_filename: "{{ project_name | lower | regex_replace('[^a-z0-9]', '-') | regex_replace('-+', '-') | regex_replace('^-|-$', '') }}"
+
+- name: Generate workspace file for vscode/positron
+  ansible.builtin.template:
+    src: "workspace.code-workspace.j2"
+    dest: "{{ omarchy_repo }}/projects/{{ project_name }}/{{ workspace_filename }}.code-workspace"
+    mode: '0644'
+  when: project_editor | default('vscode') in ['vscode', 'positron'] and project_path | length > 0
+
 - name: Add project aliases to .aliases (with project dir)
   ansible.builtin.blockinfile:
     path: "{{ omarchy_repo }}/home/.aliases"

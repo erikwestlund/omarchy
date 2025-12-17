@@ -925,7 +925,7 @@ Prompts for:
 
 | Type | Tmux Windows |
 |------|--------------|
-| `utility` | bash, claude-o, claude-s, codex, codex-gpt, project |
+| `utility` | bash, claude-1, claude-2, codex, codex-gpt, project |
 | `laravel` | + docker, npm, artisan, tinker |
 | `python` | + python repl (with venv) |
 | `rstats` | + R console |
@@ -969,8 +969,8 @@ TABNO=1
 tmux new-session -d -s $SESSION -n "bash" -c "$PROJECT_DIR"
 TABNO=$((TABNO+1))
 
-# --- claude-o ---
-tmux new-window -t $SESSION:$TABNO -n "claude-o" -c "$PROJECT_DIR"
+# --- claude-1 ---
+tmux new-window -t $SESSION:$TABNO -n "claude-1" -c "$PROJECT_DIR"
 tmux send-keys -t $SESSION:$TABNO "claude --model opus" C-m
 TABNO=$((TABNO+1))
 ```

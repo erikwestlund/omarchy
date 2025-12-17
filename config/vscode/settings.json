@@ -11,6 +11,9 @@
         "pwshCode": true,
         "pwshGit": true
     },
+    "terminal.integrated.env.linux": {
+        "TERM": "xterm-256color"
+    },
     "terminal.integrated.fontFamily": "Fira Code",
     "terminal.integrated.fontSize": 12,
     "terminal.integrated.gpuAcceleration": "on",
@@ -109,5 +112,5 @@
     "quarto.preview.inBrowser": true,
     "quarto.render.previewType": "external",
     "editor.minimap.enabled": false,
-    "workbench.iconTheme": "catppuccin-perfect-frappe"
+    "workbench.iconTheme": "catppuccin-perfect-mocha"
 }

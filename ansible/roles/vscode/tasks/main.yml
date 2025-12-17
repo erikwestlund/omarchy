@@ -29,7 +29,7 @@
     - keybindings.json
     - snippets
 
-# Positron
+# Positron (separate config from VS Code)
 - name: Check if Positron is installed
   ansible.builtin.stat:
     path: "{{ ansible_facts.env.HOME }}/.config/Positron"
@@ -54,7 +54,7 @@
 
 - name: Symlink Positron settings
   ansible.builtin.file:
-    src: "{{ config_src }}/vscode/{{ item }}"
+    src: "{{ config_src }}/positron/{{ item }}"
     dest: "{{ ansible_facts.env.HOME }}/.config/Positron/User/{{ item }}"
     state: link
     force: true

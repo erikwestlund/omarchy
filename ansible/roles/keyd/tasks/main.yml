@@ -16,6 +16,14 @@
   when: "'framework' in keyboards | default([])"
   notify: Reload keyd
 
+- name: Remove Framework keyd config if not needed
+  become: true
+  ansible.builtin.file:
+    path: /etc/keyd/default.conf
+    state: absent
+  when: "'framework' not in keyboards | default([])"
+  notify: Reload keyd
+
 - name: Create Logitech keyd config (machine-specific)
   become: true
   ansible.builtin.template:
@@ -23,6 +31,14 @@
     dest: /etc/keyd/logitech.conf
     mode: '0644'
   when: "'logitech' in keyboards | default([])"
+  notify: Reload keyd
+
+- name: Remove Logitech keyd config if not needed
+  become: true
+  ansible.builtin.file:
+    path: /etc/keyd/logitech.conf
+    state: absent
+  when: "'logitech' not in keyboards | default([])"
   notify: Reload keyd
 
 - name: Remove legacy mac-shortcuts.conf

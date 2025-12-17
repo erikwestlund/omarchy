@@ -20,3 +20,13 @@
 {% for shortcut in keyd_system_shortcuts.meta_alt %}
 {{ shortcut.key }} = {{ shortcut.action }}
 {% endfor %}
+
+[alt]
+enter = C-enter
+left = home
+right = end
+
+[alt+shift]
+# Opt+Shift+Arrow = Select to beginning/end of line (like Fn+Shift+Arrow)
+left = S-home
+right = S-end

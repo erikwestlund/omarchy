@@ -1,0 +1,53 @@
+{
+    "window.commandCenter": true,
+    "files.associations": {
+        "*.rmd": "markdown",
+        "renv.lock": "json"
+    },
+    "terminal.integrated.suggest.builtinCompletions": {
+        "pwshCode": true,
+        "pwshGit": true
+    },
+    "terminal.integrated.env.linux": {
+        "TERM": "xterm-256color"
+    },
+    "terminal.integrated.fontFamily": "Fira Code",
+    "terminal.integrated.fontSize": 12,
+    "terminal.integrated.gpuAcceleration": "on",
+    "terminal.integrated.tabs.enabled": true,
+    "terminal.integrated.tabs.location": "left",
+    "terminal.integrated.tabs.focusMode": "singleClick",
+    "terminal.integrated.profiles.enabled": true,
+    "terminal.integrated.tabs.showActiveTerminal": "always",
+    "[r]": {
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false
+    },
+    "workbench.colorCustomizations": {
+        "terminal.background": "#1a1b26",
+        "terminal.foreground": "#a9b1d6",
+        "terminal.ansiBlack": "#24283b",
+        "terminal.ansiBlue": "#7aa2f7",
+        "terminal.ansiBrightBlack": "#414868",
+        "terminal.ansiBrightBlue": "#7aa2f7",
+        "terminal.ansiBrightCyan": "#7dcfff",
+        "terminal.ansiBrightGreen": "#9ece6a",
+        "terminal.ansiBrightMagenta": "#bb9af7",
+        "terminal.ansiBrightRed": "#f7768e",
+        "terminal.ansiBrightWhite": "#c0caf5",
+        "terminal.ansiBrightYellow": "#e0af68",
+        "terminal.ansiCyan": "#7dcfff",
+        "terminal.ansiGreen": "#9ece6a",
+        "terminal.ansiMagenta": "#bb9af7",
+        "terminal.ansiRed": "#f7768e",
+        "terminal.ansiWhite": "#c0caf5",
+        "terminal.ansiYellow": "#e0af68"
+    },
+    "workbench.colorTheme": "Catppuccin Mocha",
+    "terminal.integrated.enableMultiLinePasteWarning": false,
+    "quarto.preview.inBrowser": true,
+    "quarto.render.previewType": "external",
+    "editor.minimap.enabled": false,
+    "workbench.iconTheme": "catppuccin-mocha"
+}

@@ -250,4 +250,18 @@ alias tmfwsite="~/Omarchy/projects/framework-site/tmux.sh"
 alias pmfwsite="cd ~/Omarchy/projects/framework-site"
 alias fwsite="cd /home/erik/Projects/framework-website"
 # END PROJECT framework-site
+# BEGIN PROJECT tnt-syphilis
+alias ptnt="~/Omarchy/projects/tnt-syphilis/launch"
+alias pktnt="~/Omarchy/projects/tnt-syphilis/kill"
+alias tmtnt="~/Omarchy/projects/tnt-syphilis/tmux.sh"
+alias pmtnt="cd ~/Omarchy/projects/tnt-syphilis"
+alias tnt="cd /home/erik/Projects/tnt-syphilis"
+# END PROJECT tnt-syphilis
+# BEGIN PROJECT naaccord-data-depot
+alias pna="~/Omarchy/projects/naaccord-data-depot/launch"
+alias pkna="~/Omarchy/projects/naaccord-data-depot/kill"
+alias tmna="~/Omarchy/projects/naaccord-data-depot/tmux.sh"
+alias pmna="cd ~/Omarchy/projects/naaccord-data-depot"
+alias na="cd /home/erik/Projects/naaccord-data-depot"
+# END PROJECT naaccord-data-depot
 # Auto-generated project aliases

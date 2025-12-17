@@ -51,7 +51,36 @@ case "$TYPE_CHOICE" in
     *) PROJECT_TYPE="utility" ;;
 esac
 
-# 4. Link to project directory?
+# 4. Editor choice
+echo ""
+echo "Preferred editor:"
+echo "  1) vscode   - VS Code (default)"
+echo "  2) positron - Positron"
+echo "  3) neovim   - Neovim"
+echo ""
+read -p "Editor [1-3, default=1]: " EDITOR_CHOICE
+
+case "$EDITOR_CHOICE" in
+    2) PROJECT_EDITOR="positron" ;;
+    3) PROJECT_EDITOR="neovim" ;;
+    *) PROJECT_EDITOR="vscode" ;;
+esac
+
+# 5. Docker compose?
+echo ""
+read -p "Use Docker Compose? [y/N]: " USE_DOCKER
+if [[ "$USE_DOCKER" =~ ^[Yy] ]]; then
+    DOCKER_COMPOSE=true
+else
+    DOCKER_COMPOSE=false
+fi
+
+# 6. Default workspace
+echo ""
+read -p "Default workspace [1]: " DEFAULT_WS
+DEFAULT_WS="${DEFAULT_WS:-1}"
+
+# 7. Link to project directory?
 PROJECT_PATH=""
 GITHUB_REPO=""
 CREATE_EMPTY_DIR=""
@@ -96,7 +125,7 @@ if [[ ! "$LINK_PROJECT" =~ ^[Nn] ]]; then
     fi
 fi
 
-# 5. Alias
+# 8. Alias
 echo ""
 echo "Alias creates: p{alias} (launch), pk{alias} (kill), tm{alias} (tmux), pm{alias} (PM dir), {alias} (project dir)"
 read -p "Alias (e.g., 'hl' creates phl, pkhl, tmhl, pmhl, hl): " PROJECT_ALIAS
@@ -110,6 +139,9 @@ echo ""
 echo "=== Summary ==="
 echo "Name:     $DISPLAY_NAME"
 echo "Type:     $PROJECT_TYPE"
+echo "Editor:   $PROJECT_EDITOR"
+echo "Docker:   $DOCKER_COMPOSE"
+echo "Default WS: $DEFAULT_WS"
 echo "PM dir:   ~/Omarchy/projects/$PM_NAME"
 if [ -n "$PROJECT_PATH" ]; then
     if [ -n "$GITHUB_REPO" ]; then
@@ -129,7 +161,7 @@ if [[ "$CONFIRM" =~ ^[Nn] ]]; then
     exit 0
 fi
 
-# 6. Run Ansible
+# 9. Run Ansible
 echo ""
 echo "Creating project..."
 
@@ -141,7 +173,10 @@ ANSIBLE_CMD="ansible-playbook -i \"$OMARCHY_DIR/ansible/inventory.yml\" \
     --tags new-project \
     -e \"project_name=$PM_NAME\" \
     -e \"project_alias=$PROJECT_ALIAS\" \
-    -e \"project_type=$PROJECT_TYPE\""
+    -e \"project_type=$PROJECT_TYPE\" \
+    -e \"project_editor=$PROJECT_EDITOR\" \
+    -e \"docker_compose=$DOCKER_COMPOSE\" \
+    -e \"default_ws=$DEFAULT_WS\""
 
 if [ -n "$PROJECT_PATH" ]; then
     ANSIBLE_CMD="$ANSIBLE_CMD -e \"project_path=$PROJECT_PATH\""
@@ -159,7 +194,7 @@ fi
 
 eval $ANSIBLE_CMD
 
-# 7. Success message
+# 10. Success message
 echo ""
 echo "╔══════════════════════════════════════════════════════════════╗"
 echo "║  Project '$DISPLAY_NAME' created!                            "
@@ -178,7 +213,7 @@ if [ -n "$PROJECT_PATH" ]; then
 fi
 echo ""
 echo "ALIASES (available after: source ~/.aliases)"
-echo "   p$PROJECT_ALIAS   →  Launch project (VS Code, docker, etc.)"
+echo "   p$PROJECT_ALIAS   →  Launch project ($PROJECT_EDITOR, docker, etc.)"
 echo "   pk$PROJECT_ALIAS  →  Kill project (stop docker, close windows)"
 echo "   tm$PROJECT_ALIAS  →  Launch tmux session"
 echo "   pm$PROJECT_ALIAS  →  cd to project management dir"
@@ -190,10 +225,13 @@ echo "FILES CREATED"
 echo "   ~/Omarchy/projects/$PM_NAME/launch   (project launcher)"
 echo "   ~/Omarchy/projects/$PM_NAME/kill     (project killer)"
 echo "   ~/Omarchy/projects/$PM_NAME/tmux.sh  (tmux session)"
+if [ "$PROJECT_EDITOR" = "vscode" ] || [ "$PROJECT_EDITOR" = "positron" ]; then
+    echo "   ~/Omarchy/projects/$PM_NAME/$KEBAB_NAME.code-workspace"
+fi
 echo "   ~/.aliases                           (updated)"
 echo ""
 
-# 8. Reload aliases and cd to project management dir
+# 11. Reload aliases and cd to project management dir
 echo "Reloading aliases and changing to ~/Omarchy/projects/$PM_NAME..."
 source ~/.aliases
 cd "$HOME/Omarchy/projects/$PM_NAME" && exec $SHELL

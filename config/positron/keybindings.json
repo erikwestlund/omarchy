@@ -1,0 +1,63 @@
+// Positron Keybindings - Linux/Hyprland
+// Based on VS Code keybindings
+[
+    // Terminal toggle
+    { "key": "ctrl+t", "command": "workbench.action.terminal.toggleTerminal" },
+
+    // Go to symbol (Super+R)
+    { "key": "ctrl+r", "command": "workbench.action.gotoSymbol" },
+
+    // Line editing (Super+Shift/Alt)
+    { "key": "ctrl+k", "command": "editor.action.deleteLines", "when": "editorTextFocus && !editorReadonly" },
+    { "key": "ctrl+d", "command": "editor.action.copyLinesDownAction", "when": "editorTextFocus && !editorReadonly" },
+    { "key": "alt+up", "command": "editor.action.moveLinesUpAction", "when": "editorTextFocus && !editorReadonly" },
+    { "key": "alt+down", "command": "editor.action.moveLinesDownAction", "when": "editorTextFocus && !editorReadonly" },
+    { "key": "cmd+alt+up", "command": "editor.action.moveLinesUpAction", "when": "editorTextFocus && !editorReadonly" },
+    { "key": "cmd+alt+down", "command": "editor.action.moveLinesDownAction", "when": "editorTextFocus && !editorReadonly" },
+    { "key": "ctrl+alt+l", "command": "editor.action.formatDocument", "when": "editorTextFocus && !editorReadonly" },
+
+    // R pipe operator (Super+Alt+M)
+    { "key": "meta+alt+m", "command": "type", "args": { "text": " |> " }, "when": "editorTextFocus" },
+
+    // Hide panel
+    { "key": "ctrl+j", "command": "workbench.action.togglePanel" },
+
+    // Switch between editor and terminal (Super+[/] via keyd -> Ctrl+[/])
+    { "key": "ctrl+]", "command": "workbench.action.terminal.focus", "when": "!terminalFocus" },
+    { "key": "ctrl+[", "command": "workbench.action.focusActiveEditorGroup", "when": "terminalFocus" },
+
+    // Previous/next editor (Super+Alt+[/] via keyd -> Ctrl+Alt+[/])
+    { "key": "ctrl+alt+[", "command": "workbench.action.previousEditor", "when": "!terminalFocus" },
+    { "key": "ctrl+alt+]", "command": "workbench.action.nextEditor", "when": "!terminalFocus" },
+    // Previous/next terminal (Super+Alt+[/] when in terminal)
+    { "key": "ctrl+alt+[", "command": "workbench.action.terminal.focusPrevious", "when": "terminalFocus" },
+    { "key": "ctrl+alt+]", "command": "workbench.action.terminal.focusNext", "when": "terminalFocus" },
+
+    // Sidebar views (Super+Alt+X/E/B)
+    { "key": "meta+alt+x", "command": "workbench.view.extensions" },
+    { "key": "ctrl+alt+e", "command": "workbench.view.explorer" },
+    { "key": "meta+alt+b", "command": "workbench.action.toggleAuxiliaryBar" },
+
+    // Focus editor (Super+E via keyd -> Ctrl+E)
+    { "key": "ctrl+e", "command": "workbench.action.focusActiveEditorGroup" },
+
+    // Kill terminal with Super+W (via keyd -> Ctrl+W)
+    { "key": "ctrl+w", "command": "workbench.action.terminal.kill", "when": "terminalFocus" },
+
+    // New terminal/editor with Super+Alt+N - unbind defaults first
+    { "key": "meta+alt+n", "command": "-aichat.newchataction" },
+    { "key": "meta+alt+n", "command": "workbench.action.terminal.newInActiveWorkspace", "when": "terminalFocus" },
+    { "key": "meta+alt+n", "command": "workbench.action.files.newUntitledFile", "when": "!terminalFocus" },
+
+    // Tab switching with Ctrl+1-9, Ctrl+0 for tab 10
+    { "key": "ctrl+1", "command": "workbench.action.openEditorAtIndex1" },
+    { "key": "ctrl+2", "command": "workbench.action.openEditorAtIndex2" },
+    { "key": "ctrl+3", "command": "workbench.action.openEditorAtIndex3" },
+    { "key": "ctrl+4", "command": "workbench.action.openEditorAtIndex4" },
+    { "key": "ctrl+5", "command": "workbench.action.openEditorAtIndex5" },
+    { "key": "ctrl+6", "command": "workbench.action.openEditorAtIndex6" },
+    { "key": "ctrl+7", "command": "workbench.action.openEditorAtIndex7" },
+    { "key": "ctrl+8", "command": "workbench.action.openEditorAtIndex8" },
+    { "key": "ctrl+9", "command": "workbench.action.openEditorAtIndex9" },
+    { "key": "ctrl+0", "command": "workbench.action.lastEditorInGroup" }
+]

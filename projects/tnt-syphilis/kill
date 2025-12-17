@@ -1,38 +1,19 @@
 #!/bin/bash
-# Kill script for {{ project_name }}
+# Kill script for tnt-syphilis
 
 # === Project Config ===
-PROJECT_NAME="{{ project_name }}"
-{% if project_path | length > 0 %}
-PROJECT_DIR="{{ project_path }}"
-{% else %}
-PROJECT_DIR="$HOME/Omarchy/projects/{{ project_name }}"
-{% endif %}
-EDITOR="{{ project_editor | default('vscode') }}"
-{% if docker_compose | default(false) | bool %}
-DOCKER_COMPOSE=true
-{% else %}
+PROJECT_NAME="tnt-syphilis"
+PROJECT_DIR="/home/erik/Projects/tnt-syphilis"
+EDITOR="positron"
 # DOCKER_COMPOSE=false
-{% endif %}
 
 echo "Stopping $PROJECT_NAME..."
 
-{% if docker_compose | default(false) | bool %}
-# Stop Docker services
-if [ -f "$PROJECT_DIR/docker-compose.dev.yml" ]; then
-    echo "Stopping Docker services..."
-    (cd "$PROJECT_DIR" && docker compose -f docker-compose.dev.yml down)
-elif [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
-    echo "Stopping Docker services..."
-    (cd "$PROJECT_DIR" && docker compose down)
-fi
-{% else %}
 # Stop Docker services (if configured)
-# if [ -f "$PROJECT_DIR/docker-compose.dev.yml" ]; then
+# if [ "$DOCKER_COMPOSE" = "true" ] && [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
 #     echo "Stopping Docker services..."
-#     (cd "$PROJECT_DIR" && docker compose -f docker-compose.dev.yml down)
+#     (cd "$PROJECT_DIR" && docker compose down)
 # fi
-{% endif %}
 
 # Close editor windows for this project
 echo "Closing $EDITOR..."

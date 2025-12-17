@@ -1,0 +1,73 @@
+#!/bin/bash
+# Launch script for naaccord-data-depot
+
+set -e
+
+# === Project Config ===
+PROJECT_NAME="naaccord-data-depot"
+PROJECT_DIR="/home/erik/Projects/naaccord-data-depot"
+WORKSPACE_FILE="$HOME/Omarchy/projects/naaccord-data-depot/naaccord-data-depot.code-workspace"
+EDITOR="/usr/bin/code"
+DEFAULT_WS=1
+DOCKER_COMPOSE=true
+VIEW_URL="http://localhost:3000"
+USE_SPLIT=false
+LAYOUT="dwindle"
+
+# === Parse Arguments ===
+WS=${1:-$DEFAULT_WS}
+
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: launch [WORKSPACE]"
+    echo ""
+    echo "  WORKSPACE  Workspace number (default: $DEFAULT_WS)"
+    echo ""
+    echo "Examples:"
+    echo "  launch      # Opens in workspace $DEFAULT_WS"
+    echo "  launch 3    # Opens in workspace 3"
+    exit 0
+fi
+
+# === Launch ===
+echo "Launching $PROJECT_NAME in workspace $WS..."
+
+# Switch to workspace
+hyprctl dispatch workspace $WS
+
+# Set layout
+if [ -n "$LAYOUT" ]; then
+    echo "Setting layout to $LAYOUT..."
+    hyprctl keyword general:layout $LAYOUT
+fi
+
+# Start Docker services
+if [ "$DOCKER_COMPOSE" = "true" ]; then
+    if [ -f "$PROJECT_DIR/docker-compose.dev.yml" ]; then
+        echo "Starting Docker services (dev)..."
+        (cd "$PROJECT_DIR" && docker compose -f docker-compose.dev.yml up -d)
+    elif [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+        echo "Starting Docker services..."
+        (cd "$PROJECT_DIR" && docker compose up -d)
+    fi
+fi
+
+# Launch editor (use hyprctl exec with workspace rule for reliable placement)
+echo "Opening $EDITOR..."
+hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
+
+# Open browser
+if [ -n "$VIEW_URL" ]; then
+    echo "Waiting for services to start..."
+    sleep 3
+
+    if [ "$USE_SPLIT" = "true" ]; then
+        VIEW_WS=$((WS + 1))
+        echo "Opening view in workspace $VIEW_WS..."
+        hyprctl dispatch exec "[workspace $VIEW_WS silent]" "xdg-open '$VIEW_URL'"
+    else
+        echo "Opening view..."
+        hyprctl dispatch exec "[workspace $WS silent]" "xdg-open '$VIEW_URL'"
+    fi
+fi
+
+echo "Done! $PROJECT_NAME launched in workspace $WS"

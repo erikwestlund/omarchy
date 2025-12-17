@@ -1,8 +1,8 @@
 #!/bin/bash
-# Tmux session for Omarchy
+# Tmux session for naaccord-data-depot (python)
 
-SESSION="om"
-PROJECT_DIR="$HOME/Omarchy"
+SESSION="na"
+PROJECT_DIR="/home/erik/Projects/naaccord-data-depot"
 
 # Check if session already exists
 tmux has-session -t $SESSION 2>/dev/null
@@ -16,6 +16,7 @@ TABNO=1
 
 # --- bash ---
 tmux new-session -d -s $SESSION -n "bash" -c "$PROJECT_DIR"
+tmux send-keys -t $SESSION:$TABNO "[ -d .venv ] && source .venv/bin/activate" C-m
 TABNO=$((TABNO+1))
 
 # --- claude-1 (opus) ---
@@ -36,6 +37,11 @@ TABNO=$((TABNO+1))
 # --- codex-gpt (high reasoning) ---
 tmux new-window -t $SESSION:$TABNO -n "codex-gpt" -c "$PROJECT_DIR"
 tmux send-keys -t $SESSION:$TABNO "codex --model gpt-5.1 -c model_reasoning_effort=\"high\"" C-m
+TABNO=$((TABNO+1))
+
+# --- python ---
+tmux new-window -t $SESSION:$TABNO -n "python" -c "$PROJECT_DIR"
+tmux send-keys -t $SESSION:$TABNO "[ -d .venv ] && source .venv/bin/activate && python3" C-m
 TABNO=$((TABNO+1))
 
 # --- project ---
