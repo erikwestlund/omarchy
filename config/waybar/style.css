@@ -13,7 +13,7 @@
 
 window#waybar {
   background-color: rgba(30, 30, 46, 0.75);
-  border-radius: 8px;
+  border-radius: 16px;
   margin: 2px 16px 2px 16px;
   padding: 0;
   min-height: 0;
@@ -189,7 +189,7 @@ tooltip {
   padding: 2px;
   background: rgba(30, 40, 60, 0.96);
   color: #bdd4ff;
-  border-radius: 8px;
+  border-radius: 16px;
   text-shadow: none;
 }
 
