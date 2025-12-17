@@ -3,8 +3,10 @@
 
 # Windows VM RDP username (varies per machine)
 windows_vm_user: "erik"
-# Initial RDP resolution (Kuycon G32P 6K)
-windows_vm_resolution: "6144x3456"
+# Initial RDP resolution (screen height - 100px for waybar)
+windows_vm_resolution: "6144x3356"
+# HiDPI scale factor (200 = 2x retina)
+windows_vm_scale: "200"
 
 # Keyboards connected to this machine (configs deployed for each)
 keyboards:

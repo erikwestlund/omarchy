@@ -5,6 +5,8 @@
 windows_vm_user: "erik westlund"
 # Initial RDP resolution (Framework 2.8K minus waybar/gaps)
 windows_vm_resolution: "2880x1820"
+# HiDPI scale factor (200 = 2x retina)
+windows_vm_scale: "200"
 
 # Show battery indicator in waybar
 show_battery: true
