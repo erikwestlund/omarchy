@@ -1,24 +1,25 @@
-┌─ Windows ─────────────────────┬─ Apps ────────────────────────┬─ Tmux ────────────────────────┐
-│ Super+Return    Terminal      │ Super+Shift+T  Terminal       │ Shift+←/→      Prev/next win  │
-│ Super+Space     Launcher      │ Super+Shift+B  Browser        │ Alt+←/→        Prev/next win  │
-│ Super+Alt+Space Omarchy menu  │ Super+Shift+N  Editor         │ Prefix+Tab     Next window    │
-│ Super+Q         Close         │ Super+Shift+F  Files          │ Prefix+>/<     Next/prev sess │
-│ Super+F         Fullscreen    │ Super+Shift+S  Spotify        ├─ Ghostty ─────────────────────┤
-│ Super+V         Float toggle  │ Alt+Shift+F    Toggle float   │ Ctrl+Shift+N   New tab        │
-│                               │ Ctrl+Shift+A   ChatGPT        │ Ctrl+Shift+W   Close tab      │
-├─ Workspaces ──────────────────┤ Alt+Shift+C    Claude         ├─ Screenshots ─────────────────┤
-│ Super+1-9,0     Switch 1-10   │ Super+Shift+E  Email          │ Super+Ctrl+2   Full screen    │
-│ Super+Shift+1-0 Move window   │ Super+Shift+/  1Password      │ Super+Ctrl+3   Selection      │
-│ Super+grave     Utility       │                               ├─ Utilities ───────────────────┤
-│                               ├─ Navigation (vim) ────────────┤ Super+Ctrl+S   File search    │
-├─ Media (top row, no Fn) ──────┤ Super+HJKL     Focus          │ Super+Ctrl+⇧S  Reveal in Files│
-│ Mute/Vol+/-     Direct        │ Super+Shift+HJKL  Swap        │ Super+Ctrl+C   Calculator     │
-│ Bright+/-       Direct        │ Super+Shift+,/.   Width       │ Super+Ctrl+J   JHU VPN        │
-│ Prev/Play/Next  Direct        │ Super+Shift+[/]   Height      ├─ Config ──────────────────────┤
-├─ Help ────────────────────────┤ Alt+J          Toggle split   │ vault-edit     Edit vault     │
-│ Alt+K           All hotkeys   │ Super+Shift+D  Toggle layout  │ secrets-pull   Pull from B2   │
-│ Super+Alt+H     Cheatsheet    │ Fn+←/→         Line start/end │ om-sync        Git pull       │
-│ Super+Alt+J     Agenda        │                               │ om             Full playbook  │
-│                               │                               │ vscode-sync    Sync VS Code   │
-│                               │                               │ vscode-sync-ext + extensions  │
-└───────────────────────────────┴───────────────────────────────┴───────────────────────────────┘
+┌─ Windows ─────────────┬─ Apps ────────────────┬─ Tmux ────────────────┬─ VS Code ─────────────┬─ Neovim ──────────────┐
+│ Super+Return Terminal │ Super+Sh+T Terminal   │ Shift+←/→  Prev/next  │ Super+P    Files      │ Super+HJKL  Focus     │
+│ Super+Space  Launcher │ Super+Sh+B Browser    │ Alt+←/→    Prev/next  │ Super+Sh+P Commands   │ Super+Sh+HJKL Swap    │
+│ Super+Alt+Sp Menu     │ Super+Sh+N Editor     │ Prefix+Tab Next win   │ Ctrl+,     Settings   │ Super+Sh+,/. Width    │
+│ Super+Q      Close    │ Super+Sh+F Files      │ Prefix+>/< Nxt/prv ss │ Super+T    Terminal   │ Super+Sh+[/] Height   │
+│ Super+F      Fullscrn │ Super+Sh+S Spotify    ├─ Ghostty ─────────────┤ Super+S    Save       │ Alt+J       Split     │
+│ Super+V      Float    │ Alt+Sh+F   Float      │ Ctrl+Sh+N  New tab    │ Super+W    Close/Kill │ Super+Sh+D  Layout    │
+│                       │ Ctrl+Sh+A  ChatGPT    │ Ctrl+Sh+W  Close tab  │ Super+F    Find       │                       │
+├─ Workspaces ──────────┤ Alt+Sh+C   Claude     ├─ Screenshots ─────────┤ Super+Z    Undo       │                       │
+│ Super+1-9,0  Switch   │ Super+Sh+E Email      │ Super+Ctrl+2 Full     │ Super+Sh+Z Redo       │                       │
+│ Super+Sh+#   Move win │ Super+Sh+/ 1Password  │ Super+Ctrl+3 Select   │ Super+R    Symbol     │                       │
+│ Super+grave  Utility  │                       ├─ Utilities ───────────┤ Super+[/]  Ed↔Term    │                       │
+│                       ├─ Config ──────────────┤ Super+Ctrl+S Search   │ Super+Alt+[/] Prev/Nxt│                       │
+├─ Media (no Fn) ───────┤ vault-edit Edit vault │ Super+Ctrl+C Calc     │ Super+Alt+N New       │                       │
+│ Mute/Vol+/-  Direct   │ secrets-pull Pull B2  │ Super+Ctrl+J VPN      │ Ctrl+K     Delete line│                       │
+│ Bright+/-    Direct   │ om-sync    Git pull   │                       │ Ctrl+D     Duplicate  │                       │
+│ Prev/Play/Nx Direct   │ om         Playbook   │                       │ Alt+↑/↓    Move line  │                       │
+├─ Help ────────────────┤                       │                       │ Super+Alt+L Format    │                       │
+│ Alt+K        Hotkeys  │                       │                       │ Super+B    Sidebar    │                       │
+│ Super+Alt+H  Cheatsht │                       │                       │ Super+Alt+B Aux bar   │                       │
+│ Super+Alt+J  Agenda   │                       │                       │ Super+Alt+E Explorer  │                       │
+│                       │                       │                       │ Super+Alt+X Extensions│                       │
+│                       │                       │                       │ Ctrl+1-9   Tabs       │                       │
+│                       │                       │                       │ Ctrl+J     Panel      │                       │
+└───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┘
