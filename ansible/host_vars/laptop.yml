@@ -1,18 +1,23 @@
 ---
 # Framework laptop configuration
 
+# Windows VM RDP username (varies per machine)
+windows_vm_user: "erik westlund"
+# Initial RDP resolution (Framework 2.8K minus waybar/gaps)
+windows_vm_resolution: "2880x1820"
+
 # Show battery indicator in waybar
 show_battery: true
 
 # Waybar positioning (move down for rounded display)
 waybar_json_margin_top: 6
 waybar_json_margin_x: 4
-# Border radius: top-left top-right bottom-right bottom-left
-# Top corners larger to match Framework display curve
-waybar_border_radius: "16px 16px 12px 12px"
+# Border radius (uniform)
+waybar_border_radius: "16px"
 
-# Window gaps to align with waybar
+# Window gaps and rounding
 hypr_gaps_out: 4
+hypr_rounding: 16
 
 # Keyboards connected to this machine (configs deployed for each)
 keyboards:
@@ -38,11 +43,7 @@ extra_pacman_packages:
 # Virtual machines (existing VM will be renamed from RDPWindows to win11)
 vms:
   - name: win11
-    desktop_name: Windows
-    desktop_filename: windows-11-vm
-    icon: "{{ ansible_facts.env.HOME }}/.local/share/applications/icons/windows.png"
-    exec: "{{ ansible_facts.env.HOME }}/.bin/windows"
-    keywords: windows;
+    create_desktop_entry: false  # Created in main.yml
     os_variant: win11
     ram_mb: 16384
     vcpus: 4

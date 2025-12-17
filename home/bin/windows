@@ -74,9 +74,8 @@ done
 if nc -z "$VM_IP" "$RDP_PORT" 2>/dev/null; then
     # Connect via RDP (empty domain for local account)
     # /dynamic-resolution allows window resize to change remote resolution
-    # /scale:180 for HiDPI displays (140 or 180 are valid, not 200)
     exec xfreerdp3 /v:"$VM_IP" /u:"$RDP_USER" /p:"$RDP_PASS" /d: \
-        /dynamic-resolution /scale:180 +clipboard /cert:ignore
+        /size:"${RDP_RESOLUTION:-1920x1080}" /dynamic-resolution +clipboard /cert:ignore
 else
     notify-send "Windows VM" "RDP not available, using SPICE viewer" -t 5000
     exec virt-viewer --attach -c qemu:///system "$VM_NAME"

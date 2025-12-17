@@ -29,6 +29,21 @@
     - windows-vm.desktop
     - win11-vm.desktop
     - Win11.desktop
+    - windows-11-vm.desktop
+
+- name: Create Windows desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/windows.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Windows
+      Comment=Launch Windows VM via RDP
+      Exec=uwsm app -- {{ ansible_facts.env.HOME }}/.bin/windows
+      Icon=windows
+      Terminal=false
+      Type=Application
+      Categories=System;
 
 - name: Ensure applications icons directory exists
   ansible.builtin.file:
@@ -36,12 +51,18 @@
     state: directory
     mode: '0755'
 
+- name: Check if VM icons source exists
+  ansible.builtin.stat:
+    path: "{{ playbook_dir }}/../home/.local/share/applications/icons"
+  register: vm_icons_src
+  delegate_to: localhost
+
 - name: Sync VM icons
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/../home/.local/share/applications/icons/"
     dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/icons/"
     mode: '0644'
-  failed_when: false
+  when: vm_icons_src.stat.exists
 
 - name: Ensure libvirtd is running
   become: true
@@ -118,8 +139,9 @@
     dest: "{{ ansible_facts.env.HOME }}/.config/windows-vm/rdp-creds"
     mode: '0600'
     content: |
-      RDP_USER="{{ vault_windows_vm_user | default('erik') }}"
+      RDP_USER="{{ windows_vm_user | default('erik') }}"
       RDP_PASS="{{ vault_windows_vm_password }}"
+      RDP_RESOLUTION="{{ windows_vm_resolution | default('1920x1080') }}"
   no_log: true
   when: vault_windows_vm_password is defined
 
@@ -134,6 +156,28 @@
     dest: "{{ ansible_facts.env.HOME }}/NAS/ISOs/virtio-win.iso"
     mode: '0644'
   when: not virtio_iso_stat.stat.exists
+
+# Ensure win11 VM is portable across Intel/AMD
+- name: Check if win11 VM exists
+  ansible.builtin.command: virsh dominfo win11
+  register: win11_exists
+  failed_when: false
+  changed_when: false
+
+- name: Get win11 VM XML
+  ansible.builtin.command: virsh dumpxml win11
+  register: win11_xml
+  when: win11_exists.rc == 0
+  changed_when: false
+
+- name: Remove Intel-specific Hyper-V features from win11
+  ansible.builtin.shell: |
+    virsh dumpxml win11 | sed -e '/<evmcs state=/d' -e '/<avic state=/d' > /tmp/win11-fixed.xml
+    virsh define /tmp/win11-fixed.xml
+    rm /tmp/win11-fixed.xml
+  when:
+    - win11_exists.rc == 0
+    - "'<evmcs state=' in win11_xml.stdout or '<avic state=' in win11_xml.stdout"
 
 - name: Create VMs
   ansible.builtin.include_tasks: create_vm.yml
