@@ -78,11 +78,12 @@
   loop: "{{ home_dotfiles }}"
   register: home_file_stats
 
-- name: Sync home dotfiles to ~/
-  ansible.builtin.copy:
+- name: Symlink home dotfiles to ~/
+  ansible.builtin.file:
     src: "{{ home_src }}/{{ item.item }}"
     dest: "{{ ansible_facts.env.HOME }}/{{ item.item }}"
-    mode: preserve
+    state: link
+    force: true
   loop: "{{ home_file_stats.results }}"
   loop_control:
     label: "{{ item.item }}"
@@ -209,6 +210,18 @@
     src: "{{ omarchy_repo }}/local/share/darkman/"
     dest: "{{ ansible_facts.env.HOME }}/.local/share/darkman/"
     mode: '0755'
+
+- name: Ensure applications directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.local/share/applications"
+    state: directory
+    mode: '0755'
+
+- name: Deploy desktop file overrides
+  ansible.builtin.copy:
+    src: "{{ config_src }}/applications/"
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/"
+    mode: '0644'
 
 - name: Remove old darkman script directories
   ansible.builtin.file:

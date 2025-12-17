@@ -210,6 +210,7 @@ home_dotfiles:
   - .cheatsheet
   - .gitconfig
   - .Renviron
+  - .Rprofile
   - .tmux.conf
 
 # Web apps (installed as desktop entries)

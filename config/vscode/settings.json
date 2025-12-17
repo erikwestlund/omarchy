@@ -14,7 +14,11 @@
     "terminal.integrated.env.linux": {
         "TERM": "xterm-256color"
     },
-    "terminal.integrated.fontFamily": "Fira Code",
+    "editor.fontFamily": "'JetBrains Mono', 'Fira Code', monospace",
+    "editor.fontSize": 12,
+    "editor.lineHeight": 1.25,
+    "editor.fontLigatures": true,
+    "terminal.integrated.fontFamily": "'JetBrains Mono', 'Fira Code', monospace",
     "terminal.integrated.fontSize": 12,
     "terminal.integrated.gpuAcceleration": "on",
     "terminal.integrated.tabs.enabled": true,

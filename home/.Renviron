@@ -1,2 +1,5 @@
 # R environment configuration
 R_LIBS_USER=~/.R/library
+
+# CRAN mirror (Posit Public Package Manager - provides Linux binaries)
+R_CRAN_WEB=https://packagemanager.posit.co/cran/latest
