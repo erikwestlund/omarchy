@@ -1,6 +1,10 @@
 ---
 # Desktop configuration
 
+# Project launcher defaults
+default_workspace: 1
+split_windows: false  # Desktop has big screen, no need to split
+
 # Windows VM RDP username (varies per machine)
 windows_vm_user: "erik"
 # Initial RDP resolution (screen height - 100px for waybar)

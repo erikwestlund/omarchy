@@ -819,19 +819,93 @@ Reload config with `prefix + r`.
 
 ## Project Management
 
-Projects use a consistent structure for launching dev environments. Managed via Ansible.
+Projects use a consistent structure for launching dev environments. Each project has launcher scripts for opening VS Code, starting services, and managing Hyprland workspaces.
 
 ### Structure
 
 ```
-~/Omarchy/ProjectManagement/     # Source (in repo)
-~/ProjectManagement/             # Deployed (synced by Ansible)
+~/Omarchy/projects/              # Project management scripts
     └── {project}/
+        ├── launch               # Opens VS Code, starts docker, manages workspaces
+        ├── kill                 # Stops docker, closes windows
         └── tmux.sh              # Tmux session launcher
 
 ~/Projects/                      # Actual project code
     └── {project}/
+
+~/.config/omarchy/
+    └── project-defaults.sh      # Machine-specific defaults (deployed by ansible)
 ```
+
+### Aliases
+
+| Alias | Action |
+|-------|--------|
+| `p{alias}` | Launch project (VS Code, docker, workspaces) |
+| `pk{alias}` | Kill project (stop docker, close windows) |
+| `tm{alias}` | Launch/attach tmux session |
+| `pm{alias}` | cd to ~/Omarchy/projects/{project} |
+| `{alias}` | cd to project directory |
+| `pm-sync` | Sync project aliases |
+| `pm-new` | Create new project (interactive) |
+
+Examples:
+```bash
+pfw                # Launch Framework project
+pkfw               # Kill Framework project
+tmfw               # Launch Framework tmux session
+pmfw               # cd to ~/Omarchy/projects/framework
+fw                 # cd to ~/Projects/framework
+```
+
+### Launch Script Options
+
+The launch script (`p{alias}`) supports workspace and split-window options:
+
+```bash
+# Workspace selection
+pfw --ws 2                # Launch in workspace 2
+pfw --ws=2                # Same, with = syntax
+
+# Split workspaces (editor in WS N, view/browser in WS N+1)
+pfw --split               # Enable split (default on laptop)
+pfw --split=true          # Explicit true
+pfw --split=1             # Also true
+pfw --split=t             # Also true
+
+# Disable split (all windows in same workspace)
+pfw --split=false         # Disable split
+pfw --split=0             # Also false
+pfw --split=f             # Also false
+pfw --no-split            # Same as --split=false
+
+# Combined
+pfw --ws=2 --split=0      # Workspace 2, no split
+```
+
+Boolean values are case-insensitive: `0/1`, `t/f`, `y/n`, `true/false`, `yes/no`.
+
+### Machine-Specific Defaults
+
+Defaults are configured per-machine in ansible host_vars and deployed to `~/.config/omarchy/project-defaults.sh`:
+
+```bash
+# laptop (split_windows: true - small screen, editor + browser separate)
+DEFAULT_WS=1
+SPLIT_WS=true
+
+# desktop (split_windows: false - big screen, all in one workspace)
+DEFAULT_WS=1
+SPLIT_WS=false
+```
+
+To change defaults, edit `ansible/host_vars/{machine}.yml`:
+```yaml
+default_workspace: 1
+split_windows: true   # or false
+```
+
+Then run `om --tags dotfiles` to deploy.
 
 ### Creating a New Project
 
@@ -843,33 +917,46 @@ pm-new
 
 Prompts for:
 - **Name**: Project name (e.g., `myapp`)
-- **Alias**: Short alias (e.g., `ma`)
+- **Alias**: Short alias (e.g., `ma`) - creates `pma`, `pkma`, `tmma`, `pmma`, `ma`
 - **Type**: `utility`, `laravel`, `python`, `rstats`
 - **Path**: Project directory (default: `~/Projects/{name}`)
 
 ### Project Types
 
-| Type | Extra Windows |
-|------|---------------|
-| `utility` | Basic: bash, claude, codex, project |
+| Type | Tmux Windows |
+|------|--------------|
+| `utility` | bash, claude-o, claude-s, codex, codex-gpt, project |
 | `laravel` | + docker, npm, artisan, tinker |
 | `python` | + python repl (with venv) |
 | `rstats` | + R console |
 
-### Aliases
+### Launch Script Behavior
 
-| Alias | Action |
-|-------|--------|
-| `tm{alias}` | Launch/attach tmux session |
-| `pm{alias}` | cd to ~/ProjectManagement/{project} |
-| `p{alias}` | cd to project directory |
-| `pm-sync` | Sync ProjectManagement + aliases |
-| `pm-new` | Create new project (interactive) |
+The `launch` script:
+1. Sources machine defaults from `~/.config/omarchy/project-defaults.sh`
+2. Parses command-line arguments (--ws, --split)
+3. Switches to target workspace
+4. Starts docker compose (if configured)
+5. Opens VS Code
+6. Opens browser/view URL (if configured, in split workspace if enabled)
 
-Examples:
-- `tmom` - Launch Omarchy tmux
-- `pmom` - cd to Omarchy project management
-- `pom` - cd to ~/Omarchy
+The `kill` script:
+1. Stops docker compose (if configured)
+2. Closes VS Code windows for the project
+
+### Customizing Launch Scripts
+
+Edit the scripts directly in `~/Omarchy/projects/{project}/`:
+
+```bash
+# Add docker compose
+DOCKER_COMPOSE=true
+
+# Add a view URL (opens browser)
+VIEW_URL="http://localhost:3000"
+```
+
+Or edit the Jinja templates for new projects: `ansible/roles/projects/templates/launch.j2`
 
 ### Tmux Script Pattern
 
@@ -889,13 +976,6 @@ TABNO=$((TABNO+1))
 ```
 
 To reorder: cut/paste blocks - TABNO auto-increments.
-
-### Current Projects
-
-| Project | Alias | Type | Path |
-|---------|-------|------|------|
-| Omarchy | om | utility | ~/Omarchy |
-| Homelab | hl | utility | ~/Projects/homelab |
 
 ## Reference
 

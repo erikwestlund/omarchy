@@ -1,7 +1,7 @@
 # Project Management Configuration
 # Each project generates:
 #   p{alias}  - Launch project (bootstrap + tmux)
-#   pm{alias} - cd to ~/ProjectManagement/{name}
+#   pm{alias} - cd to ~/Omarchy/projects/{name}
 #   tm{alias} - Launch tmux session only
 
 projects:

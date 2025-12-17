@@ -1,0 +1,5 @@
+# Project launcher defaults for {{ inventory_hostname }}
+# Deployed by ansible - edit host_vars/{{ inventory_hostname }}.yml to change
+
+DEFAULT_WS={{ default_workspace | default(1) }}
+SPLIT_WS={{ split_windows | default(false) | string | lower }}

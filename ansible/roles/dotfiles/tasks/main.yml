@@ -190,6 +190,19 @@
     scope: user
     daemon_reload: true
 
+# Project launcher defaults
+- name: Ensure omarchy config directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/omarchy"
+    state: directory
+    mode: '0755'
+
+- name: Deploy project launcher defaults
+  ansible.builtin.template:
+    src: project-defaults.sh.j2
+    dest: "{{ ansible_facts.env.HOME }}/.config/omarchy/project-defaults.sh"
+    mode: '0644'
+
 # Theme setup
 - name: Ensure omarchy current directory exists
   ansible.builtin.file:

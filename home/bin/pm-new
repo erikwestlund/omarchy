@@ -98,8 +98,8 @@ fi
 
 # 5. Alias
 echo ""
-echo "Alias creates: tm{alias} (tmux), pm{alias} (cd to PM dir), p{alias} (cd to project)"
-read -p "Alias (e.g., 'hl' creates tmhl, pmhl, phl): " PROJECT_ALIAS
+echo "Alias creates: p{alias} (launch), pk{alias} (kill), tm{alias} (tmux), pm{alias} (PM dir), {alias} (project dir)"
+read -p "Alias (e.g., 'hl' creates phl, pkhl, tmhl, pmhl, hl): " PROJECT_ALIAS
 if [ -z "$PROJECT_ALIAS" ]; then
     echo "Error: Alias is required"
     exit 1
@@ -117,10 +117,10 @@ if [ -n "$PROJECT_PATH" ]; then
     else
         echo "Project:  $PROJECT_PATH"
     fi
-    echo "Aliases:  tm$PROJECT_ALIAS, pm$PROJECT_ALIAS, p$PROJECT_ALIAS"
+    echo "Aliases:  p$PROJECT_ALIAS, pk$PROJECT_ALIAS, tm$PROJECT_ALIAS, pm$PROJECT_ALIAS, $PROJECT_ALIAS"
 else
     echo "Project:  (none)"
-    echo "Aliases:  tm$PROJECT_ALIAS, pm$PROJECT_ALIAS"
+    echo "Aliases:  p$PROJECT_ALIAS, pk$PROJECT_ALIAS, tm$PROJECT_ALIAS, pm$PROJECT_ALIAS"
 fi
 echo ""
 read -p "Create? [Y/n]: " CONFIRM
@@ -177,19 +177,20 @@ if [ -n "$PROJECT_PATH" ]; then
     fi
 fi
 echo ""
-echo "⌨️  ALIASES (available after: source ~/.aliases)"
-echo "   tm$PROJECT_ALIAS  →  Launch tmux session for this project"
+echo "ALIASES (available after: source ~/.aliases)"
+echo "   p$PROJECT_ALIAS   →  Launch project (VS Code, docker, etc.)"
+echo "   pk$PROJECT_ALIAS  →  Kill project (stop docker, close windows)"
+echo "   tm$PROJECT_ALIAS  →  Launch tmux session"
 echo "   pm$PROJECT_ALIAS  →  cd to project management dir"
 if [ -n "$PROJECT_PATH" ]; then
-    echo "   p$PROJECT_ALIAS   →  cd to project code"
-else
-    echo "   p$PROJECT_ALIAS   →  Run launcher.sh"
+    echo "   $PROJECT_ALIAS    →  cd to project code"
 fi
 echo ""
-echo "📝 FILES CREATED"
-echo "   ~/Omarchy/projects/$PM_NAME/tmux.sh      (tmux session launcher)"
-echo "   ~/Omarchy/projects/$PM_NAME/launcher.sh  (project bootstrap)"
-echo "   ~/.aliases                                (updated with new aliases)"
+echo "FILES CREATED"
+echo "   ~/Omarchy/projects/$PM_NAME/launch   (project launcher)"
+echo "   ~/Omarchy/projects/$PM_NAME/kill     (project killer)"
+echo "   ~/Omarchy/projects/$PM_NAME/tmux.sh  (tmux session)"
+echo "   ~/.aliases                           (updated)"
 echo ""
 
 # 8. Reload aliases and cd to project management dir

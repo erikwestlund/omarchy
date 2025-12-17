@@ -7,14 +7,6 @@
     msg: "Invalid project_type '{{ project_type }}'. Valid types: utility, laravel, python, rstats"
   when: project_type not in ['utility', 'laravel', 'python', 'rstats']
 
-# Ensure ProjectManagement symlink exists
-- name: Create ProjectManagement symlink
-  ansible.builtin.file:
-    src: "{{ omarchy_repo }}/projects"
-    dest: "{{ ansible_facts.env.HOME }}/ProjectManagement"
-    state: link
-    force: false
-
 # Clone from GitHub if requested
 - name: Clone project from GitHub
   ansible.builtin.git:
@@ -43,38 +35,31 @@
     dest: "{{ omarchy_repo }}/projects/{{ project_name }}/tmux.sh"
     mode: '0755'
 
-- name: Create launcher.sh placeholder
-  ansible.builtin.copy:
-    dest: "{{ omarchy_repo }}/projects/{{ project_name }}/launcher.sh"
+- name: Generate launch script from template
+  ansible.builtin.template:
+    src: "launch.j2"
+    dest: "{{ omarchy_repo }}/projects/{{ project_name }}/launch"
     mode: '0755'
-    content: |
-      #!/bin/bash
-      # Project launcher for {{ project_name }}
-      # Add bootstrap/setup commands here
 
-      echo "Launcher for {{ project_name }} - not configured yet"
+- name: Generate kill script from template
+  ansible.builtin.template:
+    src: "kill.j2"
+    dest: "{{ omarchy_repo }}/projects/{{ project_name }}/kill"
+    mode: '0755'
 
-- name: Add project aliases to .aliases (with project dir)
+- name: Add project aliases to .aliases
   ansible.builtin.blockinfile:
     path: "{{ omarchy_repo }}/home/.aliases"
     marker: "# {mark} PROJECT {{ project_name }}"
     insertbefore: "# Auto-generated project aliases"
     block: |
+      alias p{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/launch"
+      alias pk{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/kill"
       alias tm{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/tmux.sh"
       alias pm{{ project_alias }}="cd ~/Omarchy/projects/{{ project_name }}"
-      alias p{{ project_alias }}="cd {{ project_path }}"
-  when: project_path | length > 0
-
-- name: Add project aliases to .aliases (no project dir)
-  ansible.builtin.blockinfile:
-    path: "{{ omarchy_repo }}/home/.aliases"
-    marker: "# {mark} PROJECT {{ project_name }}"
-    insertbefore: "# Auto-generated project aliases"
-    block: |
-      alias tm{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/tmux.sh"
-      alias pm{{ project_alias }}="cd ~/Omarchy/projects/{{ project_name }}"
-      alias p{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/launcher.sh"
-  when: project_path | length == 0
+{% if project_path | length > 0 %}
+      alias {{ project_alias }}="cd {{ project_path }}"
+{% endif %}
 
 - name: Sync aliases to home
   ansible.builtin.copy:
@@ -88,6 +73,8 @@
       Project '{{ project_name }}' created!
 
       Aliases (reload shell to use):
+        p{{ project_alias }}   - Launch project (VS Code, docker, etc.)
+        pk{{ project_alias }}  - Kill project (stop docker, close windows)
         tm{{ project_alias }}  - Launch tmux session
         pm{{ project_alias }}  - cd to project management dir
-        p{{ project_alias }}   - cd to {{ project_path }}
+        {{ project_alias }}    - cd to {{ project_path }}

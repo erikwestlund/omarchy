@@ -1,6 +1,10 @@
 ---
 # Framework laptop configuration
 
+# Project launcher defaults
+default_workspace: 1
+split_windows: true  # Editor and view (browser) in separate workspaces
+
 # Windows VM RDP username (varies per machine)
 windows_vm_user: "erik westlund"
 # Initial RDP resolution (Framework 2.8K minus waybar/gaps)
