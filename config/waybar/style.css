@@ -157,6 +157,11 @@ window#waybar {
   min-width: 12px;
 }
 
+#battery.discharging.warning,
+#battery.discharging.critical {
+  color: #f38ba8;
+}
+
 #tray {
   margin: 0;
   padding: 0;

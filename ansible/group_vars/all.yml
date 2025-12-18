@@ -162,6 +162,9 @@ aur_packages:
   # Remote desktop
   - icaclient
 
+  # Email
+  - fastmail
+
 # JHU VPN configuration
 jh_vpn_url: "https://vpn.jh.edu"
 

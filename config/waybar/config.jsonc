@@ -129,7 +129,7 @@
 
   "cpu": {
     "interval": 5,
-    "format": "󰍛   ",
+    "format": "󰍛 ",
     "on-click": "omarchy-launch-or-focus-tui btop"
   },
   "custom/sysinfo": {
@@ -193,15 +193,15 @@
   },
   "battery": {
     "format": "{capacity}% {icon} ",
-    "format-discharging": "{icon}  ",
-    "format-charging": "{icon}  ",
-    "format-plugged": "󰂅  ",
+    "format-discharging": "{icon}   ",
+    "format-charging": "{icon}   ",
+    "format-plugged": "󰂅   ",
     "format-icons": {
       "charging": ["󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
       "default": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
     },
-    "format-full": "󰂅  ",
-    "format-not-charging": "󰂅  ",
+    "format-full": "󰂅   ",
+    "format-not-charging": "󰂅   ",
     "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
     "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
     "interval": 5,
@@ -212,9 +212,9 @@
     }
   },
   "bluetooth": {
-    "format": "󰂯  ",
-    "format-disabled": "󰂲  ",
-    "format-connected": "󰂱  ",
+    "format": "󰂯 ",
+    "format-disabled": "󰂲 ",
+    "format-connected": "󰂱 ",
     "format-no-controller": "",
     "tooltip-format": "Devices connected: {num_connections}",
     "on-click": "omarchy-launch-bluetooth"

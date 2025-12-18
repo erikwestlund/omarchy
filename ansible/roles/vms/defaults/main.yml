@@ -17,5 +17,6 @@ vms: []
 # VM disk storage location
 vm_disk_path: /var/lib/libvirt/images
 
-# Virtio drivers ISO URL (downloaded if not present)
+# Virtio drivers ISO (downloaded if not present)
+virtio_iso_path: "{{ ansible_facts.env.HOME }}/.local/share/libvirt/isos"
 virtio_iso_url: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso

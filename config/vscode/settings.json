@@ -111,10 +111,10 @@
         "terminal.ansiWhite": "#c0caf5",
         "terminal.ansiYellow": "#e0af68"
     },
-    "workbench.colorTheme": "Catppuccin Mocha",
+    "workbench.colorTheme": "null",
     "terminal.integrated.enableMultiLinePasteWarning": false,
     "quarto.preview.inBrowser": true,
     "quarto.render.previewType": "external",
     "editor.minimap.enabled": false,
-    "workbench.iconTheme": "catppuccin-perfect-mocha"
+    "workbench.iconTheme": "catppuccin-mocha"
 }

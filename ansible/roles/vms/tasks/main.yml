@@ -146,15 +146,21 @@
   no_log: true
   when: vault_windows_vm_password is defined
 
+- name: Ensure virtio ISO directory exists
+  ansible.builtin.file:
+    path: "{{ virtio_iso_path }}"
+    state: directory
+    mode: '0755'
+
 - name: Check for virtio ISO
   ansible.builtin.stat:
-    path: "{{ ansible_facts.env.HOME }}/NAS/ISOs/virtio-win.iso"
+    path: "{{ virtio_iso_path }}/virtio-win.iso"
   register: virtio_iso_stat
 
 - name: Download virtio drivers if missing
   ansible.builtin.get_url:
     url: "{{ virtio_iso_url }}"
-    dest: "{{ ansible_facts.env.HOME }}/NAS/ISOs/virtio-win.iso"
+    dest: "{{ virtio_iso_path }}/virtio-win.iso"
     mode: '0644'
   when: not virtio_iso_stat.stat.exists
 
