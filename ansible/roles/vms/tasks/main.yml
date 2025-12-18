@@ -152,18 +152,6 @@
     state: directory
     mode: '0755'
 
-- name: Check for virtio ISO
-  ansible.builtin.stat:
-    path: "{{ virtio_iso_path }}/virtio-win.iso"
-  register: virtio_iso_stat
-
-- name: Download virtio drivers if missing
-  ansible.builtin.get_url:
-    url: "{{ virtio_iso_url }}"
-    dest: "{{ virtio_iso_path }}/virtio-win.iso"
-    mode: '0644'
-  when: not virtio_iso_stat.stat.exists
-
 # Ensure win11 VM is portable across Intel/AMD
 - name: Check if win11 VM exists
   ansible.builtin.command: virsh dominfo win11

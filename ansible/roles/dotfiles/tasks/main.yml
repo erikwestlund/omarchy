@@ -72,6 +72,13 @@
     replace: '"cpu",\1"battery",\1"custom/weather"'
   when: show_battery | default(false)
 
+- name: Add extra spacing to CPU icon on desktop (no battery)
+  ansible.builtin.replace:
+    path: "{{ ansible_facts.env.HOME }}/.config/waybar/config.jsonc"
+    regexp: '"format": "󰍛 "'
+    replace: '"format": "󰍛  "'
+  when: not (show_battery | default(false))
+
 - name: Check which home dotfiles exist
   ansible.builtin.stat:
     path: "{{ home_src }}/{{ item }}"

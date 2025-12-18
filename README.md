@@ -188,7 +188,6 @@ omarchy/
 │   ├── hypr/                 # Hyprland config
 │   ├── khal/                 # Calendar CLI config
 │   ├── vdirsyncer/           # Calendar sync config
-│   ├── solaar/               # Logitech device settings
 │   └── waybar/               # Waybar config
 ├── scripts/
 │   ├── setup-windows-vm.sh       # Windows VM setup
@@ -382,12 +381,22 @@ The `install-packages.sh` script installs:
 - Dev: visual-studio-code-bin, claude-code, openai-codex-bin, tableplus, sublime-merge
 - Comms: slack-desktop, zoom, teams-for-linux
 - R ecosystem: rstudio-desktop-bin, quarto-cli-bin
-- Browser: google-chrome
 - Research: zotero
 
 ### Via Omarchy Menu
 - Docker (Install > Development > Docker)
 - Tailscale (Install > Service > Tailscale)
+
+### Explicitly Uninstalled
+
+These packages/apps were removed and should not be reinstalled:
+- OBS Studio - not used
+- Google Chrome - using Chromium instead
+- kdenlive - not used
+- Xournal++ - not used
+- Solaar - Logitech management doesn't work reliably
+- OpenConnect/stoken - using Pulse Secure instead
+- Figma, WhatsApp, Google Contacts/Messages/Photos, X (Twitter) - webapps removed
 
 ## Aliases
 
@@ -549,71 +558,6 @@ sudo systemd-hwdb update && sudo udevadm trigger -s input
 - Media keys come from a separate device `32ac:0006` (FRMW0001:00)
 - F10 (rfkill) is handled by the kernel before keyd can intercept, hence the hwdb workaround
 - F9 sends `Super+P` from firmware (display toggle), keyd intercepts this combo
-
-## Logitech Keyboard Setup (Bolt)
-
-External Logitech keyboards connected via Bolt USB receivers are also configured for consistent behavior.
-
-### What It Does
-
-- **Alt and Super are swapped** (matches Framework layout)
-- **F1-F12 are default** (fn-swap disabled via Solaar)
-- **OS mode set to Linux** (prevents hardware-level modifier swapping)
-
-### Setup
-
-```bash
-# Install Solaar for Logitech device management
-sudo pacman -S solaar
-
-# Run keyd setup (includes Logitech Bolt config)
-./scripts/setup-keyd.sh
-
-# Sync Solaar config
-./bootstrap.sh
-```
-
-### Pairing New Devices
-
-1. Open `solaar` GUI
-2. Click on Bolt Receiver → Pair new device
-3. Hold device's connect button for 3 seconds
-4. After pairing, configure the keyboard:
-
-```bash
-solaar config "KEYBOARD_NAME" multiplatform Linux
-solaar config "KEYBOARD_NAME" fn-swap false
-```
-
-### Configured Devices
-
-| Device | Settings |
-|--------|----------|
-| MX Keys Mini | multiplatform=Linux, fn-swap=false |
-| MX Keys S | multiplatform=Linux, fn-swap=false |
-
-### Files
-
-| File | Purpose |
-|------|---------|
-| `/etc/keyd/logitech.conf` | Alt/Super swap for Bolt receivers (046d:c548) |
-| `config/solaar/config.yaml` | Solaar device settings (synced via bootstrap) |
-
-### Troubleshooting
-
-```bash
-# Check if Bolt receiver is detected
-lsusb | grep -i logitech
-
-# Show paired devices
-solaar show
-
-# Check keyd is matching Logitech devices
-journalctl -u keyd | grep -i logitech
-
-# Reload keyd after config changes
-sudo keyd reload
-```
 
 ## Hyprland Workspace Plan
 

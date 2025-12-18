@@ -98,9 +98,6 @@ pacman_packages:
   # Wayland debugging
   - wev
 
-  # Logitech devices
-  - solaar
-
   # Virtualization
   - libvirt
   - qemu-full
@@ -139,9 +136,6 @@ aur_packages:
   - rstudio-desktop-bin
   - quarto-cli-bin
   - positron-ide-devel-bin
-
-  # Browser
-  - google-chrome
 
   # Research
   - zotero
@@ -199,7 +193,6 @@ config_dirs:
   - khal
   - omarchy
   - projects
-  - solaar
   - systemd
   - vdirsyncer
   - waybar
@@ -220,10 +213,12 @@ home_dotfiles:
 webapps:
   - name: Outlook
     url: "https://outlook.office.com/mail/0/?culture=en-us&country=us"
-  - name: Work Day
+  - name: "Outlook Calendar: Work Day"
     url: "https://outlook.office.com/calendar/view/day"
-  - name: Work Week
+    icon: Outlook.png
+  - name: "Outlook Calendar: Work Week"
     url: "https://outlook.office.com/calendar/view/workweek"
+    icon: Outlook.png
   - name: Word
     url: "https://word.cloud.microsoft"
     icon: microsoft-word.webp
