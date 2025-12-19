@@ -17,7 +17,7 @@ WORKSPACE_FILE="$HOME/Omarchy/projects/pequod/pequod.code-workspace"
 EDITOR="/usr/bin/code"
 DEFAULT_WS=1
 DOCKER_COMPOSE=true
-VIEW_URL="http://academic.test"
+VIEW_URL="http://academic.test/admin"
 
 # === Parse Arguments ===
 WS=${1:-$DEFAULT_WS}
@@ -45,19 +45,24 @@ if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
     (cd "$PROJECT_DIR" && docker compose up -d) || echo "Warning: Docker compose failed - continuing anyway"
 fi
 
-# Launch editor (skip if already open on workspace)
+# Open browser first on desktop (right side)
+MACHINE=$(cat ~/.machine 2>/dev/null)
+if [ "$MACHINE" = "desktop" ] && [ -n "$VIEW_URL" ]; then
+    if has_window_on_ws "$WS" "chromium"; then
+        echo "Browser already open on workspace $WS, skipping..."
+    else
+        echo "Opening browser..."
+        hyprctl dispatch exec "[workspace $WS silent]" "chromium --new-window '$VIEW_URL'"
+        sleep 1
+    fi
+fi
+
+# Launch editor second (left side)
 if has_window_on_ws "$WS" "code"; then
     echo "Editor already open on workspace $WS, skipping..."
 else
     echo "Opening $EDITOR..."
     hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
 fi
-
-# Open view in split workspace (if configured)
-# if [ "$USE_SPLIT" = "true" ] && [ -n "$VIEW_URL" ]; then
-#     VIEW_WS=$((WS + 1))
-#     echo "Opening view in workspace $VIEW_WS..."
-#     hyprctl dispatch exec "[workspace $VIEW_WS silent]" "xdg-open '$VIEW_URL'"
-# fi
 
 echo "Done! $PROJECT_NAME launched in workspace $WS"

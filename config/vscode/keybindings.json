@@ -1,6 +1,10 @@
 // VS Code Keybindings - Linux/Hyprland
 // Built from scratch
 [
+    // Close window (not quit all) with Super+Q via keyd -> Ctrl+Q
+    { "key": "ctrl+q", "command": "-workbench.action.quit" },
+    { "key": "ctrl+q", "command": "workbench.action.closeWindow" },
+
     // Terminal toggle
     { "key": "ctrl+t", "command": "workbench.action.terminal.toggleTerminal" },
 
