@@ -80,6 +80,14 @@ echo ""
 read -p "Default workspace [1]: " DEFAULT_WS
 DEFAULT_WS="${DEFAULT_WS:-1}"
 
+# 6b. View URL (for web projects)
+VIEW_URL=""
+if [ "$PROJECT_TYPE" = "laravel" ]; then
+    echo ""
+    echo "Laravel projects can open a browser alongside the editor."
+    read -p "View URL (e.g., 'http://myapp.test/admin', or Enter to skip): " VIEW_URL
+fi
+
 # 7. Link to project directory?
 PROJECT_PATH=""
 GITHUB_REPO=""
@@ -143,6 +151,9 @@ echo "Type:     $PROJECT_TYPE"
 echo "Editor:   $PROJECT_EDITOR"
 echo "Docker:   $DOCKER_COMPOSE"
 echo "Default WS: $DEFAULT_WS"
+if [ -n "$VIEW_URL" ]; then
+    echo "View URL: $VIEW_URL"
+fi
 echo "PM dir:   ~/Omarchy/projects/$PM_NAME"
 if [ -n "$PROJECT_PATH" ]; then
     if [ -n "$GITHUB_REPO" ]; then
@@ -191,6 +202,10 @@ fi
 
 if [ -n "$CREATE_EMPTY_DIR" ]; then
     ANSIBLE_CMD="$ANSIBLE_CMD -e \"create_project_dir=$CREATE_EMPTY_DIR\""
+fi
+
+if [ -n "$VIEW_URL" ]; then
+    ANSIBLE_CMD="$ANSIBLE_CMD -e \"view_url=$VIEW_URL\""
 fi
 
 eval $ANSIBLE_CMD

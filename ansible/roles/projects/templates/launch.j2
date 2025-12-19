@@ -77,32 +77,8 @@ fi
 # fi
 {% endif %}
 
-# Launch editor (skip if already open on workspace)
-{% if project_editor | default('vscode') == 'neovim' %}
-if has_window_on_ws "$WS" "ghostty"; then
-    echo "Editor already open on workspace $WS, skipping..."
-else
-    echo "Opening $EDITOR..."
-    hyprctl dispatch exec "[workspace $WS silent]" "ghostty -e nvim '$PROJECT_DIR'"
-fi
-{% elif project_editor | default('vscode') in ['vscode', 'positron'] %}
-if has_window_on_ws "$WS" "code"; then
-    echo "Editor already open on workspace $WS, skipping..."
-else
-    echo "Opening $EDITOR..."
-{% if project_path | length > 0 %}
-    hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
-{% else %}
-    hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$PROJECT_DIR'"
-{% endif %}
-fi
-{% else %}
-echo "Opening $EDITOR..."
-hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$PROJECT_DIR'"
-{% endif %}
-
 {% if view_url | default('') | length > 0 %}
-# Open view in split workspace (skip if browser already open)
+# Open browser FIRST (will go on RIGHT side)
 if [ "$USE_SPLIT" = "true" ]; then
     VIEW_WS=$((WS + 1))
     if has_window_on_ws "$VIEW_WS" "chromium"; then
@@ -115,16 +91,45 @@ else
     if has_window_on_ws "$WS" "chromium"; then
         echo "Browser already open on workspace $WS, skipping..."
     else
-        echo "Opening view..."
+        echo "Opening browser (right side)..."
         hyprctl dispatch exec "[workspace $WS silent]" "chromium --new-window '$VIEW_URL'"
+        sleep 1  # Wait for browser to claim right position
     fi
 fi
+{% endif %}
+
+# Launch editor SECOND (will go on LEFT side)
+{% if project_editor | default('vscode') == 'neovim' %}
+if has_window_on_ws "$WS" "ghostty"; then
+    echo "Editor already open on workspace $WS, skipping..."
+else
+    echo "Opening $EDITOR..."
+    hyprctl dispatch exec "[workspace $WS silent]" "ghostty -e nvim '$PROJECT_DIR'"
+fi
+{% elif project_editor | default('vscode') in ['vscode', 'positron'] %}
+if has_window_on_ws "$WS" "code"; then
+    echo "Editor already open on workspace $WS, skipping..."
+else
+    echo "Opening $EDITOR (left side)..."
+{% if project_path | length > 0 %}
+    hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
 {% else %}
+    hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$PROJECT_DIR'"
+{% endif %}
+fi
+{% else %}
+echo "Opening $EDITOR..."
+hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$PROJECT_DIR'"
+{% endif %}
+
+{% if not view_url | default('') | length > 0 %}
 # Open view in split workspace (if configured)
+# VIEW_URL=""
+# USE_SPLIT=false
 # if [ "$USE_SPLIT" = "true" ] && [ -n "$VIEW_URL" ]; then
 #     VIEW_WS=$((WS + 1))
 #     echo "Opening view in workspace $VIEW_WS..."
-#     hyprctl dispatch exec "[workspace $VIEW_WS silent]" "xdg-open '$VIEW_URL'"
+#     hyprctl dispatch exec "[workspace $VIEW_WS silent]" "chromium --new-window '$VIEW_URL'"
 # fi
 {% endif %}
 
