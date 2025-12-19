@@ -40,6 +40,10 @@ Because of this transformation, keybindings in `keybindings.json` must use `ctrl
 { "key": "meta+alt+e", "command": "workbench.view.explorer" }
 ```
 
+### Avoid HJKL Keys
+
+Never use H, J, K, or L in Super+Alt keybindings. These conflict with Hyprland's vim-style navigation hotkeys and produce garbled key combinations.
+
 ### Debugging
 
 If keybindings aren't working:

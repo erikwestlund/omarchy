@@ -2,6 +2,59 @@
 
 Personal configuration for [Omarchy](https://omarchy.com) (Arch Linux + Hyprland).
 
+## Quick Start (New Machine)
+
+```bash
+# 1. Clone repo
+git clone https://github.com/erikwestlund/omarchy ~/Omarchy
+
+# 2. Install ansible
+yay -S ansible
+ansible-galaxy collection install community.general
+
+# 3. Set up vault password
+echo "your-vault-password" > ~/.vault_pass
+chmod 600 ~/.vault_pass
+
+# 4. Identify this machine
+echo "laptop" > ~/.machine   # or "desktop"
+
+# 5. Download vault from B2 (see secure notes for B2 creds)
+rclone copy :b2,account=$B2_KEY,key=$B2_SECRET:erik-secrets/bootstrap/secrets.yml \
+  ~/Omarchy/ansible/vault/
+
+# 6. Run playbook
+om
+
+# 7. Switch to SSH remote
+git -C ~/Omarchy remote set-url origin git@github.com:erikwestlund/omarchy.git
+```
+
+## Machines
+
+Machines are defined in `ansible/inventory.yml` with per-machine config in `ansible/host_vars/`:
+
+| Machine | File | Description |
+|---------|------|-------------|
+| laptop | `host_vars/laptop.yml` | Framework laptop |
+| desktop | `host_vars/desktop.yml` | Desktop workstation |
+
+The `~/.machine` file determines which host ansible targets when using `om`.
+
+### Key Differences
+
+| Setting | Laptop | Desktop |
+|---------|--------|---------|
+| `split_windows` | true (small screen) | false (big screen) |
+| `show_battery` | true | false |
+| `keyboards` | framework, logitech | logitech |
+| `is_framework` | true | false |
+| `cpu_governor` | power-profiles-daemon | performance |
+| `hypr_gaps_out` | 4 | 3 |
+| `hypr_rounding` | 16 | 12 |
+
+Host vars also control: waybar styling, VM resolution, theme background, extra packages.
+
 ## Structure
 
 ```
@@ -67,34 +120,6 @@ om-desktop            # Force desktop target
 | `system/etc/*` | `/etc/*` | Copy (sudo) |
 
 *Some config dirs are symlinked, others copied (for ansible templating). See `group_vars/all.yml` for lists.
-
-## Quick Start (New Machine)
-
-```bash
-# 1. Clone repo
-git clone https://github.com/erikwestlund/omarchy ~/Omarchy
-
-# 2. Install ansible
-yay -S ansible
-ansible-galaxy collection install community.general
-
-# 3. Set up vault password
-echo "your-vault-password" > ~/.vault_pass
-chmod 600 ~/.vault_pass
-
-# 4. Identify this machine
-echo "laptop" > ~/.machine   # or "desktop"
-
-# 5. Download vault from B2 (see secure notes for B2 creds)
-rclone copy :b2,account=$B2_KEY,key=$B2_SECRET:erik-secrets/bootstrap/secrets.yml \
-  ~/Omarchy/ansible/vault/
-
-# 6. Run playbook
-om
-
-# 7. Switch to SSH remote
-git -C ~/Omarchy remote set-url origin git@github.com:erikwestlund/omarchy.git
-```
 
 ## Key Aliases
 
@@ -211,8 +236,8 @@ sudo keyd reload      # Reload after changes
 ## Adding a New Machine
 
 1. Add host to `ansible/inventory.yml`
-2. Create `ansible/host_vars/<hostname>.yml`
-3. Run: `om-<hostname>` or `om -l <hostname>`
+2. Create `ansible/host_vars/<hostname>.yml` (copy from existing)
+3. Run: `om -l <hostname>`
 
 ## Useful Shortcuts
 

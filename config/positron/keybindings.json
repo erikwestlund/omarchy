@@ -13,7 +13,9 @@
 
     // Multi-cursor select next match (Super+D)
     { "key": "meta+d", "command": "editor.action.addSelectionToNextFindMatch", "when": "editorTextFocus" },
-    { "key": "ctrl+alt+l", "command": "editor.action.formatDocument", "when": "editorTextFocus && !editorReadonly" },
+
+    // Toggle secondary sidebar (Super+Alt+L via keyd -> Ctrl+Alt+L)
+    { "key": "ctrl+alt+l", "command": "workbench.action.toggleAuxiliaryBar" },
 
     // Navigation: Ctrl+Up/Down = Page, Alt+Up/Down = Doc start/end
     { "key": "ctrl+up", "command": "cursorPageUp", "when": "editorTextFocus" },
@@ -42,8 +44,8 @@
     { "key": "ctrl+alt+[", "command": "workbench.action.terminal.focusPrevious", "when": "terminalFocus" },
     { "key": "ctrl+alt+]", "command": "workbench.action.terminal.focusNext", "when": "terminalFocus" },
 
-    // Sidebar views (Super+Alt+X/E) - keyd-application-mapper converts meta→ctrl
-    { "key": "alt+meta+x", "command": "workbench.view.extensions" },
+    // Sidebar views (Super+Alt+X/E via keyd -> Ctrl+Alt+X/E)
+    { "key": "ctrl+alt+x", "command": "workbench.view.extensions" },
     { "key": "ctrl+alt+e", "command": "workbench.view.explorer" },
 
     // Build task (Super+Alt+B via keyd -> Ctrl+Alt+B) - unbind default Ctrl+Shift+B to avoid conflict with browser
@@ -59,10 +61,10 @@
     // Paste in terminal with Ctrl+V (normally requires Ctrl+Shift+V)
     { "key": "ctrl+v", "command": "workbench.action.terminal.paste", "when": "terminalFocus" },
 
-    // New terminal/editor with Super+Alt+N - unbind defaults first
-    { "key": "alt+meta+n", "command": "-aichat.newchataction" },
-    { "key": "alt+meta+n", "command": "workbench.action.terminal.newInActiveWorkspace", "when": "terminalFocus" },
-    { "key": "alt+meta+n", "command": "workbench.action.files.newUntitledFile", "when": "!terminalFocus" },
+    // New terminal/editor with Super+Alt+N (via keyd -> Ctrl+Alt+N) - unbind defaults first
+    { "key": "ctrl+alt+n", "command": "-aichat.newchataction" },
+    { "key": "ctrl+alt+n", "command": "workbench.action.terminal.newInActiveWorkspace", "when": "terminalFocus" },
+    { "key": "ctrl+alt+n", "command": "workbench.action.files.newUntitledFile", "when": "!terminalFocus" },
 
     // Tab switching with Ctrl+1-9, Ctrl+0 for tab 10
     { "key": "ctrl+1", "command": "workbench.action.openEditorAtIndex1" },

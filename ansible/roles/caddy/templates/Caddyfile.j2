@@ -11,7 +11,7 @@
 
 {% for site in dev_sites %}
 # {{ site.domain }}
-http://{{ site.domain }} {
+http://{{ site.domain }}{% if site.wildcard | default(false) %}, http://*.{{ site.domain }}{% endif %} {
 	reverse_proxy localhost:{{ site.port }}
 }
 

@@ -38,6 +38,21 @@
   loop: "{{ config_dirs_symlink }}"
   register: config_dir_symlink_stats
 
+- name: Check existing config directories for symlink candidates
+  ansible.builtin.stat:
+    path: "{{ ansible_facts.env.HOME }}/.config/{{ item }}"
+  loop: "{{ config_dirs_symlink }}"
+  register: existing_config_dirs
+
+- name: Remove existing directories that should be symlinks
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/{{ item.item }}"
+    state: absent
+  loop: "{{ existing_config_dirs.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when: item.stat.exists and item.stat.isdir and not item.stat.islnk
+
 - name: Symlink config directories to ~/.config/
   ansible.builtin.file:
     src: "{{ config_src }}/{{ item.item }}"

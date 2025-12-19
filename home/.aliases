@@ -42,6 +42,12 @@ alias om-sync='git -C ~/Omarchy pull'
 alias ap="ansible-playbook"
 alias vault-edit="ansible-vault edit ~/Omarchy/ansible/vault/secrets.yml --vault-password-file ~/.vault_pass"
 
+# Calendar (gcalcli)
+alias cal="gcalcli --calendar Family --calendar JHU --calendar Personal calw"
+alias calm="gcalcli --calendar Family --calendar JHU --calendar Personal calm"
+alias agenda="gcalcli --calendar Family --calendar JHU --calendar Personal agenda --nostarted"
+alias today="gcalcli --calendar Family --calendar JHU --calendar Personal agenda --nostarted today today"
+
 # ls with color (GNU ls)
 alias ls="ls --color=auto"
 alias l="ls -lF"
@@ -272,4 +278,45 @@ alias tmpark="~/Omarchy/projects/parkukb/tmux.sh"
 alias pmpark="cd ~/Omarchy/projects/parkukb"
 alias park="cd /home/erik/Projects/parkukb"
 # END PROJECT parkukb
+# BEGIN PROJECT pequod
+alias ppeq="~/Omarchy/projects/pequod/launch"
+alias pkpeq="~/Omarchy/projects/pequod/kill"
+alias tmpeq="~/Omarchy/projects/pequod/tmux.sh"
+alias pmpeq="cd ~/Omarchy/projects/pequod"
+alias peq="cd /home/erik/Projects/pequod"
+# END PROJECT pequod
+
+# Laravel/PHP docker wrappers - auto-detect project and run in container
+php() {
+    case "$PWD" in
+        /home/erik/Projects/pequod*)
+            docker exec -it pequod-php php "$@"
+            ;;
+        *)
+            command php "$@"
+            ;;
+    esac
+}
+
+art() {
+    case "$PWD" in
+        /home/erik/Projects/pequod*)
+            docker exec -it pequod-php php artisan "$@"
+            ;;
+        *)
+            php artisan "$@"
+            ;;
+    esac
+}
+
+composer() {
+    case "$PWD" in
+        /home/erik/Projects/pequod*)
+            docker exec -it pequod-php composer "$@"
+            ;;
+        *)
+            command composer "$@"
+            ;;
+    esac
+}
 # Auto-generated project aliases

@@ -13,7 +13,9 @@
 
     // Multi-cursor select next match (Super+D)
     { "key": "meta+d", "command": "editor.action.addSelectionToNextFindMatch", "when": "editorTextFocus" },
-    { "key": "ctrl+alt+l", "command": "editor.action.formatDocument", "when": "editorTextFocus && !editorReadonly" },
+
+    // Toggle secondary sidebar (Super+Alt+O)
+    { "key": "alt+meta+o", "command": "workbench.action.toggleAuxiliaryBar" },
 
     // Navigation: Ctrl+Up/Down = Page, Alt+Up/Down = Doc start/end
     { "key": "ctrl+up", "command": "cursorPageUp", "when": "editorTextFocus" },
@@ -26,7 +28,7 @@
     { "key": "alt+shift+down", "command": "editor.action.moveLinesDownAction", "when": "editorTextFocus && !editorReadonly" },
 
     // R pipe operator (Super+Alt+M)
-    { "key": "ctrl+alt+m", "command": "type", "args": { "text": " |> " }, "when": "editorTextFocus" },
+    { "key": "alt+meta+m", "command": "type", "args": { "text": " |> " }, "when": "editorTextFocus" },
 
     // Hide panel
     { "key": "ctrl+j", "command": "workbench.action.togglePanel" },
@@ -42,7 +44,7 @@
     { "key": "ctrl+alt+[", "command": "workbench.action.terminal.focusPrevious", "when": "terminalFocus" },
     { "key": "ctrl+alt+]", "command": "workbench.action.terminal.focusNext", "when": "terminalFocus" },
 
-    // Sidebar views (Super+Alt+X/E) - keyd-application-mapper converts meta→ctrl
+    // Sidebar views (Super+Alt+X/E via keyd -> Ctrl+Alt+X/E)
     { "key": "alt+meta+x", "command": "workbench.view.extensions" },
     { "key": "ctrl+alt+e", "command": "workbench.view.explorer" },
 

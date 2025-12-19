@@ -121,5 +121,5 @@
     "quarto.preview.inBrowser": true,
     "quarto.render.previewType": "external",
     "editor.minimap.enabled": false,
-    "workbench.iconTheme": "catppuccin-mocha"
+    "workbench.iconTheme": "catppuccin-perfect-mocha"
 }

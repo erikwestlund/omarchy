@@ -4,3 +4,6 @@
 dev_sites:
   - domain: naaccord.test
     port: 8000
+  - domain: academic.test
+    port: 8010
+    wildcard: true
