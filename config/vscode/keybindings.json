@@ -42,10 +42,13 @@
     { "key": "ctrl+alt+[", "command": "workbench.action.terminal.focusPrevious", "when": "terminalFocus" },
     { "key": "ctrl+alt+]", "command": "workbench.action.terminal.focusNext", "when": "terminalFocus" },
 
-    // Sidebar views (Super+Alt+X/E/B) - keyd-application-mapper converts meta→ctrl
+    // Sidebar views (Super+Alt+X/E) - keyd-application-mapper converts meta→ctrl
     { "key": "alt+meta+x", "command": "workbench.view.extensions" },
     { "key": "ctrl+alt+e", "command": "workbench.view.explorer" },
-    { "key": "ctrl+alt+b", "command": "workbench.action.toggleAuxiliaryBar" },
+
+    // Build task (Super+Alt+B via keyd -> Ctrl+Alt+B) - unbind default Ctrl+Shift+B to avoid conflict with browser
+    { "key": "ctrl+shift+b", "command": "-workbench.action.tasks.build" },
+    { "key": "ctrl+alt+b", "command": "workbench.action.tasks.build" },
 
     // Focus editor (Super+E via keyd -> Ctrl+E)
     { "key": "ctrl+e", "command": "workbench.action.focusActiveEditorGroup" },

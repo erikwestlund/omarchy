@@ -110,9 +110,6 @@ pacman_packages:
   - freerdp
   - openbsd-netcat
 
-  # Calendar
-  - vdirsyncer
-  - khal
 
 # Packages installed via AUR (yay)
 aur_packages:
@@ -185,23 +182,25 @@ syncthing_chromium_folder_id: "erik-chromium"
 syncthing_photos_folder_id: "erik-photos"
 
 
-# Config directories to sync (config/ -> ~/.config/)
-config_dirs:
+# Config directories to COPY (require ansible processing like templates or mode changes)
+config_dirs_copy:
+  - hypr      # Templates looknfeel-host.conf, scripts need chmod
+  - waybar    # Templates waybar-host.css, config.jsonc modified
+
+# Config directories to SYMLINK (no ansible processing needed)
+config_dirs_symlink:
   - darkman
   - ghostty
-  - hypr
-  - khal
   - omarchy
   - projects
   - systemd
-  - vdirsyncer
-  - waybar
   - wireplumber
   - xdg-desktop-portal
 
 # Home dotfiles to sync (home/.foo -> ~/.foo)
 home_dotfiles:
   - .aliases
+  - .bashrc
   - .bashrc.local
   - .cheatsheet
   - .gitconfig

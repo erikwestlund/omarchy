@@ -1,0 +1,64 @@
+#!/bin/bash
+# Launch script for parkukb
+
+# === Helper Functions ===
+# Check if a window of given class exists on a workspace
+has_window_on_ws() {
+    local ws="$1"
+    local class="$2"
+    hyprctl clients -j | jq -e --arg ws "$ws" --arg class "$class" \
+        '.[] | select(.workspace.id == ($ws | tonumber) and (.class | ascii_downcase | contains($class | ascii_downcase)))' > /dev/null 2>&1
+}
+
+# === Project Config ===
+PROJECT_NAME="parkukb"
+PROJECT_DIR="/home/erik/Projects/parkukb"
+WORKSPACE_FILE="$HOME/Omarchy/projects/parkukb/parkukb.code-workspace"
+EDITOR="/usr/bin/code"
+DEFAULT_WS=5
+# DOCKER_COMPOSE=false
+# VIEW_URL=""
+# USE_SPLIT=false
+
+# === Parse Arguments ===
+WS=${1:-$DEFAULT_WS}
+
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: launch [WORKSPACE]"
+    echo ""
+    echo "  WORKSPACE  Workspace number (default: $DEFAULT_WS)"
+    echo ""
+    echo "Examples:"
+    echo "  launch      # Opens in workspace $DEFAULT_WS"
+    echo "  launch 3    # Opens in workspace 3"
+    exit 0
+fi
+
+# === Launch ===
+echo "Launching $PROJECT_NAME in workspace $WS..."
+
+# Switch to workspace
+hyprctl dispatch workspace $WS
+
+# Start Docker services (if configured)
+# if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+#     echo "Starting Docker services..."
+#     (cd "$PROJECT_DIR" && docker compose up -d)
+# fi
+
+# Launch editor (skip if already open on workspace)
+if has_window_on_ws "$WS" "code"; then
+    echo "Editor already open on workspace $WS, skipping..."
+else
+    echo "Opening $EDITOR..."
+    hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
+fi
+
+# Open view in split workspace (if configured)
+# if [ "$USE_SPLIT" = "true" ] && [ -n "$VIEW_URL" ]; then
+#     VIEW_WS=$((WS + 1))
+#     echo "Opening view in workspace $VIEW_WS..."
+#     hyprctl dispatch exec "[workspace $VIEW_WS silent]" "xdg-open '$VIEW_URL'"
+# fi
+
+echo "Done! $PROJECT_NAME launched in workspace $WS"

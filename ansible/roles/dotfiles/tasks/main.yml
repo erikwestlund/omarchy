@@ -13,22 +13,48 @@
     mode: '0644'
   when: not machine_file.stat.exists
 
-- name: Check which config directories exist
+# Config directories that need ansible processing (templates, mode changes)
+- name: Check which config directories to copy exist
   ansible.builtin.stat:
     path: "{{ config_src }}/{{ item }}"
-  loop: "{{ config_dirs }}"
-  register: config_dir_stats
+  loop: "{{ config_dirs_copy }}"
+  register: config_dir_copy_stats
 
-- name: Sync config directories to ~/.config/
+- name: Copy config directories to ~/.config/ (processed by ansible)
   ansible.builtin.copy:
     src: "{{ config_src }}/{{ item.item }}/"
     dest: "{{ ansible_facts.env.HOME }}/.config/{{ item.item }}/"
     mode: preserve
-  loop: "{{ config_dir_stats.results }}"
+  loop: "{{ config_dir_copy_stats.results }}"
   loop_control:
     label: "{{ item.item }}"
   when: item.stat.exists and item.stat.isdir
   register: config_sync_results
+
+# Config directories that can be symlinked (no ansible processing)
+- name: Check which config directories to symlink exist
+  ansible.builtin.stat:
+    path: "{{ config_src }}/{{ item }}"
+  loop: "{{ config_dirs_symlink }}"
+  register: config_dir_symlink_stats
+
+- name: Symlink config directories to ~/.config/
+  ansible.builtin.file:
+    src: "{{ config_src }}/{{ item.item }}"
+    dest: "{{ ansible_facts.env.HOME }}/.config/{{ item.item }}"
+    state: link
+    force: true
+  loop: "{{ config_dir_symlink_stats.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when: item.stat.exists and item.stat.isdir
+
+- name: Symlink starship config
+  ansible.builtin.file:
+    src: "{{ config_src }}/starship.toml"
+    dest: "{{ ansible_facts.env.HOME }}/.config/starship.toml"
+    state: link
+    force: true
 
 - name: Deploy host-specific Hyprland config
   ansible.builtin.template:
@@ -96,13 +122,6 @@
     label: "{{ item.item }}"
   when: item.stat.exists and item.stat.isreg
 
-- name: Ensure .bashrc sources .bashrc.local
-  ansible.builtin.lineinfile:
-    path: "{{ ansible_facts.env.HOME }}/.bashrc"
-    line: '[ -f ~/.bashrc.local ] && source ~/.bashrc.local'
-    create: true
-    mode: '0644'
-
 - name: Sync SSH config
   ansible.builtin.copy:
     src: "{{ home_src }}/.ssh/config"
@@ -119,19 +138,6 @@
     src: "{{ home_src }}/bin/"
     dest: "{{ ansible_facts.env.HOME }}/.bin/"
     mode: '0755'
-
-- name: Ensure ~/.bin is in PATH
-  ansible.builtin.lineinfile:
-    path: "{{ ansible_facts.env.HOME }}/.bashrc"
-    line: 'export PATH="$HOME/.bin:$PATH"'
-    create: true
-    mode: '0644'
-
-- name: Remove old ~/bin PATH entry
-  ansible.builtin.lineinfile:
-    path: "{{ ansible_facts.env.HOME }}/.bashrc"
-    line: 'export PATH="$HOME/bin:$PATH"'
-    state: absent
 
 - name: Make hypr scripts executable
   ansible.builtin.file:
@@ -224,11 +230,21 @@
     state: directory
     mode: '0755'
 
-- name: Deploy desktop file overrides
-  ansible.builtin.copy:
-    src: "{{ config_src }}/applications/"
-    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/"
-    mode: '0644'
+- name: Find desktop file overrides
+  ansible.builtin.find:
+    paths: "{{ config_src }}/applications"
+    patterns: "*.desktop"
+  register: desktop_files
+
+- name: Symlink desktop file overrides
+  ansible.builtin.file:
+    src: "{{ item.path }}"
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/{{ item.path | basename }}"
+    state: link
+    force: true
+  loop: "{{ desktop_files.files }}"
+  loop_control:
+    label: "{{ item.path | basename }}"
 
 - name: Remove old darkman script directories
   ansible.builtin.file:

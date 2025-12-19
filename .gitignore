@@ -32,7 +32,6 @@
 # Environment/secrets
 .env
 .env.*
-*.local
 
 # Ansible
 .vault_pass

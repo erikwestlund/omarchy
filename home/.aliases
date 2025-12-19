@@ -42,12 +42,6 @@ alias om-sync='git -C ~/Omarchy pull'
 alias ap="ansible-playbook"
 alias vault-edit="ansible-vault edit ~/Omarchy/ansible/vault/secrets.yml --vault-password-file ~/.vault_pass"
 
-# Calendar (khal + vdirsyncer)
-alias calsync="vdirsyncer sync"
-alias cal="khal calendar"
-alias agenda="khal list today 7d"
-alias today="khal list today today"
-
 # ls with color (GNU ls)
 alias ls="ls --color=auto"
 alias l="ls -lF"
@@ -271,4 +265,11 @@ alias tmmhmi="~/Omarchy/projects/mh-missing-data/tmux.sh"
 alias pmmhmi="cd ~/Omarchy/projects/mh-missing-data"
 alias mhmi="cd /home/erik/Projects/mh-missing-data"
 # END PROJECT mh-missing-data
+# BEGIN PROJECT parkukb
+alias ppark="~/Omarchy/projects/parkukb/launch"
+alias pkpark="~/Omarchy/projects/parkukb/kill"
+alias tmpark="~/Omarchy/projects/parkukb/tmux.sh"
+alias pmpark="cd ~/Omarchy/projects/parkukb"
+alias park="cd /home/erik/Projects/parkukb"
+# END PROJECT parkukb
 # Auto-generated project aliases

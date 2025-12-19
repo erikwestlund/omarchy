@@ -14,6 +14,20 @@
     - vault/secrets.yml
 
   pre_tasks:
+    - name: Check for uncommitted changes in Omarchy repo
+      ansible.builtin.command:
+        cmd: git status --porcelain
+        chdir: "{{ omarchy_repo }}"
+      register: git_status
+      changed_when: false
+      tags: always
+
+    - name: Warn about uncommitted changes
+      ansible.builtin.debug:
+        msg: "WARNING: Uncommitted changes in {{ omarchy_repo }}. Skipping git pull. Commit or stash changes to enable auto-pull."
+      when: git_status.stdout | length > 0
+      tags: always
+
     - name: Pull latest Omarchy repo
       ansible.builtin.git:
         repo: "{{ omarchy_repo_url | default('git@github.com:erikwestlund/omarchy.git') }}"
@@ -23,6 +37,8 @@
       tags: always
       register: repo_pull
       changed_when: repo_pull.changed
+      when: git_status.stdout | length == 0
+      ignore_errors: true
 
     - name: Detect Framework laptop
       ansible.builtin.set_fact:

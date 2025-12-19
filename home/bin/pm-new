@@ -85,8 +85,8 @@ PROJECT_PATH=""
 GITHUB_REPO=""
 CREATE_EMPTY_DIR=""
 echo ""
-echo "Link to a project directory?"
-echo "  - Will search ~/Projects for existing projects"
+echo "Link to a project directory in ~/Projects/$KEBAB_NAME?"
+echo "  - You can choose a different directory name if needed"
 echo "  - Can clone from GitHub or create empty directory"
 echo ""
 read -p "Link to project? [Y/n]: " LINK_PROJECT
@@ -108,9 +108,10 @@ if [[ ! "$LINK_PROJECT" =~ ^[Nn] ]]; then
             fi
         fi
     else
-        read -p "~/Projects/$KEBAB_NAME doesn't exist. Create? [Y/n]: " CREATE_DIR
+        echo "~/Projects/$KEBAB_NAME doesn't exist."
+        read -p "Create a project directory? [Y/n]: " CREATE_DIR
         if [[ ! "$CREATE_DIR" =~ ^[Nn] ]]; then
-            read -p "Clone from GitHub? (e.g., 'user/repo') or press Enter for empty dir: " GITHUB_REPO
+            read -p "Clone from GitHub? (e.g., 'user/repo') or Enter for empty dir: " GITHUB_REPO
             if [ -n "$GITHUB_REPO" ]; then
                 read -p "Directory name [$KEBAB_NAME]: " DIR_NAME
                 DIR_NAME="${DIR_NAME:-$KEBAB_NAME}"

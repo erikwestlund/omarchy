@@ -1,0 +1,8 @@
+# Add local and app directories to PATH
+export PATH="$HOME/.local/bin:/usr/share/positron/bin:$PATH"
+
+# Enable autocd - type directory name to cd into it
+shopt -s autocd
+
+# R user library - keep out of ~/
+export R_LIBS_USER="$HOME/.R/library"

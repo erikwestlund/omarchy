@@ -1,4 +1,7 @@
 {
+    "terminal.integrated.commandsToSkipShell": [
+        "workbench.action.quit"
+    ],
     "window.commandCenter": true,
     "files.associations": {
         "*.rmd": "markdown"
@@ -12,8 +15,10 @@
         "pwshGit": true
     },
     "terminal.integrated.env.linux": {
-        "TERM": "xterm-256color"
+        "TERM": "xterm-256color",
+        "COLORTERM": "truecolor"
     },
+    "terminal.integrated.shellIntegration.enabled": false,
     "editor.fontFamily": "'JetBrains Mono', 'Fira Code', monospace",
     "editor.fontSize": 12,
     "editor.lineHeight": 1.25,
