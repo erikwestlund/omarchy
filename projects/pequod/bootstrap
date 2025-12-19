@@ -1,0 +1,75 @@
+#!/bin/bash
+# Bootstrap script for pequod - ensures project is ready to run
+# Run this on a fresh machine or when setting up the project
+
+set -e
+
+# === Project Config ===
+PROJECT_NAME="pequod"
+PROJECT_DIR="/home/erik/Projects/pequod"
+GIT_REPO="git@github.com:table1/pequod.git"
+SECRETS_DIR="$HOME/.secrets/pequod"
+
+# Required secrets (relative to SECRETS_DIR -> PROJECT_DIR)
+SECRETS=(
+    "auth.json"
+    ".env"
+)
+
+echo "Bootstrapping $PROJECT_NAME..."
+
+# === 1. Ensure repo is cloned ===
+if [ -d "$PROJECT_DIR/.git" ]; then
+    echo "[OK] Repository already exists at $PROJECT_DIR"
+else
+    echo "[...] Cloning repository..."
+    mkdir -p "$(dirname "$PROJECT_DIR")"
+    git clone "$GIT_REPO" "$PROJECT_DIR"
+    echo "[OK] Repository cloned"
+fi
+
+# === 2. Ensure secrets are in place ===
+if [ ! -d "$SECRETS_DIR" ]; then
+    echo "[ERROR] Secrets directory not found: $SECRETS_DIR"
+    echo "       Run 'secrets-pull' first to fetch secrets from B2"
+    exit 1
+fi
+
+for secret in "${SECRETS[@]}"; do
+    src="$SECRETS_DIR/$secret"
+    dest="$PROJECT_DIR/$secret"
+
+    if [ ! -f "$src" ]; then
+        echo "[ERROR] Secret not found: $src"
+        exit 1
+    fi
+
+    if [ -f "$dest" ]; then
+        # Check if they're the same
+        if cmp -s "$src" "$dest"; then
+            echo "[OK] Secret already in place: $secret"
+        else
+            echo "[...] Updating secret: $secret"
+            cp "$src" "$dest"
+            chmod 600 "$dest"
+            echo "[OK] Secret updated: $secret"
+        fi
+    else
+        echo "[...] Copying secret: $secret"
+        cp "$src" "$dest"
+        chmod 600 "$dest"
+        echo "[OK] Secret copied: $secret"
+    fi
+done
+
+# === 3. Build Docker images ===
+if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+    echo "[...] Building Docker images..."
+    (cd "$PROJECT_DIR" && docker compose build)
+    echo "[OK] Docker images built"
+else
+    echo "[SKIP] No docker-compose.yml found"
+fi
+
+echo ""
+echo "Bootstrap complete! Run 'launch' to start $PROJECT_NAME."

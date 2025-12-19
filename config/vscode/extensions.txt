@@ -5,7 +5,7 @@ anysphere.cursorpyright
 batisteo.vscode-django
 bmewburn.vscode-intelephense-client
 catppuccin.catppuccin-vsc
-catppuccin.catppuccin-vsc-icons
+thang-nm.catppuccin-perfect-icons
 dbaeumer.vscode-eslint
 donjayamanne.python-environment-manager
 donjayamanne.python-extension-pack

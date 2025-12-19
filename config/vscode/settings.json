@@ -1,4 +1,9 @@
 {
+    // Prevent Settings Sync from overwriting theme settings
+    "settingsSync.ignoredSettings": [
+        "workbench.colorTheme",
+        "workbench.iconTheme"
+    ],
     "terminal.integrated.commandsToSkipShell": [
         "workbench.action.quit"
     ],
@@ -116,7 +121,7 @@
         "terminal.ansiWhite": "#c0caf5",
         "terminal.ansiYellow": "#e0af68"
     },
-    "workbench.colorTheme": "null",
+    "workbench.colorTheme": "Catppuccin Mocha",
     "terminal.integrated.enableMultiLinePasteWarning": false,
     "quarto.preview.inBrowser": true,
     "quarto.render.previewType": "external",
