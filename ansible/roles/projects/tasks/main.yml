@@ -67,6 +67,7 @@
       alias p{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/launch"
       alias pk{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/kill"
       alias tm{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/tmux.sh"
+      alias b{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/bootstrap"
       alias pm{{ project_alias }}="cd ~/Omarchy/projects/{{ project_name }}"
       alias {{ project_alias }}="cd {{ project_path }}"
   when: project_path | length > 0
@@ -80,6 +81,7 @@
       alias p{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/launch"
       alias pk{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/kill"
       alias tm{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/tmux.sh"
+      alias b{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/bootstrap"
       alias pm{{ project_alias }}="cd ~/Omarchy/projects/{{ project_name }}"
   when: project_path | length == 0
 
@@ -98,5 +100,6 @@
         p{{ project_alias }}   - Launch project (VS Code, docker, etc.)
         pk{{ project_alias }}  - Kill project (stop docker, close windows)
         tm{{ project_alias }}  - Launch tmux session
+        b{{ project_alias }}   - Bootstrap project (clone, secrets, build)
         pm{{ project_alias }}  - cd to project management dir
         {{ project_alias }}    - cd to {{ project_path }}

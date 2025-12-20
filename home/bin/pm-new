@@ -136,7 +136,7 @@ fi
 
 # 8. Alias
 echo ""
-echo "Alias creates: p{alias} (launch), pk{alias} (kill), tm{alias} (tmux), pm{alias} (PM dir), {alias} (project dir)"
+echo "Alias creates: p{alias} (launch), pk{alias} (kill), tm{alias} (tmux), b{alias} (bootstrap), pm{alias} (PM dir), {alias} (project dir)"
 read -p "Alias (e.g., 'hl' creates phl, pkhl, tmhl, pmhl, hl): " PROJECT_ALIAS
 if [ -z "$PROJECT_ALIAS" ]; then
     echo "Error: Alias is required"
@@ -161,10 +161,10 @@ if [ -n "$PROJECT_PATH" ]; then
     else
         echo "Project:  $PROJECT_PATH"
     fi
-    echo "Aliases:  p$PROJECT_ALIAS, pk$PROJECT_ALIAS, tm$PROJECT_ALIAS, pm$PROJECT_ALIAS, $PROJECT_ALIAS"
+    echo "Aliases:  p$PROJECT_ALIAS, pk$PROJECT_ALIAS, tm$PROJECT_ALIAS, b$PROJECT_ALIAS, pm$PROJECT_ALIAS, $PROJECT_ALIAS"
 else
     echo "Project:  (none)"
-    echo "Aliases:  p$PROJECT_ALIAS, pk$PROJECT_ALIAS, tm$PROJECT_ALIAS, pm$PROJECT_ALIAS"
+    echo "Aliases:  p$PROJECT_ALIAS, pk$PROJECT_ALIAS, tm$PROJECT_ALIAS, b$PROJECT_ALIAS, pm$PROJECT_ALIAS"
 fi
 echo ""
 read -p "Create? [Y/n]: " CONFIRM
@@ -232,6 +232,7 @@ echo "ALIASES (available after: source ~/.aliases)"
 echo "   p$PROJECT_ALIAS   →  Launch project ($PROJECT_EDITOR, docker, etc.)"
 echo "   pk$PROJECT_ALIAS  →  Kill project (stop docker, close windows)"
 echo "   tm$PROJECT_ALIAS  →  Launch tmux session"
+echo "   b$PROJECT_ALIAS   →  Bootstrap project (clone, secrets, build)"
 echo "   pm$PROJECT_ALIAS  →  cd to project management dir"
 if [ -n "$PROJECT_PATH" ]; then
     echo "   $PROJECT_ALIAS    →  cd to project code"

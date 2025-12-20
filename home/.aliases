@@ -282,6 +282,7 @@ alias park="cd /home/erik/Projects/parkukb"
 alias ppeq="~/Omarchy/projects/pequod/launch"
 alias pkpeq="~/Omarchy/projects/pequod/kill"
 alias tmpeq="~/Omarchy/projects/pequod/tmux.sh"
+alias bpeq="~/Omarchy/projects/pequod/bootstrap"
 alias pmpeq="cd ~/Omarchy/projects/pequod"
 alias peq="cd /home/erik/Projects/pequod"
 # END PROJECT pequod

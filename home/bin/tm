@@ -1,0 +1,57 @@
+#!/bin/bash
+# Tmux project management wrapper
+# Subcommands: new, ls, a (attach), k (kill)
+
+set -e
+
+usage() {
+    echo "Usage: tm <command> [args]"
+    echo ""
+    echo "Commands:"
+    echo "  new          Create new project (launches pm-new)"
+    echo "  ls           List tmux sessions"
+    echo "  a <session>  Attach to session"
+    echo "  k <session>  Kill session"
+    echo ""
+    echo "Examples:"
+    echo "  tm new       # Interactive new project setup"
+    echo "  tm ls        # Show all sessions"
+    echo "  tm a peq     # Attach to pequod session"
+    echo "  tm k peq     # Kill pequod session"
+}
+
+case "$1" in
+    new)
+        exec ~/.bin/pm-new
+        ;;
+    ls)
+        tmux ls 2>/dev/null || echo "No tmux sessions."
+        ;;
+    a|attach)
+        if [ -z "$2" ]; then
+            echo "Usage: tm a <session>"
+            exit 1
+        fi
+        tmux attach -t "$2"
+        ;;
+    k|kill)
+        if [ -z "$2" ]; then
+            echo "Usage: tm k <session>"
+            exit 1
+        fi
+        tmux kill-session -t "$2"
+        ;;
+    -h|--help|help)
+        usage
+        ;;
+    *)
+        if [ -z "$1" ]; then
+            usage
+        else
+            echo "Unknown command: $1"
+            echo ""
+            usage
+            exit 1
+        fi
+        ;;
+esac
