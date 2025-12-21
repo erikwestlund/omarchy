@@ -7,9 +7,9 @@ keyd_system_shortcuts:
   meta:
     - { key: a, action: "C-a" }      # Select all
     - { key: f, action: "C-f" }      # Find
-  meta_shift:
-    - { key: a, action: "C-S-a" }    # Shift variant
-    - { key: f, action: "C-S-f" }    # Shift variant
+  meta_shift: []
+    # EMPTY - was blocking Super+Shift+H/J/K/L from reaching Hyprland
+    # Super+Shift+H/J/K/L must pass through for window management
   meta_alt:
     - { key: l, action: "C-l" }      # Address bar (browser)
 

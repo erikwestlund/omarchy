@@ -47,10 +47,12 @@ p = f9
 {{ shortcut.key }} = {{ shortcut.action }}
 {% endfor %}
 
+{% if keyd_system_shortcuts.meta_shift | length > 0 %}
 [meta+shift]
 {% for shortcut in keyd_system_shortcuts.meta_shift %}
 {{ shortcut.key }} = {{ shortcut.action }}
 {% endfor %}
+{% endif %}
 
 [meta+alt]
 {% for shortcut in keyd_system_shortcuts.meta_alt %}
