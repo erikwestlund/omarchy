@@ -29,6 +29,21 @@
     - keybindings.json
     - snippets
 
+# Fix VS Code theme persistence issue
+# VS Code caches theme in globalStorage/storage.json which overrides settings.json
+- name: Check if VS Code globalStorage exists
+  ansible.builtin.stat:
+    path: "{{ ansible_facts.env.HOME }}/.config/Code/User/globalStorage/storage.json"
+  register: vscode_storage
+
+- name: Remove theme cache from VS Code globalStorage
+  ansible.builtin.shell:
+    cmd: |
+      jq 'del(.theme, .themeBackground)' "{{ ansible_facts.env.HOME }}/.config/Code/User/globalStorage/storage.json" > /tmp/vscode_storage.json.tmp
+      mv /tmp/vscode_storage.json.tmp "{{ ansible_facts.env.HOME }}/.config/Code/User/globalStorage/storage.json"
+  when: vscode_storage.stat.exists
+  changed_when: false
+
 # Positron (separate config from VS Code)
 - name: Check if Positron is installed
   ansible.builtin.stat:
@@ -63,6 +78,21 @@
     - keybindings.json
     - snippets
   when: positron_dir.stat.exists
+
+# Fix Positron theme persistence issue
+- name: Check if Positron globalStorage exists
+  ansible.builtin.stat:
+    path: "{{ ansible_facts.env.HOME }}/.config/Positron/User/globalStorage/storage.json"
+  register: positron_storage
+  when: positron_dir.stat.exists
+
+- name: Remove theme cache from Positron globalStorage
+  ansible.builtin.shell:
+    cmd: |
+      jq 'del(.theme, .themeBackground)' "{{ ansible_facts.env.HOME }}/.config/Positron/User/globalStorage/storage.json" > /tmp/positron_storage.json.tmp
+      mv /tmp/positron_storage.json.tmp "{{ ansible_facts.env.HOME }}/.config/Positron/User/globalStorage/storage.json"
+  when: positron_dir.stat.exists and positron_storage.stat.exists
+  changed_when: false
 
 # Extensions (optional - run with -e "vscode_install_extensions=true")
 - name: Read extensions list
