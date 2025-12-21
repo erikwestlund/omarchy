@@ -248,6 +248,35 @@ sudo keyd reload      # Reload after changes
 | Super + K | Show all hotkeys |
 | Super + Return | Terminal |
 
+## Troubleshooting
+
+### Escape Sequences Appearing in Tmux
+
+**Symptom**: Raw escape codes like `]10;rgb:a9a9/b1b1/d6d6` or `]11;rgb:1a1a/1b1b/2626` appear when attaching to tmux or after switching focus.
+
+**Cause**: Tmux's `escape-time` set too low (especially 0) causes it to timeout before receiving terminal responses to capability queries (OSC 10/11 color queries, device attributes). These responses then leak as visible text.
+
+**Fix**: Set `escape-time` to at least 50ms in `home/.tmux.conf`:
+
+```tmux
+set -s escape-time 50
+```
+
+Then reload:
+```bash
+tmux source-file ~/.tmux.conf
+```
+
+**Why it happens**:
+- Applications (like Starship) query terminal colors during initialization
+- With `escape-time 0`, tmux gives up immediately waiting for responses
+- Terminal responses arrive "too late" and display as raw text
+- 50ms provides enough time while remaining responsive for Escape key detection
+
+**References**:
+- [OSC terminal color query leak issue](https://github.com/anthropics/claude-code/issues/12910)
+- [Tmux escape sequence timing problem](https://github.com/PowerShell/Win32-OpenSSH/issues/2275)
+
 ## Reference
 
 - [Omarchy Manual](https://learn.omacom.io/2/the-omarchy-manual/91/welcome-to-omarchy)

@@ -5,7 +5,20 @@
         "workbench.iconTheme"
     ],
     "terminal.integrated.commandsToSkipShell": [
-        "workbench.action.quit"
+        "workbench.action.quit",
+        "workbench.action.toggleSidebarVisibility",
+        "workbench.view.explorer",
+        "workbench.view.extensions",
+        "workbench.action.terminal.toggleTerminal",
+        "workbench.action.closeWindow",
+        "workbench.action.gotoSymbol",
+        "workbench.action.toggleAuxiliaryBar",
+        "workbench.action.togglePanel",
+        "workbench.action.tasks.build",
+        "workbench.action.focusActiveEditorGroup",
+        "workbench.action.previousEditor",
+        "workbench.action.nextEditor",
+        "workbench.action.files.newUntitledFile"
     ],
     "window.commandCenter": true,
     "files.associations": {
@@ -126,5 +139,5 @@
     "quarto.preview.inBrowser": true,
     "quarto.render.previewType": "external",
     "editor.minimap.enabled": false,
-    "workbench.iconTheme": "catppuccin-perfect-mocha"
+    "workbench.iconTheme": "catppuccin-mocha"
 }

@@ -78,6 +78,13 @@
     mode: '0644'
   register: hypr_host_config
 
+- name: Deploy host-specific hypridle config (laptop suspend fix)
+  ansible.builtin.template:
+    src: hypridle.conf.j2
+    dest: "{{ ansible_facts.env.HOME }}/.config/hypr/hypridle.conf"
+    mode: '0644'
+  when: hypridle_after_sleep_delay is defined
+
 - name: Deploy host-specific Waybar CSS
   ansible.builtin.template:
     src: waybar-host.css.j2

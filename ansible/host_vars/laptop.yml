@@ -33,6 +33,11 @@ keyboards:
 # Framework-specific settings
 is_framework: true
 
+# Hypridle: delay (seconds) after suspend resume before turning on DPMS
+# This helps prevent black screen/broken lock screen on resume.
+# Set to 0 or remove to disable. See: https://github.com/basecamp/omarchy/issues/3293
+hypridle_after_sleep_delay: 1
+
 # Theme - using local base-theme (no remote fetch)
 # theme_git_url: commented out to use local base-theme
 theme_background: "1.png"
