@@ -108,6 +108,8 @@ pacman_packages:
   - edk2-ovmf
   - swtpm
   - freerdp
+  - remmina
+  - libvncserver
   - openbsd-netcat
 
 
@@ -128,6 +130,7 @@ aur_packages:
   # Communication
   - slack-desktop
   - zoom
+  - bluebubbles-bin
 
   # R ecosystem
   - rstudio-desktop-bin

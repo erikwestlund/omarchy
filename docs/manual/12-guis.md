@@ -22,6 +22,13 @@ Complete office suite including word processor, spreadsheet, presentations, and 
 The pioneer of E2E encrypted messaging for secure communications.
 - Launch: `Super + Shift + G`
 
+### BlueBubbles
+Cross-platform iMessage client that connects to a Mac server, enabling iMessage on Linux.
+- Launch: Application launcher (`Super + Space`)
+- Requirements: Mac running BlueBubbles Server as message relay
+- Configuration: Enter Mac server IP/hostname and password on first launch
+- Package: `bluebubbles-bin` (AUR)
+
 ### mpv
 Media player supporting diverse video sources and formats.
 - Launch: Application launcher or double-click videos in file manager
