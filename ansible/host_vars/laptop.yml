@@ -29,6 +29,7 @@ hypr_rounding: 16
 keyboards:
   - framework
   - logitech
+  - logitech-bluetooth
 
 # Framework-specific settings
 is_framework: true

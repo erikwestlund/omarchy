@@ -41,6 +41,23 @@
   when: "'logitech' not in keyboards | default([])"
   notify: Reload keyd
 
+- name: Create Logitech Bluetooth keyd config (machine-specific)
+  become: true
+  ansible.builtin.template:
+    src: "logitech-bluetooth-{{ inventory_hostname }}.conf.j2"
+    dest: /etc/keyd/logitech-bluetooth.conf
+    mode: '0644'
+  when: "'logitech-bluetooth' in keyboards | default([])"
+  notify: Reload keyd
+
+- name: Remove Logitech Bluetooth keyd config if not needed
+  become: true
+  ansible.builtin.file:
+    path: /etc/keyd/logitech-bluetooth.conf
+    state: absent
+  when: "'logitech-bluetooth' not in keyboards | default([])"
+  notify: Reload keyd
+
 - name: Remove legacy mac-shortcuts.conf
   become: true
   ansible.builtin.file:
