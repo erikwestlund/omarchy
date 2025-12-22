@@ -16,7 +16,7 @@
 │ Bright+/-    Direct   │ om-sync    Git pull   ├─ Text (keyd) ─────────┤ Alt+Sh+↑/↓ Move line  │                       │
 │ Prev/Play/Nx Direct   │ om         Playbook   │ Opt+Sh+←/→ Line sel  │ Alt+↑/↓    Doc start  │                       │
 ├─ Help ────────────────┤                       │ Opt+Enter  C-Enter   │ Ctrl+↑/↓   Page Up/Dn │                       │
-│ Alt+K        Hotkeys  │                       │                       │ Super+B    Sidebar    │                       │
+│ Alt+K        Hotkeys  │                       │                       │ Super+E    Sidebar    │                       │
 │ Super+Alt+H  Cheatsht │                       │                       │ Super+Alt+L Format    │                       │
 │ Super+Alt+J  Agenda   │                       │                       │ Ctrl+1-9   Tabs       │                       │
 │                       │                       │                       │ Ctrl+J     Panel      │                       │
