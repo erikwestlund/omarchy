@@ -56,11 +56,9 @@
     { "key": "ctrl+shift+b", "command": "-workbench.action.tasks.build" },
     { "key": "ctrl+alt+b", "command": "workbench.action.tasks.build" },
 
-    // Focus editor (Super+E via keyd -> Ctrl+E)
-    { "key": "ctrl+e", "command": "workbench.action.focusActiveEditorGroup" },
-
-    // Toggle sidebar (Super+B -> Meta+B)
-    { "key": "meta+b", "command": "workbench.action.toggleSidebarVisibility" },
+    // Toggle sidebar (Super+E via keyd -> Ctrl+E)
+    { "key": "ctrl+b", "command": "-workbench.action.toggleSidebarVisibility" },
+    { "key": "ctrl+e", "command": "workbench.action.toggleSidebarVisibility" },
 
     // Kill terminal with Super+W (via keyd -> Ctrl+W)
     { "key": "ctrl+w", "command": "workbench.action.terminal.kill", "when": "terminalFocus" },

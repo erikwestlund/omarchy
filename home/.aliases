@@ -279,8 +279,8 @@ alias pmpark="cd ~/Omarchy/projects/parkukb"
 alias park="cd /home/erik/Projects/parkukb"
 # END PROJECT parkukb
 # BEGIN PROJECT pequod
-alias ppeq="~/Omarchy/projects/pequod/launch"
-alias pkpeq="~/Omarchy/projects/pequod/kill"
+alias lpeq="~/Omarchy/projects/pequod/launch"
+alias kpeq="~/Omarchy/projects/pequod/kill"
 alias tmpeq="~/Omarchy/projects/pequod/tmux.sh"
 alias bpeq="~/Omarchy/projects/pequod/bootstrap"
 alias pmpeq="cd ~/Omarchy/projects/pequod"
@@ -293,6 +293,9 @@ php() {
         /home/erik/Projects/pequod*)
             docker exec -it pequod-php php "$@"
             ;;
+        /home/erik/Projects/better-shoes*)
+            docker exec -it better-shoes-php php "$@"
+            ;;
         *)
             command php "$@"
             ;;
@@ -303,6 +306,9 @@ art() {
     case "$PWD" in
         /home/erik/Projects/pequod*)
             docker exec -it pequod-php php artisan "$@"
+            ;;
+        /home/erik/Projects/better-shoes*)
+            docker exec -it better-shoes-php php artisan "$@"
             ;;
         *)
             php artisan "$@"
@@ -315,9 +321,54 @@ composer() {
         /home/erik/Projects/pequod*)
             docker exec -it pequod-php composer "$@"
             ;;
+        /home/erik/Projects/better-shoes*)
+            docker exec -it better-shoes-php composer "$@"
+            ;;
         *)
             command composer "$@"
             ;;
     esac
 }
+
+npm() {
+    case "$PWD" in
+        /home/erik/Projects/pequod*)
+            docker exec -it pequod-php npm "$@"
+            ;;
+        /home/erik/Projects/better-shoes*)
+            docker exec -it better-shoes-php npm "$@"
+            ;;
+        *)
+            command npm "$@"
+            ;;
+    esac
+}
+
+node() {
+    case "$PWD" in
+        /home/erik/Projects/pequod*)
+            docker exec -it pequod-php node "$@"
+            ;;
+        /home/erik/Projects/better-shoes*)
+            docker exec -it better-shoes-php node "$@"
+            ;;
+        *)
+            command node "$@"
+            ;;
+    esac
+}
+# BEGIN PROJECT better-shoes
+alias lbs="~/Omarchy/projects/better-shoes/launch"
+alias kbs="~/Omarchy/projects/better-shoes/kill"
+alias tmbs="~/Omarchy/projects/better-shoes/tmux.sh"
+alias bbs="~/Omarchy/projects/better-shoes/bootstrap"
+alias pmbs="cd ~/Omarchy/projects/better-shoes"
+alias bs="cd /home/erik/Projects/better-shoes"
+
+# Restore better-shoes database from dump
+bs-restore() {
+    local file="${1:-better_shoes.sql}"
+    docker exec -i better-shoes-postgres psql -U better_shoes -d better_shoes < "/home/erik/Projects/better-shoes/storage/app/dumps/$file" 2>&1 | tail -100
+}
+# END PROJECT better-shoes
 # Auto-generated project aliases

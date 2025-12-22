@@ -36,31 +36,6 @@ F-key navigation is implemented:
 
 Note: Alt+F9 is broken by Framework EC firmware - use Super+Shift+9 to move windows to workspace 9.
 
-## Laptop Suspend/Resume Fix
-
-The laptop has a custom `hypridle.conf` deployed via Ansible to fix black screen/broken lock screen issues after suspend resume.
-
-**Problem**: After resuming from suspend, the display stack may not be ready when hyprlock/hyprland tries to interact with it, causing crashes or black screens.
-
-**Solution**: Add a delay after resume before turning on DPMS:
-```
-after_sleep_cmd = sleep 1 && hyprctl dispatch dpms on
-```
-
-**Configuration**: Set in `ansible/host_vars/laptop.yml`:
-```yaml
-hypridle_after_sleep_delay: 1  # seconds to wait after resume
-```
-
-**To revert**:
-1. Remove or set to 0: `hypridle_after_sleep_delay: 0` in `host_vars/laptop.yml`
-2. Re-run ansible: `ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l laptop --tags dotfiles`
-3. Or simply delete `~/.config/hypr/hypridle.conf` to fall back to Omarchy defaults
-
-**References**:
-- https://github.com/basecamp/omarchy/issues/3293
-- https://github.com/basecamp/omarchy/issues/1147
-
 ## Reference
 
 - Hyprland wiki: https://wiki.hyprland.org/

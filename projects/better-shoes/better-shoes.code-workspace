@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "/home/erik/Projects/better-shoes"
+		}
+	],
+	"settings": {
+		"workbench.colorTheme": "Catppuccin Mocha",
+		"workbench.iconTheme": "catppuccin-perfect-mocha",
+		"terminal.integrated.env.linux": {
+			"TERM": "xterm-256color"
+		}
+	}
+}

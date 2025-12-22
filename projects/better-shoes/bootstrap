@@ -1,0 +1,142 @@
+#!/bin/bash
+# Bootstrap script for better-shoes - ensures project is ready to run
+# Run this on a fresh machine or when setting up the project
+
+set -e
+
+# === Project Config ===
+PROJECT_NAME="better-shoes"
+PROJECT_DIR="/home/erik/Projects/better-shoes"
+GIT_REPO="git@github.com:letsrun/better-shoes.git"
+SECRETS_DIR="$HOME/.secrets/better-shoes"
+
+# Required secrets (relative to SECRETS_DIR -> PROJECT_DIR)
+SECRETS=(
+    ".env"
+)
+
+# Optional secrets (won't fail if missing)
+OPTIONAL_SECRETS=(
+    "auth.json"
+)
+
+echo "Bootstrapping $PROJECT_NAME..."
+
+# === 1. Ensure repo is cloned ===
+if [ -d "$PROJECT_DIR/.git" ]; then
+    echo "[OK] Repository already exists at $PROJECT_DIR"
+else
+    echo "[...] Cloning repository..."
+    mkdir -p "$(dirname "$PROJECT_DIR")"
+    git clone "$GIT_REPO" "$PROJECT_DIR"
+    echo "[OK] Repository cloned"
+fi
+
+# === 2. Ensure secrets are in place ===
+if [ ! -d "$SECRETS_DIR" ]; then
+    echo "[ERROR] Secrets directory not found: $SECRETS_DIR"
+    echo "       Run 'secrets-pull' first to fetch secrets from B2"
+    exit 1
+fi
+
+for secret in "${SECRETS[@]}"; do
+    src="$SECRETS_DIR/$secret"
+    dest="$PROJECT_DIR/$secret"
+
+    if [ ! -f "$src" ]; then
+        echo "[ERROR] Secret not found: $src"
+        exit 1
+    fi
+
+    if [ -f "$dest" ]; then
+        # Check if they're the same
+        if cmp -s "$src" "$dest"; then
+            echo "[OK] Secret already in place: $secret"
+        else
+            echo "[...] Updating secret: $secret"
+            cp "$src" "$dest"
+            chmod 600 "$dest"
+            echo "[OK] Secret updated: $secret"
+        fi
+    else
+        echo "[...] Copying secret: $secret"
+        cp "$src" "$dest"
+        chmod 600 "$dest"
+        echo "[OK] Secret copied: $secret"
+    fi
+done
+
+# Copy optional secrets if they exist
+for secret in "${OPTIONAL_SECRETS[@]}"; do
+    src="$SECRETS_DIR/$secret"
+    dest="$PROJECT_DIR/$secret"
+
+    if [ -f "$src" ]; then
+        if [ -f "$dest" ]; then
+            if cmp -s "$src" "$dest"; then
+                echo "[OK] Optional secret already in place: $secret"
+            else
+                echo "[...] Updating optional secret: $secret"
+                cp "$src" "$dest"
+                chmod 600 "$dest"
+                echo "[OK] Optional secret updated: $secret"
+            fi
+        else
+            echo "[...] Copying optional secret: $secret"
+            cp "$src" "$dest"
+            chmod 600 "$dest"
+            echo "[OK] Optional secret copied: $secret"
+        fi
+    else
+        echo "[SKIP] Optional secret not found (skipping): $secret"
+    fi
+done
+
+# === 3. Build Docker images ===
+if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+    echo "[...] Building Docker images..."
+    (cd "$PROJECT_DIR" && docker compose build)
+    echo "[OK] Docker images built"
+else
+    echo "[SKIP] No docker-compose.yml found"
+fi
+
+# === 4. Start Docker services ===
+echo "[...] Starting Docker services..."
+(cd "$PROJECT_DIR" && docker compose up -d)
+echo "[OK] Docker services started"
+
+# === 5. Install Composer dependencies ===
+if [ -f "$PROJECT_DIR/composer.json" ]; then
+    echo "[...] Installing Composer dependencies..."
+    (cd "$PROJECT_DIR" && docker compose exec -T php composer install --no-interaction --prefer-dist --optimize-autoloader)
+    echo "[OK] Composer dependencies installed"
+fi
+
+# === 6. Generate Laravel app key ===
+if [ -f "$PROJECT_DIR/artisan" ]; then
+    # Check if APP_KEY is set
+    if ! grep -q "APP_KEY=base64:" "$PROJECT_DIR/.env" 2>/dev/null; then
+        echo "[...] Generating Laravel app key..."
+        (cd "$PROJECT_DIR" && docker compose exec -T php php artisan key:generate --no-interaction)
+        echo "[OK] App key generated"
+    else
+        echo "[OK] App key already set"
+    fi
+fi
+
+# === 7. Run database migrations ===
+if [ -f "$PROJECT_DIR/artisan" ]; then
+    echo "[...] Running database migrations..."
+    (cd "$PROJECT_DIR" && docker compose exec -T php php artisan migrate --force --no-interaction) || echo "[WARN] Migrations failed (may need manual attention)"
+    echo "[OK] Database setup complete"
+fi
+
+echo ""
+echo "Bootstrap complete! Run 'lbs' to start $PROJECT_NAME."
+echo ""
+echo "Services:"
+echo "  - App: http://better-shoes.test"
+echo "  - MinIO Console: http://localhost:9003"
+echo "  - Mailpit: http://localhost:8026"
+echo "  - Meilisearch: http://localhost:7700"

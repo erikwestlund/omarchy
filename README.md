@@ -250,6 +250,31 @@ sudo keyd reload      # Reload after changes
 
 ## Troubleshooting
 
+### Black Screen / Broken Lock Screen After Laptop Suspend
+
+**Symptom**: After resuming from suspend, the lock screen is broken or you see a black screen requiring a hard reboot.
+
+**Cause**: The display stack isn't fully ready when hyprlock/hypridle tries to interact with it after resume. This is a known issue with Hyprland on some hardware.
+
+**Fix**: A delay is added after resume before turning on DPMS. Configured in `ansible/host_vars/laptop.yml`:
+
+```yaml
+hypridle_after_sleep_delay: 1  # seconds to wait after resume
+```
+
+This deploys a custom `~/.config/hypr/hypridle.conf` with:
+```
+after_sleep_cmd = sleep 1 && hyprctl dispatch dpms on
+```
+
+**To adjust**: Increase the delay value if issues persist (try 2).
+
+**To revert**: Set `hypridle_after_sleep_delay: 0` in `host_vars/laptop.yml` and re-run `om --tags dotfiles`, or delete `~/.config/hypr/hypridle.conf`.
+
+**References**:
+- https://github.com/basecamp/omarchy/issues/3293
+- https://github.com/basecamp/omarchy/issues/1147
+
 ### Escape Sequences Appearing in Tmux
 
 **Symptom**: Raw escape codes like `]10;rgb:a9a9/b1b1/d6d6` or `]11;rgb:1a1a/1b1b/2626` appear when attaching to tmux or after switching focus.

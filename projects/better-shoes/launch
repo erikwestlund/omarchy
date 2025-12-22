@@ -1,0 +1,149 @@
+#!/bin/bash
+# Launch script for better-shoes
+#
+# This script launches the better-shoes development environment with:
+# - Workspace management (switches to target workspace)
+# - Docker service orchestration (starts and waits for health checks)
+# - Window positioning (adapts based on desktop vs laptop mode)
+# - Notification system (shows progress updates)
+#
+# Desktop mode: Browser and editor on same workspace (browser right, editor left)
+# Laptop mode: Editor on WS N, browser on WS N+1, then return to WS N
+#
+# Race condition prevention: Waits for windows to actually appear before
+# switching workspaces to ensure correct positioning.
+
+# === Helper Functions ===
+# Check if a window of given class exists on a workspace
+has_window_on_ws() {
+    local ws="$1"
+    local class="$2"
+    hyprctl clients -j | jq -e --arg ws "$ws" --arg class "$class" \
+        '.[] | select(.workspace.id == ($ws | tonumber) and (.class | ascii_downcase | contains($class | ascii_downcase)))' > /dev/null 2>&1
+}
+
+# === Project Config ===
+PROJECT_NAME="better-shoes"
+PROJECT_DIR="/home/erik/Projects/better-shoes"
+WORKSPACE_FILE="$HOME/Omarchy/projects/better-shoes/better-shoes.code-workspace"
+EDITOR="/usr/bin/code"
+DEFAULT_WS=2
+DOCKER_COMPOSE=true
+VIEW_URL="https://better-shoes.test"
+
+# === Parse Arguments ===
+WS=${1:-$DEFAULT_WS}
+
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: launch [WORKSPACE]"
+    echo ""
+    echo "  WORKSPACE  Workspace number (default: $DEFAULT_WS)"
+    echo ""
+    echo "Examples:"
+    echo "  launch      # Opens in workspace $DEFAULT_WS"
+    echo "  launch 3    # Opens in workspace 3"
+    exit 0
+fi
+
+# === Launch ===
+notify-send -u low "Better Shoes" "Launching..." -t 5000
+
+# Switch to workspace and wait for it to complete
+hyprctl dispatch workspace $WS
+sleep 0.3
+
+# Start Docker services (docker-compose.yml = dev, docker-compose.prod.yml = prod)
+if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+    notify-send -u low "Better Shoes" "Starting Docker services..." -t 4000
+    (cd "$PROJECT_DIR" && docker compose up -d) || {
+        notify-send -u critical "Better Shoes" "Failed to start Docker services" -t 5000
+        exit 1
+    }
+
+    # Wait for services to be healthy
+    MAX_WAIT=60  # Maximum wait time in seconds
+    ELAPSED=0
+    WAITING_NOTIFIED=false
+
+    while [ $ELAPSED -lt $MAX_WAIT ]; do
+        # Check if all services with health checks are healthy
+        UNHEALTHY=$(cd "$PROJECT_DIR" && docker compose ps --format json | jq -r 'select(.Health != "" and .Health != "healthy") | .Service' 2>/dev/null)
+
+        if [ -z "$UNHEALTHY" ]; then
+            break
+        fi
+
+        # Only show waiting notification if it's taking more than 4 seconds
+        if [ $ELAPSED -ge 4 ] && [ "$WAITING_NOTIFIED" = false ]; then
+            notify-send -u normal "Better Shoes" "Waiting for services..." -t 10000
+            WAITING_NOTIFIED=true
+        fi
+
+        sleep 2
+        ELAPSED=$((ELAPSED + 2))
+    done
+
+    if [ $ELAPSED -ge $MAX_WAIT ]; then
+        notify-send -u normal "Better Shoes" "Services slow, opening anyway..." -t 3000
+    fi
+fi
+
+MACHINE=$(cat ~/.machine 2>/dev/null)
+
+if [ "$MACHINE" = "desktop" ]; then
+    # Desktop: open browser first (right), then editor (left), both on same workspace
+    if [ -n "$VIEW_URL" ] && ! has_window_on_ws "$WS" "chromium"; then
+        hyprctl dispatch exec "[workspace $WS silent]" "chromium --new-window '$VIEW_URL'"
+
+        # Wait for browser to appear before opening editor (ensures correct positioning)
+        for i in {1..10}; do
+            if has_window_on_ws "$WS" "chromium"; then
+                break
+            fi
+            sleep 0.2
+        done
+    fi
+
+    if ! has_window_on_ws "$WS" "code"; then
+        hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
+    fi
+else
+    # Laptop: editor on WS, browser on WS+1
+    if ! has_window_on_ws "$WS" "code"; then
+        # Ensure we're on the right workspace, then open editor
+        hyprctl dispatch workspace $WS
+        sleep 0.3
+        $EDITOR "$WORKSPACE_FILE" &
+
+        # Wait for VS Code window to actually appear on this workspace
+        for i in {1..20}; do
+            if has_window_on_ws "$WS" "code"; then
+                break
+            fi
+            sleep 0.2
+        done
+    fi
+
+    if [ -n "$VIEW_URL" ]; then
+        BROWSER_WS=$((WS + 1))
+        if ! has_window_on_ws "$BROWSER_WS" "chromium"; then
+            # Switch to browser workspace, open browser, wait for it to appear
+            hyprctl dispatch workspace $BROWSER_WS
+            sleep 0.3
+            chromium --new-window "$VIEW_URL" &
+
+            # Wait for browser window to appear
+            for i in {1..20}; do
+                if has_window_on_ws "$BROWSER_WS" "chromium"; then
+                    break
+                fi
+                sleep 0.2
+            done
+
+            # Switch back to editor workspace
+            hyprctl dispatch workspace $WS
+        fi
+    fi
+fi
+
+notify-send -u low "Better Shoes" "Ready! Workspace $WS" -t 3000

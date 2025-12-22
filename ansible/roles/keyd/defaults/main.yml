@@ -7,9 +7,9 @@ keyd_system_shortcuts:
   meta:
     - { key: a, action: "C-a" }      # Select all
     - { key: f, action: "C-f" }      # Find
-  meta_shift: []
-    # EMPTY - was blocking Super+Shift+H/J/K/L from reaching Hyprland
-    # Super+Shift+H/J/K/L must pass through for window management
+    - { key: z, action: "C-z" }      # Undo
+  meta_shift:
+    - { key: z, action: "C-S-z" }    # Redo
   meta_alt:
     - { key: l, action: "C-l" }      # Address bar (browser)
 
@@ -21,3 +21,4 @@ keyd_browser_shortcuts:
   - { key: t, action: "C-t" }        # New tab
   - { key: r, action: "C-r" }        # Refresh
   - { key: q, action: "C-S-w" }      # Close window
+  # z and S-z removed - now in global shortcuts
