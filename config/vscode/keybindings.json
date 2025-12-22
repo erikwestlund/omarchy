@@ -37,6 +37,17 @@
     // Hide panel
     { "key": "ctrl+j", "command": "workbench.action.togglePanel" },
 
+    // Widen terminal panel (workaround for Wayland resize bug)
+    { "key": "ctrl+shift+j", "command": "runCommands", "args": { "commands": [
+        "workbench.action.focusPanel",
+        "workbench.action.increaseViewSize",
+        "workbench.action.increaseViewSize",
+        "workbench.action.increaseViewSize",
+        "workbench.action.increaseViewSize",
+        "workbench.action.increaseViewSize",
+        "workbench.action.increaseViewSize"
+    ] } },
+
     // Switch between editor and terminal (Super+[/] via keyd -> Ctrl+[/])
     { "key": "ctrl+]", "command": "workbench.action.terminal.focus", "when": "!terminalFocus" },
     { "key": "ctrl+[", "command": "workbench.action.focusActiveEditorGroup", "when": "terminalFocus" },

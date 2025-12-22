@@ -21,6 +21,8 @@
         "workbench.action.files.newUntitledFile"
     ],
     "window.commandCenter": true,
+    "window.restoreWindows": "none",
+    "workbench.editor.restoreViewState": false,
     "files.associations": {
         "*.rmd": "markdown"
     },

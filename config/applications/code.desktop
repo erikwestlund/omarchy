@@ -2,7 +2,8 @@
 Name=Visual Studio Code
 Comment=Code Editing. Redefined.
 GenericName=Text Editor
-Exec=/usr/bin/code --ozone-platform=x11 %F
+# Native Wayland (better resize). To revert to XWayland: add --ozone-platform=x11
+Exec=/usr/bin/code %F
 Icon=visual-studio-code
 Type=Application
 StartupNotify=false
@@ -14,5 +15,6 @@ Keywords=vscode;
 
 [Desktop Action new-empty-window]
 Name=New Empty Window
-Exec=/usr/bin/code --ozone-platform=x11 --new-window %F
+# Native Wayland. To revert: add --ozone-platform=x11
+Exec=/usr/bin/code --new-window %F
 Icon=visual-studio-code
