@@ -37,6 +37,46 @@
     // Hide panel
     { "key": "ctrl+j", "command": "workbench.action.togglePanel" },
 
+    // Resize terminal panel (workaround for Wayland resize bug)
+    { "key": "ctrl+shift+j", "command": "runCommands", "args": { "commands": [
+        "workbench.action.focusPanel",
+        "workbench.action.increaseViewSize",
+        "workbench.action.increaseViewSize",
+        "workbench.action.increaseViewSize",
+        "workbench.action.increaseViewSize",
+        "workbench.action.increaseViewSize",
+        "workbench.action.increaseViewSize"
+    ] } },
+    { "key": "ctrl+shift+k", "command": "runCommands", "args": { "commands": [
+        "workbench.action.focusPanel",
+        "workbench.action.decreaseViewSize",
+        "workbench.action.decreaseViewSize",
+        "workbench.action.decreaseViewSize",
+        "workbench.action.decreaseViewSize",
+        "workbench.action.decreaseViewSize",
+        "workbench.action.decreaseViewSize"
+    ] } },
+
+    // Resize sidebar (file explorer area)
+    { "key": "ctrl+shift+i", "command": "runCommands", "args": { "commands": [
+        "workbench.view.explorer",
+        "workbench.action.increaseViewWidth",
+        "workbench.action.increaseViewWidth",
+        "workbench.action.increaseViewWidth",
+        "workbench.action.increaseViewWidth",
+        "workbench.action.increaseViewWidth",
+        "workbench.action.increaseViewWidth"
+    ] } },
+    { "key": "ctrl+shift+u", "command": "runCommands", "args": { "commands": [
+        "workbench.view.explorer",
+        "workbench.action.decreaseViewWidth",
+        "workbench.action.decreaseViewWidth",
+        "workbench.action.decreaseViewWidth",
+        "workbench.action.decreaseViewWidth",
+        "workbench.action.decreaseViewWidth",
+        "workbench.action.decreaseViewWidth"
+    ] } },
+
     // Switch between editor and terminal (Super+[/] via keyd -> Ctrl+[/])
     { "key": "ctrl+]", "command": "workbench.action.terminal.focus", "when": "!terminalFocus" },
     { "key": "ctrl+[", "command": "workbench.action.focusActiveEditorGroup", "when": "terminalFocus" },
@@ -81,5 +121,8 @@
     { "key": "ctrl+7", "command": "workbench.action.openEditorAtIndex7" },
     { "key": "ctrl+8", "command": "workbench.action.openEditorAtIndex8" },
     { "key": "ctrl+9", "command": "workbench.action.openEditorAtIndex9" },
-    { "key": "ctrl+0", "command": "workbench.action.lastEditorInGroup" }
+    { "key": "ctrl+0", "command": "workbench.action.lastEditorInGroup" },
+
+    // Line continuation in terminal with Shift+Enter
+    { "key": "shift+enter", "command": "workbench.action.terminal.sendSequence", "args": { "text": "\\\n" }, "when": "terminalFocus" }
 ]

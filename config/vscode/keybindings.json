@@ -57,6 +57,26 @@
         "workbench.action.decreaseViewSize"
     ] } },
 
+    // Resize sidebar (file explorer area)
+    { "key": "ctrl+shift+i", "command": "runCommands", "args": { "commands": [
+        "workbench.view.explorer",
+        "workbench.action.increaseViewWidth",
+        "workbench.action.increaseViewWidth",
+        "workbench.action.increaseViewWidth",
+        "workbench.action.increaseViewWidth",
+        "workbench.action.increaseViewWidth",
+        "workbench.action.increaseViewWidth"
+    ] } },
+    { "key": "ctrl+shift+u", "command": "runCommands", "args": { "commands": [
+        "workbench.view.explorer",
+        "workbench.action.decreaseViewWidth",
+        "workbench.action.decreaseViewWidth",
+        "workbench.action.decreaseViewWidth",
+        "workbench.action.decreaseViewWidth",
+        "workbench.action.decreaseViewWidth",
+        "workbench.action.decreaseViewWidth"
+    ] } },
+
     // Switch between editor and terminal (Super+[/] via keyd -> Ctrl+[/])
     { "key": "ctrl+]", "command": "workbench.action.terminal.focus", "when": "!terminalFocus" },
     { "key": "ctrl+[", "command": "workbench.action.focusActiveEditorGroup", "when": "terminalFocus" },

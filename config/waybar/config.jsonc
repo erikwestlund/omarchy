@@ -246,7 +246,19 @@
     "margin-right": 4,
     "margin-bottom": 2,
     "modules-left": [
-      "custom/ws-U"
+      "custom/ws-U",
+      "custom/ws-1",
+      "custom/ws-2",
+      "custom/ws-3",
+      "custom/ws-4",
+      "custom/ws-5",
+      "custom/ws-6",
+      "custom/ws-7",
+      "custom/ws-8",
+      "custom/ws-9",
+      "custom/ws-10",
+      "custom/ws-11",
+      "custom/ws-12"
     ],
     "modules-center": [],
     "modules-right": [
@@ -257,6 +269,66 @@
       "exec": "~/.config/waybar/scripts/workspace.sh U",
       "return-type": "json",
       "on-click": "hyprctl dispatch workspace name:U"
+    },
+    "custom/ws-1": {
+      "exec": "~/.config/waybar/scripts/workspace.sh 1",
+      "return-type": "json",
+      "on-click": "hyprctl dispatch workspace 1"
+    },
+    "custom/ws-2": {
+      "exec": "~/.config/waybar/scripts/workspace.sh 2",
+      "return-type": "json",
+      "on-click": "hyprctl dispatch workspace 2"
+    },
+    "custom/ws-3": {
+      "exec": "~/.config/waybar/scripts/workspace.sh 3",
+      "return-type": "json",
+      "on-click": "hyprctl dispatch workspace 3"
+    },
+    "custom/ws-4": {
+      "exec": "~/.config/waybar/scripts/workspace.sh 4",
+      "return-type": "json",
+      "on-click": "hyprctl dispatch workspace 4"
+    },
+    "custom/ws-5": {
+      "exec": "~/.config/waybar/scripts/workspace.sh 5",
+      "return-type": "json",
+      "on-click": "hyprctl dispatch workspace 5"
+    },
+    "custom/ws-6": {
+      "exec": "~/.config/waybar/scripts/workspace.sh 6",
+      "return-type": "json",
+      "on-click": "hyprctl dispatch workspace 6"
+    },
+    "custom/ws-7": {
+      "exec": "~/.config/waybar/scripts/workspace.sh 7",
+      "return-type": "json",
+      "on-click": "hyprctl dispatch workspace 7"
+    },
+    "custom/ws-8": {
+      "exec": "~/.config/waybar/scripts/workspace.sh 8",
+      "return-type": "json",
+      "on-click": "hyprctl dispatch workspace 8"
+    },
+    "custom/ws-9": {
+      "exec": "~/.config/waybar/scripts/workspace.sh 9",
+      "return-type": "json",
+      "on-click": "hyprctl dispatch workspace 9"
+    },
+    "custom/ws-10": {
+      "exec": "~/.config/waybar/scripts/workspace.sh 10",
+      "return-type": "json",
+      "on-click": "hyprctl dispatch workspace 10"
+    },
+    "custom/ws-11": {
+      "exec": "~/.config/waybar/scripts/workspace.sh 11",
+      "return-type": "json",
+      "on-click": "hyprctl dispatch workspace 11"
+    },
+    "custom/ws-12": {
+      "exec": "~/.config/waybar/scripts/workspace.sh 12",
+      "return-type": "json",
+      "on-click": "hyprctl dispatch workspace 12"
     },
     "clock": {
       "format": "{:%I:%M %p}",

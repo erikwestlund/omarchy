@@ -273,8 +273,8 @@ alias pmmhmi="cd ~/Omarchy/projects/mh-missing-data"
 alias mhmi="cd /home/erik/Projects/mh-missing-data"
 # END PROJECT mh-missing-data
 # BEGIN PROJECT parkukb
-alias ppark="~/Omarchy/projects/parkukb/launch"
-alias pkpark="~/Omarchy/projects/parkukb/kill"
+alias lpark="~/Omarchy/projects/parkukb/launch"
+alias kpark="~/Omarchy/projects/parkukb/kill"
 alias tmpark="~/Omarchy/projects/parkukb/tmux.sh"
 alias bpark="~/Omarchy/projects/parkukb/bootstrap"
 alias pmpark="cd ~/Omarchy/projects/parkukb"
