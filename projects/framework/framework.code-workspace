@@ -9,7 +9,7 @@
 	],
 	"settings": {
 		"workbench.colorTheme": "Catppuccin Mocha",
-		"workbench.iconTheme": "catppuccin-perfect-mocha",
+		"workbench.iconTheme": "catppuccin-mocha",
 		"terminal.integrated.env.linux": {
 			"TERM": "xterm-256color"
 		}
