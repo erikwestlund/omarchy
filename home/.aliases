@@ -212,12 +212,12 @@ alias secrets-push="~/.bin/secrets-push"
 alias pm-sync="om --tags projects,dotfiles"
 
 # Project shortcuts
-# p{alias} = launch | pk{alias} = kill | tm{alias} = tmux | pm{alias} = project mgmt | {alias} = project dir
+# l{alias} = launch | k{alias} = kill | t{alias} = tmux | pm{alias} = project mgmt | {alias} = project dir
 
 # BEGIN PROJECT omarchy
-alias pom="~/Omarchy/projects/omarchy/launch"
-alias pkom="~/Omarchy/projects/omarchy/kill"
-alias tmom="~/Omarchy/projects/omarchy/tmux.sh"
+alias lom="~/Omarchy/projects/omarchy/launch"
+alias kom="~/Omarchy/projects/omarchy/kill"
+alias tom="~/Omarchy/projects/omarchy/tmux.sh"
 alias pmom="cd ~/Omarchy/projects/omarchy"
 # Note: 'om' is the ansible function, use 'omarchy' or 'oma' to cd
 # END PROJECT omarchy

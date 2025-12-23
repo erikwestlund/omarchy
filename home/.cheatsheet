@@ -20,5 +20,6 @@
 ├─ Help ────────────────┤                       ├─ Text (keyd) ─────────┤ Super+Alt+L Format    │                       │                       │
 │ Alt+K        Hotkeys  │                       │ Opt+Sh+←/→ Line sel  │ Ctrl+1-9   Tabs       │                       │                       │
 │ Super+Alt+H  Cheatsht │                       │ Opt+Enter  C-Enter   │ Ctrl+J     Panel      │                       │                       │
-│ Super+Alt+J  Agenda   │                       │                       │ Super+D    Multi-sel  │                       │                       │
+│ Super+Alt+J  Agenda   │                       │                       │ Ctrl+Sh+J/K Panel ↑/↓│                       │                       │
+│                       │                       │                       │ Super+D    Multi-sel  │                       │                       │
 └───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┘
