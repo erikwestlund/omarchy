@@ -37,8 +37,9 @@ case "$action" in
         notify-send "Display Mode" "Laptop on Right"
         ;;
     "Two Displays (Laptop on Left)")
-        hyprctl keyword monitor "$LAPTOP,2880x1920@120,0x0,2"
         hyprctl keyword monitor "$EXTERNAL,6144x3456@60,1440x0,2"
+        sleep 0.1
+        hyprctl keyword monitor "$LAPTOP,2880x1920@120,0x0,2"
         sleep 0.3
         setup_workspaces
         notify-send "Display Mode" "Laptop on Left"
