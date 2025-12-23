@@ -260,8 +260,18 @@
       "custom/ws-11",
       "custom/ws-12"
     ],
-    "modules-center": [],
+    "modules-center": ["custom/media", "custom/update", "custom/screenrecording-indicator"],
     "modules-right": [
+      "group/tray-expander",
+      "custom/vpn",
+      "custom/tailscale",
+      "bluetooth",
+      "network",
+      "pulseaudio",
+      "cpu",
+      "battery",
+      "custom/darkman",
+      "custom/weather",
       "clock"
     ],
 
@@ -330,9 +340,129 @@
       "return-type": "json",
       "on-click": "hyprctl dispatch workspace 12"
     },
+    "custom/update": {
+      "format": "",
+      "exec": "omarchy-update-available",
+      "on-click": "omarchy-launch-floating-terminal-with-presentation omarchy-update",
+      "tooltip-format": "Omarchy update available",
+      "signal": 7,
+      "interval": 21600
+    },
+    "cpu": {
+      "interval": 5,
+      "format": "󰍛 ",
+      "on-click": "omarchy-launch-or-focus-tui btop"
+    },
     "clock": {
-      "format": "{:%I:%M %p}",
+      "format": "{:%b %d %I:%M %p}",
+      "format-alt": "{:%A %d %B %Y}",
+      "tooltip": false,
+      "on-click-right": "omarchy-launch-floating-terminal-with-presentation omarchy-tz-select"
+    },
+    "custom/darkman": {
+      "exec": "~/.config/waybar/scripts/darkman.sh",
+      "return-type": "json",
+      "interval": 5,
+      "on-click": "darkman toggle",
+      "tooltip": true
+    },
+    "custom/weather": {
+      "exec": "~/.config/waybar/scripts/weather.sh",
+      "interval": 300,
+      "tooltip": false,
+      "on-click": "xdg-open \"https://wttr.in/$(cat /tmp/weather_location 2>/dev/null || echo Milton,MA)\""
+    },
+    "custom/media": {
+      "exec": "~/.config/waybar/scripts/media.sh",
+      "return-type": "json",
+      "interval": 3,
+      "tooltip": false,
+      "on-click": "playerctl play-pause"
+    },
+    "custom/vpn": {
+      "exec": "~/.config/waybar/scripts/vpn.sh",
+      "return-type": "json",
+      "interval": 10,
+      "signal": 9,
+      "tooltip": true,
+      "on-click": "jhvpn-up",
+      "on-click-right": "jhvpn-down"
+    },
+    "custom/tailscale": {
+      "exec": "~/.config/waybar/scripts/tailscale.sh",
+      "return-type": "json",
+      "interval": 10,
+      "tooltip": true
+    },
+    "network": {
+      "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+      "format": "{icon}",
+      "format-wifi": "{icon}",
+      "format-ethernet": "󰀂",
+      "format-disconnected": "󰤮",
+      "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+      "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+      "tooltip-format-disconnected": "Disconnected",
+      "interval": 3,
+      "on-click": "omarchy-launch-wifi"
+    },
+    "battery": {
+      "format": "{capacity}% {icon} ",
+      "format-discharging": "{icon}   ",
+      "format-charging": "{icon}   ",
+      "format-plugged": "󰂅   ",
+      "format-icons": {
+        "charging": ["󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
+        "default": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
+      },
+      "format-full": "󰂅   ",
+      "format-not-charging": "󰂅   ",
+      "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
+      "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
+      "interval": 5,
+      "on-click": "omarchy-menu power",
+      "states": {
+        "warning": 20,
+        "critical": 10
+      }
+    },
+    "bluetooth": {
+      "format": "󰂯 ",
+      "format-disabled": "󰂲 ",
+      "format-connected": "󰂱 ",
+      "format-no-controller": "",
+      "tooltip-format": "Devices connected: {num_connections}",
+      "on-click": "omarchy-launch-bluetooth"
+    },
+    "pulseaudio": {
+      "format": "󰕾 ",
+      "on-click": "omarchy-launch-or-focus-tui wiremix",
+      "on-click-right": "pamixer -t",
+      "tooltip-format": "Playing at {volume}%",
+      "scroll-step": 5,
+      "format-muted": "󰖁 "
+    },
+    "group/tray-expander": {
+      "orientation": "inherit",
+      "drawer": {
+        "transition-duration": 600,
+        "children-class": "tray-group-item"
+      },
+      "modules": ["custom/expand-icon", "tray"]
+    },
+    "custom/expand-icon": {
+      "format": "",
       "tooltip": false
+    },
+    "custom/screenrecording-indicator": {
+      "on-click": "omarchy-cmd-screenrecord",
+      "exec": "$OMARCHY_PATH/default/waybar/indicators/screen-recording.sh",
+      "signal": 8,
+      "return-type": "json"
+    },
+    "tray": {
+      "icon-size": 12,
+      "spacing": 17
     }
   }
 ]
