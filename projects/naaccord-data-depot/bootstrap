@@ -91,13 +91,53 @@ for secret in "${OPTIONAL_SECRETS[@]}"; do
     fi
 done
 
-# === 3. Build Docker images ===
+# === 3. Generate mock-idp certificates ===
+CERT_DIR="$PROJECT_DIR/deploy/containers/mock-idp/cert"
+if [ ! -f "$CERT_DIR/idp.crt" ]; then
+    echo "[...] Generating mock-idp certificates..."
+    "$PROJECT_DIR/deploy/containers/mock-idp/generate-certs.sh"
+    echo "[OK] Certificates generated"
+else
+    echo "[OK] Mock-idp certificates already exist"
+fi
+
+# Ensure keys are readable by container (runs as www-data)
+chmod 644 "$CERT_DIR"/*.key 2>/dev/null || true
+
+# === 4. Build Docker images ===
 if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
     echo "[...] Building Docker images..."
     (cd "$PROJECT_DIR" && docker compose build)
     echo "[OK] Docker images built"
 else
     echo "[SKIP] No docker-compose.yml found"
+fi
+
+# === 5. Start services and run migrations ===
+if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+    echo "[...] Starting services..."
+    (cd "$PROJECT_DIR" && docker compose up -d)
+
+    # Wait for mariadb to be ready
+    echo "[...] Waiting for database..."
+    for i in {1..30}; do
+        if docker exec naaccord-test-mariadb mariadb -u naaccord -pI4ms3cr3t -e "SELECT 1" naaccord >/dev/null 2>&1; then
+            break
+        fi
+        sleep 2
+    done
+
+    echo "[...] Running migrations..."
+    docker exec naaccord-test-web python manage.py migrate --noinput
+    echo "[OK] Migrations complete"
+
+    echo "[...] Seeding initial data..."
+    docker exec naaccord-test-web python manage.py seed_init
+    echo "[OK] Initial data seeded"
+
+    echo "[...] Loading test users..."
+    docker exec naaccord-test-web python manage.py load_test_users
+    echo "[OK] Test users loaded"
 fi
 
 echo ""
