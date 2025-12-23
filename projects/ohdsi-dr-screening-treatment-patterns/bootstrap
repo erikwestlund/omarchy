@@ -1,0 +1,71 @@
+#!/bin/bash
+# Bootstrap script for ohdsi-dr-screening-treatment-patterns - ensures project is ready to run
+# Run this on a fresh machine or when setting up the project
+
+set -e
+
+# === Project Config ===
+PROJECT_NAME="ohdsi-dr-screening-treatment-patterns"
+PROJECT_DIR="/home/erik/Projects/ohdsi-dr-screening-treatment-patterns"
+GIT_REPO="git@github.com:erikwestlund/gde2025_retina_tp.git"
+SECRETS_DIR="$HOME/.secrets/ohdsi-dr-screening-treatment-patterns"
+
+
+echo "Bootstrapping $PROJECT_NAME..."
+
+# === 1. Ensure repo is cloned ===
+if [ -n "$GIT_REPO" ]; then
+    if [ -d "$PROJECT_DIR/.git" ]; then
+        echo "[OK] Repository already exists at $PROJECT_DIR"
+    else
+        echo "[...] Cloning repository..."
+        mkdir -p "$(dirname "$PROJECT_DIR")"
+        git clone "$GIT_REPO" "$PROJECT_DIR"
+        echo "[OK] Repository cloned"
+    fi
+else
+    if [ -d "$PROJECT_DIR" ]; then
+        echo "[OK] Project directory exists at $PROJECT_DIR"
+    else
+        echo "[...] Creating project directory..."
+        mkdir -p "$PROJECT_DIR"
+        echo "[OK] Project directory created"
+    fi
+fi
+
+
+
+# === 2. Install R dependencies ===
+if [ -f "$PROJECT_DIR/renv.lock" ]; then
+    echo "[...] Restoring renv packages..."
+    (cd "$PROJECT_DIR" && Rscript -e "renv::restore()")
+    echo "[OK] R packages restored"
+elif [ -f "$PROJECT_DIR/DESCRIPTION" ]; then
+    echo "[...] Installing package dependencies..."
+    (cd "$PROJECT_DIR" && Rscript -e "devtools::install_deps()")
+    echo "[OK] R dependencies installed"
+else
+    echo "[SKIP] No renv.lock or DESCRIPTION found"
+fi
+
+# Python venv for mixed R/Python projects
+if [ -f "$PROJECT_DIR/requirements.txt" ] || [ -f "$PROJECT_DIR/pyproject.toml" ]; then
+    if [ -d "$PROJECT_DIR/.venv" ]; then
+        echo "[OK] Python venv already exists"
+    else
+        echo "[...] Creating Python virtual environment..."
+        (cd "$PROJECT_DIR" && python3 -m venv .venv)
+        echo "[OK] Python venv created"
+    fi
+
+    echo "[...] Installing Python dependencies..."
+    if [ -f "$PROJECT_DIR/requirements.txt" ]; then
+        (cd "$PROJECT_DIR" && .venv/bin/pip install -r requirements.txt)
+    elif [ -f "$PROJECT_DIR/pyproject.toml" ]; then
+        (cd "$PROJECT_DIR" && .venv/bin/pip install -e .)
+    fi
+    echo "[OK] Python dependencies installed"
+fi
+
+echo ""
+echo "Bootstrap complete! Run 'launch' to start $PROJECT_NAME."

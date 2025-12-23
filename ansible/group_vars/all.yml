@@ -236,3 +236,13 @@ webapps:
   - name: Claude
     url: "https://claude.ai/new"
     icon: claude-ai-light.webp
+
+# Remmina remote desktop profiles
+remmina_profiles: []
+
+# Remmina desktop launchers
+remmina_desktops: []
+
+# NoMachine desktop launchers
+nomachine_desktops:
+  - nomachine-mac-mini.desktop

@@ -1,14 +1,13 @@
 #!/bin/bash
-# Launch script for naaccord-data-depot
+# Launch script for ohdsi-dr-screening-treatment-patterns
 #
-# This script launches the naaccord-data-depot development environment with:
+# This script launches the ohdsi-dr-screening-treatment-patterns development environment with:
 # - Workspace management (switches to target workspace)
-# - Docker service orchestration (starts and waits for health checks)
 # - Window positioning (adapts based on desktop vs laptop mode)
 # - Notification system (shows progress updates)
 #
-# Desktop mode: Browser and editor on same workspace (browser right, editor left)
-# Laptop mode: Editor on WS N, browser on WS N+1, then return to WS N
+# Desktop mode: Editor only (no browser)
+# Laptop mode: Editor only (no browser)
 #
 # Race condition prevention: Waits for windows to actually appear before
 # switching workspaces to ensure correct positioning.
@@ -23,13 +22,13 @@ has_window_on_ws() {
 }
 
 # === Project Config ===
-PROJECT_NAME="naaccord-data-depot"
-PROJECT_DIR="/home/erik/Projects/naaccord-data-depot"
-WORKSPACE_FILE="$HOME/Omarchy/projects/naaccord-data-depot/naaccord-data-depot.code-workspace"
+PROJECT_NAME="ohdsi-dr-screening-treatment-patterns"
+PROJECT_DIR="/home/erik/Projects/ohdsi-dr-screening-treatment-patterns"
+WORKSPACE_FILE="$HOME/Omarchy/projects/ohdsi-dr-screening-treatment-patterns/ohdsi-dr-screening-treatment-patterns.code-workspace"
 EDITOR="/usr/bin/code"
-DEFAULT_WS=4
-DOCKER_COMPOSE=true
-VIEW_URL="http://naaccord.test"
+DEFAULT_WS=7
+DOCKER_COMPOSE=false
+VIEW_URL=""
 
 # === Parse Arguments ===
 WS=${1:-$DEFAULT_WS}
@@ -46,17 +45,17 @@ if [[ "$1" == "-h" || "$1" == "--help" ]]; then
 fi
 
 # === Launch ===
-notify-send -u low "NA Accord" "Launching..." -t 5000
+notify-send -u low "DR Screening TP" "Launching..." -t 5000
 
 # Switch to workspace and wait for it to complete
 hyprctl dispatch workspace $WS
 sleep 0.3
 
-# Start Docker services (docker-compose.yml = dev, docker-compose.prod.yml = prod)
-if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
-    notify-send -u low "NA Accord" "Starting Docker services..." -t 4000
+# Start Docker services (if enabled)
+if [ "$DOCKER_COMPOSE" = "true" ] && [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+    notify-send -u low "DR Screening TP" "Starting Docker services..." -t 4000
     (cd "$PROJECT_DIR" && docker compose up -d) || {
-        notify-send -u critical "NA Accord" "Failed to start Docker services" -t 5000
+        notify-send -u critical "DR Screening TP" "Failed to start Docker services" -t 5000
         exit 1
     }
 
@@ -75,7 +74,7 @@ if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
 
         # Only show waiting notification if it's taking more than 4 seconds
         if [ $ELAPSED -ge 4 ] && [ "$WAITING_NOTIFIED" = false ]; then
-            notify-send -u normal "NA Accord" "Waiting for services..." -t 10000
+            notify-send -u normal "DR Screening TP" "Waiting for services..." -t 10000
             WAITING_NOTIFIED=true
         fi
 
@@ -84,7 +83,7 @@ if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
     done
 
     if [ $ELAPSED -ge $MAX_WAIT ]; then
-        notify-send -u normal "NA Accord" "Services slow, opening anyway..." -t 3000
+        notify-send -u normal "DR Screening TP" "Services slow, opening anyway..." -t 3000
     fi
 fi
 
@@ -108,7 +107,7 @@ if [ "$MACHINE" = "desktop" ]; then
         hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
     fi
 else
-    # Laptop: editor on WS, browser on WS+1
+    # Laptop: editor on WS, browser on WS+1 (if VIEW_URL is set)
     if ! has_window_on_ws "$WS" "code"; then
         # Ensure we're on the right workspace, then open editor
         hyprctl dispatch workspace $WS
@@ -146,4 +145,4 @@ else
     fi
 fi
 
-notify-send -u low "NA Accord" "Ready! Workspace $WS" -t 3000
+notify-send -u low "DR Screening TP" "Ready! Workspace $WS" -t 3000

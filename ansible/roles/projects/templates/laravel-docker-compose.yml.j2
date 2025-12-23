@@ -75,7 +75,7 @@ services:
       - ./storage/app/dumps:/dumps
 {% endif %}
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:{{ postgres_port | default('5432') }}:5432"
     networks:
       - {{ project_name }}-network
     healthcheck:
@@ -91,7 +91,7 @@ services:
     volumes:
       - {{ project_name }}-redis-data:/data
     ports:
-      - "127.0.0.1:6379:6379"
+      - "127.0.0.1:{{ redis_port | default('6379') }}:6379"
     networks:
       - {{ project_name }}-network
     healthcheck:
@@ -115,7 +115,7 @@ services:
     volumes:
       - {{ project_name }}-meilisearch-data:/meili_data
     ports:
-      - "127.0.0.1:7700:7700"
+      - "127.0.0.1:{{ meilisearch_port | default('7700') }}:7700"
     networks:
       - {{ project_name }}-network
     healthcheck:
@@ -133,8 +133,8 @@ services:
     container_name: {{ project_name }}-minio
     restart: unless-stopped
     ports:
-      - "127.0.0.1:9000:9000"
-      - "127.0.0.1:9001:9001"
+      - "127.0.0.1:{{ minio_api_port | default('9000') }}:9000"
+      - "127.0.0.1:{{ minio_console_port | default('9001') }}:9001"
     environment:
       MINIO_ROOT_USER: {{ project_name }}
       MINIO_ROOT_PASSWORD: {{ project_name }}-dev-secret
@@ -175,8 +175,8 @@ services:
     container_name: {{ project_name }}-mailpit
     restart: unless-stopped
     ports:
-      - "127.0.0.1:1025:1025"
-      - "127.0.0.1:8025:8025"
+      - "127.0.0.1:{{ mailpit_smtp_port | default('1025') }}:1025"
+      - "127.0.0.1:{{ mailpit_web_port | default('8025') }}:8025"
     networks:
       - {{ project_name }}-network
 

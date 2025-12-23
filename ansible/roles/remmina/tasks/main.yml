@@ -1,0 +1,54 @@
+---
+# Manage Remmina remote desktop profiles
+
+- name: Ensure remmina data directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.local/share/remmina"
+    state: directory
+    mode: '0755'
+
+- name: Symlink Remmina profiles
+  ansible.builtin.file:
+    src: "{{ playbook_dir }}/../ansible/roles/remmina/files/profiles/{{ item }}"
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/remmina/{{ item }}"
+    state: link
+  loop: "{{ remmina_profiles | default([]) }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: Ensure applications directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.local/share/applications"
+    state: directory
+    mode: '0755'
+
+- name: Ensure applications icons directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.local/share/applications/icons"
+    state: directory
+    mode: '0755'
+
+- name: Copy Remmina icons
+  ansible.builtin.copy:
+    src: "icons/"
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/icons/"
+    mode: '0644'
+  when: remmina_desktops | default([]) | length > 0
+
+- name: Create Remmina desktop entries
+  ansible.builtin.template:
+    src: desktop.j2
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/{{ item.name | lower | replace(' ', '-') }}.desktop"
+    mode: '0755'
+  loop: "{{ remmina_desktops | default([]) }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Copy NoMachine desktop entries
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/{{ item | basename }}"
+    mode: '0755'
+  loop: "{{ nomachine_desktops | default([]) }}"
+  loop_control:
+    label: "{{ item | basename }}"

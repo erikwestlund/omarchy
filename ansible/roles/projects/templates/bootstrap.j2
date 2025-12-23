@@ -1,0 +1,151 @@
+#!/bin/bash
+# Bootstrap script for {{ project_name }} - ensures project is ready to run
+# Run this on a fresh machine or when setting up the project
+
+set -e
+
+# === Project Config ===
+PROJECT_NAME="{{ project_name }}"
+{% if project_path | length > 0 %}
+PROJECT_DIR="{{ project_path }}"
+{% else %}
+PROJECT_DIR="$HOME/Projects/{{ project_name }}"
+{% endif %}
+{% if github_repo is defined and github_repo | length > 0 %}
+GIT_REPO="git@github.com:{{ github_repo }}.git"
+{% else %}
+GIT_REPO=""
+{% endif %}
+SECRETS_DIR="$HOME/.secrets/{{ project_name }}"
+
+{% if project_type == 'laravel' %}
+# Required secrets (relative to SECRETS_DIR -> PROJECT_DIR)
+SECRETS=(
+    ".env"
+)
+{% endif %}
+
+echo "Bootstrapping $PROJECT_NAME..."
+
+# === 1. Ensure repo is cloned ===
+if [ -n "$GIT_REPO" ]; then
+    if [ -d "$PROJECT_DIR/.git" ]; then
+        echo "[OK] Repository already exists at $PROJECT_DIR"
+    else
+        echo "[...] Cloning repository..."
+        mkdir -p "$(dirname "$PROJECT_DIR")"
+        git clone "$GIT_REPO" "$PROJECT_DIR"
+        echo "[OK] Repository cloned"
+    fi
+else
+    if [ -d "$PROJECT_DIR" ]; then
+        echo "[OK] Project directory exists at $PROJECT_DIR"
+    else
+        echo "[...] Creating project directory..."
+        mkdir -p "$PROJECT_DIR"
+        echo "[OK] Project directory created"
+    fi
+fi
+
+{% if project_type == 'laravel' %}
+# === 2. Ensure secrets are in place ===
+if [ ! -d "$SECRETS_DIR" ]; then
+    echo "[WARN] Secrets directory not found: $SECRETS_DIR"
+    echo "       Create it and add required files, or run 'secrets-pull' if using B2"
+else
+    for secret in "${SECRETS[@]}"; do
+        src="$SECRETS_DIR/$secret"
+        dest="$PROJECT_DIR/$secret"
+
+        if [ ! -f "$src" ]; then
+            echo "[WARN] Secret not found: $src"
+            continue
+        fi
+
+        if [ -f "$dest" ]; then
+            if cmp -s "$src" "$dest"; then
+                echo "[OK] Secret already in place: $secret"
+            else
+                echo "[...] Updating secret: $secret"
+                cp "$src" "$dest"
+                chmod 600 "$dest"
+                echo "[OK] Secret updated: $secret"
+            fi
+        else
+            echo "[...] Copying secret: $secret"
+            cp "$src" "$dest"
+            chmod 600 "$dest"
+            echo "[OK] Secret copied: $secret"
+        fi
+    done
+fi
+
+# === 3. Build Docker images ===
+if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+    echo "[...] Building Docker images..."
+    (cd "$PROJECT_DIR" && docker compose build)
+    echo "[OK] Docker images built"
+else
+    echo "[SKIP] No docker-compose.yml found"
+fi
+{% endif %}
+
+{% if project_type == 'python' %}
+# === 2. Set up Python virtual environment ===
+if [ -f "$PROJECT_DIR/requirements.txt" ] || [ -f "$PROJECT_DIR/pyproject.toml" ]; then
+    if [ -d "$PROJECT_DIR/.venv" ]; then
+        echo "[OK] Python venv already exists"
+    else
+        echo "[...] Creating Python virtual environment..."
+        (cd "$PROJECT_DIR" && python3 -m venv .venv)
+        echo "[OK] Python venv created"
+    fi
+
+    echo "[...] Installing Python dependencies..."
+    if [ -f "$PROJECT_DIR/requirements.txt" ]; then
+        (cd "$PROJECT_DIR" && .venv/bin/pip install -r requirements.txt)
+    elif [ -f "$PROJECT_DIR/pyproject.toml" ]; then
+        (cd "$PROJECT_DIR" && .venv/bin/pip install -e .)
+    fi
+    echo "[OK] Python dependencies installed"
+else
+    echo "[SKIP] No requirements.txt or pyproject.toml found"
+fi
+{% endif %}
+
+{% if project_type == 'rstats' %}
+# === 2. Install R dependencies ===
+if [ -f "$PROJECT_DIR/renv.lock" ]; then
+    echo "[...] Restoring renv packages..."
+    (cd "$PROJECT_DIR" && Rscript -e "renv::restore()")
+    echo "[OK] R packages restored"
+elif [ -f "$PROJECT_DIR/DESCRIPTION" ]; then
+    echo "[...] Installing package dependencies..."
+    (cd "$PROJECT_DIR" && Rscript -e "devtools::install_deps()")
+    echo "[OK] R dependencies installed"
+else
+    echo "[SKIP] No renv.lock or DESCRIPTION found"
+fi
+
+# Python venv for mixed R/Python projects
+if [ -f "$PROJECT_DIR/requirements.txt" ] || [ -f "$PROJECT_DIR/pyproject.toml" ]; then
+    if [ -d "$PROJECT_DIR/.venv" ]; then
+        echo "[OK] Python venv already exists"
+    else
+        echo "[...] Creating Python virtual environment..."
+        (cd "$PROJECT_DIR" && python3 -m venv .venv)
+        echo "[OK] Python venv created"
+    fi
+
+    echo "[...] Installing Python dependencies..."
+    if [ -f "$PROJECT_DIR/requirements.txt" ]; then
+        (cd "$PROJECT_DIR" && .venv/bin/pip install -r requirements.txt)
+    elif [ -f "$PROJECT_DIR/pyproject.toml" ]; then
+        (cd "$PROJECT_DIR" && .venv/bin/pip install -e .)
+    fi
+    echo "[OK] Python dependencies installed"
+fi
+{% endif %}
+
+echo ""
+echo "Bootstrap complete! Run 'launch' to start $PROJECT_NAME."

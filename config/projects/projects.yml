@@ -3,31 +3,50 @@
 #   p{alias}  - Launch project (bootstrap + tmux)
 #   pm{alias} - cd to ~/Omarchy/projects/{name}
 #   tm{alias} - Launch tmux session only
+#
+# Port allocation for Docker services (pm-new reads these to assign next available):
+#   nginx: 8010+, postgres: 5432+, redis: 6379+, meilisearch: 7700+
+#   minio_api: 9000+, minio_console: 9001+, mailpit_smtp: 1025+, mailpit_web: 8025+
 
 projects:
-  # Example: Framework R/npm project
-  # - name: framework
-  #   alias: fw
-  #   type: rstats
-  #   path: ~/code/framework
-  #   extras:
-  #     site_dir: ~/code/framework-site
-  #     gui_dir: ~/code/framework/gui-dev
+  - name: pequod
+    alias: peq
+    type: laravel
+    path: ~/Projects/pequod
+    ports:
+      nginx: 8010
+      postgres: 5432
+      redis: 6379
+      minio_api: 9000
+      minio_console: 9001
+      mailpit_smtp: 1025
+      mailpit_web: 8025
 
-  # Example: Python data science project
-  # - name: parkukb
-  #   alias: park
-  #   type: python
-  #   path: ~/code/parkukb_v2
+  - name: better-shoes
+    alias: bs
+    type: laravel
+    path: ~/Projects/better-shoes
+    ports:
+      nginx: 8020
+      postgres: 5433
+      redis: 6380
+      meilisearch: 7700
+      minio_api: 9002
+      minio_console: 9003
+      mailpit_smtp: 1026
+      mailpit_web: 8026
 
-  # Example: Laravel project with Docker
-  # - name: naaccord
-  #   alias: na
-  #   type: laravel
-  #   path: ~/code/naaccord
-
-  # Example: Utility project (general purpose)
-  # - name: computing
-  #   alias: comp
-  #   type: utility
-  #   path: ~/code/computing
+  - name: naaccord-data-depot
+    alias: na
+    type: python  # Django project
+    path: ~/Projects/naaccord-data-depot
+    extras:
+      view_url: http://naaccord.test
+      default_ws: 4
+    ports:
+      redis: 6381
+      mariadb: 3306
+      web: 8000
+      services: 8001
+      idp: 8082
+      flower: 5555

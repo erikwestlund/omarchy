@@ -1,0 +1,80 @@
+#!/bin/bash
+# Bootstrap script for parkukb - ensures project is ready to run
+# Run this on a fresh machine or when setting up the project
+
+set -e
+
+# === Project Config ===
+PROJECT_NAME="parkukb"
+PROJECT_DIR="/home/erik/Projects/parkukb"
+GIT_REPO="git@github.com:erikwestlund/park-gers.git"
+
+# Secrets: source path -> destination filename in project
+declare -A SECRETS=(
+    ["/home/erik/NAS/UnifiDrive/dotenv/parkukb_v2.env"]=".env"
+)
+
+echo "Bootstrapping $PROJECT_NAME..."
+
+# === 1. Ensure repo is cloned ===
+if [ -d "$PROJECT_DIR/.git" ]; then
+    echo "[OK] Repository already exists at $PROJECT_DIR"
+else
+    echo "[...] Cloning repository..."
+    mkdir -p "$(dirname "$PROJECT_DIR")"
+    git clone "$GIT_REPO" "$PROJECT_DIR"
+    echo "[OK] Repository cloned"
+fi
+
+# === 2. Ensure secrets are in place ===
+for src in "${!SECRETS[@]}"; do
+    dest_name="${SECRETS[$src]}"
+    dest="$PROJECT_DIR/$dest_name"
+
+    if [ ! -f "$src" ]; then
+        echo "[ERROR] Secret not found: $src"
+        echo "       Ensure NAS is mounted and file exists"
+        exit 1
+    fi
+
+    if [ -f "$dest" ]; then
+        # Check if they're the same
+        if cmp -s "$src" "$dest"; then
+            echo "[OK] Secret already in place: $dest_name"
+        else
+            echo "[...] Updating secret: $dest_name"
+            cp "$src" "$dest"
+            chmod 600 "$dest"
+            echo "[OK] Secret updated: $dest_name"
+        fi
+    else
+        echo "[...] Copying secret: $dest_name"
+        cp "$src" "$dest"
+        chmod 600 "$dest"
+        echo "[OK] Secret copied: $dest_name"
+    fi
+done
+
+# === 3. Set up Python virtual environment ===
+if [ -f "$PROJECT_DIR/requirements.txt" ] || [ -f "$PROJECT_DIR/pyproject.toml" ]; then
+    if [ -d "$PROJECT_DIR/.venv" ]; then
+        echo "[OK] Python venv already exists"
+    else
+        echo "[...] Creating Python virtual environment..."
+        (cd "$PROJECT_DIR" && python3 -m venv .venv)
+        echo "[OK] Python venv created"
+    fi
+
+    echo "[...] Installing Python dependencies..."
+    if [ -f "$PROJECT_DIR/requirements.txt" ]; then
+        (cd "$PROJECT_DIR" && .venv/bin/pip install -r requirements.txt)
+    elif [ -f "$PROJECT_DIR/pyproject.toml" ]; then
+        (cd "$PROJECT_DIR" && .venv/bin/pip install -e .)
+    fi
+    echo "[OK] Python dependencies installed"
+else
+    echo "[SKIP] No requirements.txt or pyproject.toml found"
+fi
+
+echo ""
+echo "Bootstrap complete! Run 'launch' to start $PROJECT_NAME."

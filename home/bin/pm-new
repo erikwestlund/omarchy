@@ -13,6 +13,22 @@ to_kebab() {
     echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//'
 }
 
+# Find next available port for a service by reading projects.yml
+# Usage: next_port SERVICE_NAME DEFAULT_BASE
+# Returns highest allocated port + 1, or DEFAULT_BASE if none found
+next_port() {
+    local service=$1
+    local default=$2
+    local projects_file="$OMARCHY_DIR/config/projects/projects.yml"
+    # Extract highest port for this service from projects.yml (number on same line as service key)
+    local max_port=$(grep "[[:space:]]${service}:" "$projects_file" 2>/dev/null | grep -oE '[0-9]+$' | sort -n | tail -1)
+    if [ -n "$max_port" ]; then
+        echo $((max_port + 1))
+    else
+        echo $default
+    fi
+}
+
 echo "=== New Project Setup ==="
 echo ""
 
@@ -73,6 +89,18 @@ if [[ "$USE_DOCKER" =~ ^[Yy] ]]; then
     DOCKER_COMPOSE=true
 else
     DOCKER_COMPOSE=false
+fi
+
+# 5b. Auto-assign ports for Laravel projects with Docker
+if [ "$PROJECT_TYPE" = "laravel" ] && [ "$DOCKER_COMPOSE" = true ]; then
+    PORT_NGINX=$(next_port nginx 8010)
+    PORT_POSTGRES=$(next_port postgres 5432)
+    PORT_REDIS=$(next_port redis 6379)
+    PORT_MEILISEARCH=$(next_port meilisearch 7700)
+    PORT_MINIO_API=$(next_port minio_api 9000)
+    PORT_MINIO_CONSOLE=$(next_port minio_console 9001)
+    PORT_MAILPIT_SMTP=$(next_port mailpit_smtp 1025)
+    PORT_MAILPIT_WEB=$(next_port mailpit_web 8025)
 fi
 
 # 6. Default workspace
@@ -154,6 +182,10 @@ echo "Default WS: $DEFAULT_WS"
 if [ -n "$VIEW_URL" ]; then
     echo "View URL: $VIEW_URL"
 fi
+if [ "$PROJECT_TYPE" = "laravel" ] && [ "$DOCKER_COMPOSE" = true ]; then
+    echo "Ports:    nginx=$PORT_NGINX postgres=$PORT_POSTGRES redis=$PORT_REDIS"
+    echo "          minio=$PORT_MINIO_API/$PORT_MINIO_CONSOLE mailpit=$PORT_MAILPIT_SMTP/$PORT_MAILPIT_WEB"
+fi
 echo "PM dir:   ~/Omarchy/projects/$PM_NAME"
 if [ -n "$PROJECT_PATH" ]; then
     if [ -n "$GITHUB_REPO" ]; then
@@ -208,6 +240,18 @@ if [ -n "$VIEW_URL" ]; then
     ANSIBLE_CMD="$ANSIBLE_CMD -e \"view_url=$VIEW_URL\""
 fi
 
+# Pass port assignments for Laravel projects
+if [ "$PROJECT_TYPE" = "laravel" ] && [ "$DOCKER_COMPOSE" = true ]; then
+    ANSIBLE_CMD="$ANSIBLE_CMD -e \"nginx_port=$PORT_NGINX\""
+    ANSIBLE_CMD="$ANSIBLE_CMD -e \"postgres_port=$PORT_POSTGRES\""
+    ANSIBLE_CMD="$ANSIBLE_CMD -e \"redis_port=$PORT_REDIS\""
+    ANSIBLE_CMD="$ANSIBLE_CMD -e \"meilisearch_port=$PORT_MEILISEARCH\""
+    ANSIBLE_CMD="$ANSIBLE_CMD -e \"minio_api_port=$PORT_MINIO_API\""
+    ANSIBLE_CMD="$ANSIBLE_CMD -e \"minio_console_port=$PORT_MINIO_CONSOLE\""
+    ANSIBLE_CMD="$ANSIBLE_CMD -e \"mailpit_smtp_port=$PORT_MAILPIT_SMTP\""
+    ANSIBLE_CMD="$ANSIBLE_CMD -e \"mailpit_web_port=$PORT_MAILPIT_WEB\""
+fi
+
 eval $ANSIBLE_CMD
 
 # 10. Success message
@@ -239,9 +283,10 @@ if [ -n "$PROJECT_PATH" ]; then
 fi
 echo ""
 echo "FILES CREATED"
-echo "   ~/Omarchy/projects/$PM_NAME/launch   (project launcher)"
-echo "   ~/Omarchy/projects/$PM_NAME/kill     (project killer)"
-echo "   ~/Omarchy/projects/$PM_NAME/tmux.sh  (tmux session)"
+echo "   ~/Omarchy/projects/$PM_NAME/launch    (project launcher)"
+echo "   ~/Omarchy/projects/$PM_NAME/kill      (project killer)"
+echo "   ~/Omarchy/projects/$PM_NAME/bootstrap (clone, deps, secrets)"
+echo "   ~/Omarchy/projects/$PM_NAME/tmux.sh   (tmux session)"
 if [ "$PROJECT_EDITOR" = "vscode" ] || [ "$PROJECT_EDITOR" = "positron" ]; then
     echo "   ~/Omarchy/projects/$PM_NAME/$KEBAB_NAME.code-workspace"
 fi

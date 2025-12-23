@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name={{ item.name }}
+Comment=Remote connection to {{ item.name }}
+Exec=remmina -c {{ ansible_facts.env.HOME }}/.local/share/remmina/{{ item.profile }}
+Terminal=false
+Type=Application
+Icon={{ ansible_facts.env.HOME }}/.local/share/applications/icons/{{ item.icon | default(item.name | lower | replace(' ', '-') + '.png') }}
+StartupNotify=true
+Categories=Network;RemoteAccess;

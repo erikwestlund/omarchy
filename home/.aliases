@@ -258,9 +258,10 @@ alias pmtnt="cd ~/Omarchy/projects/tnt-syphilis"
 alias tnt="cd /home/erik/Projects/tnt-syphilis"
 # END PROJECT tnt-syphilis
 # BEGIN PROJECT naaccord-data-depot
-alias pna="~/Omarchy/projects/naaccord-data-depot/launch"
-alias pkna="~/Omarchy/projects/naaccord-data-depot/kill"
+alias lna="~/Omarchy/projects/naaccord-data-depot/launch"
+alias kna="~/Omarchy/projects/naaccord-data-depot/kill"
 alias tmna="~/Omarchy/projects/naaccord-data-depot/tmux.sh"
+alias bna="~/Omarchy/projects/naaccord-data-depot/bootstrap"
 alias pmna="cd ~/Omarchy/projects/naaccord-data-depot"
 alias na="cd /home/erik/Projects/naaccord-data-depot"
 # END PROJECT naaccord-data-depot
@@ -275,6 +276,7 @@ alias mhmi="cd /home/erik/Projects/mh-missing-data"
 alias ppark="~/Omarchy/projects/parkukb/launch"
 alias pkpark="~/Omarchy/projects/parkukb/kill"
 alias tmpark="~/Omarchy/projects/parkukb/tmux.sh"
+alias bpark="~/Omarchy/projects/parkukb/bootstrap"
 alias pmpark="cd ~/Omarchy/projects/parkukb"
 alias park="cd /home/erik/Projects/parkukb"
 # END PROJECT parkukb
@@ -330,33 +332,6 @@ composer() {
     esac
 }
 
-npm() {
-    case "$PWD" in
-        /home/erik/Projects/pequod*)
-            docker exec -it pequod-php npm "$@"
-            ;;
-        /home/erik/Projects/better-shoes*)
-            docker exec -it better-shoes-php npm "$@"
-            ;;
-        *)
-            command npm "$@"
-            ;;
-    esac
-}
-
-node() {
-    case "$PWD" in
-        /home/erik/Projects/pequod*)
-            docker exec -it pequod-php node "$@"
-            ;;
-        /home/erik/Projects/better-shoes*)
-            docker exec -it better-shoes-php node "$@"
-            ;;
-        *)
-            command node "$@"
-            ;;
-    esac
-}
 # BEGIN PROJECT better-shoes
 alias lbs="~/Omarchy/projects/better-shoes/launch"
 alias kbs="~/Omarchy/projects/better-shoes/kill"
@@ -371,4 +346,12 @@ bs-restore() {
     docker exec -i better-shoes-postgres psql -U better_shoes -d better_shoes < "/home/erik/Projects/better-shoes/storage/app/dumps/$file" 2>&1 | tail -100
 }
 # END PROJECT better-shoes
+# BEGIN PROJECT ohdsi-dr-screening-treatment-patterns
+alias ldrtp="~/Omarchy/projects/ohdsi-dr-screening-treatment-patterns/launch"
+alias kdrtp="~/Omarchy/projects/ohdsi-dr-screening-treatment-patterns/kill"
+alias tmdrtp="~/Omarchy/projects/ohdsi-dr-screening-treatment-patterns/tmux.sh"
+alias bdrtp="~/Omarchy/projects/ohdsi-dr-screening-treatment-patterns/bootstrap"
+alias pmdrtp="cd ~/Omarchy/projects/ohdsi-dr-screening-treatment-patterns"
+alias drtp="cd /home/erik/Projects/ohdsi-dr-screening-treatment-patterns"
+# END PROJECT ohdsi-dr-screening-treatment-patterns
 # Auto-generated project aliases

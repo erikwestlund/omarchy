@@ -1,5 +1,19 @@
 #!/bin/bash
 # Launch script for {{ project_name }}
+#
+# This script launches the {{ project_name }} development environment with:
+# - Workspace management (switches to target workspace)
+{% if docker_compose | default(false) | bool %}
+# - Docker service orchestration (starts and waits for health checks)
+{% endif %}
+# - Window positioning (adapts based on desktop vs laptop mode)
+# - Notification system (shows progress updates)
+#
+# Desktop mode: Browser and editor on same workspace (browser right, editor left)
+# Laptop mode: Editor on WS N, browser on WS N+1, then return to WS N
+#
+# Race condition prevention: Waits for windows to actually appear before
+# switching workspaces to ensure correct positioning.
 
 # === Helper Functions ===
 # Check if a window of given class exists on a workspace
@@ -33,14 +47,12 @@ DEFAULT_WS={{ default_ws | default(1) }}
 {% if docker_compose | default(false) | bool %}
 DOCKER_COMPOSE=true
 {% else %}
-# DOCKER_COMPOSE=false
+DOCKER_COMPOSE=false
 {% endif %}
 {% if view_url | default('') | length > 0 %}
 VIEW_URL="{{ view_url }}"
-USE_SPLIT={{ use_split | default(false) | lower }}
 {% else %}
-# VIEW_URL=""
-# USE_SPLIT=false
+VIEW_URL=""
 {% endif %}
 
 # === Parse Arguments ===
@@ -58,79 +70,112 @@ if [[ "$1" == "-h" || "$1" == "--help" ]]; then
 fi
 
 # === Launch ===
-echo "Launching $PROJECT_NAME in workspace $WS..."
+notify-send -u low "{{ project_name | replace('-', ' ') | title }}" "Launching..." -t 5000
 
-# Switch to workspace
+# Switch to workspace and wait for it to complete
 hyprctl dispatch workspace $WS
+sleep 0.3
 
-{% if docker_compose | default(false) | bool %}
-# Start Docker services (docker-compose.yml = dev, docker-compose.prod.yml = prod)
-if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
-    echo "Starting Docker services..."
-    (cd "$PROJECT_DIR" && docker compose up -d) || echo "Warning: Docker compose failed - continuing anyway"
-fi
-{% else %}
-# Start Docker services (if configured)
-# if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
-#     echo "Starting Docker services..."
-#     (cd "$PROJECT_DIR" && docker compose up -d)
-# fi
-{% endif %}
+# Start Docker services (if enabled)
+if [ "$DOCKER_COMPOSE" = "true" ] && [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+    notify-send -u low "{{ project_name | replace('-', ' ') | title }}" "Starting Docker services..." -t 4000
+    (cd "$PROJECT_DIR" && docker compose up -d) || {
+        notify-send -u critical "{{ project_name | replace('-', ' ') | title }}" "Failed to start Docker services" -t 5000
+        exit 1
+    }
 
-{% if view_url | default('') | length > 0 %}
-# Open browser FIRST (will go on RIGHT side)
-if [ "$USE_SPLIT" = "true" ]; then
-    VIEW_WS=$((WS + 1))
-    if has_window_on_ws "$VIEW_WS" "chromium"; then
-        echo "Browser already open on workspace $VIEW_WS, skipping..."
-    else
-        echo "Opening view in workspace $VIEW_WS..."
-        hyprctl dispatch exec "[workspace $VIEW_WS silent]" "chromium --new-window '$VIEW_URL'"
+    # Wait for services to be healthy
+    MAX_WAIT=60  # Maximum wait time in seconds
+    ELAPSED=0
+    WAITING_NOTIFIED=false
+
+    while [ $ELAPSED -lt $MAX_WAIT ]; do
+        # Check if all services with health checks are healthy
+        UNHEALTHY=$(cd "$PROJECT_DIR" && docker compose ps --format json | jq -r 'select(.Health != "" and .Health != "healthy") | .Service' 2>/dev/null)
+
+        if [ -z "$UNHEALTHY" ]; then
+            break
+        fi
+
+        # Only show waiting notification if it's taking more than 4 seconds
+        if [ $ELAPSED -ge 4 ] && [ "$WAITING_NOTIFIED" = false ]; then
+            notify-send -u normal "{{ project_name | replace('-', ' ') | title }}" "Waiting for services..." -t 10000
+            WAITING_NOTIFIED=true
+        fi
+
+        sleep 2
+        ELAPSED=$((ELAPSED + 2))
+    done
+
+    if [ $ELAPSED -ge $MAX_WAIT ]; then
+        notify-send -u normal "{{ project_name | replace('-', ' ') | title }}" "Services slow, opening anyway..." -t 3000
     fi
-else
-    if has_window_on_ws "$WS" "chromium"; then
-        echo "Browser already open on workspace $WS, skipping..."
-    else
-        echo "Opening browser (right side)..."
+fi
+
+MACHINE=$(cat ~/.machine 2>/dev/null)
+
+if [ "$MACHINE" = "desktop" ]; then
+    # Desktop: open browser first (right), then editor (left), both on same workspace
+    if [ -n "$VIEW_URL" ] && ! has_window_on_ws "$WS" "chromium"; then
         hyprctl dispatch exec "[workspace $WS silent]" "chromium --new-window '$VIEW_URL'"
-        sleep 1  # Wait for browser to claim right position
+
+        # Wait for browser to appear before opening editor (ensures correct positioning)
+        for i in {1..10}; do
+            if has_window_on_ws "$WS" "chromium"; then
+                break
+            fi
+            sleep 0.2
+        done
+    fi
+
+    if ! has_window_on_ws "$WS" "code"; then
+{% if project_editor | default('vscode') in ['vscode', 'positron'] and project_path | length > 0 %}
+        hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
+{% else %}
+        hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$PROJECT_DIR'"
+{% endif %}
+    fi
+else
+    # Laptop: editor on WS, browser on WS+1 (if VIEW_URL is set)
+    if ! has_window_on_ws "$WS" "code"; then
+        # Ensure we're on the right workspace, then open editor
+        hyprctl dispatch workspace $WS
+        sleep 0.3
+{% if project_editor | default('vscode') in ['vscode', 'positron'] and project_path | length > 0 %}
+        $EDITOR "$WORKSPACE_FILE" &
+{% else %}
+        $EDITOR "$PROJECT_DIR" &
+{% endif %}
+
+        # Wait for VS Code window to actually appear on this workspace
+        for i in {1..20}; do
+            if has_window_on_ws "$WS" "code"; then
+                break
+            fi
+            sleep 0.2
+        done
+    fi
+
+    if [ -n "$VIEW_URL" ]; then
+        BROWSER_WS=$((WS + 1))
+        if ! has_window_on_ws "$BROWSER_WS" "chromium"; then
+            # Switch to browser workspace, open browser, wait for it to appear
+            hyprctl dispatch workspace $BROWSER_WS
+            sleep 0.3
+            chromium --new-window "$VIEW_URL" &
+
+            # Wait for browser window to appear
+            for i in {1..20}; do
+                if has_window_on_ws "$BROWSER_WS" "chromium"; then
+                    break
+                fi
+                sleep 0.2
+            done
+
+            # Switch back to editor workspace
+            hyprctl dispatch workspace $WS
+        fi
     fi
 fi
-{% endif %}
 
-# Launch editor SECOND (will go on LEFT side)
-{% if project_editor | default('vscode') == 'neovim' %}
-if has_window_on_ws "$WS" "ghostty"; then
-    echo "Editor already open on workspace $WS, skipping..."
-else
-    echo "Opening $EDITOR..."
-    hyprctl dispatch exec "[workspace $WS silent]" "ghostty -e nvim '$PROJECT_DIR'"
-fi
-{% elif project_editor | default('vscode') in ['vscode', 'positron'] %}
-if has_window_on_ws "$WS" "code"; then
-    echo "Editor already open on workspace $WS, skipping..."
-else
-    echo "Opening $EDITOR (left side)..."
-{% if project_path | length > 0 %}
-    hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
-{% else %}
-    hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$PROJECT_DIR'"
-{% endif %}
-fi
-{% else %}
-echo "Opening $EDITOR..."
-hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$PROJECT_DIR'"
-{% endif %}
-
-{% if not view_url | default('') | length > 0 %}
-# Open view in split workspace (if configured)
-# VIEW_URL=""
-# USE_SPLIT=false
-# if [ "$USE_SPLIT" = "true" ] && [ -n "$VIEW_URL" ]; then
-#     VIEW_WS=$((WS + 1))
-#     echo "Opening view in workspace $VIEW_WS..."
-#     hyprctl dispatch exec "[workspace $VIEW_WS silent]" "chromium --new-window '$VIEW_URL'"
-# fi
-{% endif %}
-
-echo "Done! $PROJECT_NAME launched in workspace $WS"
+notify-send -u low "{{ project_name | replace('-', ' ') | title }}" "Ready! Workspace $WS" -t 3000

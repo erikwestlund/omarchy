@@ -1,0 +1,10 @@
+#!/bin/bash
+# Wrapper for NoMachine with HiDPI scaling
+
+# Disable force_zero_scaling so Hyprland scales at 2x (makes NoMachine bigger)
+hyprctl keyword xwayland:force_zero_scaling false
+
+/usr/NX/bin/nxplayer --session /home/erik/.nx/cache/ce9762ec-6ccc-470f-bb1b-461cb8f4441e.nxs
+
+# Restore default (sharp but small for other XWayland apps)
+hyprctl keyword xwayland:force_zero_scaling true

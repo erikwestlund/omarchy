@@ -97,6 +97,9 @@
       tags: vms
       when: vms | default([]) | length > 0
 
+    - role: remmina
+      tags: remmina
+
     - role: projects
       tags: new-project
       when: project_name is defined

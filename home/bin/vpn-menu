@@ -1,0 +1,51 @@
+#!/bin/bash
+# VPN menu - manage non-JHU VPNs (Tailscale, etc.)
+
+# Check Tailscale status
+if tailscale status --json 2>/dev/null | jq -e '.BackendState == "Running"' >/dev/null 2>&1; then
+    # Tailscale is up
+    action=$(echo -e "Down\nStatus\nExit Node...\nPrefs" | walker --dmenu -p "Tailscale:")
+else
+    # Tailscale is down or stopped
+    action=$(echo -e "Up\nStatus\nPrefs" | walker --dmenu -p "Tailscale:")
+fi
+
+case "$action" in
+    Up)
+        tailscale up && notify-send "Tailscale" "Connected"
+        ;;
+    Down)
+        tailscale down && notify-send "Tailscale" "Disconnected"
+        ;;
+    Status)
+        status=$(tailscale status 2>&1)
+        if [ -z "$status" ]; then
+            notify-send "Tailscale" "Not running" --urgency=critical
+        else
+            # Show status in a terminal window
+            ghostty -e bash -c "tailscale status; echo; echo 'Press any key to close...'; read -n1"
+        fi
+        ;;
+    "Exit Node...")
+        # Get list of exit nodes
+        nodes=$(tailscale exit-node list 2>/dev/null | tail -n +2 | awk '{print $1, $2}' | sed 's/^/  /')
+        if [ -z "$nodes" ]; then
+            notify-send "Tailscale" "No exit nodes available" --urgency=normal
+        else
+            # Add "None (direct)" option at the top
+            selected=$(echo -e "None (direct)\n$nodes" | walker --dmenu -p "Exit Node:")
+            if [ -n "$selected" ]; then
+                if [ "$selected" = "None (direct)" ]; then
+                    tailscale set --exit-node= && notify-send "Tailscale" "Exit node cleared"
+                else
+                    node_id=$(echo "$selected" | awk '{print $1}')
+                    tailscale set --exit-node="$node_id" && notify-send "Tailscale" "Exit node set to $node_id"
+                fi
+            fi
+        fi
+        ;;
+    Prefs)
+        # Show preferences in terminal
+        ghostty -e bash -c "echo 'Tailscale Preferences:'; echo; tailscale status --json | jq '.Prefs' | less; echo; echo 'Press any key to close...'; read -n1"
+        ;;
+esac

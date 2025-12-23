@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Mac Mini
+Comment=Connect to Mac Mini via NoMachine
+Exec=/home/erik/.bin/nomachine-mac-mini
+Terminal=false
+Type=Application
+Icon=/home/erik/.local/share/applications/icons/mac-mini.webp
+StartupNotify=true
+Categories=Network;RemoteAccess;

@@ -47,6 +47,12 @@
     dest: "{{ omarchy_repo }}/projects/{{ project_name }}/kill"
     mode: '0755'
 
+- name: Generate bootstrap script from template
+  ansible.builtin.template:
+    src: "bootstrap.j2"
+    dest: "{{ omarchy_repo }}/projects/{{ project_name }}/bootstrap"
+    mode: '0755'
+
 - name: Convert project name to kebab-case for workspace file
   ansible.builtin.set_fact:
     workspace_filename: "{{ project_name | lower | regex_replace('[^a-z0-9]', '-') | regex_replace('-+', '-') | regex_replace('^-|-$', '') }}"
