@@ -141,7 +141,6 @@ window#waybar {
 #cpu,
 #battery,
 #custom-omarchy,
-#custom-darkman,
 #custom-screenrecording-indicator,
 #custom-update,
 #pulseaudio,
@@ -151,6 +150,12 @@ window#waybar {
   margin: 0;
   padding: 0;
   margin-top: 1px;
+}
+
+#custom-darkman {
+  color: #bdd4ff;
+  margin: 0;
+  padding: 0;
 }
 
 #battery {
