@@ -49,7 +49,6 @@ cpu_governor: performance
 
 # Additional desktop-specific packages (merged with all.yml)
 # extra_pacman_packages: []
-# extra_aur_packages: []
 
 # Virtual machines
 vms:

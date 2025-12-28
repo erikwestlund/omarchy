@@ -194,7 +194,6 @@ config_dirs_copy:
 
 # Config directories to SYMLINK (no ansible processing needed)
 config_dirs_symlink:
-  - btop
   - darkman
   - ghostty
   - omarchy
