@@ -48,7 +48,9 @@ theme_background: "1.png"
 cpu_governor: performance
 
 # Additional desktop-specific packages (merged with all.yml)
-# extra_pacman_packages: []
+extra_pacman_packages:
+  - i2c-tools
+  - openrgb
 
 # Virtual machines
 vms:

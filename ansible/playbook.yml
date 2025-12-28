@@ -104,6 +104,10 @@
       tags: intel-gpu
       when: inventory_hostname == 'desktop'
 
+    - role: openrgb
+      tags: openrgb
+      when: inventory_hostname == 'desktop'
+
     - role: projects
       tags: new-project
       when: project_name is defined

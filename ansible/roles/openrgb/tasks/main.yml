@@ -1,0 +1,36 @@
+---
+# OpenRGB configuration - turn off RAM RGB on boot
+
+- name: Load i2c-dev module at boot
+  ansible.builtin.copy:
+    dest: /etc/modules-load.d/i2c-dev.conf
+    content: |
+      i2c-dev
+    mode: '0644'
+  become: true
+
+- name: Create OpenRGB service to disable RAM RGB
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/openrgb-off.service
+    content: |
+      [Unit]
+      Description=Turn off RAM RGB LEDs
+      After=multi-user.target
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/bin/openrgb --device 0 --mode off
+      ExecStart=/usr/bin/openrgb --device 1 --mode off
+      RemainAfterExit=yes
+
+      [Install]
+      WantedBy=multi-user.target
+    mode: '0644'
+  become: true
+
+- name: Enable OpenRGB service
+  ansible.builtin.systemd:
+    name: openrgb-off.service
+    enabled: true
+    daemon_reload: true
+  become: true
