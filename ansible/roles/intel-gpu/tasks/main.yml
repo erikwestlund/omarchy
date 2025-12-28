@@ -1,0 +1,33 @@
+---
+# Intel Arc GPU driver installation
+# Only installs if Intel discrete GPU (Arc) is detected
+
+- name: Check for Intel Arc GPU
+  ansible.builtin.shell: |
+    lspci | grep -i 'VGA.*Intel.*Arc\|VGA.*Intel.*Battlemage\|VGA.*Intel.*Alchemist'
+  register: intel_arc_check
+  changed_when: false
+  failed_when: false
+
+- name: Install Intel Arc GPU packages
+  become: true
+  community.general.pacman:
+    name:
+      - vulkan-intel
+      - intel-media-driver
+    state: present
+  when: intel_arc_check.rc == 0
+  retries: 3
+  delay: 5
+  register: intel_gpu_result
+  until: intel_gpu_result is succeeded
+
+- name: Report Intel Arc GPU status
+  ansible.builtin.debug:
+    msg: "Intel Arc GPU detected and drivers installed"
+  when: intel_arc_check.rc == 0
+
+- name: Report no Intel Arc GPU
+  ansible.builtin.debug:
+    msg: "No Intel Arc GPU detected, skipping driver installation"
+  when: intel_arc_check.rc != 0
