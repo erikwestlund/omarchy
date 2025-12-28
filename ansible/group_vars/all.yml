@@ -37,6 +37,8 @@ pacman_packages:
 
   # Hardware/Thunderbolt
   - bolt
+  - lm_sensors
+  - nvme-cli
 
   # Development
   - cmake
