@@ -1,0 +1,244 @@
+---
+# Windows VM Setup Playbook
+#
+# This playbook sets up a Windows 11 VM with libvirt/QEMU.
+# Run separately from the main playbook - not part of default Omarchy setup.
+#
+# Prerequisites:
+#   1. Windows 11 ISO at ~/NAS/ISOs/win-11.iso (or specify with -e win_iso=/path/to/iso)
+#   2. VirtIO drivers ISO at ~/NAS/ISOs/virtio-win.iso (or specify with -e virtio_iso=/path/to/iso)
+#
+# Usage:
+#   # Set up Windows VM on current machine
+#   ansible-playbook ansible/windows-vm.yml -l laptop
+#
+#   # With custom ISO paths
+#   ansible-playbook ansible/windows-vm.yml -l desktop \
+#     -e win_iso=/path/to/win11.iso \
+#     -e virtio_iso=/path/to/virtio-win.iso
+
+- name: Set up Windows VM
+  hosts: all
+  connection: local
+  gather_facts: true
+
+  vars_files:
+    - vault/secrets.yml
+
+  vars:
+    # VM configuration (can be overridden with -e)
+    win_vm_name: win11
+    win_ram_mb: 16384
+    win_vcpus: 4
+    win_disk_size_gb: 250
+    win_iso: "{{ ansible_facts.env.HOME }}/NAS/ISOs/win-11.iso"
+    virtio_iso: "{{ ansible_facts.env.HOME }}/NAS/ISOs/virtio-win.iso"
+    vm_disk_path: /var/lib/libvirt/images
+
+  tasks:
+    # Libvirt setup
+    - name: Add user to libvirt groups
+      become: true
+      ansible.builtin.user:
+        name: "{{ ansible_facts.env.USER }}"
+        groups:
+          - libvirt
+          - libvirt-qemu
+        append: true
+
+    - name: Ensure libvirtd is running
+      become: true
+      ansible.builtin.systemd:
+        name: libvirtd
+        state: started
+        enabled: true
+
+    - name: Ensure default network exists
+      become: true
+      ansible.builtin.command: virsh net-define /usr/share/libvirt/networks/default.xml
+      register: net_define
+      failed_when: false
+      changed_when: net_define.rc == 0
+
+    - name: Ensure default network is active
+      become: true
+      ansible.builtin.command: virsh net-start default
+      register: net_start
+      failed_when: false
+      changed_when: net_start.rc == 0
+
+    - name: Autostart default network
+      become: true
+      ansible.builtin.command: virsh net-autostart default
+      register: net_autostart
+      failed_when: false
+      changed_when: net_autostart.rc == 0
+
+    - name: Ensure VM disk directory exists
+      become: true
+      ansible.builtin.file:
+        path: "{{ vm_disk_path }}"
+        state: directory
+        mode: '0755'
+
+    # Check prerequisites
+    - name: Check if Windows ISO exists
+      ansible.builtin.stat:
+        path: "{{ win_iso }}"
+      register: win_iso_stat
+
+    - name: Check if VirtIO ISO exists
+      ansible.builtin.stat:
+        path: "{{ virtio_iso }}"
+      register: virtio_iso_stat
+
+    - name: Fail if Windows ISO not found
+      ansible.builtin.fail:
+        msg: |
+          Windows ISO not found at: {{ win_iso }}
+
+          Download Windows 11 from Microsoft and place at the path above, or specify a custom path:
+            ansible-playbook ansible/windows-vm.yml -l {{ inventory_hostname }} -e win_iso=/path/to/win11.iso
+      when: not win_iso_stat.stat.exists
+
+    - name: Fail if VirtIO ISO not found
+      ansible.builtin.fail:
+        msg: |
+          VirtIO drivers ISO not found at: {{ virtio_iso }}
+
+          Download from: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
+          Place at the path above, or specify a custom path:
+            ansible-playbook ansible/windows-vm.yml -l {{ inventory_hostname }} -e virtio_iso=/path/to/virtio-win.iso
+      when: not virtio_iso_stat.stat.exists
+
+    # VM creation
+    - name: Check if VM already exists
+      become: true
+      ansible.builtin.command: "virsh dominfo {{ win_vm_name }}"
+      register: vm_exists
+      failed_when: false
+      changed_when: false
+
+    - name: Create Windows VM
+      become: true
+      ansible.builtin.command: >
+        virt-install
+        --name {{ win_vm_name }}
+        --ram {{ win_ram_mb }}
+        --vcpus {{ win_vcpus }}
+        --os-variant win11
+        --disk path={{ vm_disk_path }}/{{ win_vm_name }}.qcow2,size={{ win_disk_size_gb }},format=qcow2,bus=virtio
+        --cdrom {{ win_iso }}
+        --disk path={{ virtio_iso }},device=cdrom
+        --network network=default,model=virtio
+        --graphics spice,listen=socket
+        --video qxl
+        --channel spicevmc,target.type=virtio,target.name=com.redhat.spice.0
+        --boot uefi
+        --tpm backend.type=emulator,backend.version=2.0,model=tpm-tis
+        --cpu host-passthrough
+        --noautoconsole
+      when: vm_exists.rc != 0
+      register: vm_created
+
+    - name: VM creation result
+      ansible.builtin.debug:
+        msg: |
+          Windows VM '{{ win_vm_name }}' created successfully!
+
+          Next steps:
+          1. Open virt-manager or run: virt-viewer {{ win_vm_name }}
+          2. Install Windows (load VirtIO drivers from the second CD-ROM during disk selection)
+          3. Install VirtIO guest tools from the CD-ROM after Windows is installed
+          4. Enable RDP in Windows Settings > System > Remote Desktop
+          5. Add vault_windows_vm_password to your vault, then re-run this playbook to set up RDP access
+      when: vm_created.changed | default(false)
+
+    # Windows desktop entry and RDP setup
+    - name: Ensure applications directory exists
+      ansible.builtin.file:
+        path: "{{ ansible_facts.env.HOME }}/.local/share/applications"
+        state: directory
+        mode: '0755'
+
+    - name: Create Windows desktop entry
+      ansible.builtin.copy:
+        dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/windows.desktop"
+        mode: '0644'
+        content: |
+          [Desktop Entry]
+          Name=Windows
+          Comment=Launch Windows VM via RDP
+          Exec=uwsm app -- {{ ansible_facts.env.HOME }}/.bin/windows
+          Icon=windows
+          Terminal=false
+          Type=Application
+          Categories=System;
+
+    - name: Ensure applications icons directory exists
+      ansible.builtin.file:
+        path: "{{ ansible_facts.env.HOME }}/.local/share/applications/icons"
+        state: directory
+        mode: '0755'
+
+    - name: Check if VM icons source exists
+      ansible.builtin.stat:
+        path: "{{ playbook_dir }}/../home/.local/share/applications/icons"
+      register: vm_icons_src
+      delegate_to: localhost
+
+    - name: Sync VM icons
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../home/.local/share/applications/icons/"
+        dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/icons/"
+        mode: '0644'
+      when: vm_icons_src.stat.exists
+
+    # RDP credentials (only if vault password is set)
+    - name: Ensure windows-vm config directory exists
+      ansible.builtin.file:
+        path: "{{ ansible_facts.env.HOME }}/.config/windows-vm"
+        state: directory
+        mode: '0700'
+      when: vault_windows_vm_password is defined
+
+    - name: Deploy Windows VM RDP credentials
+      ansible.builtin.copy:
+        dest: "{{ ansible_facts.env.HOME }}/.config/windows-vm/rdp-creds"
+        mode: '0600'
+        content: |
+          RDP_USER="{{ windows_vm_user | default('erik') }}"
+          RDP_PASS="{{ vault_windows_vm_password }}"
+          RDP_RESOLUTION="{{ windows_vm_resolution | default('1920x1080') }}"
+          RDP_SCALE="{{ windows_vm_scale | default('100') }}"
+      no_log: true
+      when: vault_windows_vm_password is defined
+
+    - name: RDP credentials note
+      ansible.builtin.debug:
+        msg: |
+          RDP credentials not configured. To enable one-click RDP access:
+          1. Add 'vault_windows_vm_password: "your-password"' to your vault
+          2. Re-run this playbook
+      when: vault_windows_vm_password is not defined
+
+    # Migration: clean up legacy VM names
+    - name: Check for legacy RDPWindows VM
+      ansible.builtin.command: virsh dominfo RDPWindows
+      register: legacy_vm_check
+      failed_when: false
+      changed_when: false
+
+    - name: Rename RDPWindows to win11
+      ansible.builtin.command: virsh domrename RDPWindows win11
+      when: legacy_vm_check.rc == 0
+
+    - name: Remove old Windows desktop entries
+      ansible.builtin.file:
+        path: "{{ ansible_facts.env.HOME }}/.local/share/applications/{{ item }}"
+        state: absent
+      loop:
+        - windows-vm.desktop
+        - win11-vm.desktop
+        - Win11.desktop
+        - windows-11-vm.desktop

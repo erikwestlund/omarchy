@@ -93,10 +93,6 @@
     - role: pulsesecure
       tags: pulsesecure
 
-    - role: vms
-      tags: vms
-      when: vms | default([]) | length > 0
-
     - role: remmina
       tags: remmina
 

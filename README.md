@@ -10,7 +10,7 @@ git clone https://github.com/erikwestlund/omarchy ~/Omarchy
 
 # 2. Install ansible
 yay -S ansible
-ansible-galaxy collection install community.general
+ansible-galaxy collection install community.general kewlfft.aur
 
 # 3. Set up vault password
 echo "your-vault-password" > ~/.vault_pass
@@ -23,11 +23,14 @@ echo "laptop" > ~/.machine   # or "desktop"
 rclone copy :b2,account=$B2_KEY,key=$B2_SECRET:erik-secrets/bootstrap/secrets.yml \
   ~/Omarchy/ansible/vault/
 
-# 6. Run playbook
-om
+# 6. Run playbook (aliases not available yet, use full command)
+ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l laptop  # or desktop
 
 # 7. Switch to SSH remote
 git -C ~/Omarchy remote set-url origin git@github.com:erikwestlund/omarchy.git
+
+# 8. Reload shell to get aliases, then use 'om' for future runs
+exec bash
 ```
 
 ## Machines
@@ -53,7 +56,7 @@ The `~/.machine` file determines which host ansible targets when using `om`.
 | `hypr_gaps_out` | 4 | 3 |
 | `hypr_rounding` | 16 | 12 |
 
-Host vars also control: waybar styling, VM resolution, theme background, extra packages.
+Host vars also control: waybar styling, theme background, extra packages.
 
 ## Structure
 
@@ -61,6 +64,7 @@ Host vars also control: waybar styling, VM resolution, theme background, extra p
 omarchy/
 ├── ansible/              # Ansible playbooks and roles
 │   ├── playbook.yml      # Main entry point
+│   ├── windows-vm.yml    # Optional Windows VM setup (separate)
 │   ├── inventory.yml     # Hosts: laptop, desktop
 │   ├── group_vars/       # Shared config (packages, dotfiles lists)
 │   ├── host_vars/        # Per-machine settings
@@ -219,6 +223,35 @@ om --tags secrets
 | AWS creds | `~/.aws` (symlink) |
 | GPG keys | Imported to GPG |
 | Hosts file | `/etc/hosts` (copy) |
+| GitHub PAT | Docker login to ghcr.io |
+
+### Vault Variables
+
+The ansible vault (`ansible/vault/secrets.yml`) must contain these secrets:
+
+```yaml
+# B2 storage (for secrets backup)
+vault_b2_key_id: "..."
+vault_b2_app_key: "..."
+vault_b2_bucket: "..."
+
+# Age encryption
+vault_age_secret_key: "AGE-SECRET-KEY-..."
+vault_age_public_key: "age1..."
+
+# NAS credentials
+vault_nas_erik_username: "..."
+vault_nas_erik_password: "..."
+
+# GitHub Container Registry (optional - for pulling private images)
+github_username: "your-github-username"
+github_pat: "ghp_..."  # needs read:packages scope
+```
+
+Edit the vault with:
+```bash
+vault-edit
+```
 
 ## Framework Laptop
 
@@ -231,6 +264,73 @@ The Framework laptop has keyboard remapping via keyd:
 ```bash
 om --tags keyd        # Deploy keyboard config
 sudo keyd reload      # Reload after changes
+```
+
+## Windows VM (Optional)
+
+A Windows 11 VM can be set up separately using libvirt/QEMU. This is **not** part of the default Omarchy setup.
+
+### Prerequisites
+
+1. **Windows 11 ISO** - Download from [Microsoft](https://www.microsoft.com/software-download/windows11)
+2. **VirtIO drivers ISO** - Download from [Fedora](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso)
+
+Place both ISOs in `~/NAS/ISOs/` (or specify custom paths).
+
+### Setup
+
+```bash
+# Run the Windows VM playbook
+ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg \
+  ansible-playbook ~/Omarchy/ansible/windows-vm.yml -l laptop  # or desktop
+
+# With custom ISO paths
+ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg \
+  ansible-playbook ~/Omarchy/ansible/windows-vm.yml -l desktop \
+  -e win_iso=/path/to/win11.iso \
+  -e virtio_iso=/path/to/virtio-win.iso
+```
+
+### What It Does
+
+1. Sets up libvirt/QEMU infrastructure
+2. Creates a Windows 11 VM with:
+   - VirtIO disk and network drivers (fast)
+   - TPM 2.0 emulation (required for Win11)
+   - UEFI boot
+   - SPICE graphics
+3. Creates a "Windows" desktop entry for launching via RDP
+
+### Post-Install Steps
+
+After the VM is created:
+
+1. Open `virt-manager` or run `virt-viewer win11`
+2. Install Windows (load VirtIO drivers from the second CD-ROM during disk selection)
+3. Install VirtIO guest tools from the CD-ROM after Windows boots
+4. Enable RDP in Windows: Settings > System > Remote Desktop
+
+### RDP Quick Launch (Optional)
+
+For one-click RDP access, add your Windows password to the vault:
+
+```bash
+vault-edit
+```
+
+Add:
+```yaml
+vault_windows_vm_password: "your-windows-password"
+```
+
+Then re-run the Windows VM playbook. The `~/.bin/windows` script will use these credentials.
+
+Configure RDP resolution/scaling in your host_vars:
+
+```yaml
+windows_vm_user: "erik"
+windows_vm_resolution: "1920x1080"
+windows_vm_scale: "100"  # 200 for HiDPI
 ```
 
 ## Adding a New Machine
