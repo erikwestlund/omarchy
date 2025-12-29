@@ -1,6 +1,6 @@
 ---
 # Development sites to proxy
-# Maps .test domains to localhost ports
+# Maps domains to localhost ports
 dev_sites:
   - domain: naaccord.test
     port: 8000
@@ -10,3 +10,6 @@ dev_sites:
   - domain: better-shoes.test
     port: 8020
     wildcard: true
+  # Local services
+  - domain: local.syncthing.lan
+    port: 8384

@@ -11,3 +11,7 @@ dnsmasq_interface: "127.0.0.1"
 # Each project can add its domain here
 dev_domains:
   - naaccord.test
+
+# Local LAN domains pointing to localhost (for local services)
+local_lan_domains:
+  - local.syncthing.lan

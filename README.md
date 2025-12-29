@@ -172,6 +172,13 @@ After running ansible, these are available:
 | `secrets-pull` | Pull & decrypt from B2 |
 | `secrets-push` | Encrypt & push to B2 |
 
+### Windows VM
+
+| Alias | Action |
+|-------|--------|
+| `win-spice` | Connect to Windows VM via SPICE (for setup) |
+| `windows` | Launch Windows VM via RDP (daily use) |
+
 ## Projects
 
 Projects have launcher scripts in `~/Omarchy/projects/{project}/`:
@@ -268,51 +275,43 @@ sudo keyd reload      # Reload after changes
 
 ## Windows VM (Optional)
 
-A Windows 11 VM can be set up separately using libvirt/QEMU. This is **not** part of the default Omarchy setup.
+A Windows 11 VM using libvirt/QEMU. Not part of the default Omarchy setup.
 
-### Prerequisites
-
-1. **Windows 11 ISO** - Download from [Microsoft](https://www.microsoft.com/software-download/windows11)
-2. **VirtIO drivers ISO** - Download from [Fedora](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso)
-
-Place both ISOs in `~/NAS/ISOs/` (or specify custom paths).
-
-### Setup
+### 1. Copy ISO
 
 ```bash
-# Run the Windows VM playbook
-ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg \
-  ansible-playbook ~/Omarchy/ansible/windows-vm.yml -l laptop  # or desktop
-
-# With custom ISO paths
-ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg \
-  ansible-playbook ~/Omarchy/ansible/windows-vm.yml -l desktop \
-  -e win_iso=/path/to/win11.iso \
-  -e virtio_iso=/path/to/virtio-win.iso
+sudo cp ~/NAS/ISOs/win-11-min.iso /var/lib/libvirt/images/
+sudo chown libvirt-qemu:libvirt-qemu /var/lib/libvirt/images/win-11-min.iso
 ```
 
-### What It Does
+### 2. Create VM
 
-1. Sets up libvirt/QEMU infrastructure
-2. Creates a Windows 11 VM with:
-   - VirtIO disk and network drivers (fast)
-   - TPM 2.0 emulation (required for Win11)
-   - UEFI boot
-   - SPICE graphics
-3. Creates a "Windows" desktop entry for launching via RDP
+```bash
+ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg \
+  ansible-playbook ~/Omarchy/ansible/windows-vm.yml -l desktop  # or laptop
+```
 
-### Post-Install Steps
+### 3. Install Windows
 
-After the VM is created:
+Connect via SPICE for initial installation:
 
-1. Open `virt-manager` or run `virt-viewer win11`
-2. Install Windows (load VirtIO drivers from the second CD-ROM during disk selection)
-3. Install VirtIO guest tools from the CD-ROM after Windows boots
-4. Enable RDP in Windows: Settings > System > Remote Desktop
+```bash
+win-spice   # or: virt-viewer --connect qemu:///system win11
+```
 
-### RDP Quick Launch (Optional)
+- **Be patient** - there will be delays during installation
+- When Windows restarts, relaunch `win-spice` to reconnect
+- If prompted for drivers: storage is in `viostor`, network is in `netkvm`
 
-For one-click RDP access, add your Windows password to the vault:
+### 4. Enable Remote Desktop in Windows
+
+In Windows: **Settings > System > Remote Desktop** → Enable
+
+This is required for the "Windows" launcher to work.
+
+### 5. Configure RDP Credentials
+
+Add your Windows password to the vault:
 
 ```bash
 vault-edit
@@ -320,15 +319,32 @@ vault-edit
 
 Add:
 ```yaml
-vault_windows_vm_password: "your-windows-password"
+windows_vm_user: "your-windows-username"
+windows_vm_password: "your-windows-password"
 ```
 
-Then re-run the Windows VM playbook. The `~/.bin/windows` script will use these credentials.
+Re-run the playbook to deploy credentials:
 
-Configure RDP resolution/scaling in your host_vars:
+```bash
+ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg \
+  ansible-playbook ~/Omarchy/ansible/windows-vm.yml -l desktop
+```
+
+### 6. Launch via RDP
+
+Use the "Windows" app from the launcher, or:
+
+```bash
+~/.bin/windows
+```
+
+This connects via RDP with auto-resize support.
+
+### Optional: RDP Settings
+
+Configure resolution/scaling in `host_vars/desktop.yml`:
 
 ```yaml
-windows_vm_user: "erik"
 windows_vm_resolution: "1920x1080"
 windows_vm_scale: "100"  # 200 for HiDPI
 ```

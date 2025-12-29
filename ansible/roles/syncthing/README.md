@@ -78,6 +78,20 @@ Cookies-journal
 - Local path: `~/.config/chromium/Default`
 - Server path: `/data/syncthing/chromium` (or your preferred location)
 
+## Local Web UI
+
+Access the local Syncthing web UI at:
+
+```
+http://local.syncthing.lan
+```
+
+This is proxied via Caddy from `localhost:8384`. Requires running the dnsmasq and caddy roles:
+
+```bash
+om --tags dnsmasq,caddy
+```
+
 ## Useful Commands
 
 ```bash

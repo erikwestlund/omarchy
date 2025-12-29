@@ -214,6 +214,9 @@ alias secrets-push="~/.bin/secrets-push"
 
 # After vault-edit, use secrets-push to sync
 
+# Windows VM
+alias win-spice="virt-viewer --connect qemu:///system win11"
+
 # Project management
 alias pm-sync="om --tags projects,dotfiles"
 

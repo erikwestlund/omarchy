@@ -5,17 +5,15 @@
 # Run separately from the main playbook - not part of default Omarchy setup.
 #
 # Prerequisites:
-#   1. Windows 11 ISO at ~/NAS/ISOs/win-11.iso (or specify with -e win_iso=/path/to/iso)
-#   2. VirtIO drivers ISO at ~/NAS/ISOs/virtio-win.iso (or specify with -e virtio_iso=/path/to/iso)
+#   1. Copy Windows 11 minimal ISO to libvirt images directory:
+#      sudo cp ~/NAS/ISOs/win-11-min.iso /var/lib/libvirt/images/
+#      sudo chown libvirt-qemu:libvirt-qemu /var/lib/libvirt/images/win-11-min.iso
+#
+#      Note: The minimal ISO has VirtIO drivers included, no separate drivers needed.
 #
 # Usage:
-#   # Set up Windows VM on current machine
 #   ansible-playbook ansible/windows-vm.yml -l laptop
-#
-#   # With custom ISO paths
-#   ansible-playbook ansible/windows-vm.yml -l desktop \
-#     -e win_iso=/path/to/win11.iso \
-#     -e virtio_iso=/path/to/virtio-win.iso
+#   ansible-playbook ansible/windows-vm.yml -l desktop
 
 - name: Set up Windows VM
   hosts: all
@@ -31,8 +29,7 @@
     win_ram_mb: 16384
     win_vcpus: 4
     win_disk_size_gb: 250
-    win_iso: "{{ ansible_facts.env.HOME }}/NAS/ISOs/win-11.iso"
-    virtio_iso: "{{ ansible_facts.env.HOME }}/NAS/ISOs/virtio-win.iso"
+    win_iso: "/var/lib/libvirt/images/win-11-min.iso"
     vm_disk_path: /var/lib/libvirt/images
 
   tasks:
@@ -87,11 +84,6 @@
         path: "{{ win_iso }}"
       register: win_iso_stat
 
-    - name: Check if VirtIO ISO exists
-      ansible.builtin.stat:
-        path: "{{ virtio_iso }}"
-      register: virtio_iso_stat
-
     - name: Fail if Windows ISO not found
       ansible.builtin.fail:
         msg: |
@@ -100,16 +92,6 @@
           Download Windows 11 from Microsoft and place at the path above, or specify a custom path:
             ansible-playbook ansible/windows-vm.yml -l {{ inventory_hostname }} -e win_iso=/path/to/win11.iso
       when: not win_iso_stat.stat.exists
-
-    - name: Fail if VirtIO ISO not found
-      ansible.builtin.fail:
-        msg: |
-          VirtIO drivers ISO not found at: {{ virtio_iso }}
-
-          Download from: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
-          Place at the path above, or specify a custom path:
-            ansible-playbook ansible/windows-vm.yml -l {{ inventory_hostname }} -e virtio_iso=/path/to/virtio-win.iso
-      when: not virtio_iso_stat.stat.exists
 
     # VM creation
     - name: Check if VM already exists
@@ -129,10 +111,9 @@
         --os-variant win11
         --disk path={{ vm_disk_path }}/{{ win_vm_name }}.qcow2,size={{ win_disk_size_gb }},format=qcow2,bus=virtio
         --cdrom {{ win_iso }}
-        --disk path={{ virtio_iso }},device=cdrom
         --network network=default,model=virtio
-        --graphics spice,listen=socket
-        --video qxl
+        --graphics spice,listen=socket,gl.enable=no
+        --video qxl,ram=65536,vram=65536,vgamem=65536
         --channel spicevmc,target.type=virtio,target.name=com.redhat.spice.0
         --boot uefi
         --tpm backend.type=emulator,backend.version=2.0,model=tpm-tis
@@ -148,10 +129,9 @@
 
           Next steps:
           1. Open virt-manager or run: virt-viewer {{ win_vm_name }}
-          2. Install Windows (load VirtIO drivers from the second CD-ROM during disk selection)
-          3. Install VirtIO guest tools from the CD-ROM after Windows is installed
-          4. Enable RDP in Windows Settings > System > Remote Desktop
-          5. Add vault_windows_vm_password to your vault, then re-run this playbook to set up RDP access
+          2. Install Windows (VirtIO drivers are included in the minimal ISO)
+          3. Enable RDP in Windows Settings > System > Remote Desktop
+          4. Add vault_windows_vm_password to your vault, then re-run this playbook to set up RDP access
       when: vm_created.changed | default(false)
 
     # Windows desktop entry and RDP setup
@@ -200,7 +180,7 @@
         path: "{{ ansible_facts.env.HOME }}/.config/windows-vm"
         state: directory
         mode: '0700'
-      when: vault_windows_vm_password is defined
+      when: windows_vm_password is defined
 
     - name: Deploy Windows VM RDP credentials
       ansible.builtin.copy:
@@ -208,19 +188,19 @@
         mode: '0600'
         content: |
           RDP_USER="{{ windows_vm_user | default('erik') }}"
-          RDP_PASS="{{ vault_windows_vm_password }}"
+          RDP_PASS="{{ windows_vm_password }}"
           RDP_RESOLUTION="{{ windows_vm_resolution | default('1920x1080') }}"
           RDP_SCALE="{{ windows_vm_scale | default('100') }}"
       no_log: true
-      when: vault_windows_vm_password is defined
+      when: windows_vm_password is defined
 
     - name: RDP credentials note
       ansible.builtin.debug:
         msg: |
           RDP credentials not configured. To enable one-click RDP access:
-          1. Add 'vault_windows_vm_password: "your-password"' to your vault
+          1. Add 'windows_vm_password: "your-password"' to your vault
           2. Re-run this playbook
-      when: vault_windows_vm_password is not defined
+      when: windows_vm_password is not defined
 
     # Migration: clean up legacy VM names
     - name: Check for legacy RDPWindows VM

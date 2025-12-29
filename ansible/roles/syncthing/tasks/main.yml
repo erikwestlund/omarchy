@@ -10,6 +10,15 @@
   delay: 2
   changed_when: false
 
+# Configure GUI for local.syncthing.lan access via Caddy proxy
+- name: Allow local.syncthing.lan hostname in GUI
+  ansible.builtin.command: syncthing cli config gui insecure-skip-host-check set true
+  changed_when: false
+
+- name: Disable TLS for GUI (Caddy handles external access)
+  ansible.builtin.command: syncthing cli config gui raw-use-tls set false
+  changed_when: false
+
 - name: Check if Syncthing server device exists
   ansible.builtin.command: syncthing cli config devices list
   register: syncthing_devices

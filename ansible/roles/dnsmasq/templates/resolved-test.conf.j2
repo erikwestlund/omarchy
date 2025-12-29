@@ -1,7 +1,7 @@
-# systemd-resolved configuration for .test domain routing
+# systemd-resolved configuration for local domain routing
 # Managed by Ansible - do not edit directly
 
 [Resolve]
-# Forward .test queries to local dnsmasq
+# Forward .test and local.*.lan queries to local dnsmasq
 DNS=127.0.0.1:{{ dnsmasq_port }}
-Domains=~test
+Domains=~test {% for domain in local_lan_domains | default([]) %}~{{ domain }} {% endfor %}
