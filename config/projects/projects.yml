@@ -4,8 +4,8 @@
 #   pm{alias} - cd to ~/Omarchy/projects/{name}
 #   tm{alias} - Launch tmux session only
 #
-# Port allocation for Docker services (pm-new reads these to assign next available):
-#   nginx: 8010+, postgres: 5432+, redis: 6379+, meilisearch: 7700+
+# Port allocation for services (pm-new reads these to assign next available):
+#   vite: 5173+, nginx: 8010+, postgres: 5432+, redis: 6379+, meilisearch: 7700+
 #   minio_api: 9000+, minio_console: 9001+, mailpit_smtp: 1025+, mailpit_web: 8025+
 
 projects:
@@ -14,6 +14,7 @@ projects:
     type: laravel
     path: ~/Projects/pequod
     ports:
+      vite: 5173
       nginx: 8010
       postgres: 5432
       redis: 6379
@@ -27,6 +28,7 @@ projects:
     type: laravel
     path: ~/Projects/better-shoes
     ports:
+      vite: 5174
       nginx: 8020
       postgres: 5433
       redis: 6380
