@@ -57,7 +57,7 @@ Logitech keyboards use machine-specific templates because different machines may
 - `logitech-{{ inventory_hostname }}.conf.j2` - Machine-specific Logitech config
 
 For example:
-- `logitech-desktop.conf.j2` - Desktop's Logitech Bolt receiver (no alt/super swap)
+- `logitech-desktop.conf.j2` - Desktop's Logitech Bolt receiver (with alt/super swap)
 - `logitech-laptop.conf.j2` - Laptop's external Logitech keyboard (with alt/super swap)
 
 The Framework keyboard uses a shared template since it's consistent across Framework laptops:
