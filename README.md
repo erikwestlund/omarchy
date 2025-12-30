@@ -23,13 +23,16 @@ echo "laptop" > ~/.machine   # or "desktop"
 rclone copy :b2,account=$B2_KEY,key=$B2_SECRET:erik-secrets/bootstrap/secrets.yml \
   ~/Omarchy/ansible/vault/
 
-# 6. Run playbook (aliases not available yet, use full command)
+# 6. Add GitHub SSH host key (first time only)
+ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+# 7. Run playbook (aliases not available yet, use full command)
 ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l laptop  # or desktop
 
-# 7. Switch to SSH remote
+# 8. Switch to SSH remote
 git -C ~/Omarchy remote set-url origin git@github.com:erikwestlund/omarchy.git
 
-# 8. Reload shell to get aliases, then use 'om' for future runs
+# 9. Reload shell to get aliases, then use 'om' for future runs
 exec bash
 ```
 
