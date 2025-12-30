@@ -5,5 +5,8 @@
     "editor.fontLigatures": true,
     "terminal.integrated.fontFamily": "'JetBrains Mono', 'Fira Code', monospace",
     "terminal.integrated.fontSize": 13,
-    "workbench.colorTheme": "null"
+    "workbench.colorTheme": "null",
+    "terminal.integrated.commandsToSkipShell": [
+        "workbench.action.closeWindow"
+    ]
 }

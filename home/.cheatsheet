@@ -5,7 +5,7 @@
 │ Super+Q      Close    │ Super+Sh+G GitHub     │ Prefix+>/< Nxt/prv ss │ Super+T    Terminal   │ Super+Sh+[/] Height   │ b{x}  bootstrap       │
 │ Super+F      Fullscrn │ Super+Sh+U Claude     ├─ Ghostty ─────────────┤ Super+S    Save       │ Alt+J       Split     │ {x}   cd ~/Projects   │
 │ Super+V      Float    │ Super+Sh+B Browser    │ Ctrl+Sh+N  New tab    │ Super+W    Close/Kill │ Super+Sh+D  Layout    ├───────────────────────┤
-│ Super+Y    Scratch    │ Super+Sh+N Obsidian   │ Ctrl+Sh+W  Close tab  │ Super+F    Find       ├─ Developer ───────────┤ bs     better-shoes   │
+│ Super+Y      Scratch  │ Super+Sh+N Obsidian   │ Ctrl+Sh+W  Close tab  │ Super+F    Find       ├─ Developer ───────────┤ bs     better-shoes   │
 ├─ Workspaces ──────────┤ Super+Sh+S Spotify    ├─ Screenshots ─────────┤ Super+Z    Undo       │ Ctrl+Sh+C   Dev Tools │ drtp   ohdsi-dr       │
 │ Super+1-9,0  Switch   │ Super+Sh+E Email      │ Super+Ctrl+2 Full     │ Super+Sh+Z Redo       │ Ctrl+Sh+I   Inspect   │ fw     framework      │
 │ Super+Sh+#   Move win │ Super+Sh+/ 1Password  │ Super+Ctrl+3 Select   │ Super+[/]  Ed/Term    │ F12         Console   │ fwsite framework-site │

@@ -124,7 +124,7 @@
   ansible.builtin.replace:
     path: "{{ ansible_facts.env.HOME }}/.config/waybar/config.jsonc"
     regexp: '"format": "󰍛 "'
-    replace: '"format": "󰍛  "'
+    replace: '"format": "󰍛   "'
   when: not (show_battery | default(false))
 
 - name: Check which home dotfiles exist
