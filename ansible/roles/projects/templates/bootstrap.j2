@@ -50,8 +50,11 @@ fi
 
 {% if project_type == 'laravel' %}
 # === 2. Generate docker-compose.yml ===
-echo "[...] Generating docker-compose.yml..."
-cat > "$PROJECT_DIR/docker-compose.yml" << 'DOCKER_COMPOSE_EOF'
+if [ -f "$PROJECT_DIR/docker-compose.yml" ] && [ "$1" != "--force" ]; then
+    echo "[OK] docker-compose.yml already exists (use --force to regenerate)"
+else
+    echo "[...] Generating docker-compose.yml..."
+    cat > "$PROJECT_DIR/docker-compose.yml" << 'DOCKER_COMPOSE_EOF'
 services:
   php:
     build:
@@ -226,23 +229,38 @@ volumes:
 {% endif %}
   {{ project_name }}-minio-data:
 DOCKER_COMPOSE_EOF
-echo "[OK] docker-compose.yml generated"
+    echo "[OK] docker-compose.yml generated"
+fi
 
 # === 3. Copy Docker configs from pequod (reference project) ===
 REFERENCE_PROJECT="$HOME/Projects/pequod"
 if [ -d "$REFERENCE_PROJECT/docker/php" ]; then
-    echo "[...] Copying Docker PHP config..."
     mkdir -p "$PROJECT_DIR/docker/php"
-    cp "$REFERENCE_PROJECT/docker/php/Dockerfile" "$PROJECT_DIR/docker/php/" 2>/dev/null || true
-    cp "$REFERENCE_PROJECT/docker/php/php.ini" "$PROJECT_DIR/docker/php/" 2>/dev/null || true
-    echo "[OK] Docker PHP config copied"
+    if [ ! -f "$PROJECT_DIR/docker/php/Dockerfile" ]; then
+        echo "[...] Copying Docker PHP Dockerfile..."
+        cp "$REFERENCE_PROJECT/docker/php/Dockerfile" "$PROJECT_DIR/docker/php/" 2>/dev/null || true
+        echo "[OK] Docker PHP Dockerfile copied"
+    else
+        echo "[OK] Docker PHP Dockerfile already exists"
+    fi
+    if [ ! -f "$PROJECT_DIR/docker/php/php.ini" ]; then
+        echo "[...] Copying Docker PHP php.ini..."
+        cp "$REFERENCE_PROJECT/docker/php/php.ini" "$PROJECT_DIR/docker/php/" 2>/dev/null || true
+        echo "[OK] Docker PHP php.ini copied"
+    else
+        echo "[OK] Docker PHP php.ini already exists"
+    fi
 fi
 
 if [ -d "$REFERENCE_PROJECT/docker/nginx" ]; then
-    echo "[...] Copying Docker nginx config..."
     mkdir -p "$PROJECT_DIR/docker/nginx"
-    cp "$REFERENCE_PROJECT/docker/nginx/default.conf" "$PROJECT_DIR/docker/nginx/" 2>/dev/null || true
-    echo "[OK] Docker nginx config copied"
+    if [ ! -f "$PROJECT_DIR/docker/nginx/default.conf" ]; then
+        echo "[...] Copying Docker nginx config..."
+        cp "$REFERENCE_PROJECT/docker/nginx/default.conf" "$PROJECT_DIR/docker/nginx/" 2>/dev/null || true
+        echo "[OK] Docker nginx config copied"
+    else
+        echo "[OK] Docker nginx config already exists"
+    fi
 fi
 
 # === 4. Ensure secrets are in place ===
@@ -277,11 +295,16 @@ else
     done
 fi
 
-# === 5. Build Docker images ===
+# === 5. Build Docker images (only if needed) ===
 if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
-    echo "[...] Building Docker images..."
-    (cd "$PROJECT_DIR" && docker compose build)
-    echo "[OK] Docker images built"
+    # Check if php image exists
+    if docker images | grep -q "{{ project_name }}-php" && [ "$1" != "--force" ]; then
+        echo "[OK] Docker images already built (use --force to rebuild)"
+    else
+        echo "[...] Building Docker images..."
+        (cd "$PROJECT_DIR" && docker compose build)
+        echo "[OK] Docker images built"
+    fi
 else
     echo "[SKIP] No docker-compose.yml found"
 fi

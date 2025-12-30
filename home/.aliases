@@ -319,47 +319,39 @@ alias pmpeq="cd ~/Omarchy/projects/pequod"
 alias peq="cd /home/erik/Projects/pequod"
 # END PROJECT pequod
 
-# Laravel/PHP docker wrappers - auto-detect project and run in container
+# Laravel/PHP docker wrappers - convention-based auto-detection
+# If in ~/Projects/{name} and {name}-php container is running, use it
+_php_container() {
+    [[ "$PWD" =~ ^/home/erik/Projects/([^/]+) ]] || return 1
+    local container="${BASH_REMATCH[1]}-php"
+    docker container inspect "$container" &>/dev/null && echo "$container"
+}
+
 php() {
-    case "$PWD" in
-        /home/erik/Projects/pequod*)
-            docker exec -it pequod-php php "$@"
-            ;;
-        /home/erik/Projects/better-shoes*)
-            docker exec -it better-shoes-php php "$@"
-            ;;
-        *)
-            command php "$@"
-            ;;
-    esac
+    local container=$(_php_container)
+    if [[ -n "$container" ]]; then
+        docker exec -it "$container" php "$@"
+    else
+        command php "$@"
+    fi
 }
 
 art() {
-    case "$PWD" in
-        /home/erik/Projects/pequod*)
-            docker exec -it pequod-php php artisan "$@"
-            ;;
-        /home/erik/Projects/better-shoes*)
-            docker exec -it better-shoes-php php artisan "$@"
-            ;;
-        *)
-            php artisan "$@"
-            ;;
-    esac
+    local container=$(_php_container)
+    if [[ -n "$container" ]]; then
+        docker exec -it "$container" php artisan "$@"
+    else
+        command php artisan "$@"
+    fi
 }
 
 composer() {
-    case "$PWD" in
-        /home/erik/Projects/pequod*)
-            docker exec -it pequod-php composer "$@"
-            ;;
-        /home/erik/Projects/better-shoes*)
-            docker exec -it better-shoes-php composer "$@"
-            ;;
-        *)
-            command composer "$@"
-            ;;
-    esac
+    local container=$(_php_container)
+    if [[ -n "$container" ]]; then
+        docker exec -it "$container" composer "$@"
+    else
+        command composer "$@"
+    fi
 }
 
 # BEGIN PROJECT better-shoes

@@ -46,6 +46,9 @@
       tags: always
 
   roles:
+    - role: cleanup
+      tags: cleanup
+
     - role: packages
       tags: packages
 

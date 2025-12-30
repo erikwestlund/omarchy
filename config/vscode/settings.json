@@ -1,3 +1,9 @@
 {
-    "workbench.iconTheme": "catppuccin-mocha"
+    "workbench.iconTheme": "catppuccin-mocha",
+    "editor.minimap.enabled": false,
+    "editor.fontFamily": "'JetBrains Mono', 'Fira Code', monospace",
+    "editor.fontLigatures": true,
+    "terminal.integrated.fontFamily": "'JetBrains Mono', 'Fira Code', monospace",
+    "terminal.integrated.fontSize": 13,
+    "workbench.colorTheme": "Catppuccin Mocha"
 }

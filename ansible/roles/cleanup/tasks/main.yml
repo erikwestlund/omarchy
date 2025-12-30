@@ -1,0 +1,25 @@
+---
+# Remove unwanted applications that come with Omarchy base
+
+# Remove unwanted packages
+- name: Remove unwanted pacman packages
+  become: true
+  community.general.pacman:
+    name: "{{ cleanup_pacman_packages }}"
+    state: absent
+  when: cleanup_pacman_packages | default([]) | length > 0
+
+- name: Remove unwanted AUR packages
+  become: true
+  community.general.pacman:
+    name: "{{ cleanup_aur_packages }}"
+    state: absent
+  when: cleanup_aur_packages | default([]) | length > 0
+
+# Remove unwanted webapp desktop files
+- name: Remove unwanted webapp desktop files
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.local/share/applications/{{ item }}"
+    state: absent
+  loop: "{{ cleanup_webapps }}"
+  when: cleanup_webapps | default([]) | length > 0

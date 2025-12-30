@@ -59,6 +59,7 @@ pacman_packages:
   # Fonts
   - inter-font
   - ttf-font-awesome
+  - ttf-jetbrains-mono
 
   # Git
   - git-lfs
@@ -238,6 +239,26 @@ webapps:
   - name: Claude
     url: "https://claude.ai/new"
     icon: claude-ai-light.webp
+
+# Packages to remove (cleanup from Omarchy base)
+cleanup_pacman_packages:
+  - alacritty
+  - kdenlive
+  - signal-desktop
+  - xournalpp
+
+cleanup_aur_packages: []
+
+# Desktop files to remove (webapps and unwanted launchers)
+cleanup_webapps:
+  - "Figma.desktop"
+  - "Fizzy.desktop"
+  - "Google Contacts.desktop"
+  - "Google Messages.desktop"
+  - "Google Photos.desktop"
+  - "HEY.desktop"
+  - "WhatsApp.desktop"
+  - "X.desktop"
 
 # Remmina remote desktop profiles
 remmina_profiles: []
