@@ -168,6 +168,13 @@
     state: link
     force: true
 
+- name: Override omarchy browser theme to use device preference
+  ansible.builtin.file:
+    src: "{{ ansible_facts.env.HOME }}/.bin/omarchy-theme-set-browser"
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/omarchy/bin/omarchy-theme-set-browser"
+    state: link
+    force: true
+
 - name: Make hypr scripts executable
   ansible.builtin.file:
     path: "{{ ansible_facts.env.HOME }}/.config/hypr/scripts"
