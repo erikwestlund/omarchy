@@ -74,7 +74,7 @@ fi
 # === 4. Install PHP dependencies ===
 if [ -f "$PROJECT_DIR/composer.json" ]; then
     echo "[...] Installing PHP dependencies..."
-    (cd "$PROJECT_DIR" && composer install)
+    (cd "$PROJECT_DIR" && docker compose run --rm php composer install)
     echo "[OK] PHP dependencies installed"
 else
     echo "[SKIP] No composer.json found"

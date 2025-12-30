@@ -176,10 +176,10 @@ services:
     entrypoint: >
       /bin/sh -c "
       mc alias set better-shoes http://minio:9000 better-shoes better-shoes-dev-secret;
-      mc mb --ignore-existing better-shoes/better_shoes-default;
-      mc mb --ignore-existing better-shoes/better_shoes-test;
-      mc anonymous set download better-shoes/better_shoes-default;
-      mc anonymous set download better-shoes/better_shoes-test;
+      mc mb --ignore-existing better-shoes/better-shoes-default;
+      mc mb --ignore-existing better-shoes/better-shoes-test;
+      mc anonymous set download better-shoes/better-shoes-default;
+      mc anonymous set download better-shoes/better-shoes-test;
       echo 'MinIO setup complete';
       "
     networks:

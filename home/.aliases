@@ -387,4 +387,4 @@ alias fl="cd /home/erik/Projects/flint"
 # Auto-generated project aliases
 
 # Sync R2 media to local minio for better-shoes dev
-alias bs-media-sync='rclone sync better-shoes-r2:better-shoes better-shoes-minio:better_shoes-default --progress'
+alias bs-media-sync='rclone sync better-shoes-r2:better-shoes better-shoes-minio:better-shoes-default --progress'
