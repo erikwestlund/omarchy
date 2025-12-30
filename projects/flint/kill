@@ -1,9 +1,9 @@
 #!/bin/bash
-# Kill script for homelab
+# Kill script for flint
 
 # === Project Config ===
-PROJECT_NAME="homelab"
-PROJECT_DIR="/home/erik/Projects/homelab"
+PROJECT_NAME="flint"
+PROJECT_DIR="/home/erik/Projects/flint"
 EDITOR="vscode"
 # DOCKER_COMPOSE=false
 

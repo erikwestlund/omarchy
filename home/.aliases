@@ -226,7 +226,8 @@ alias pm-sync="om --tags projects,dotfiles"
 # BEGIN PROJECT omarchy
 alias lom="~/Omarchy/projects/omarchy/launch"
 alias kom="~/Omarchy/projects/omarchy/kill"
-alias tom="~/Omarchy/projects/omarchy/tmux.sh"
+alias tmom="~/Omarchy/projects/omarchy/tmux.sh"
+alias bom="~/Omarchy/projects/omarchy/bootstrap"
 alias pmom="cd ~/Omarchy/projects/omarchy"
 # Note: 'om' is the ansible function, use 'omarchy' or 'oma' to cd
 # END PROJECT omarchy
@@ -239,30 +240,34 @@ zai() {
 }
 
 # BEGIN PROJECT homelab
-alias phl="~/Omarchy/projects/homelab/launch"
-alias pkhl="~/Omarchy/projects/homelab/kill"
+alias lhl="~/Omarchy/projects/homelab/launch"
+alias khl="~/Omarchy/projects/homelab/kill"
 alias tmhl="~/Omarchy/projects/homelab/tmux.sh"
+alias bhl="~/Omarchy/projects/homelab/bootstrap"
 alias pmhl="cd ~/Omarchy/projects/homelab"
 alias hl="cd /home/erik/Projects/homelab"
 # END PROJECT homelab
 # BEGIN PROJECT framework
-alias pfw="~/Omarchy/projects/framework/launch"
-alias pkfw="~/Omarchy/projects/framework/kill"
+alias lfw="~/Omarchy/projects/framework/launch"
+alias kfw="~/Omarchy/projects/framework/kill"
 alias tmfw="~/Omarchy/projects/framework/tmux.sh"
+alias bfw="~/Omarchy/projects/framework/bootstrap"
 alias pmfw="cd ~/Omarchy/projects/framework"
 alias fw="cd /home/erik/Projects/framework"
 # END PROJECT framework
 # BEGIN PROJECT framework-site
-alias pfwsite="~/Omarchy/projects/framework-site/launch"
-alias pkfwsite="~/Omarchy/projects/framework-site/kill"
-alias tmfwsite="~/Omarchy/projects/framework-site/tmux.sh"
-alias pmfwsite="cd ~/Omarchy/projects/framework-site"
-alias fwsite="cd /home/erik/Projects/framework-website"
+alias lfws="~/Omarchy/projects/framework-site/launch"
+alias kfws="~/Omarchy/projects/framework-site/kill"
+alias tmfws="~/Omarchy/projects/framework-site/tmux.sh"
+alias bfws="~/Omarchy/projects/framework-site/bootstrap"
+alias pmfws="cd ~/Omarchy/projects/framework-site"
+alias fws="cd /home/erik/Projects/framework-site"
 # END PROJECT framework-site
 # BEGIN PROJECT tnt-syphilis
-alias ptnt="~/Omarchy/projects/tnt-syphilis/launch"
-alias pktnt="~/Omarchy/projects/tnt-syphilis/kill"
+alias ltnt="~/Omarchy/projects/tnt-syphilis/launch"
+alias ktnt="~/Omarchy/projects/tnt-syphilis/kill"
 alias tmtnt="~/Omarchy/projects/tnt-syphilis/tmux.sh"
+alias btnt="~/Omarchy/projects/tnt-syphilis/bootstrap"
 alias pmtnt="cd ~/Omarchy/projects/tnt-syphilis"
 alias tnt="cd /home/erik/Projects/tnt-syphilis"
 # END PROJECT tnt-syphilis
@@ -275,9 +280,10 @@ alias pmna="cd ~/Omarchy/projects/naaccord-data-depot"
 alias na="cd /home/erik/Projects/naaccord-data-depot"
 # END PROJECT naaccord-data-depot
 # BEGIN PROJECT mh-missing-data
-alias pmhmi="~/Omarchy/projects/mh-missing-data/launch"
-alias pkmhmi="~/Omarchy/projects/mh-missing-data/kill"
+alias lmhmi="~/Omarchy/projects/mh-missing-data/launch"
+alias kmhmi="~/Omarchy/projects/mh-missing-data/kill"
 alias tmmhmi="~/Omarchy/projects/mh-missing-data/tmux.sh"
+alias bmhmi="~/Omarchy/projects/mh-missing-data/bootstrap"
 alias pmmhmi="cd ~/Omarchy/projects/mh-missing-data"
 alias mhmi="cd /home/erik/Projects/mh-missing-data"
 # END PROJECT mh-missing-data
@@ -363,4 +369,12 @@ alias bdrtp="~/Omarchy/projects/ohdsi-dr-screening-treatment-patterns/bootstrap"
 alias pmdrtp="cd ~/Omarchy/projects/ohdsi-dr-screening-treatment-patterns"
 alias drtp="cd /home/erik/Projects/ohdsi-dr-screening-treatment-patterns"
 # END PROJECT ohdsi-dr-screening-treatment-patterns
+# BEGIN PROJECT flint
+alias lfl="~/Omarchy/projects/flint/launch"
+alias kfl="~/Omarchy/projects/flint/kill"
+alias tmfl="~/Omarchy/projects/flint/tmux.sh"
+alias bfl="~/Omarchy/projects/flint/bootstrap"
+alias pmfl="cd ~/Omarchy/projects/flint"
+alias fl="cd /home/erik/Projects/flint"
+# END PROJECT flint
 # Auto-generated project aliases

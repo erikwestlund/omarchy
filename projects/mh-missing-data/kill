@@ -4,7 +4,7 @@
 # === Project Config ===
 PROJECT_NAME="mh-missing-data"
 PROJECT_DIR="/home/erik/Projects/mh-missing-data"
-EDITOR="positron"
+EDITOR="vscode"
 # DOCKER_COMPOSE=false
 
 echo "Stopping $PROJECT_NAME..."

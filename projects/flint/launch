@@ -1,7 +1,7 @@
 #!/bin/bash
-# Launch script for omarchy
+# Launch script for flint
 #
-# This script launches the omarchy development environment with:
+# This script launches the flint development environment with:
 # - Workspace management (switches to target workspace)
 # - Window positioning (adapts based on desktop vs laptop mode)
 # - Notification system (shows progress updates)
@@ -22,13 +22,13 @@ has_window_on_ws() {
 }
 
 # === Project Config ===
-PROJECT_NAME="omarchy"
-PROJECT_DIR="/home/erik/Omarchy"
-WORKSPACE_FILE="$HOME/Omarchy/projects/omarchy/omarchy.code-workspace"
+PROJECT_NAME="flint"
+PROJECT_DIR="/home/erik/Projects/flint"
+WORKSPACE_FILE="$HOME/Omarchy/projects/flint/flint.code-workspace"
 EDITOR="/usr/bin/code"
-DEFAULT_WS=9
+DEFAULT_WS=6
 DOCKER_COMPOSE=false
-VIEW_URL=""
+VIEW_URL="http://flint.test"
 
 # === Parse Arguments ===
 WS=${1:-$DEFAULT_WS}
@@ -45,7 +45,7 @@ if [[ "$1" == "-h" || "$1" == "--help" ]]; then
 fi
 
 # === Launch ===
-notify-send -u low "Omarchy" "Launching..." -t 5000
+notify-send -u low "Flint" "Launching..." -t 5000
 
 # Switch to workspace and wait for it to complete
 hyprctl dispatch workspace $WS
@@ -53,9 +53,9 @@ sleep 0.3
 
 # Start Docker services (if enabled)
 if [ "$DOCKER_COMPOSE" = "true" ] && [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
-    notify-send -u low "Omarchy" "Starting Docker services..." -t 4000
+    notify-send -u low "Flint" "Starting Docker services..." -t 4000
     (cd "$PROJECT_DIR" && docker compose up -d) || {
-        notify-send -u critical "Omarchy" "Failed to start Docker services" -t 5000
+        notify-send -u critical "Flint" "Failed to start Docker services" -t 5000
         exit 1
     }
 
@@ -74,7 +74,7 @@ if [ "$DOCKER_COMPOSE" = "true" ] && [ -f "$PROJECT_DIR/docker-compose.yml" ]; t
 
         # Only show waiting notification if it's taking more than 4 seconds
         if [ $ELAPSED -ge 4 ] && [ "$WAITING_NOTIFIED" = false ]; then
-            notify-send -u normal "Omarchy" "Waiting for services..." -t 10000
+            notify-send -u normal "Flint" "Waiting for services..." -t 10000
             WAITING_NOTIFIED=true
         fi
 
@@ -83,7 +83,7 @@ if [ "$DOCKER_COMPOSE" = "true" ] && [ -f "$PROJECT_DIR/docker-compose.yml" ]; t
     done
 
     if [ $ELAPSED -ge $MAX_WAIT ]; then
-        notify-send -u normal "Omarchy" "Services slow, opening anyway..." -t 3000
+        notify-send -u normal "Flint" "Services slow, opening anyway..." -t 3000
     fi
 fi
 
@@ -145,4 +145,4 @@ else
     fi
 fi
 
-notify-send -u low "Omarchy" "Ready! Workspace $WS" -t 3000
+notify-send -u low "Flint" "Ready! Workspace $WS" -t 3000

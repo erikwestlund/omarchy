@@ -105,6 +105,47 @@
     mode: '0600'
   when: project_type == 'laravel' and not env_secrets_stat.stat.exists and (project_path | length == 0 or not env_project_stat.stat.exists)
 
+# Add project to projects.yml for port tracking and documentation
+- name: Convert project path to tilde notation
+  ansible.builtin.set_fact:
+    project_path_tilde: "{{ project_path | regex_replace('^' + ansible_facts.env.HOME, '~') }}"
+  when: project_path is defined and project_path | length > 0
+
+- name: Build base project entry
+  ansible.builtin.set_fact:
+    project_yml_lines:
+      - "  - name: {{ project_name }}"
+      - "    alias: {{ project_alias }}"
+      - "    type: {{ project_type }}"
+      - "    path: {{ project_path_tilde | default('') }}"
+
+- name: Add extras section if needed
+  ansible.builtin.set_fact:
+    project_yml_lines: "{{ project_yml_lines + ['    extras:'] }}"
+  when: (view_url is defined and view_url | length > 0) or (default_ws | default(1) | int != 1)
+
+- name: Add view_url to extras
+  ansible.builtin.set_fact:
+    project_yml_lines: "{{ project_yml_lines + ['      view_url: ' + view_url] }}"
+  when: view_url is defined and view_url | length > 0
+
+- name: Add default_ws to extras
+  ansible.builtin.set_fact:
+    project_yml_lines: "{{ project_yml_lines + ['      default_ws: ' + (default_ws | string)] }}"
+  when: default_ws | default(1) | int != 1
+
+- name: Add ports section for Laravel with Docker
+  ansible.builtin.set_fact:
+    project_yml_lines: "{{ project_yml_lines + ['    ports:', '      vite: ' + (vite_port | default(5173) | string), '      nginx: ' + (nginx_port | default(8010) | string), '      postgres: ' + (postgres_port | default(5432) | string), '      redis: ' + (redis_port | default(6379) | string), '      minio_api: ' + (minio_api_port | default(9000) | string), '      minio_console: ' + (minio_console_port | default(9001) | string), '      mailpit_smtp: ' + (mailpit_smtp_port | default(1025) | string), '      mailpit_web: ' + (mailpit_web_port | default(8025) | string)] }}"
+  when: project_type == 'laravel' and docker_compose | default(false) | bool
+
+- name: Add project to projects.yml
+  ansible.builtin.blockinfile:
+    path: "{{ omarchy_repo }}/config/projects/projects.yml"
+    marker: "# {mark} PROJECT {{ project_name }}"
+    block: "{{ project_yml_lines | join('\n') }}"
+    insertafter: EOF
+
 - name: Add project aliases to .aliases (with project dir)
   ansible.builtin.blockinfile:
     path: "{{ omarchy_repo }}/home/.aliases"

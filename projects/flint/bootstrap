@@ -1,29 +1,20 @@
 #!/bin/bash
-# Bootstrap script for {{ project_name }} - ensures project is ready to run
+# Bootstrap script for flint - ensures project is ready to run
 # Run this on a fresh machine or when setting up the project
 
 set -e
 
 # === Project Config ===
-PROJECT_NAME="{{ project_name }}"
-{% if project_path | length > 0 %}
-PROJECT_DIR="{{ project_path }}"
-{% else %}
-PROJECT_DIR="$HOME/Projects/{{ project_name }}"
-{% endif %}
-{% if github_repo is defined and github_repo | length > 0 %}
-GIT_REPO="git@github.com:{{ github_repo }}.git"
-{% else %}
+PROJECT_NAME="flint"
+PROJECT_DIR="/home/erik/Projects/flint"
 GIT_REPO=""
-{% endif %}
-SECRETS_DIR="$HOME/.secrets/{{ project_name }}"
+SECRETS_DIR="$HOME/.secrets/flint"
 
-{% if project_type == 'laravel' %}
 # Required secrets (relative to SECRETS_DIR -> PROJECT_DIR)
 SECRETS=(
     ".env"
+    "auth.json"
 )
-{% endif %}
 
 echo "Bootstrapping $PROJECT_NAME..."
 
@@ -47,7 +38,6 @@ else
     fi
 fi
 
-{% if project_type == 'laravel' %}
 # === 2. Generate docker-compose.yml ===
 echo "[...] Generating docker-compose.yml..."
 cat > "$PROJECT_DIR/docker-compose.yml" << 'DOCKER_COMPOSE_EOF'
@@ -56,14 +46,14 @@ services:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-    container_name: {{ project_name }}-php
+    container_name: flint-php
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
     networks:
-      - {{ project_name }}-network
+      - flint-network
     depends_on:
       postgres:
         condition: service_healthy
@@ -74,15 +64,15 @@ services:
 
   nginx:
     image: nginx:alpine
-    container_name: {{ project_name }}-nginx
+    container_name: flint-nginx
     restart: unless-stopped
     ports:
-      - "127.0.0.1:{{ nginx_port | default('8010') }}:80"
+      - "127.0.0.1:8031:80"
     volumes:
       - ./:/var/www/html:ro
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
-      - {{ project_name }}-network
+      - flint-network
     depends_on:
       - php
 
@@ -90,14 +80,14 @@ services:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-    container_name: {{ project_name }}-queue
+    container_name: flint-queue
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
     networks:
-      - {{ project_name }}-network
+      - flint-network
     depends_on:
       postgres:
         condition: service_healthy
@@ -107,78 +97,56 @@ services:
 
   postgres:
     image: postgres:17-alpine
-    container_name: {{ project_name }}-postgres
+    container_name: flint-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: {{ project_name | replace('-', '_') }}
-      POSTGRES_USER: {{ project_name | replace('-', '_') }}
-      POSTGRES_PASSWORD: {{ project_name }}-dev-secret
+      POSTGRES_DB: flint
+      POSTGRES_USER: flint
+      POSTGRES_PASSWORD: flint-dev-secret
     volumes:
-      - {{ project_name }}-postgres-data:/var/lib/postgresql/data
+      - flint-postgres-data:/var/lib/postgresql/data
       - ./storage/app/dumps:/dumps
     ports:
-      - "127.0.0.1:{{ postgres_port | default('5432') }}:5432"
+      - "127.0.0.1:5435:5432"
     networks:
-      - {{ project_name }}-network
+      - flint-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U {{ project_name | replace('-', '_') }} -d {{ project_name | replace('-', '_') }}"]
+      test: ["CMD-SHELL", "pg_isready -U flint -d flint"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis:
     image: redis:7-alpine
-    container_name: {{ project_name }}-redis
+    container_name: flint-redis
     restart: unless-stopped
     volumes:
-      - {{ project_name }}-redis-data:/data
+      - flint-redis-data:/data
     ports:
-      - "127.0.0.1:{{ redis_port | default('6379') }}:6379"
+      - "127.0.0.1:6384:6379"
     networks:
-      - {{ project_name }}-network
+      - flint-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-{% if include_meilisearch | default(false) %}
-  meilisearch:
-    image: getmeili/meilisearch:latest
-    container_name: {{ project_name }}-meilisearch
-    restart: unless-stopped
-    environment:
-      MEILI_ENV: development
-      MEILI_MASTER_KEY: {{ project_name }}-dev-secret
-      MEILI_NO_ANALYTICS: true
-    volumes:
-      - {{ project_name }}-meilisearch-data:/meili_data
-    ports:
-      - "127.0.0.1:{{ meilisearch_port | default('7700') }}:7700"
-    networks:
-      - {{ project_name }}-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://127.0.0.1:7700/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-{% endif %}
   minio:
     image: minio/minio:latest
-    container_name: {{ project_name }}-minio
+    container_name: flint-minio
     restart: unless-stopped
     ports:
-      - "127.0.0.1:{{ minio_api_port | default('9000') }}:9000"
-      - "127.0.0.1:{{ minio_console_port | default('9001') }}:9001"
+      - "127.0.0.1:9006:9000"
+      - "127.0.0.1:9007:9001"
     environment:
-      MINIO_ROOT_USER: {{ project_name }}
-      MINIO_ROOT_PASSWORD: {{ project_name }}-dev-secret
+      MINIO_ROOT_USER: flint
+      MINIO_ROOT_PASSWORD: flint-dev-secret
     command: server /data --console-address ":9001"
     volumes:
-      - {{ project_name }}-minio-data:/data
+      - flint-minio-data:/data
     networks:
-      - {{ project_name }}-network
+      - flint-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
@@ -187,43 +155,40 @@ services:
 
   minio-setup:
     image: minio/mc:latest
-    container_name: {{ project_name }}-minio-setup
+    container_name: flint-minio-setup
     depends_on:
       minio:
         condition: service_healthy
     entrypoint: >
       /bin/sh -c "
-      mc alias set {{ project_name }} http://minio:9000 {{ project_name }} {{ project_name }}-dev-secret;
-      mc mb --ignore-existing {{ project_name }}/{{ project_name | replace('-', '_') }}-default;
-      mc mb --ignore-existing {{ project_name }}/{{ project_name | replace('-', '_') }}-test;
-      mc anonymous set download {{ project_name }}/{{ project_name | replace('-', '_') }}-default;
-      mc anonymous set download {{ project_name }}/{{ project_name | replace('-', '_') }}-test;
+      mc alias set flint http://minio:9000 flint flint-dev-secret;
+      mc mb --ignore-existing flint/flint-default;
+      mc mb --ignore-existing flint/flint-test;
+      mc anonymous set download flint/flint-default;
+      mc anonymous set download flint/flint-test;
       echo 'MinIO setup complete';
       "
     networks:
-      - {{ project_name }}-network
+      - flint-network
 
   mailpit:
     image: axllent/mailpit:latest
-    container_name: {{ project_name }}-mailpit
+    container_name: flint-mailpit
     restart: unless-stopped
     ports:
-      - "127.0.0.1:{{ mailpit_smtp_port | default('1025') }}:1025"
-      - "127.0.0.1:{{ mailpit_web_port | default('8025') }}:8025"
+      - "127.0.0.1:1028:1025"
+      - "127.0.0.1:8028:8025"
     networks:
-      - {{ project_name }}-network
+      - flint-network
 
 networks:
-  {{ project_name }}-network:
+  flint-network:
     driver: bridge
 
 volumes:
-  {{ project_name }}-postgres-data:
-  {{ project_name }}-redis-data:
-{% if include_meilisearch | default(false) %}
-  {{ project_name }}-meilisearch-data:
-{% endif %}
-  {{ project_name }}-minio-data:
+  flint-postgres-data:
+  flint-redis-data:
+  flint-minio-data:
 DOCKER_COMPOSE_EOF
 echo "[OK] docker-compose.yml generated"
 
@@ -318,66 +283,8 @@ if [ -f "$PROJECT_DIR/package.json" ]; then
 else
     echo "[SKIP] No package.json found"
 fi
-{% endif %}
 
-{% if project_type == 'python' %}
-# === 2. Set up Python virtual environment ===
-if [ -f "$PROJECT_DIR/requirements.txt" ] || [ -f "$PROJECT_DIR/pyproject.toml" ]; then
-    if [ -d "$PROJECT_DIR/.venv" ]; then
-        echo "[OK] Python venv already exists"
-    else
-        echo "[...] Creating Python virtual environment..."
-        (cd "$PROJECT_DIR" && python3 -m venv .venv)
-        echo "[OK] Python venv created"
-    fi
 
-    echo "[...] Installing Python dependencies..."
-    if [ -f "$PROJECT_DIR/requirements.txt" ]; then
-        (cd "$PROJECT_DIR" && .venv/bin/pip install -r requirements.txt)
-    elif [ -f "$PROJECT_DIR/pyproject.toml" ]; then
-        (cd "$PROJECT_DIR" && .venv/bin/pip install -e .)
-    fi
-    echo "[OK] Python dependencies installed"
-else
-    echo "[SKIP] No requirements.txt or pyproject.toml found"
-fi
-{% endif %}
-
-{% if project_type == 'rstats' %}
-# === 2. Install R dependencies ===
-if [ -f "$PROJECT_DIR/renv.lock" ]; then
-    echo "[...] Restoring renv packages..."
-    (cd "$PROJECT_DIR" && Rscript -e "renv::restore()")
-    echo "[OK] R packages restored"
-elif [ -f "$PROJECT_DIR/DESCRIPTION" ]; then
-    echo "[...] Ensuring devtools is installed..."
-    Rscript -e "dir.create(Sys.getenv('R_LIBS_USER'), recursive = TRUE, showWarnings = FALSE); if (!requireNamespace('devtools', quietly = TRUE)) install.packages('devtools', repos = 'https://cloud.r-project.org', lib = Sys.getenv('R_LIBS_USER'))"
-    echo "[...] Installing package dependencies..."
-    (cd "$PROJECT_DIR" && Rscript -e "devtools::install_deps()")
-    echo "[OK] R dependencies installed"
-else
-    echo "[SKIP] No renv.lock or DESCRIPTION found"
-fi
-
-# Python venv for mixed R/Python projects
-if [ -f "$PROJECT_DIR/requirements.txt" ] || [ -f "$PROJECT_DIR/pyproject.toml" ]; then
-    if [ -d "$PROJECT_DIR/.venv" ]; then
-        echo "[OK] Python venv already exists"
-    else
-        echo "[...] Creating Python virtual environment..."
-        (cd "$PROJECT_DIR" && python3 -m venv .venv)
-        echo "[OK] Python venv created"
-    fi
-
-    echo "[...] Installing Python dependencies..."
-    if [ -f "$PROJECT_DIR/requirements.txt" ]; then
-        (cd "$PROJECT_DIR" && .venv/bin/pip install -r requirements.txt)
-    elif [ -f "$PROJECT_DIR/pyproject.toml" ]; then
-        (cd "$PROJECT_DIR" && .venv/bin/pip install -e .)
-    fi
-    echo "[OK] Python dependencies installed"
-fi
-{% endif %}
 
 echo ""
 echo "Bootstrap complete! Run 'launch' to start $PROJECT_NAME."

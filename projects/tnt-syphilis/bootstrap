@@ -1,14 +1,14 @@
 #!/bin/bash
-# Bootstrap script for ohdsi-dr-screening-treatment-patterns - ensures project is ready to run
+# Bootstrap script for tnt-syphilis - ensures project is ready to run
 # Run this on a fresh machine or when setting up the project
 
 set -e
 
 # === Project Config ===
-PROJECT_NAME="ohdsi-dr-screening-treatment-patterns"
-PROJECT_DIR="/home/erik/Projects/ohdsi-dr-screening-treatment-patterns"
+PROJECT_NAME="tnt-syphilis"
+PROJECT_DIR="/home/erik/Projects/tnt-syphilis"
 GIT_REPO=""
-SECRETS_DIR="$HOME/.secrets/ohdsi-dr-screening-treatment-patterns"
+SECRETS_DIR="$HOME/.secrets/tnt-syphilis"
 
 
 echo "Bootstrapping $PROJECT_NAME..."

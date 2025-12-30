@@ -2,7 +2,7 @@
 # Tmux session for framework-site (laravel)
 
 SESSION="fwsite"
-PROJECT_DIR="/home/erik/Projects/framework-website"
+PROJECT_DIR="/home/erik/Projects/framework-site"
 
 # Check if session already exists
 tmux has-session -t $SESSION 2>/dev/null
@@ -54,7 +54,7 @@ TABNO=$((TABNO+1))
 
 # --- tinker ---
 tmux new-window -t $SESSION:$TABNO -n "tinker" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "php artisan tinker" C-m
+tmux send-keys -t $SESSION:$TABNO "docker exec -it framework-site-php php artisan tinker" C-m
 TABNO=$((TABNO+1))
 
 # --- project ---

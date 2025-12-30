@@ -5,8 +5,9 @@
 #   tm{alias} - Launch tmux session only
 #
 # Port allocation for services (pm-new reads these to assign next available):
-#   vite: 5173+, nginx: 8010+, postgres: 5432+, redis: 6379+, meilisearch: 7700+
-#   minio_api: 9000+, minio_console: 9001+, mailpit_smtp: 1025+, mailpit_web: 8025+
+#   vite: 5173+, nginx: 8010+, postgres: 5440+, redis: 6390+, meilisearch: 7700+
+#   minio_api: 9010+, minio_console: 9011+, mailpit_smtp: 1030+, mailpit_web: 8030+
+#   mariadb: 3310+
 
 projects:
   - name: pequod
@@ -16,12 +17,12 @@ projects:
     ports:
       vite: 5173
       nginx: 8010
-      postgres: 5432
-      redis: 6379
-      minio_api: 9000
-      minio_console: 9001
-      mailpit_smtp: 1025
-      mailpit_web: 8025
+      postgres: 5440
+      redis: 6390
+      minio_api: 9010
+      minio_console: 9011
+      mailpit_smtp: 1030
+      mailpit_web: 8030
 
   - name: better-shoes
     alias: bs
@@ -30,13 +31,39 @@ projects:
     ports:
       vite: 5174
       nginx: 8020
-      postgres: 5433
-      redis: 6380
+      postgres: 5441
+      redis: 6391
       meilisearch: 7700
-      minio_api: 9002
-      minio_console: 9003
-      mailpit_smtp: 1026
-      mailpit_web: 8026
+      minio_api: 9012
+      minio_console: 9013
+      mailpit_smtp: 1031
+      mailpit_web: 8031
+
+  - name: framework
+    alias: fw
+    type: rstats
+    path: ~/Projects/framework
+    ports:
+      vite: 5175  # gui-dev vite server
+
+  - name: framework-site
+    alias: fws
+    type: laravel
+    path: ~/Projects/framework-site
+    ports:
+      vite: 5176
+      nginx: 8032
+      postgres: 5442
+      redis: 6392
+      minio_api: 9014
+      minio_console: 9015
+      mailpit_smtp: 1032
+      mailpit_web: 8033
+
+  - name: parkukb
+    alias: park
+    type: rstats  # R + Python project
+    path: ~/Projects/parkukb
 
   - name: naaccord-data-depot
     alias: na
@@ -46,9 +73,62 @@ projects:
       view_url: http://naaccord.test
       default_ws: 4
     ports:
-      redis: 6381
-      mariadb: 3306
-      web: 8000
-      services: 8001
+      redis: 6393
+      mariadb: 3310
+      web: 8040
+      services: 8041
       idp: 8082
       flower: 5555
+
+# BEGIN PROJECT homelab
+  - name: homelab
+    alias: hl
+    type: utility
+    path: ~/Projects/homelab
+# END PROJECT homelab
+# BEGIN PROJECT flint
+  - name: flint
+    alias: fl
+    type: laravel
+    path: ~/Projects/flint
+    extras:
+      view_url: http://flint.test
+      default_ws: 6
+    ports:
+      vite: 5177
+      nginx: 8050
+      postgres: 5443
+      redis: 6394
+      minio_api: 9016
+      minio_console: 9017
+      mailpit_smtp: 1033
+      mailpit_web: 8051
+# END PROJECT flint
+# BEGIN PROJECT tnt-syphilis
+  - name: tnt-syphilis
+    alias: tnt
+    type: rstats
+    path: ~/Projects/tnt-syphilis
+    extras:
+      default_ws: 7
+# END PROJECT tnt-syphilis
+# BEGIN PROJECT ohdsi-dr-screening-treatment-patterns
+  - name: ohdsi-dr-screening-treatment-patterns
+    alias: drtp
+    type: rstats
+    path: ~/Projects/ohdsi-dr-screening-treatment-patterns
+# END PROJECT ohdsi-dr-screening-treatment-patterns
+# BEGIN PROJECT mh-missing-data
+  - name: mh-missing-data
+    alias: mhmi
+    type: rstats
+    path: ~/Projects/mh-missing-data
+# END PROJECT mh-missing-data
+# BEGIN PROJECT omarchy
+  - name: omarchy
+    alias: om
+    type: utility
+    path: ~/Omarchy
+    extras:
+      default_ws: 9
+# END PROJECT omarchy

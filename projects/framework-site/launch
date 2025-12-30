@@ -11,7 +11,8 @@ SPLIT_WS=${SPLIT_WS:-false}
 
 # Project config
 PROJECT_NAME="framework-site"
-PROJECT_DIR="$HOME/Projects/framework-website"
+PROJECT_DIR="$HOME/Projects/framework-site"
+WORKSPACE_FILE="$HOME/Omarchy/projects/framework-site/framework-site.code-workspace"
 DOCKER_COMPOSE=false
 VIEW_URL=""
 
@@ -84,7 +85,7 @@ hyprctl dispatch workspace $WS
 
 # Launch VS Code
 echo "Opening VS Code..."
-code "$PROJECT_DIR" &
+code "$WORKSPACE_FILE" &
 
 # Wait for VS Code window to appear
 sleep 1.5

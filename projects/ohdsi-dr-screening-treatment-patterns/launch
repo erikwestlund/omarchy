@@ -6,8 +6,8 @@
 # - Window positioning (adapts based on desktop vs laptop mode)
 # - Notification system (shows progress updates)
 #
-# Desktop mode: Editor only (no browser)
-# Laptop mode: Editor only (no browser)
+# Desktop mode: Browser and editor on same workspace (browser right, editor left)
+# Laptop mode: Editor on WS N, browser on WS N+1, then return to WS N
 #
 # Race condition prevention: Waits for windows to actually appear before
 # switching workspaces to ensure correct positioning.
@@ -26,7 +26,7 @@ PROJECT_NAME="ohdsi-dr-screening-treatment-patterns"
 PROJECT_DIR="/home/erik/Projects/ohdsi-dr-screening-treatment-patterns"
 WORKSPACE_FILE="$HOME/Omarchy/projects/ohdsi-dr-screening-treatment-patterns/ohdsi-dr-screening-treatment-patterns.code-workspace"
 EDITOR="/usr/bin/code"
-DEFAULT_WS=7
+DEFAULT_WS=1
 DOCKER_COMPOSE=false
 VIEW_URL=""
 
@@ -45,7 +45,7 @@ if [[ "$1" == "-h" || "$1" == "--help" ]]; then
 fi
 
 # === Launch ===
-notify-send -u low "DR Screening TP" "Launching..." -t 5000
+notify-send -u low "Ohdsi Dr Screening Treatment Patterns" "Launching..." -t 5000
 
 # Switch to workspace and wait for it to complete
 hyprctl dispatch workspace $WS
@@ -53,9 +53,9 @@ sleep 0.3
 
 # Start Docker services (if enabled)
 if [ "$DOCKER_COMPOSE" = "true" ] && [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
-    notify-send -u low "DR Screening TP" "Starting Docker services..." -t 4000
+    notify-send -u low "Ohdsi Dr Screening Treatment Patterns" "Starting Docker services..." -t 4000
     (cd "$PROJECT_DIR" && docker compose up -d) || {
-        notify-send -u critical "DR Screening TP" "Failed to start Docker services" -t 5000
+        notify-send -u critical "Ohdsi Dr Screening Treatment Patterns" "Failed to start Docker services" -t 5000
         exit 1
     }
 
@@ -74,7 +74,7 @@ if [ "$DOCKER_COMPOSE" = "true" ] && [ -f "$PROJECT_DIR/docker-compose.yml" ]; t
 
         # Only show waiting notification if it's taking more than 4 seconds
         if [ $ELAPSED -ge 4 ] && [ "$WAITING_NOTIFIED" = false ]; then
-            notify-send -u normal "DR Screening TP" "Waiting for services..." -t 10000
+            notify-send -u normal "Ohdsi Dr Screening Treatment Patterns" "Waiting for services..." -t 10000
             WAITING_NOTIFIED=true
         fi
 
@@ -83,7 +83,7 @@ if [ "$DOCKER_COMPOSE" = "true" ] && [ -f "$PROJECT_DIR/docker-compose.yml" ]; t
     done
 
     if [ $ELAPSED -ge $MAX_WAIT ]; then
-        notify-send -u normal "DR Screening TP" "Services slow, opening anyway..." -t 3000
+        notify-send -u normal "Ohdsi Dr Screening Treatment Patterns" "Services slow, opening anyway..." -t 3000
     fi
 fi
 
@@ -145,4 +145,4 @@ else
     fi
 fi
 
-notify-send -u low "DR Screening TP" "Ready! Workspace $WS" -t 3000
+notify-send -u low "Ohdsi Dr Screening Treatment Patterns" "Ready! Workspace $WS" -t 3000

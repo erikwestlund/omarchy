@@ -1,8 +1,8 @@
 #!/bin/bash
-# Tmux session for ohdsi-dr-screening-treatment-patterns (rstats)
+# Tmux session for flint (laravel)
 
-SESSION="drtp"
-PROJECT_DIR="/home/erik/Projects/ohdsi-dr-screening-treatment-patterns"
+SESSION="fl"
+PROJECT_DIR="/home/erik/Projects/flint"
 
 # Check if session already exists
 tmux has-session -t $SESSION 2>/dev/null
@@ -38,9 +38,23 @@ tmux new-window -t $SESSION:$TABNO -n "codex-gpt" -c "$PROJECT_DIR"
 tmux send-keys -t $SESSION:$TABNO "codex --model gpt-5.1 -c model_reasoning_effort=\"high\"" C-m
 TABNO=$((TABNO+1))
 
-# --- R ---
-tmux new-window -t $SESSION:$TABNO -n "R" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "R" C-m
+# --- docker ---
+tmux new-window -t $SESSION:$TABNO -n "docker" -c "$PROJECT_DIR"
+tmux send-keys -t $SESSION:$TABNO "docker compose up" C-m
+TABNO=$((TABNO+1))
+
+# --- npm ---
+tmux new-window -t $SESSION:$TABNO -n "npm" -c "$PROJECT_DIR"
+tmux send-keys -t $SESSION:$TABNO "npm run dev" C-m
+TABNO=$((TABNO+1))
+
+# --- artisan ---
+tmux new-window -t $SESSION:$TABNO -n "artisan" -c "$PROJECT_DIR"
+TABNO=$((TABNO+1))
+
+# --- tinker ---
+tmux new-window -t $SESSION:$TABNO -n "tinker" -c "$PROJECT_DIR"
+tmux send-keys -t $SESSION:$TABNO "docker exec -it flint-php php artisan tinker" C-m
 TABNO=$((TABNO+1))
 
 # --- project ---

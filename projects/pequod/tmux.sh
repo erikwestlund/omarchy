@@ -54,7 +54,7 @@ TABNO=$((TABNO+1))
 
 # --- tinker ---
 tmux new-window -t $SESSION:$TABNO -n "tinker" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "php artisan tinker" C-m
+tmux send-keys -t $SESSION:$TABNO "docker exec -it pequod-php php artisan tinker" C-m
 TABNO=$((TABNO+1))
 
 # --- project ---

@@ -1,14 +1,14 @@
 #!/bin/bash
-# Bootstrap script for ohdsi-dr-screening-treatment-patterns - ensures project is ready to run
+# Bootstrap script for mh-missing-data - ensures project is ready to run
 # Run this on a fresh machine or when setting up the project
 
 set -e
 
 # === Project Config ===
-PROJECT_NAME="ohdsi-dr-screening-treatment-patterns"
-PROJECT_DIR="/home/erik/Projects/ohdsi-dr-screening-treatment-patterns"
+PROJECT_NAME="mh-missing-data"
+PROJECT_DIR="/home/erik/Projects/mh-missing-data"
 GIT_REPO=""
-SECRETS_DIR="$HOME/.secrets/ohdsi-dr-screening-treatment-patterns"
+SECRETS_DIR="$HOME/.secrets/mh-missing-data"
 
 
 echo "Bootstrapping $PROJECT_NAME..."

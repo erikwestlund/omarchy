@@ -1,0 +1,40 @@
+#!/bin/bash
+# Bootstrap script for omarchy - ensures project is ready to run
+# Run this on a fresh machine or when setting up the project
+
+set -e
+
+# === Project Config ===
+PROJECT_NAME="omarchy"
+PROJECT_DIR="/home/erik/Omarchy"
+GIT_REPO=""
+SECRETS_DIR="$HOME/.secrets/omarchy"
+
+
+echo "Bootstrapping $PROJECT_NAME..."
+
+# === 1. Ensure repo is cloned ===
+if [ -n "$GIT_REPO" ]; then
+    if [ -d "$PROJECT_DIR/.git" ]; then
+        echo "[OK] Repository already exists at $PROJECT_DIR"
+    else
+        echo "[...] Cloning repository..."
+        mkdir -p "$(dirname "$PROJECT_DIR")"
+        git clone "$GIT_REPO" "$PROJECT_DIR"
+        echo "[OK] Repository cloned"
+    fi
+else
+    if [ -d "$PROJECT_DIR" ]; then
+        echo "[OK] Project directory exists at $PROJECT_DIR"
+    else
+        echo "[...] Creating project directory..."
+        mkdir -p "$PROJECT_DIR"
+        echo "[OK] Project directory created"
+    fi
+fi
+
+
+
+
+echo ""
+echo "Bootstrap complete! Run 'launch' to start $PROJECT_NAME."

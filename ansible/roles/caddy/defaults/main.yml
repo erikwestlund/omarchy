@@ -3,13 +3,19 @@
 # Maps domains to localhost ports
 dev_sites:
   - domain: naaccord.test
-    port: 8000
+    port: 8040
   - domain: academic.test
     port: 8010
     wildcard: true
   - domain: better-shoes.test
     port: 8020
     wildcard: true
+  - domain: framework.test
+    port: 5175
+  - domain: site.framework.test
+    port: 8032
+  - domain: flint.test
+    port: 8031
   # Local services
   - domain: local.syncthing.lan
     port: 8384

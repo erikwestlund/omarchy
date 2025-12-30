@@ -1,8 +1,8 @@
 #!/bin/bash
-# Tmux session for Omarchy
+# Tmux session for omarchy (utility)
 
 SESSION="om"
-PROJECT_DIR="$HOME/Omarchy"
+PROJECT_DIR="/home/erik/Omarchy"
 
 # Check if session already exists
 tmux has-session -t $SESSION 2>/dev/null

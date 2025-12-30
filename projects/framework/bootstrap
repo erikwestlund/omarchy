@@ -1,0 +1,58 @@
+#!/bin/bash
+# Bootstrap script for framework - ensures project is ready to run
+
+set -e
+
+# === Project Config ===
+PROJECT_NAME="framework"
+PROJECT_DIR="/home/erik/Projects/framework"
+GIT_REPO="git@github.com:table1/framework.git"
+
+echo "Bootstrapping $PROJECT_NAME..."
+
+# === 1. Ensure repo is cloned ===
+if [ -d "$PROJECT_DIR/.git" ]; then
+    echo "[OK] Repository already exists at $PROJECT_DIR"
+else
+    echo "[...] Cloning repository..."
+    mkdir -p "$(dirname "$PROJECT_DIR")"
+    git clone "$GIT_REPO" "$PROJECT_DIR"
+    echo "[OK] Repository cloned"
+fi
+
+# === 2. Install Node dependencies for gui-dev ===
+if [ -f "$PROJECT_DIR/gui-dev/package.json" ]; then
+    echo "[...] Installing Node dependencies for gui-dev..."
+    (cd "$PROJECT_DIR/gui-dev" && npm install)
+    echo "[OK] Node dependencies installed"
+else
+    echo "[SKIP] No gui-dev/package.json found"
+fi
+
+# === 2b. Install Node dependencies for framework-site ===
+SITE_DIR="/home/erik/Projects/framework-site"
+if [ -f "$SITE_DIR/package.json" ]; then
+    echo "[...] Installing Node dependencies for framework-site..."
+    (cd "$SITE_DIR" && npm install)
+    echo "[OK] framework-site Node dependencies installed"
+else
+    echo "[SKIP] framework-site not found or no package.json"
+fi
+
+# === 3. Install R dependencies ===
+if [ -f "$PROJECT_DIR/renv.lock" ]; then
+    echo "[...] Restoring renv packages..."
+    (cd "$PROJECT_DIR" && Rscript -e "renv::restore()")
+    echo "[OK] R packages restored"
+elif [ -f "$PROJECT_DIR/DESCRIPTION" ]; then
+    echo "[...] Ensuring devtools is installed..."
+    Rscript -e "dir.create(Sys.getenv('R_LIBS_USER'), recursive = TRUE, showWarnings = FALSE); if (!requireNamespace('devtools', quietly = TRUE)) install.packages('devtools', repos = 'https://cloud.r-project.org', lib = Sys.getenv('R_LIBS_USER'))"
+    echo "[...] Installing package dependencies..."
+    (cd "$PROJECT_DIR" && Rscript -e "devtools::install_deps()")
+    echo "[OK] R dependencies installed"
+else
+    echo "[SKIP] No renv.lock or DESCRIPTION found"
+fi
+
+echo ""
+echo "Bootstrap complete! Run 'lfw' to start $PROJECT_NAME."

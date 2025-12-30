@@ -4,13 +4,13 @@
 # === Project Config ===
 PROJECT_NAME="tnt-syphilis"
 PROJECT_DIR="/home/erik/Projects/tnt-syphilis"
-EDITOR="positron"
+EDITOR="vscode"
 # DOCKER_COMPOSE=false
 
 echo "Stopping $PROJECT_NAME..."
 
 # Stop Docker services (if configured)
-# if [ "$DOCKER_COMPOSE" = "true" ] && [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+# if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
 #     echo "Stopping Docker services..."
 #     (cd "$PROJECT_DIR" && docker compose down)
 # fi
