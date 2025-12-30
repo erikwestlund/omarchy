@@ -93,6 +93,7 @@ fi
 
 # 5b. Auto-assign ports for Laravel projects with Docker
 if [ "$PROJECT_TYPE" = "laravel" ] && [ "$DOCKER_COMPOSE" = true ]; then
+    PORT_VITE=$(next_port vite 5173)
     PORT_NGINX=$(next_port nginx 8010)
     PORT_POSTGRES=$(next_port postgres 5432)
     PORT_REDIS=$(next_port redis 6379)
@@ -164,8 +165,8 @@ fi
 
 # 8. Alias
 echo ""
-echo "Alias creates: p{alias} (launch), pk{alias} (kill), tm{alias} (tmux), b{alias} (bootstrap), pm{alias} (PM dir), {alias} (project dir)"
-read -p "Alias (e.g., 'hl' creates phl, pkhl, tmhl, pmhl, hl): " PROJECT_ALIAS
+echo "Alias creates: l{alias} (launch), k{alias} (kill), tm{alias} (tmux), b{alias} (bootstrap), pm{alias} (PM dir), {alias} (project dir)"
+read -p "Alias (e.g., 'hl' creates lhl, khl, tmhl, bhl, pmhl, hl): " PROJECT_ALIAS
 if [ -z "$PROJECT_ALIAS" ]; then
     echo "Error: Alias is required"
     exit 1
@@ -183,7 +184,7 @@ if [ -n "$VIEW_URL" ]; then
     echo "View URL: $VIEW_URL"
 fi
 if [ "$PROJECT_TYPE" = "laravel" ] && [ "$DOCKER_COMPOSE" = true ]; then
-    echo "Ports:    nginx=$PORT_NGINX postgres=$PORT_POSTGRES redis=$PORT_REDIS"
+    echo "Ports:    vite=$PORT_VITE nginx=$PORT_NGINX postgres=$PORT_POSTGRES redis=$PORT_REDIS"
     echo "          minio=$PORT_MINIO_API/$PORT_MINIO_CONSOLE mailpit=$PORT_MAILPIT_SMTP/$PORT_MAILPIT_WEB"
 fi
 echo "PM dir:   ~/Omarchy/projects/$PM_NAME"
@@ -193,10 +194,10 @@ if [ -n "$PROJECT_PATH" ]; then
     else
         echo "Project:  $PROJECT_PATH"
     fi
-    echo "Aliases:  p$PROJECT_ALIAS, pk$PROJECT_ALIAS, tm$PROJECT_ALIAS, b$PROJECT_ALIAS, pm$PROJECT_ALIAS, $PROJECT_ALIAS"
+    echo "Aliases:  l$PROJECT_ALIAS, k$PROJECT_ALIAS, tm$PROJECT_ALIAS, b$PROJECT_ALIAS, pm$PROJECT_ALIAS, $PROJECT_ALIAS"
 else
     echo "Project:  (none)"
-    echo "Aliases:  p$PROJECT_ALIAS, pk$PROJECT_ALIAS, tm$PROJECT_ALIAS, b$PROJECT_ALIAS, pm$PROJECT_ALIAS"
+    echo "Aliases:  l$PROJECT_ALIAS, k$PROJECT_ALIAS, tm$PROJECT_ALIAS, b$PROJECT_ALIAS, pm$PROJECT_ALIAS"
 fi
 echo ""
 read -p "Create? [Y/n]: " CONFIRM
@@ -210,9 +211,8 @@ echo ""
 echo "Creating project..."
 
 # Build ansible command
-ANSIBLE_CMD="ansible-playbook -i \"$OMARCHY_DIR/ansible/inventory.yml\" \
+ANSIBLE_CMD="ANSIBLE_CONFIG=$OMARCHY_DIR/ansible/ansible.cfg ansible-playbook \
     \"$OMARCHY_DIR/ansible/playbook.yml\" \
-    --vault-password-file ~/.vault_pass \
     --limit \"$(cat ~/.machine)\" \
     --tags new-project \
     -e \"project_name=$PM_NAME\" \
@@ -242,6 +242,7 @@ fi
 
 # Pass port assignments for Laravel projects
 if [ "$PROJECT_TYPE" = "laravel" ] && [ "$DOCKER_COMPOSE" = true ]; then
+    ANSIBLE_CMD="$ANSIBLE_CMD -e \"vite_port=$PORT_VITE\""
     ANSIBLE_CMD="$ANSIBLE_CMD -e \"nginx_port=$PORT_NGINX\""
     ANSIBLE_CMD="$ANSIBLE_CMD -e \"postgres_port=$PORT_POSTGRES\""
     ANSIBLE_CMD="$ANSIBLE_CMD -e \"redis_port=$PORT_REDIS\""
@@ -273,8 +274,8 @@ if [ -n "$PROJECT_PATH" ]; then
 fi
 echo ""
 echo "ALIASES (available after: source ~/.aliases)"
-echo "   p$PROJECT_ALIAS   →  Launch project ($PROJECT_EDITOR, docker, etc.)"
-echo "   pk$PROJECT_ALIAS  →  Kill project (stop docker, close windows)"
+echo "   l$PROJECT_ALIAS   →  Launch project ($PROJECT_EDITOR, docker, etc.)"
+echo "   k$PROJECT_ALIAS   →  Kill project (stop docker, close windows)"
 echo "   tm$PROJECT_ALIAS  →  Launch tmux session"
 echo "   b$PROJECT_ALIAS   →  Bootstrap project (clone, secrets, build)"
 echo "   pm$PROJECT_ALIAS  →  cd to project management dir"

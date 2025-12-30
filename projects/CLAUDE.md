@@ -130,8 +130,8 @@ Projects generate command aliases (configured via `~/Omarchy/config/projects/pro
 
 | Alias | Purpose | Example |
 |-------|---------|---------|
-| `p{alias}` | Launch project | `ppeq` launches pequod |
-| `pk{alias}` | Kill project | `pkpeq` stops pequod |
+| `l{alias}` | Launch project | `lpeq` launches pequod |
+| `k{alias}` | Kill project | `kpeq` stops pequod |
 | `tm{alias}` | Launch tmux only | `tmpeq` opens terminal session |
 | `b{alias}` | Bootstrap project | `bpeq` sets up pequod |
 | `pm{alias}` | cd to project config | `pmpeq` → `~/Omarchy/projects/pequod` |
@@ -175,7 +175,7 @@ The `kill` script provides clean shutdown:
 
 Example usage:
 ```bash
-pkpeq  # Stop pequod project
+kpeq  # Stop pequod project
 ```
 
 ## Troubleshooting
