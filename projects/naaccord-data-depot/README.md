@@ -29,10 +29,10 @@ docker exec naaccord-test-web python manage.py migrate
 | Service | URL/Port |
 |---------|----------|
 | App | http://naaccord.test |
-| Vite | localhost:5175 |
-| MariaDB | localhost:3306 |
-| Redis | localhost:6381 |
-| Mock-IDP | localhost:8001 |
+| MariaDB | localhost:3310 |
+| Redis | localhost:6393 |
+| Mock-IDP | localhost:8082 |
+| Flower | localhost:5555 |
 
 ## Frontend Assets
 
