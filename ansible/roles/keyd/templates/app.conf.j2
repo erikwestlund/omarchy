@@ -1,6 +1,7 @@
 # keyd app-specific bindings (via keyd-application-mapper)
 
 [chromium]
+meta.s = C-s
 {% for shortcut in keyd_browser_shortcuts %}
 meta.{{ shortcut.key }} = {{ shortcut.action }}
 {% endfor %}
@@ -60,5 +61,24 @@ meta.A-[ = C-A-[
 meta.A-] = C-A-]
 
 [obsidian]
+meta.s = C-s
 meta.w = C-w
 meta.q = C-q
+
+[libreoffice-writer]
+meta.s = C-s
+
+[libreoffice-calc]
+meta.s = C-s
+
+[libreoffice-impress]
+meta.s = C-s
+
+[libreoffice-draw]
+meta.s = C-s
+
+[libreoffice-base]
+meta.s = C-s
+
+[libreoffice-math]
+meta.s = C-s
