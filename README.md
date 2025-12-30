@@ -8,8 +8,8 @@ Personal configuration for [Omarchy](https://omarchy.org) (Arch Linux + Hyprland
 # 1. Clone repo
 git clone https://github.com/erikwestlund/omarchy ~/Omarchy
 
-# 2. Install ansible
-yay -S ansible
+# 2. Install ansible and rclone
+yay -S ansible rclone
 ansible-galaxy collection install community.general kewlfft.aur
 
 # 3. Set up vault password
