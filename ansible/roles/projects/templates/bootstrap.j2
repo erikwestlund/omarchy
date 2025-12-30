@@ -58,7 +58,7 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     container_name: {{ project_name }}-php
-    restart: unless-stopped
+    restart: on-failure
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
@@ -76,7 +76,7 @@ services:
   nginx:
     image: nginx:alpine
     container_name: {{ project_name }}-nginx
-    restart: unless-stopped
+    restart: on-failure
     ports:
       - "127.0.0.1:{{ nginx_port | default('8010') }}:80"
     volumes:
@@ -92,7 +92,7 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     container_name: {{ project_name }}-queue
-    restart: unless-stopped
+    restart: on-failure
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
@@ -109,7 +109,7 @@ services:
   postgres:
     image: postgres:17-alpine
     container_name: {{ project_name }}-postgres
-    restart: unless-stopped
+    restart: on-failure
     environment:
       POSTGRES_DB: {{ project_name | replace('-', '_') }}
       POSTGRES_USER: {{ project_name | replace('-', '_') }}
@@ -118,7 +118,7 @@ services:
       - {{ project_name }}-postgres-data:/var/lib/postgresql/data
       - ./storage/app/dumps:/dumps
     ports:
-      - "127.0.0.1:{{ postgres_port | default('5432') }}:5432"
+      - "127.0.0.1:{{ postgres_port | default('5440') }}:5432"
     networks:
       - {{ project_name }}-network
     healthcheck:
@@ -130,11 +130,11 @@ services:
   redis:
     image: redis:7-alpine
     container_name: {{ project_name }}-redis
-    restart: unless-stopped
+    restart: on-failure
     volumes:
       - {{ project_name }}-redis-data:/data
     ports:
-      - "127.0.0.1:{{ redis_port | default('6379') }}:6379"
+      - "127.0.0.1:{{ redis_port | default('6390') }}:6379"
     networks:
       - {{ project_name }}-network
     healthcheck:
@@ -147,7 +147,7 @@ services:
   meilisearch:
     image: getmeili/meilisearch:latest
     container_name: {{ project_name }}-meilisearch
-    restart: unless-stopped
+    restart: on-failure
     environment:
       MEILI_ENV: development
       MEILI_MASTER_KEY: {{ project_name }}-dev-secret
@@ -168,10 +168,10 @@ services:
   minio:
     image: minio/minio:latest
     container_name: {{ project_name }}-minio
-    restart: unless-stopped
+    restart: on-failure
     ports:
-      - "127.0.0.1:{{ minio_api_port | default('9000') }}:9000"
-      - "127.0.0.1:{{ minio_console_port | default('9001') }}:9001"
+      - "127.0.0.1:{{ minio_api_port | default('9010') }}:9000"
+      - "127.0.0.1:{{ minio_console_port | default('9011') }}:9001"
     environment:
       MINIO_ROOT_USER: {{ project_name }}
       MINIO_ROOT_PASSWORD: {{ project_name }}-dev-secret
@@ -207,10 +207,10 @@ services:
   mailpit:
     image: axllent/mailpit:latest
     container_name: {{ project_name }}-mailpit
-    restart: unless-stopped
+    restart: on-failure
     ports:
-      - "127.0.0.1:{{ mailpit_smtp_port | default('1025') }}:1025"
-      - "127.0.0.1:{{ mailpit_web_port | default('8025') }}:8025"
+      - "127.0.0.1:{{ mailpit_smtp_port | default('1030') }}:1025"
+      - "127.0.0.1:{{ mailpit_web_port | default('8030') }}:8025"
     networks:
       - {{ project_name }}-network
 
@@ -324,10 +324,11 @@ fi
 {% if project_type == 'python' %}
 # === 2. Set up Python virtual environment ===
 if [ -f "$PROJECT_DIR/requirements.txt" ] || [ -f "$PROJECT_DIR/pyproject.toml" ]; then
-    if [ -d "$PROJECT_DIR/.venv" ]; then
+    if [ -d "$PROJECT_DIR/.venv" ] && [ -f "$PROJECT_DIR/.venv/bin/pip" ]; then
         echo "[OK] Python venv already exists"
     else
         echo "[...] Creating Python virtual environment..."
+        rm -rf "$PROJECT_DIR/.venv"
         (cd "$PROJECT_DIR" && python3 -m venv .venv)
         echo "[OK] Python venv created"
     fi
@@ -362,10 +363,11 @@ fi
 
 # Python venv for mixed R/Python projects
 if [ -f "$PROJECT_DIR/requirements.txt" ] || [ -f "$PROJECT_DIR/pyproject.toml" ]; then
-    if [ -d "$PROJECT_DIR/.venv" ]; then
+    if [ -d "$PROJECT_DIR/.venv" ] && [ -f "$PROJECT_DIR/.venv/bin/pip" ]; then
         echo "[OK] Python venv already exists"
     else
         echo "[...] Creating Python virtual environment..."
+        rm -rf "$PROJECT_DIR/.venv"
         (cd "$PROJECT_DIR" && python3 -m venv .venv)
         echo "[OK] Python venv created"
     fi

@@ -2,7 +2,7 @@
 Name=Positron
 Comment=The next generation IDE for data science
 GenericName=Text Editor
-Exec=/usr/share/positron/positron --ozone-platform=x11 %F
+Exec=/usr/share/positron/positron %F
 Icon=co.posit.positron
 Type=Application
 StartupNotify=false
@@ -14,5 +14,5 @@ Keywords=vscode;
 
 [Desktop Action new-empty-window]
 Name=New Empty Window
-Exec=/usr/share/positron/positron --ozone-platform=x11 --new-window %F
+Exec=/usr/share/positron/positron --new-window %F
 Icon=co.posit.positron

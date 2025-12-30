@@ -3,7 +3,7 @@
 │ Super+Space  Launcher │ Super+Sh+T Teams      │ Alt+←/→    Prev/next  │ Super+Sh+P Commands   │ Alt+Sh+HJKL Swap      │ k{x}  kill            │
 │ Super+Alt+Sp Menu     │ Super+Sh+R Slack      │ Prefix+Tab Next win   │ Ctrl+,     Settings   │ Super+Sh+,/. Width    │ tm{x} tmux            │
 │ Super+Q      Close    │ Super+Sh+G GitHub     │ Prefix+>/< Nxt/prv ss │ Super+T    Terminal   │ Super+Sh+[/] Height   │ b{x}  bootstrap       │
-│ Super+F      Fullscrn │ Super+Sh+K Claude     ├─ Ghostty ─────────────┤ Super+S    Save       │ Alt+J       Split     │ {x}   cd ~/Projects   │
+│ Super+F      Fullscrn │ Super+Sh+U Claude     ├─ Ghostty ─────────────┤ Super+S    Save       │ Alt+J       Split     │ {x}   cd ~/Projects   │
 │ Super+V      Float    │ Super+Sh+B Browser    │ Ctrl+Sh+N  New tab    │ Super+W    Close/Kill │ Super+Sh+D  Layout    ├───────────────────────┤
 │                       │ Super+Sh+N Obsidian   │ Ctrl+Sh+W  Close tab  │ Super+F    Find       ├─ Developer ───────────┤ bs     better-shoes   │
 ├─ Workspaces ──────────┤ Super+Sh+S Spotify    ├─ Screenshots ─────────┤ Super+Z    Undo       │ Ctrl+Sh+C   Dev Tools │ drtp   ohdsi-dr       │
@@ -18,8 +18,8 @@
 │                       │                       │ Super+Ctrl+M Clamshel │ Ctrl+↑/↓   Page Up/Dn │                       │ tnt    tnt-syphilis   │
 │                       │                       │ Super+Ctrl+D Display  │ Super+E    Sidebar    │                       │                       │
 ├─ Help ────────────────┤                       ├─ Text (keyd) ─────────┤ Super+Alt+L Format    │                       │                       │
-│ Alt+K        Hotkeys  │                       │ Opt+Sh+←/→ Line sel  │ Ctrl+1-9   Tabs       │                       │                       │
-│ Super+Alt+H  Cheatsht │                       │ Opt+Enter  C-Enter   │ Ctrl+J     Panel      │                       │                       │
-│ Super+Alt+J  Agenda   │                       │                       │ Ctrl+Sh+J/K Panel ↑/↓│                       │                       │
+│ Alt+K        Hotkeys  │                       │ Opt+Sh+←/→ Line sel   │ Ctrl+1-9   Tabs       │                       │                       │
+│ Super+Alt+H  Cheatsht │                       │ Opt+Enter  C-Enter    │ Ctrl+J     Panel      │                       │                       │
+│ Super+Alt+J  Agenda   │                       │                       │ Ctrl+Sh+J/K Panel ↑/↓ │                       │                       │
 │                       │                       │                       │ Super+D    Multi-sel  │                       │                       │
 └───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┘

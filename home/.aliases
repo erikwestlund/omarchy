@@ -78,6 +78,21 @@ alias localip="hostname -I | awk '{print \$1}'"
 # Flush DNS cache (systemd-resolved)
 alias flushdns="sudo systemd-resolve --flush-caches"
 
+# NVMe SMART info
+nvme-info() {
+    sudo nvme list
+    echo
+    if [[ -n "$1" ]]; then
+        sudo nvme smart-log "/dev/nvme$1"
+    else
+        for dev in /dev/nvme[0-9]; do
+            echo "=== $dev ==="
+            sudo nvme smart-log "$dev"
+            echo
+        done
+    fi
+}
+
 # Clipboard (requires xclip)
 alias clip="xclip -selection clipboard"
 alias c="tr -d '\n' | xclip -selection clipboard"

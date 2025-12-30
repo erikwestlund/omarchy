@@ -7,7 +7,12 @@ PROJECT_DIR="/home/erik/Omarchy"
 # Check if session already exists
 tmux has-session -t $SESSION 2>/dev/null
 if [ $? = 0 ]; then
-    tmux attach-session -t $SESSION
+    # Only attach if running interactively (in a terminal)
+    if [ -t 1 ]; then
+        tmux attach-session -t $SESSION
+    else
+        echo "ok"
+    fi
     exit 0
 fi
 
@@ -45,5 +50,9 @@ TABNO=$((TABNO+1))
 # Select first window
 tmux select-window -t $SESSION:1
 
-# Attach
-tmux attach-session -t $SESSION
+# Attach only if running interactively
+if [ -t 1 ]; then
+    tmux attach-session -t $SESSION
+else
+    echo "ok"
+fi

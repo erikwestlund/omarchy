@@ -40,6 +40,14 @@ echo "Launching $PROJECT_NAME in workspace $WS..."
 # Switch to workspace
 hyprctl dispatch workspace $WS
 
+# Start tmux session (if not already running)
+TMUX_SCRIPT="$HOME/Omarchy/projects/parkukb/tmux.sh"
+if [ -x "$TMUX_SCRIPT" </dev/null &
+    sleep 0.5 ]; then
+    "$TMUX_SCRIPT" </dev/null &
+    sleep 0.5
+fi
+
 # Start Docker services (if configured)
 # if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
 #     echo "Starting Docker services..."

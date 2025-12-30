@@ -57,10 +57,11 @@ done
 
 # === 3. Set up Python virtual environment ===
 if [ -f "$PROJECT_DIR/requirements.txt" ] || [ -f "$PROJECT_DIR/pyproject.toml" ]; then
-    if [ -d "$PROJECT_DIR/.venv" ]; then
+    if [ -d "$PROJECT_DIR/.venv" ] && [ -f "$PROJECT_DIR/.venv/bin/pip" ]; then
         echo "[OK] Python venv already exists"
     else
         echo "[...] Creating Python virtual environment..."
+        rm -rf "$PROJECT_DIR/.venv"
         (cd "$PROJECT_DIR" && python3 -m venv .venv)
         echo "[OK] Python venv created"
     fi

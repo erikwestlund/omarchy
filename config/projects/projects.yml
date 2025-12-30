@@ -96,13 +96,13 @@ projects:
       default_ws: 6
     ports:
       vite: 5177
-      nginx: 8050
-      postgres: 5443
-      redis: 6394
-      minio_api: 9016
-      minio_console: 9017
-      mailpit_smtp: 1033
-      mailpit_web: 8051
+      nginx: 8031
+      postgres: 5435
+      redis: 6384
+      minio_api: 9006
+      minio_console: 9007
+      mailpit_smtp: 1028
+      mailpit_web: 8028
 # END PROJECT flint
 # BEGIN PROJECT tnt-syphilis
   - name: tnt-syphilis
@@ -117,6 +117,9 @@ projects:
     alias: drtp
     type: rstats
     path: ~/Projects/ohdsi-dr-screening-treatment-patterns
+    extras:
+      default_ws: 7
+      editor: positron
 # END PROJECT ohdsi-dr-screening-treatment-patterns
 # BEGIN PROJECT mh-missing-data
   - name: mh-missing-data

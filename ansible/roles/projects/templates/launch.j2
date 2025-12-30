@@ -38,10 +38,13 @@ WORKSPACE_FILE=""
 {% endif %}
 {% if project_editor | default('vscode') == 'positron' %}
 EDITOR="/usr/share/positron/bin/positron"
+EDITOR_CLASS="positron"
 {% elif project_editor | default('vscode') == 'vscode' %}
 EDITOR="/usr/bin/code"
+EDITOR_CLASS="code"
 {% else %}
 EDITOR="{{ project_editor | default('vscode') }}"
+EDITOR_CLASS="code"
 {% endif %}
 DEFAULT_WS={{ default_ws | default(1) }}
 {% if docker_compose | default(false) | bool %}
@@ -75,6 +78,13 @@ notify-send -u low "{{ project_name | replace('-', ' ') | title }}" "Launching..
 # Switch to workspace and wait for it to complete
 hyprctl dispatch workspace $WS
 sleep 0.3
+
+# Start tmux session (if not already running) - run detached so it doesn't block
+TMUX_SCRIPT="$HOME/Omarchy/projects/{{ project_name }}/tmux.sh"
+if [ -x "$TMUX_SCRIPT" ]; then
+    "$TMUX_SCRIPT" </dev/null &
+    sleep 0.5
+fi
 
 # Start Docker services (if enabled)
 if [ "$DOCKER_COMPOSE" = "true" ] && [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
@@ -128,7 +138,7 @@ if [ "$MACHINE" = "desktop" ]; then
         done
     fi
 
-    if ! has_window_on_ws "$WS" "code"; then
+    if ! has_window_on_ws "$WS" "$EDITOR_CLASS"; then
 {% if project_editor | default('vscode') in ['vscode', 'positron'] and project_path | length > 0 %}
         hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
 {% else %}
@@ -137,7 +147,7 @@ if [ "$MACHINE" = "desktop" ]; then
     fi
 else
     # Laptop: editor on WS, browser on WS+1 (if VIEW_URL is set)
-    if ! has_window_on_ws "$WS" "code"; then
+    if ! has_window_on_ws "$WS" "$EDITOR_CLASS"; then
         # Ensure we're on the right workspace, then open editor
         hyprctl dispatch workspace $WS
         sleep 0.3
@@ -147,9 +157,9 @@ else
         $EDITOR "$PROJECT_DIR" &
 {% endif %}
 
-        # Wait for VS Code window to actually appear on this workspace
+        # Wait for editor window to actually appear on this workspace
         for i in {1..20}; do
-            if has_window_on_ws "$WS" "code"; then
+            if has_window_on_ws "$WS" "$EDITOR_CLASS"; then
                 break
             fi
             sleep 0.2

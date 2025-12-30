@@ -52,6 +52,14 @@ notify-send -u low "Pequod" "Launching..." -t 5000
 hyprctl dispatch workspace $WS
 sleep 0.3
 
+# Start tmux session (if not already running)
+TMUX_SCRIPT="$HOME/Omarchy/projects/pequod/tmux.sh"
+if [ -x "$TMUX_SCRIPT" </dev/null &
+    sleep 0.5 ]; then
+    "$TMUX_SCRIPT" </dev/null &
+    sleep 0.5
+fi
+
 # Start Docker services (docker-compose.yml = dev, docker-compose.prod.yml = prod)
 if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
     notify-send -u low "Pequod" "Starting Docker services..." -t 4000

@@ -93,15 +93,16 @@ fi
 
 # 5b. Auto-assign ports for Laravel projects with Docker
 if [ "$PROJECT_TYPE" = "laravel" ] && [ "$DOCKER_COMPOSE" = true ]; then
+    # Base ports match projects.yml convention (line 7-10)
     PORT_VITE=$(next_port vite 5173)
     PORT_NGINX=$(next_port nginx 8010)
-    PORT_POSTGRES=$(next_port postgres 5432)
-    PORT_REDIS=$(next_port redis 6379)
+    PORT_POSTGRES=$(next_port postgres 5440)
+    PORT_REDIS=$(next_port redis 6390)
     PORT_MEILISEARCH=$(next_port meilisearch 7700)
-    PORT_MINIO_API=$(next_port minio_api 9000)
-    PORT_MINIO_CONSOLE=$(next_port minio_console 9001)
-    PORT_MAILPIT_SMTP=$(next_port mailpit_smtp 1025)
-    PORT_MAILPIT_WEB=$(next_port mailpit_web 8025)
+    PORT_MINIO_API=$(next_port minio_api 9010)
+    PORT_MINIO_CONSOLE=$(next_port minio_console 9011)
+    PORT_MAILPIT_SMTP=$(next_port mailpit_smtp 1030)
+    PORT_MAILPIT_WEB=$(next_port mailpit_web 8030)
 fi
 
 # 6. Default workspace

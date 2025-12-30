@@ -51,6 +51,14 @@ notify-send -u low "Omarchy" "Launching..." -t 5000
 hyprctl dispatch workspace $WS
 sleep 0.3
 
+# Start tmux session (if not already running)
+TMUX_SCRIPT="$HOME/Omarchy/projects/omarchy/tmux.sh"
+if [ -x "$TMUX_SCRIPT" </dev/null &
+    sleep 0.5 ]; then
+    "$TMUX_SCRIPT" </dev/null &
+    sleep 0.5
+fi
+
 # Start Docker services (if enabled)
 if [ "$DOCKER_COMPOSE" = "true" ] && [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
     notify-send -u low "Omarchy" "Starting Docker services..." -t 4000

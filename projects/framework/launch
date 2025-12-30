@@ -82,6 +82,21 @@ echo "Launching $PROJECT_NAME in workspace $WS..."
 # Switch to editor workspace
 hyprctl dispatch workspace $WS
 
+# Start tmux session (if not already running)
+TMUX_SCRIPT="$HOME/Omarchy/projects/framework/tmux.sh"
+if [ -x "$TMUX_SCRIPT" </dev/null &
+    sleep 0.5 ]; then
+    "$TMUX_SCRIPT" </dev/null &
+    sleep 0.5
+fi
+
+# Start framework-site Docker services (Laravel backend)
+FRAMEWORK_SITE_DIR="$HOME/Projects/framework-site"
+if [ -f "$FRAMEWORK_SITE_DIR/docker-compose.yml" ]; then
+    echo "Starting framework-site Docker services..."
+    (cd "$FRAMEWORK_SITE_DIR" && docker compose up -d)
+fi
+
 # Launch VS Code
 echo "Opening VS Code..."
 code "$PROJECT_DIR" &

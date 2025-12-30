@@ -25,8 +25,9 @@ has_window_on_ws() {
 PROJECT_NAME="ohdsi-dr-screening-treatment-patterns"
 PROJECT_DIR="/home/erik/Projects/ohdsi-dr-screening-treatment-patterns"
 WORKSPACE_FILE="$HOME/Omarchy/projects/ohdsi-dr-screening-treatment-patterns/ohdsi-dr-screening-treatment-patterns.code-workspace"
-EDITOR="/usr/bin/code"
-DEFAULT_WS=1
+EDITOR="/usr/share/positron/bin/positron"
+EDITOR_CLASS="positron"
+DEFAULT_WS=7
 DOCKER_COMPOSE=false
 VIEW_URL=""
 
@@ -50,6 +51,13 @@ notify-send -u low "Ohdsi Dr Screening Treatment Patterns" "Launching..." -t 500
 # Switch to workspace and wait for it to complete
 hyprctl dispatch workspace $WS
 sleep 0.3
+
+# Start tmux session (if not already running) - run detached so it doesn't block
+TMUX_SCRIPT="$HOME/Omarchy/projects/ohdsi-dr-screening-treatment-patterns/tmux.sh"
+if [ -x "$TMUX_SCRIPT" ]; then
+    "$TMUX_SCRIPT" </dev/null &
+    sleep 0.5
+fi
 
 # Start Docker services (if enabled)
 if [ "$DOCKER_COMPOSE" = "true" ] && [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
@@ -89,6 +97,8 @@ fi
 
 MACHINE=$(cat ~/.machine 2>/dev/null)
 
+EDITOR_CLASS=${EDITOR_CLASS:-code}
+
 if [ "$MACHINE" = "desktop" ]; then
     # Desktop: open browser first (right), then editor (left), both on same workspace
     if [ -n "$VIEW_URL" ] && ! has_window_on_ws "$WS" "chromium"; then
@@ -103,20 +113,20 @@ if [ "$MACHINE" = "desktop" ]; then
         done
     fi
 
-    if ! has_window_on_ws "$WS" "code"; then
+    if ! has_window_on_ws "$WS" "$EDITOR_CLASS"; then
         hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
     fi
 else
     # Laptop: editor on WS, browser on WS+1 (if VIEW_URL is set)
-    if ! has_window_on_ws "$WS" "code"; then
+    if ! has_window_on_ws "$WS" "$EDITOR_CLASS"; then
         # Ensure we're on the right workspace, then open editor
         hyprctl dispatch workspace $WS
         sleep 0.3
         $EDITOR "$WORKSPACE_FILE" &
 
-        # Wait for VS Code window to actually appear on this workspace
+        # Wait for editor window to actually appear on this workspace
         for i in {1..20}; do
-            if has_window_on_ws "$WS" "code"; then
+            if has_window_on_ws "$WS" "$EDITOR_CLASS"; then
                 break
             fi
             sleep 0.2

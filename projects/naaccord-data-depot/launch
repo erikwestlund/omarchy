@@ -52,6 +52,14 @@ notify-send -u low "NA Accord" "Launching..." -t 5000
 hyprctl dispatch workspace $WS
 sleep 0.3
 
+# Start tmux session (if not already running)
+TMUX_SCRIPT="$HOME/Omarchy/projects/naaccord-data-depot/tmux.sh"
+if [ -x "$TMUX_SCRIPT" </dev/null &
+    sleep 0.5 ]; then
+    "$TMUX_SCRIPT" </dev/null &
+    sleep 0.5
+fi
+
 # Start Docker services (docker-compose.yml = dev, docker-compose.prod.yml = prod)
 if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
     notify-send -u low "NA Accord" "Starting Docker services..." -t 4000

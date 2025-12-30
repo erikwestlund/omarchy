@@ -3,11 +3,21 @@
 
 SESSION="mhmi"
 PROJECT_DIR="/home/erik/Projects/mh-missing-data"
+VENV_ACTIVATE="source .venv/bin/activate"
+
+# Disable VS Code shell integration that causes OSC escape sequence leaks
+export TERM_PROGRAM=
+export VSCODE_SHELL_INTEGRATION=
 
 # Check if session already exists
 tmux has-session -t $SESSION 2>/dev/null
 if [ $? = 0 ]; then
-    tmux attach-session -t $SESSION
+    # Only attach if running interactively (in a terminal)
+    if [ -t 1 ]; then
+        tmux attach-session -t $SESSION
+    else
+        echo "ok"
+    fi
     exit 0
 fi
 
@@ -16,6 +26,7 @@ TABNO=1
 
 # --- bash ---
 tmux new-session -d -s $SESSION -n "bash" -c "$PROJECT_DIR"
+tmux send-keys -t $SESSION:$TABNO "[ -d .venv ] && $VENV_ACTIVATE" C-m
 TABNO=$((TABNO+1))
 
 # --- claude-1 (opus) ---
@@ -43,12 +54,22 @@ tmux new-window -t $SESSION:$TABNO -n "R" -c "$PROJECT_DIR"
 tmux send-keys -t $SESSION:$TABNO "R" C-m
 TABNO=$((TABNO+1))
 
+# --- python ---
+tmux new-window -t $SESSION:$TABNO -n "python" -c "$PROJECT_DIR"
+tmux send-keys -t $SESSION:$TABNO "[ -d .venv ] && $VENV_ACTIVATE && python3" C-m
+TABNO=$((TABNO+1))
+
 # --- project ---
 tmux new-window -t $SESSION:$TABNO -n "project" -c "$PROJECT_DIR"
+tmux send-keys -t $SESSION:$TABNO "[ -d .venv ] && $VENV_ACTIVATE" C-m
 TABNO=$((TABNO+1))
 
 # Select first window
 tmux select-window -t $SESSION:1
 
-# Attach
-tmux attach-session -t $SESSION
+# Attach only if running interactively
+if [ -t 1 ]; then
+    tmux attach-session -t $SESSION
+else
+    echo "ok"
+fi

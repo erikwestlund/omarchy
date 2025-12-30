@@ -47,7 +47,7 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     container_name: flint-php
-    restart: unless-stopped
+    restart: on-failure
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
@@ -65,7 +65,7 @@ services:
   nginx:
     image: nginx:alpine
     container_name: flint-nginx
-    restart: unless-stopped
+    restart: on-failure
     ports:
       - "127.0.0.1:8031:80"
     volumes:
@@ -81,7 +81,7 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     container_name: flint-queue
-    restart: unless-stopped
+    restart: on-failure
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
@@ -98,7 +98,7 @@ services:
   postgres:
     image: postgres:17-alpine
     container_name: flint-postgres
-    restart: unless-stopped
+    restart: on-failure
     environment:
       POSTGRES_DB: flint
       POSTGRES_USER: flint
@@ -119,7 +119,7 @@ services:
   redis:
     image: redis:7-alpine
     container_name: flint-redis
-    restart: unless-stopped
+    restart: on-failure
     volumes:
       - flint-redis-data:/data
     ports:
@@ -135,7 +135,7 @@ services:
   minio:
     image: minio/minio:latest
     container_name: flint-minio
-    restart: unless-stopped
+    restart: on-failure
     ports:
       - "127.0.0.1:9006:9000"
       - "127.0.0.1:9007:9001"
@@ -174,7 +174,7 @@ services:
   mailpit:
     image: axllent/mailpit:latest
     container_name: flint-mailpit
-    restart: unless-stopped
+    restart: on-failure
     ports:
       - "127.0.0.1:1028:1025"
       - "127.0.0.1:8028:8025"
