@@ -27,12 +27,16 @@ rclone copy :b2,account=$B2_KEY,key=$B2_SECRET:erik-secrets/bootstrap/secrets.ym
 ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 # 7. Run playbook (aliases not available yet, use full command)
-ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l laptop  # or desktop
+# -K prompts for sudo password
+ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l laptop -K  # or desktop
 
 # 8. Switch to SSH remote
 git -C ~/Omarchy remote set-url origin git@github.com:erikwestlund/omarchy.git
 
-# 9. Reload shell to get aliases, then use 'om' for future runs
+# 9. Load SSH key (deployed by secrets role in step 7)
+eval "$(ssh-agent -s)" && ssh-add ~/.ssh/id_ed25519
+
+# 10. Reload shell to get aliases, then use 'om' for future runs
 exec bash
 ```
 
@@ -291,7 +295,7 @@ sudo chown libvirt-qemu:libvirt-qemu /var/lib/libvirt/images/win-11-min.iso
 
 ```bash
 ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg \
-  ansible-playbook ~/Omarchy/ansible/windows-vm.yml -l desktop  # or laptop
+  ansible-playbook ~/Omarchy/ansible/windows-vm.yml -l desktop -K  # or laptop
 ```
 
 ### 3. Install Windows
@@ -330,7 +334,7 @@ Re-run the playbook to deploy credentials:
 
 ```bash
 ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg \
-  ansible-playbook ~/Omarchy/ansible/windows-vm.yml -l desktop
+  ansible-playbook ~/Omarchy/ansible/windows-vm.yml -l desktop -K
 ```
 
 ### 6. Launch via RDP
