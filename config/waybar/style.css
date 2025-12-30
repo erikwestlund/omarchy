@@ -50,7 +50,7 @@ window#waybar {
   font-weight: 500;
   letter-spacing: 0;
   border: 1px solid transparent;
-  background-color: rgba(30, 30, 46, 0.4);  /* slight translucency */
+  background-color: #151626;  /* matches waybar background */
   color: #5a6a88;  /* gray-blue */
 }
 
@@ -230,7 +230,7 @@ tooltip {
   color: #bdd4ff;
   margin: 0;
   padding: 0;
-  margin-bottom: 2px;
+  margin-top: 1px;
 }
 
 #custom-media.spotify {

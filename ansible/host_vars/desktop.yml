@@ -21,14 +21,13 @@ is_framework: false
 
 # Hyprland look and feel overrides
 hypr_gaps_in: 3
-hypr_gaps_out: 3
+hypr_gaps_out: 6
 hypr_rounding: 12
 hypr_blur_enabled: true
 
-# Waybar border radius to match windows
-waybar_border_radius: "12px"
-
-# Waybar styling for 6K display
+# Waybar styling for 6K display - sticky top, no rounding
+waybar_border_radius: "0"
+waybar_background: "#151626"
 waybar_margin_left: 0
 waybar_margin_right: 0
 waybar_margin_top: 0
@@ -36,9 +35,9 @@ waybar_margin_bottom: 0
 waybar_font_size: 14
 waybar_icon_spacing: 12
 # Waybar JSON config overrides
-waybar_json_margin_x: 3
-waybar_json_margin_top: 5
-waybar_json_height: 28
+waybar_json_margin_x: 0
+waybar_json_margin_top: 0
+waybar_json_height: 32
 
 # Theme - using local base-theme (no remote fetch)
 # theme_git_url: commented out to use local base-theme
