@@ -50,7 +50,7 @@ window#waybar {
   font-weight: 500;
   letter-spacing: 0;
   border: 1px solid transparent;
-  background-color: #151626;  /* matches waybar background */
+  background-color: transparent;
   color: #5a6a88;  /* gray-blue */
 }
 
@@ -75,7 +75,7 @@ window#waybar {
   margin-right: 6px;
 }
 
-/* Has windows - slightly visible */
+/* Has windows - transparent, text only */
 #custom-ws-U.has-windows,
 #custom-ws-1.has-windows,
 #custom-ws-2.has-windows,
@@ -89,11 +89,11 @@ window#waybar {
 #custom-ws-10.has-windows,
 #custom-ws-11.has-windows,
 #custom-ws-12.has-windows {
-  background-color: rgba(35, 37, 52, 0.5);
+  background-color: transparent;
   color: #6878a0;  /* gray-blue */
 }
 
-/* Empty workspace - most subtle */
+/* Empty workspace - transparent, text only */
 #custom-ws-U.empty,
 #custom-ws-1.empty,
 #custom-ws-2.empty,
@@ -107,7 +107,7 @@ window#waybar {
 #custom-ws-10.empty,
 #custom-ws-11.empty,
 #custom-ws-12.empty {
-  background-color: rgba(30, 30, 46, 0.3);
+  background-color: transparent;
   color: #4a5a78;  /* gray-blue */
 }
 

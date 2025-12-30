@@ -15,13 +15,14 @@ windows_vm_scale: "200"
 # Show battery indicator in waybar
 show_battery: true
 
-# Waybar positioning (move down for rounded display)
-waybar_json_margin_top: 6
-waybar_json_margin_x: 4
-# Border radius (uniform)
-waybar_border_radius: "16px"
+# Waybar styling - sticky top, no rounding (matches desktop)
+waybar_border_radius: "0"
+waybar_background: "#151626"
+waybar_json_margin_x: 0
+waybar_json_margin_top: 0
 
 # Window gaps and rounding
+hypr_gaps_in: 2
 hypr_gaps_out: 4
 hypr_rounding: 16
 
