@@ -1,6 +1,6 @@
 # Omarchy Configuration
 
-Personal configuration for [Omarchy](https://omarchy.com) (Arch Linux + Hyprland).
+Personal configuration for [Omarchy](https://omarchy.org) (Arch Linux + Hyprland).
 
 ## Quick Start (New Machine)
 
