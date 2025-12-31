@@ -12,3 +12,4 @@ source ~/.local/share/omarchy/default/bash/rc
 [ -f ~/.aliases ] && source ~/.aliases
 [ -f ~/.bashrc.local ] && source ~/.bashrc.local
 export PATH="$HOME/.bin:$PATH"
+export LIBVIRT_DEFAULT_URI="qemu:///system"

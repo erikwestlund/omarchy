@@ -71,6 +71,40 @@
       failed_when: false
       changed_when: net_autostart.rc == 0
 
+    # UFW firewall rules for libvirt NAT networking
+    # Libvirt uses nftables but UFW (iptables) blocks forwarding by default
+    - name: Check if UFW is installed
+      ansible.builtin.command: which ufw
+      register: ufw_installed
+      failed_when: false
+      changed_when: false
+
+    - name: Allow UFW forwarding on virbr0 (inbound)
+      become: true
+      community.general.ufw:
+        rule: allow
+        route: true
+        direction: in
+        interface: virbr0
+      when: ufw_installed.rc == 0
+
+    - name: Allow UFW forwarding on virbr0 (outbound)
+      become: true
+      community.general.ufw:
+        rule: allow
+        route: true
+        direction: out
+        interface: virbr0
+      when: ufw_installed.rc == 0
+
+    - name: Allow UFW input on virbr0 (for DHCP/DNS to VM)
+      become: true
+      community.general.ufw:
+        rule: allow
+        direction: in
+        interface: virbr0
+      when: ufw_installed.rc == 0
+
     - name: Ensure VM disk directory exists
       become: true
       ansible.builtin.file:
