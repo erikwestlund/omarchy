@@ -155,11 +155,23 @@
     path: "{{ ansible_facts.env.HOME }}/bin"
     state: absent
 
-- name: Sync ~/.bin scripts
-  ansible.builtin.copy:
-    src: "{{ home_src }}/bin/"
-    dest: "{{ ansible_facts.env.HOME }}/.bin/"
-    mode: '0755'
+- name: Check if .bin exists and is not a symlink
+  ansible.builtin.stat:
+    path: "{{ ansible_facts.env.HOME }}/.bin"
+  register: bin_dir_stat
+
+- name: Remove .bin directory if not a symlink
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.bin"
+    state: absent
+  when: bin_dir_stat.stat.exists and not bin_dir_stat.stat.islnk
+
+- name: Symlink ~/.bin scripts
+  ansible.builtin.file:
+    src: "{{ home_src }}/bin"
+    dest: "{{ ansible_facts.env.HOME }}/.bin"
+    state: link
+    force: true
 
 - name: Override omarchy screensaver with custom version
   ansible.builtin.file:

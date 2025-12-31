@@ -96,8 +96,8 @@
     - role: pulsesecure
       tags: pulsesecure
 
-    - role: remmina
-      tags: remmina
+    - role: remotes
+      tags: remotes
 
     - role: intel-gpu
       tags: intel-gpu

@@ -158,6 +158,7 @@ aur_packages:
 
   # Remote desktop
   - icaclient
+  - nomachine
 
   # Email
   - fastmail
@@ -267,5 +268,7 @@ remmina_profiles: []
 remmina_desktops: []
 
 # NoMachine desktop launchers
-nomachine_desktops:
-  - nomachine-mac-mini.desktop
+nomachine_desktops: []
+
+# NoMachine sessions (deployed as .nxs files)
+nomachine_sessions: []
