@@ -26,7 +26,7 @@ PROJECT_NAME="homelab"
 PROJECT_DIR="/home/erik/Projects/homelab"
 WORKSPACE_FILE="$HOME/Omarchy/projects/homelab/homelab.code-workspace"
 EDITOR="/usr/bin/code"
-DEFAULT_WS=1
+DEFAULT_WS=8
 DOCKER_COMPOSE=false
 VIEW_URL=""
 
@@ -53,8 +53,7 @@ sleep 0.3
 
 # Start tmux session (if not already running)
 TMUX_SCRIPT="$HOME/Omarchy/projects/homelab/tmux.sh"
-if [ -x "$TMUX_SCRIPT" </dev/null &
-    sleep 0.5 ]; then
+if [ -x "$TMUX_SCRIPT" ]; then
     "$TMUX_SCRIPT" </dev/null &
     sleep 0.5
 fi
@@ -117,10 +116,7 @@ if [ "$MACHINE" = "desktop" ]; then
 else
     # Laptop: editor on WS, browser on WS+1 (if VIEW_URL is set)
     if ! has_window_on_ws "$WS" "code"; then
-        # Ensure we're on the right workspace, then open editor
-        hyprctl dispatch workspace $WS
-        sleep 0.3
-        $EDITOR "$WORKSPACE_FILE" &
+        hyprctl dispatch exec "[workspace $WS]" "$EDITOR '$WORKSPACE_FILE'"
 
         # Wait for VS Code window to actually appear on this workspace
         for i in {1..20}; do
@@ -129,6 +125,9 @@ else
             fi
             sleep 0.2
         done
+
+        # Switch to the workspace after editor opens
+        hyprctl dispatch workspace $WS
     fi
 
     if [ -n "$VIEW_URL" ]; then

@@ -29,7 +29,7 @@ WORKSPACE_FILE="$HOME/Omarchy/projects/better-shoes/better-shoes.code-workspace"
 EDITOR="/usr/bin/code"
 DEFAULT_WS=2
 DOCKER_COMPOSE=true
-VIEW_URL="https://better-shoes.test"
+VIEW_URL="http://better-shoes.test"
 
 # === Parse Arguments ===
 WS=${1:-$DEFAULT_WS}

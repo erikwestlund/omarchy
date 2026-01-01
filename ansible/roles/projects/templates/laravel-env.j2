@@ -68,6 +68,7 @@ MEILISEARCH_HOST=http://meilisearch:7700
 MEILISEARCH_KEY={{ project_name }}-dev-secret
 
 {% endif %}
+{% if include_minio | default(false) %}
 # MinIO S3-compatible Storage (in Docker)
 AWS_ACCESS_KEY_ID={{ project_name }}
 AWS_SECRET_ACCESS_KEY={{ project_name }}-dev-secret
@@ -76,5 +77,6 @@ AWS_BUCKET={{ project_name }}-default
 AWS_ENDPOINT=http://minio:9000
 AWS_USE_PATH_STYLE_ENDPOINT=true
 AWS_URL=http://localhost:9000/{{ project_name }}-default
+{% endif %}
 
 VITE_APP_NAME="${APP_NAME}"

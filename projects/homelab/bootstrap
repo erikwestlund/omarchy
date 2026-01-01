@@ -7,7 +7,7 @@ set -e
 # === Project Config ===
 PROJECT_NAME="homelab"
 PROJECT_DIR="/home/erik/Projects/homelab"
-GIT_REPO=""
+GIT_REPO="git@github.com:erikwestlund/homelab.git"
 SECRETS_DIR="$HOME/.secrets/homelab"
 
 

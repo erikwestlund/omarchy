@@ -11,5 +11,6 @@ source ~/.local/share/omarchy/default/bash/rc
 # alias p='python'
 [ -f ~/.aliases ] && source ~/.aliases
 [ -f ~/.bashrc.local ] && source ~/.bashrc.local
+[ -f ~/.config/secrets/config ] && { source ~/.config/secrets/config; export GITHUB_USERNAME GITHUB_PAT; }
 export PATH="$HOME/.bin:$PATH"
 export LIBVIRT_DEFAULT_URI="qemu:///system"

@@ -7,3 +7,6 @@ all:
     desktop:
       ansible_connection: local
       ansible_python_interpreter: /usr/bin/python3
+    minio-dev:
+      ansible_host: minio-dev.lan
+      ansible_user: erik

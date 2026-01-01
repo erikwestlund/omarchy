@@ -19,8 +19,6 @@ projects:
       nginx: 8010
       postgres: 5440
       redis: 6390
-      minio_api: 9010
-      minio_console: 9011
       mailpit_smtp: 1030
       mailpit_web: 8030
 
@@ -34,8 +32,6 @@ projects:
       postgres: 5441
       redis: 6391
       meilisearch: 7700
-      minio_api: 9012
-      minio_console: 9013
       mailpit_smtp: 1031
       mailpit_web: 8031
 
@@ -85,6 +81,8 @@ projects:
     alias: hl
     type: utility
     path: ~/Projects/homelab
+    extras:
+      default_ws: 8
 # END PROJECT homelab
 # BEGIN PROJECT flint
   - name: flint
@@ -99,8 +97,6 @@ projects:
       nginx: 8031
       postgres: 5435
       redis: 6384
-      minio_api: 9006
-      minio_console: 9007
       mailpit_smtp: 1028
       mailpit_web: 8028
 # END PROJECT flint

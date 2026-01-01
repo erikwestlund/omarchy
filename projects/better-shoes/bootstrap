@@ -46,6 +46,7 @@ services:
     volumes:
       - ./:/var/www/html
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - better-shoes-network
     depends_on:
@@ -146,45 +147,6 @@ services:
       timeout: 5s
       retries: 5
 
-  minio:
-    image: minio/minio:latest
-    container_name: better-shoes-minio
-    restart: on-failure
-    ports:
-      - "127.0.0.1:9002:9000"
-      - "127.0.0.1:9003:9001"
-    environment:
-      MINIO_ROOT_USER: better-shoes
-      MINIO_ROOT_PASSWORD: better-shoes-dev-secret
-    command: server /data --console-address ":9001"
-    volumes:
-      - better-shoes-minio-data:/data
-    networks:
-      - better-shoes-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
-
-  minio-setup:
-    image: minio/mc:latest
-    container_name: better-shoes-minio-setup
-    depends_on:
-      minio:
-        condition: service_healthy
-    entrypoint: >
-      /bin/sh -c "
-      mc alias set better-shoes http://minio:9000 better-shoes better-shoes-dev-secret;
-      mc mb --ignore-existing better-shoes/better-shoes-default;
-      mc mb --ignore-existing better-shoes/better-shoes-test;
-      mc anonymous set download better-shoes/better-shoes-default;
-      mc anonymous set download better-shoes/better-shoes-test;
-      echo 'MinIO setup complete';
-      "
-    networks:
-      - better-shoes-network
-
   mailpit:
     image: axllent/mailpit:latest
     container_name: better-shoes-mailpit
@@ -226,7 +188,6 @@ volumes:
   better-shoes-postgres-data:
   better-shoes-redis-data:
   better-shoes-meilisearch-data:
-  better-shoes-minio-data:
 DOCKER_COMPOSE_EOF
 echo "[OK] docker-compose.yml generated"
 
@@ -326,6 +287,14 @@ if [ -d "$PROJECT_DIR/storage" ]; then
     echo "[OK] Storage permissions fixed"
 fi
 
+# Create media symlink for local filesystem storage
+if [ ! -L "$PROJECT_DIR/public/media" ]; then
+    echo "[...] Creating media symlink..."
+    mkdir -p "$PROJECT_DIR/storage/app/media"
+    ln -sf "$PROJECT_DIR/storage/app/media" "$PROJECT_DIR/public/media"
+    echo "[OK] Media symlink created"
+fi
+
 # Wait for PHP container to be ready
 echo "[...] Waiting for services to be healthy..."
 sleep 5
@@ -354,5 +323,4 @@ echo ""
 echo "Services:"
 echo "  - App: http://better-shoes.test (nginx on port 8020)"
 echo "  - Meilisearch: http://localhost:7700"
-echo "  - MinIO Console: http://localhost:9003"
 echo "  - Mailpit: http://localhost:8026"

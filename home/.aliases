@@ -46,7 +46,7 @@ alias om-sync='git -C ~/Omarchy pull'
 
 # Ansible
 alias ap="ansible-playbook"
-alias vault-edit="ansible-vault edit ~/Omarchy/ansible/vault/secrets.yml --vault-password-file ~/.vault_pass"
+alias vault-edit="EDITOR=nvim ansible-vault edit ~/Omarchy/ansible/vault/secrets.yml --vault-password-file ~/.vault_pass"
 
 # Calendar (gcalcli)
 alias cal="gcalcli --calendar Family --calendar JHU --calendar Personal calw"

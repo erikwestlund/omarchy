@@ -132,45 +132,6 @@ services:
       timeout: 5s
       retries: 5
 
-  minio:
-    image: minio/minio:latest
-    container_name: flint-minio
-    restart: on-failure
-    ports:
-      - "127.0.0.1:9006:9000"
-      - "127.0.0.1:9007:9001"
-    environment:
-      MINIO_ROOT_USER: flint
-      MINIO_ROOT_PASSWORD: flint-dev-secret
-    command: server /data --console-address ":9001"
-    volumes:
-      - flint-minio-data:/data
-    networks:
-      - flint-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
-
-  minio-setup:
-    image: minio/mc:latest
-    container_name: flint-minio-setup
-    depends_on:
-      minio:
-        condition: service_healthy
-    entrypoint: >
-      /bin/sh -c "
-      mc alias set flint http://minio:9000 flint flint-dev-secret;
-      mc mb --ignore-existing flint/flint-default;
-      mc mb --ignore-existing flint/flint-test;
-      mc anonymous set download flint/flint-default;
-      mc anonymous set download flint/flint-test;
-      echo 'MinIO setup complete';
-      "
-    networks:
-      - flint-network
-
   mailpit:
     image: axllent/mailpit:latest
     container_name: flint-mailpit
@@ -188,7 +149,6 @@ networks:
 volumes:
   flint-postgres-data:
   flint-redis-data:
-  flint-minio-data:
 DOCKER_COMPOSE_EOF
 echo "[OK] docker-compose.yml generated"
 
