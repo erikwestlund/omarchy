@@ -80,6 +80,9 @@ pacman_packages:
   # Browsers
   - firefox
 
+  # Bootable USB
+  - isoimagewriter
+
   # Media
   - vlc
 
@@ -162,9 +165,6 @@ aur_packages:
 
   # Email
   - fastmail
-
-  # Bootable USB
-  - ventoy-bin
 
 # JHU VPN configuration
 jh_vpn_url: "https://vpn.jh.edu"
