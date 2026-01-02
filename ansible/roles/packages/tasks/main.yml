@@ -89,3 +89,9 @@
     name: pulsesecure
     enabled: true
     state: started
+
+- name: Install Claude Code
+  ansible.builtin.shell: |
+    curl -fsSL https://claude.ai/install.sh | bash
+  args:
+    creates: "{{ ansible_facts.env.HOME }}/.claude/local/claude"

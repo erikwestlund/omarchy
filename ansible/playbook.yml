@@ -28,6 +28,12 @@
       when: git_status.stdout | length > 0
       tags: always
 
+    - name: Check if SSH key exists
+      ansible.builtin.stat:
+        path: "{{ ansible_facts.env.HOME }}/.ssh/id_ed25519"
+      register: ssh_key_check
+      tags: always
+
     - name: Pull latest Omarchy repo
       ansible.builtin.git:
         repo: "{{ omarchy_repo_url | default('git@github.com:erikwestlund/omarchy.git') }}"
@@ -37,7 +43,7 @@
       tags: always
       register: repo_pull
       changed_when: repo_pull.changed
-      when: git_status.stdout | length == 0
+      when: git_status.stdout | length == 0 and ssh_key_check.stat.exists
       ignore_errors: true
 
     - name: Detect Framework laptop
