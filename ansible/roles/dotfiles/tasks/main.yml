@@ -377,6 +377,21 @@
       XDG_PICTURES_DIR="$HOME"
       XDG_VIDEOS_DIR="$HOME"
 
+# Framework 13 AMD mic fix - disable UCM to make internal DMIC work
+# See: https://community.frame.work/t/laptop13-ryzen-ai-340-internal-mic-in-fedora42-doesnt-work/75748
+- name: Deploy Framework laptop mic fix (disable UCM)
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.config/wireplumber/wireplumber.conf.d/50-framework-mic-fix.conf"
+    mode: '0644'
+    content: |
+      # Fix internal microphone on Framework 13 AMD
+      # Disabling UCM allows the DMIC to be properly detected
+      monitor.alsa.properties = {
+        alsa.use-ucm = false
+      }
+  when: is_framework | default(false)
+  notify: restart wireplumber
+
 - name: Prevent xdg-user-dirs-update from running
   ansible.builtin.copy:
     dest: "{{ ansible_facts.env.HOME }}/.config/user-dirs.conf"

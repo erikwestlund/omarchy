@@ -16,3 +16,9 @@
   loop:
     - xdg-desktop-portal.service
     - xdg-desktop-portal-gtk.service
+
+- name: restart wireplumber
+  ansible.builtin.systemd:
+    name: wireplumber.service
+    state: restarted
+    scope: user

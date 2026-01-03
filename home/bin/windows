@@ -78,7 +78,7 @@ if nc -z "$VM_IP" "$RDP_PORT" 2>/dev/null; then
     exec xfreerdp3 /v:"$VM_IP" /u:"$RDP_USER" /p:"$RDP_PASS" /d: \
         /size:"${RDP_RESOLUTION:-1920x1080}" /scale-desktop:"${RDP_SCALE:-100}" \
         /dynamic-resolution +clipboard /cert:ignore \
-        /drive:Home,"$HOME"
+        /drive:Home,"$HOME" /sound
 else
     notify-send "Windows VM" "RDP not available, using SPICE viewer" -t 5000
     exec virt-viewer --attach -c qemu:///system "$VM_NAME"

@@ -88,6 +88,9 @@ pacman_packages:
 
   # Gaming
   - steam
+  - lutris
+  - gnutls
+  - lib32-gnutls
 
   # Screenshots
   - flameshot
