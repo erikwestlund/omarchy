@@ -394,3 +394,6 @@ alias bs-media-sync='rclone sync better-shoes-r2:better-shoes better-shoes-minio
 alias frs="fix-resume-status"   # Show diagnostic info
 alias frg="fix-resume-gpu"      # Try GPU recovery
 alias frc="fix-resume-cpu"      # Try CPU freq reset
+
+# Steam
+alias ksteam="pkill -9 steam"

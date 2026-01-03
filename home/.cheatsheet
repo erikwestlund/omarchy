@@ -20,6 +20,6 @@
 ├─ Help ────────────────┼─ Resume Fixes ────────┼─ Text (keyd) ─────────┤ Super+Alt+L Format    │                       │                       │
 │ Alt+K        Hotkeys  │ frs  Diag status      │ Opt+Sh+←/→ Line sel   │ Ctrl+1-9   Tabs       │                       │                       │
 │ Super+Alt+H  Cheatsht │ frg  GPU recovery     │ Opt+Enter  C-Enter    │ Ctrl+J     Panel      │                       │                       │
-│ Super+Alt+J  Agenda   │ frc  CPU freq reset   │                       │ Ctrl+Sh+J/K Panel ↑/↓ │                       │                       │
+│ Super+Alt+J  Agenda   │ frc  CPU freq reset   │ ksteam     Kill Steam │ Ctrl+Sh+J/K Panel ↑/↓ │                       │                       │
 │                       │                       │                       │ Super+D    Multi-sel  │                       │                       │
 └───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┘
