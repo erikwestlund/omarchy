@@ -105,6 +105,10 @@
     - role: remotes
       tags: remotes
 
+    - role: amd-gpu
+      tags: amd-gpu
+      when: inventory_hostname == 'laptop'
+
     - role: intel-gpu
       tags: intel-gpu
       when: inventory_hostname == 'desktop'

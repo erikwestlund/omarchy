@@ -1,0 +1,33 @@
+---
+# AMD GPU driver installation
+# Only installs if AMD GPU is detected
+
+- name: Check for AMD GPU
+  ansible.builtin.shell: |
+    lspci | grep -iE 'VGA.*AMD|Display.*AMD|3D.*AMD'
+  register: amd_gpu_check
+  changed_when: false
+  failed_when: false
+
+- name: Install AMD GPU Vulkan packages
+  become: true
+  community.general.pacman:
+    name:
+      - vulkan-radeon
+      - lib32-vulkan-radeon
+    state: present
+  when: amd_gpu_check.rc == 0
+  retries: 3
+  delay: 5
+  register: amd_gpu_result
+  until: amd_gpu_result is succeeded
+
+- name: Report AMD GPU status
+  ansible.builtin.debug:
+    msg: "AMD GPU detected and Vulkan drivers installed"
+  when: amd_gpu_check.rc == 0
+
+- name: Report no AMD GPU
+  ansible.builtin.debug:
+    msg: "No AMD GPU detected, skipping driver installation"
+  when: amd_gpu_check.rc != 0
