@@ -17,9 +17,9 @@
 │ Prev/Play/Nx Direct   │ om         Playbook   │ Super+Alt+V  Clipbrd  │ Alt+↑/↓    Doc start  │                       │ peq    pequod         │
 │                       │                       │ Super+Ctrl+M Clamshel │ Ctrl+↑/↓   Page Up/Dn │                       │ tnt    tnt-syphilis   │
 │                       │                       │ Super+Ctrl+D Display  │ Super+E    Sidebar    │                       │                       │
-├─ Help ────────────────┤                       ├─ Text (keyd) ─────────┤ Super+Alt+L Format    │                       │                       │
-│ Alt+K        Hotkeys  │                       │ Opt+Sh+←/→ Line sel   │ Ctrl+1-9   Tabs       │                       │                       │
-│ Super+Alt+H  Cheatsht │                       │ Opt+Enter  C-Enter    │ Ctrl+J     Panel      │                       │                       │
-│ Super+Alt+J  Agenda   │                       │                       │ Ctrl+Sh+J/K Panel ↑/↓ │                       │                       │
+├─ Help ────────────────┼─ Resume Fixes ────────┼─ Text (keyd) ─────────┤ Super+Alt+L Format    │                       │                       │
+│ Alt+K        Hotkeys  │ frs  Diag status      │ Opt+Sh+←/→ Line sel   │ Ctrl+1-9   Tabs       │                       │                       │
+│ Super+Alt+H  Cheatsht │ frg  GPU recovery     │ Opt+Enter  C-Enter    │ Ctrl+J     Panel      │                       │                       │
+│ Super+Alt+J  Agenda   │ frc  CPU freq reset   │                       │ Ctrl+Sh+J/K Panel ↑/↓ │                       │                       │
 │                       │                       │                       │ Super+D    Multi-sel  │                       │                       │
 └───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┘

@@ -86,6 +86,9 @@ pacman_packages:
   # Media
   - vlc
 
+  # Gaming
+  - steam
+
   # Screenshots
   - flameshot
 

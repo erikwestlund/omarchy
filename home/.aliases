@@ -388,3 +388,9 @@ alias fl="cd /home/erik/Projects/flint"
 
 # Sync R2 media to local minio for better-shoes dev
 alias bs-media-sync='rclone sync better-shoes-r2:better-shoes better-shoes-minio:better-shoes-default --progress'
+
+# Post-resume stutter fixes (Framework laptop)
+# See: ~/Omarchy/docs/post-resume-stutter.md
+alias frs="fix-resume-status"   # Show diagnostic info
+alias frg="fix-resume-gpu"      # Try GPU recovery
+alias frc="fix-resume-cpu"      # Try CPU freq reset

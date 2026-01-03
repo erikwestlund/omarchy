@@ -1,0 +1,24 @@
+#!/bin/bash
+# fix-resume-gpu - Try GPU recovery for post-resume stutter
+#
+# Use this when experiencing lag/stutter after resume from sleep.
+# If this fixes the issue, the root cause is the AMD GPU DMCUB bug.
+#
+# Related: https://gitlab.freedesktop.org/drm/amd/-/issues/3647
+#          https://community.frame.work/t/fedora-kde-becomes-suddenly-slow/58459
+
+echo "=== GPU Recovery Fix ==="
+echo "Triggering amdgpu GPU recovery..."
+echo
+
+if [[ ! -f /sys/kernel/debug/dri/1/amdgpu_gpu_recover ]]; then
+    echo "ERROR: GPU recovery interface not found."
+    echo "Try: sudo mount -t debugfs debugfs /sys/kernel/debug"
+    exit 1
+fi
+
+sudo cat /sys/kernel/debug/dri/1/amdgpu_gpu_recover
+
+echo
+echo "GPU recovery triggered. If stutter is gone, the issue is GPU-related."
+echo "Permanent fix: add 'amdgpu.dcdebugmask=0x10' to kernel cmdline."
