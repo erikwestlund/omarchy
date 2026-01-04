@@ -11,7 +11,7 @@ echo "=== GPU Recovery Fix ==="
 echo "Triggering amdgpu GPU recovery..."
 echo
 
-if [[ ! -f /sys/kernel/debug/dri/1/amdgpu_gpu_recover ]]; then
+if ! sudo test -f /sys/kernel/debug/dri/1/amdgpu_gpu_recover; then
     echo "ERROR: GPU recovery interface not found."
     echo "Try: sudo mount -t debugfs debugfs /sys/kernel/debug"
     exit 1
