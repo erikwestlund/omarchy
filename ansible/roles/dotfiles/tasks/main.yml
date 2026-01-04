@@ -193,6 +193,20 @@
     state: link
     force: true
 
+- name: Override omarchy power profiles list with custom version
+  ansible.builtin.file:
+    src: "{{ ansible_facts.env.HOME }}/.bin/omarchy-powerprofiles-list"
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/omarchy/bin/omarchy-powerprofiles-list"
+    state: link
+    force: true
+
+- name: Override powerprofilesctl with custom wrapper
+  ansible.builtin.file:
+    src: "{{ ansible_facts.env.HOME }}/.bin/powerprofilesctl"
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/omarchy/bin/powerprofilesctl"
+    state: link
+    force: true
+
 - name: Make hypr scripts executable
   ansible.builtin.file:
     path: "{{ ansible_facts.env.HOME }}/.config/hypr/scripts"

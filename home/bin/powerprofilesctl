@@ -1,0 +1,82 @@
+#!/bin/bash
+# Wrapper for powerprofilesctl that adds balanced-light and balanced-plus modes
+# These custom modes sit between the standard power-profiles-daemon profiles
+
+REAL_CMD="/usr/bin/powerprofilesctl"
+STATE_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/power-profile-custom"
+
+# Custom profile definitions (EPP + platform profile)
+declare -A CUSTOM_PROFILES=(
+    ["balanced-light"]="balance_power:balanced"
+    ["balanced-plus"]="balance_performance:performance"
+)
+
+get_custom_profile() {
+    [[ -f "$STATE_FILE" ]] && cat "$STATE_FILE"
+}
+
+set_custom_profile() {
+    local profile="$1"
+    mkdir -p "$(dirname "$STATE_FILE")"
+    echo "$profile" > "$STATE_FILE"
+}
+
+clear_custom_profile() {
+    rm -f "$STATE_FILE"
+}
+
+apply_epp() {
+    local epp="$1"
+    for cpu in /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference; do
+        echo "$epp" | sudo tee "$cpu" >/dev/null 2>&1
+    done
+}
+
+apply_platform_profile() {
+    local profile="$1"
+    local pp_file="/sys/firmware/acpi/platform_profile"
+    echo "$profile" | sudo tee "$pp_file" >/dev/null 2>&1
+}
+
+apply_custom_profile() {
+    local profile="$1"
+    local settings="${CUSTOM_PROFILES[$profile]}"
+    local epp="${settings%%:*}"
+    local platform="${settings##*:}"
+
+    # First set power-profiles-daemon to balanced as base
+    "$REAL_CMD" set balanced
+
+    # Then apply our custom tweaks
+    apply_epp "$epp"
+    apply_platform_profile "$platform"
+
+    set_custom_profile "$profile"
+}
+
+case "$1" in
+    get)
+        custom=$(get_custom_profile)
+        if [[ -n "$custom" ]]; then
+            echo "$custom"
+        else
+            "$REAL_CMD" get
+        fi
+        ;;
+    set)
+        profile="$2"
+        if [[ -n "${CUSTOM_PROFILES[$profile]}" ]]; then
+            apply_custom_profile "$profile"
+        else
+            clear_custom_profile
+            "$REAL_CMD" set "$profile"
+        fi
+        ;;
+    list)
+        # Pass through to real command, custom profiles added by omarchy-powerprofiles-list
+        "$REAL_CMD" "$@"
+        ;;
+    *)
+        "$REAL_CMD" "$@"
+        ;;
+esac

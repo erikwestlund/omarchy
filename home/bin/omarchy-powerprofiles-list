@@ -1,0 +1,18 @@
+#!/bin/bash
+# Override omarchy-powerprofiles-list to include custom balanced modes
+# Final order (top to bottom): performance, balanced-plus, balanced, balanced-light, power-saver
+
+/usr/bin/powerprofilesctl list |
+    awk '/^\s*[* ]\s*[a-zA-Z0-9\-]+:$/ { gsub(/^[*[:space:]]+|:$/,""); print }' |
+    while read -r profile; do
+        # Insert balanced-plus before balanced (after tac: appears above balanced)
+        if [[ "$profile" == "balanced" ]]; then
+            echo "balanced-plus"
+        fi
+        echo "$profile"
+        # Insert balanced-light after balanced (after tac: appears below balanced)
+        if [[ "$profile" == "balanced" ]]; then
+            echo "balanced-light"
+        fi
+    done |
+    tac
