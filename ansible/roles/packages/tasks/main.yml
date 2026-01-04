@@ -76,6 +76,12 @@
     enabled: true
     state: started
 
+- name: Configure Tailscale operator and routes
+  become: true
+  ansible.builtin.command:
+    cmd: tailscale set --operator={{ ansible_facts.env.USER }} --accept-routes
+  changed_when: false
+
 - name: Enable and start Syncthing user service
   ansible.builtin.systemd:
     name: syncthing

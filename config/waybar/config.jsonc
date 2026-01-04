@@ -160,7 +160,8 @@
       "exec": "~/.config/waybar/scripts/tailscale.sh",
       "return-type": "json",
       "interval": 10,
-      "tooltip": true
+      "tooltip": true,
+      "on-click": "~/.bin/vpn-menu"
     },
     "network": {
       "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
@@ -392,7 +393,8 @@
       "exec": "~/.config/waybar/scripts/tailscale.sh",
       "return-type": "json",
       "interval": 10,
-      "tooltip": true
+      "tooltip": true,
+      "on-click": "~/.bin/vpn-menu"
     },
     "network": {
       "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
