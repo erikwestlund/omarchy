@@ -29,6 +29,7 @@
     "modules-center": ["custom/media", "custom/update", "custom/screenrecording-indicator"],
     "modules-right": [
       "group/tray-expander",
+      "custom/tmux",
       "custom/vpn",
       "custom/tailscale",
       "bluetooth",
@@ -162,6 +163,13 @@
       "interval": 10,
       "tooltip": true,
       "on-click": "~/.bin/vpn-menu"
+    },
+    "custom/tmux": {
+      "exec": "~/.config/waybar/scripts/tmux.sh",
+      "return-type": "json",
+      "interval": 5,
+      "tooltip": true,
+      "on-click": "~/.bin/tm-menu"
     },
     "network": {
       "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
@@ -264,6 +272,7 @@
     "modules-center": ["custom/media", "custom/update", "custom/screenrecording-indicator"],
     "modules-right": [
       "group/tray-expander",
+      "custom/tmux",
       "custom/vpn",
       "custom/tailscale",
       "bluetooth",
@@ -395,6 +404,13 @@
       "interval": 10,
       "tooltip": true,
       "on-click": "~/.bin/vpn-menu"
+    },
+    "custom/tmux": {
+      "exec": "~/.config/waybar/scripts/tmux.sh",
+      "return-type": "json",
+      "interval": 5,
+      "tooltip": true,
+      "on-click": "~/.bin/tm-menu"
     },
     "network": {
       "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],

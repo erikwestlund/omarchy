@@ -1,0 +1,38 @@
+#!/bin/bash
+# Tmux session menu - select session, then choose action
+
+sessions=$(tmux list-sessions -F "#{session_name}: #{session_windows}w #{?session_attached,(attached),}" 2>/dev/null)
+
+if [ -z "$sessions" ]; then
+    notify-send "Tmux" "No active sessions"
+    exit 0
+fi
+
+# First menu: select a session
+selected=$(echo -e "$sessions\n+ New Session" | walker --dmenu -p "Tmux:")
+
+[ -z "$selected" ] && exit 0
+
+if [ "$selected" = "+ New Session" ]; then
+    # Prompt for session name
+    name=$(echo "" | walker --dmenu -p "Session name:")
+    if [ -n "$name" ]; then
+        ghostty -e tmux new-session -s "$name"
+    fi
+    exit 0
+fi
+
+# Extract session name (everything before the first colon)
+session_name=$(echo "$selected" | cut -d: -f1)
+
+# Second menu: choose action
+action=$(echo -e "Attach\nKill" | walker --dmenu -p "$session_name:")
+
+case "$action" in
+    Attach)
+        ghostty -e tmux attach-session -t "$session_name"
+        ;;
+    Kill)
+        tmux kill-session -t "$session_name" && notify-send "Tmux" "Killed session: $session_name"
+        ;;
+esac
