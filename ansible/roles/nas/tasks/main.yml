@@ -18,10 +18,13 @@
       username={{ nas_erik_username }}
       password={{ nas_erik_password }}
 
-- name: Create NAS mount point in home
+- name: Create NAS mount point
+  become: true
   ansible.builtin.file:
-    path: "{{ ansible_facts.env.HOME }}/NAS"
+    path: /mnt/nas
     state: directory
+    owner: erik
+    group: erik
     mode: '0755'
 
 - name: Ensure autofs maps directory exists
@@ -37,7 +40,7 @@
     dest: /etc/autofs/auto.master.d/nas.autofs
     mode: '0644'
     content: |
-      {{ ansible_facts.env.HOME }}/NAS /etc/autofs/auto.nas --timeout=300 --browse
+      /mnt/nas /etc/autofs/auto.nas --timeout=300 --browse
   notify: Restart autofs
 
 - name: Configure NAS auto-mount map
@@ -61,3 +64,16 @@
     enabled: true
     state: started
     daemon_reload: true
+
+- name: Ensure ~/.local/share directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.local/share"
+    state: directory
+    mode: '0755'
+
+- name: Configure file manager bookmarks with NAS shortcuts
+  ansible.builtin.template:
+    src: user-places.xbel.j2
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/user-places.xbel"
+    mode: '0644'
+

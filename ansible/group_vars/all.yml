@@ -38,6 +38,7 @@ pacman_packages:
 
   # Hardware/Thunderbolt
   - bolt
+  - fwupd
   - lm_sensors
   - nvme-cli
 

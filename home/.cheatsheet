@@ -10,19 +10,16 @@
 │ Super+Sh+#   Move win │ Super+Sh+E Email      │ Super+Ctrl+2 Full     │ Super+Sh+Z Redo       │ Ctrl+Sh+I   Inspect   │ fw     framework      │
 │ Super+grave  Utility  │ Super+Sh+/ 1Password  │ Super+Ctrl+3 Select   │ Super+[/]  Ed/Term    │ F12         Console   │ fwsite framework-site │
 │                       │ Ctrl+Sh+X  1Pass menu ├─ Utilities ───────────┤ Super+Alt+[/] Prev/Nxt├─ Window Mgmt ─────────┤ hl     homelab        │
-├─ Media (no Fn) ───────┼─ Config ──────────────┤ Super+Ctrl+S Search   │ Super+Alt+N New file  │ Sup+Alt+N   Float     │ mhmi   mh-missing     │
-│ Mute/Vol+/-  Direct   │ vault-edit Edit vault │ Super+Ctrl+C Calc     │ Ctrl+K     Delete line│ Sup+Alt+M   Focus     │ na     naaccord       │
-│ Bright+/-    Direct   │ secrets-pull Pull B2  │ Super+Ctrl+J JHU VPN  │ Ctrl+D     Duplicate  │ Super+Y     Scratch   │ om     omarchy        │
-│ Prev/Play/Nx Direct   │ om-sync    Git pull   │ Super+Ctrl+V VPN      │ Alt+Sh+↑/↓ Move line  │ Super+LMB   Move win  │ park   parkukb        │
-│                       │ om         Playbook   │ Super+Alt+V  Clipbrd  │ Alt+↑/↓    Doc start  │ Super+RMB   Resize    │ peq    pequod         │
-│                       │                       │ Super+Ctrl+M Clamshel │ Ctrl+↑/↓   Page Up/Dn │                       │ tnt    tnt-syphilis   │
-├─ Help ────────────────┼─ Resume Fixes ────────┤ Super+Ctrl+D Display  │ Super+E    Sidebar    │                       │                       │
-│ Alt+K        Hotkeys  │ frs  Diag status      ├─ Text (keyd) ─────────┤ Super+Alt+L Format    │                       │                       │
-│ Super+Alt+H  Cheatsht │ frg  GPU recovery     │ Opt+Sh+←/→ Line sel   │ Ctrl+1-9   Tabs       │                       │                       │
-│ Super+Alt+J  Agenda   │ frc  CPU freq reset   │ Opt+Enter  C-Enter    │ Ctrl+J     Panel      │                       │                       │
-│                       │                       │ ksteam     Kill Steam │ Ctrl+Sh+J/K Panel ↑/↓ │                       │                       │
-│                       │                       │                       │ Super+D    Multi-sel  │                       │                       │
+├─ Media (no Fn) ───────┼─ Config ──────────────┤ Super+Ctrl+S Search   │ Super+Alt+N New file  │ Super+Arr   Focus     │ mhmi   mh-missing     │
+│ Mute/Vol+/-  Direct   │ vault-edit Edit vault │ Super+Ctrl+C Calc     │ Ctrl+K     Delete line│ Super+Sh+Arr Swap     │ na     naaccord       │
+│ Bright+/-    Direct   │ secrets-pull Pull B2  │ Super+Ctrl+J JHU VPN  │ Ctrl+D     Duplicate  │ Sup+Alt+N   Float     │ om     omarchy        │
+│ Prev/Play/Nx Direct   │ om-sync    Git pull   │ Super+Ctrl+V VPN      │ Alt+Sh+↑/↓ Move line  │ Super+Y     Scratch   │ park   parkukb        │
+│                       │ om         Playbook   │ Super+Alt+V  Clipbrd  │ Ctrl+↑/↓   Page Up/Dn │ Super+LMB   Move win  │ peq    pequod         │
+│                       │                       │ Super+Ctrl+M Clamshel │ Super+E    Sidebar    │ Super+RMB   Resize    │ tnt    tnt-syphilis   │
+├─ Help ────────────────┼─ Resume Fixes ────────┤ Super+Ctrl+D Display  │                       │                       │                       │
+│ Alt+K        Hotkeys  │ frs  Diag status      ├─ Text Nav (keyd) ─────┤ Super+Alt+L Format    │                       │                       │
+│ Super+Alt+H  Cheatsht │ frg  GPU recovery     │ Alt+←/→  Line st/end  │ Ctrl+1-9   Tabs       │                       │                       │
+│ Super+Alt+J  Agenda   │ frc  CPU freq reset   │ Alt+↑/↓  Doc top/btm  │ Ctrl+J     Panel      │                       │                       │
+│                       │                       │ +Shift   Select       │ Ctrl+Sh+J/K Panel ↑/↓ │                       │                       │
+│                       │                       │ ksteam   Kill Steam   │ Super+D    Multi-sel  │                       │                       │
 └───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┘
-
-
-test
