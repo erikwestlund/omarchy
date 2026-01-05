@@ -11,7 +11,7 @@ GIT_REPO="git@github.com:erikwestlund/park-gers.git"
 
 # Secrets: source path -> destination filename in project
 declare -A SECRETS=(
-    ["/home/erik/NAS/UnifiDrive/dotenv/parkukb_v2.env"]=".env"
+    ["/mnt/nas/UnifiDrive/dotenv/parkukb_v2.env"]=".env"
 )
 
 echo "Bootstrapping $PROJECT_NAME..."

@@ -39,6 +39,8 @@ projects:
     alias: fw
     type: rstats
     path: ~/Projects/framework
+    extras:
+      default_ws: 3
     ports:
       vite: 5175  # gui-dev vite server
 
@@ -131,3 +133,19 @@ projects:
     extras:
       default_ws: 9
 # END PROJECT omarchy
+# BEGIN PROJECT r50-code-samples-site
+  - name: r50-code-samples-site
+    alias: r50code
+    type: utility
+    path: ~/Projects/r50-code-samples-site
+    extras:
+      default_ws: 8
+# END PROJECT r50-code-samples-site
+# BEGIN PROJECT r50-application
+  - name: r50-application
+    alias: r50
+    type: utility
+    path: ~/Projects/r50-application
+    extras:
+      default_ws: 8
+# END PROJECT r50-application

@@ -1,0 +1,36 @@
+#!/bin/bash
+# Kill script for r50-code-samples-site
+
+# === Project Config ===
+PROJECT_NAME="r50-code-samples-site"
+PROJECT_DIR="/home/erik/Projects/r50-code-samples-site"
+EDITOR="vscode"
+# DOCKER_COMPOSE=false
+
+echo "Stopping $PROJECT_NAME..."
+
+# Stop Docker services (if configured)
+# if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+#     echo "Stopping Docker services..."
+#     (cd "$PROJECT_DIR" && docker compose down)
+# fi
+
+# Close editor windows for this project
+echo "Closing $EDITOR..."
+case "$EDITOR" in
+    positron)
+        EDITOR_ADDRS=$(hyprctl clients -j | jq -r '.[] | select(.class | test("positron|Positron")) | select(.title | contains("'"$PROJECT_NAME"'")) | .address')
+        ;;
+    code|vscode)
+        EDITOR_ADDRS=$(hyprctl clients -j | jq -r '.[] | select(.class | test("code|Code")) | select(.title | contains("'"$PROJECT_NAME"'")) | .address')
+        ;;
+    neovim)
+        EDITOR_ADDRS=$(hyprctl clients -j | jq -r '.[] | select(.class | test("ghostty")) | select(.title | contains("nvim")) | .address')
+        ;;
+esac
+
+for addr in $EDITOR_ADDRS; do
+    hyprctl dispatch closewindow "address:$addr" 2>/dev/null
+done
+
+echo "Done! $PROJECT_NAME stopped."

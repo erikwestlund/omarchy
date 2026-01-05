@@ -6,7 +6,7 @@
 #
 # Prerequisites:
 #   1. Copy Windows 11 minimal ISO to libvirt images directory:
-#      sudo cp ~/NAS/ISOs/win-11-min.iso /var/lib/libvirt/images/
+#      sudo cp /mnt/nas/ISOs/win-11-min.iso /var/lib/libvirt/images/
 #      sudo chown libvirt-qemu:libvirt-qemu /var/lib/libvirt/images/win-11-min.iso
 #
 #      Note: The minimal ISO has VirtIO drivers included, no separate drivers needed.

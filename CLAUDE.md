@@ -92,7 +92,7 @@ ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/
 
 ## Home Infrastructure
 
-- **NAS** (nas.lan) - Storage server, CIFS shares via autofs at `~/NAS/`
+- **NAS** (nas.lan) - Storage server, CIFS shares via autofs at `/mnt/nas/`
 - **Syncthing** (syncthing.lan) - File sync server, backs up to NAS for redundancy
 
 The `nas` Ansible role handles NAS mounts, `syncthing` role handles sync config.

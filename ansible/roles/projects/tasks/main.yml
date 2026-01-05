@@ -173,12 +173,6 @@
       alias pm{{ project_alias }}="cd ~/Omarchy/projects/{{ project_name }}"
   when: project_path | length == 0
 
-- name: Sync aliases to home
-  ansible.builtin.copy:
-    src: "{{ omarchy_repo }}/home/.aliases"
-    dest: "{{ ansible_facts.env.HOME }}/.aliases"
-    mode: '0644'
-
 - name: Show completion message (Laravel)
   ansible.builtin.debug:
     msg: |

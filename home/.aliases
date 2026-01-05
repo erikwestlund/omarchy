@@ -208,6 +208,9 @@ alias pvenv=". venv/bin/activate"
 alias pym="python manage.py"
 alias rundj="python manage.py runserver"
 
+# R
+alias fwinst='Rscript -e "remotes::install_git(\"https://github.com/table1/framework\", force=TRUE)"'
+
 # Arch Linux package management (pacman/yay)
 alias pac="sudo pacman"
 alias pacs="sudo pacman -S"
@@ -384,6 +387,22 @@ alias bfl="~/Omarchy/projects/flint/bootstrap"
 alias pmfl="cd ~/Omarchy/projects/flint"
 alias fl="cd /home/erik/Projects/flint"
 # END PROJECT flint
+# BEGIN PROJECT r50-code-samples-site
+alias lr50code="~/Omarchy/projects/r50-code-samples-site/launch"
+alias kr50code="~/Omarchy/projects/r50-code-samples-site/kill"
+alias tmr50code="~/Omarchy/projects/r50-code-samples-site/tmux.sh"
+alias br50code="~/Omarchy/projects/r50-code-samples-site/bootstrap"
+alias pmr50code="cd ~/Omarchy/projects/r50-code-samples-site"
+alias r50code="cd /home/erik/Projects/erikwestlund-nih/code-samples-site"
+# END PROJECT r50-code-samples-site
+# BEGIN PROJECT r50-application
+alias lr50="~/Omarchy/projects/r50-application/launch"
+alias kr50="~/Omarchy/projects/r50-application/kill"
+alias tmr50="~/Omarchy/projects/r50-application/tmux.sh"
+alias br50="~/Omarchy/projects/r50-application/bootstrap"
+alias pmr50="cd ~/Omarchy/projects/r50-application"
+alias r50="cd /home/erik/Projects/r50-application"
+# END PROJECT r50-application
 # Auto-generated project aliases
 
 # Sync R2 media to local minio for better-shoes dev

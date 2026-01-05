@@ -6,7 +6,7 @@ set -e
 
 # Machine defaults (from ~/.config/omarchy/project-defaults.sh)
 source ~/.config/omarchy/project-defaults.sh 2>/dev/null || true
-DEFAULT_WS=${DEFAULT_WS:-1}
+DEFAULT_WS=${DEFAULT_WS:-3}
 SPLIT_WS=${SPLIT_WS:-false}
 
 # Project config

@@ -287,7 +287,7 @@ A Windows 11 VM using libvirt/QEMU. Not part of the default Omarchy setup.
 ### 1. Copy ISO
 
 ```bash
-sudo cp ~/NAS/ISOs/win-11-min.iso /var/lib/libvirt/images/
+sudo cp /mnt/nas/ISOs/win-11-min.iso /var/lib/libvirt/images/
 sudo chown libvirt-qemu:libvirt-qemu /var/lib/libvirt/images/win-11-min.iso
 ```
 

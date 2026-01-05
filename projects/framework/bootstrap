@@ -45,11 +45,13 @@ if [ -f "$PROJECT_DIR/renv.lock" ]; then
     (cd "$PROJECT_DIR" && Rscript -e "renv::restore()")
     echo "[OK] R packages restored"
 elif [ -f "$PROJECT_DIR/DESCRIPTION" ]; then
-    echo "[...] Ensuring devtools is installed..."
-    Rscript -e "dir.create(Sys.getenv('R_LIBS_USER'), recursive = TRUE, showWarnings = FALSE); if (!requireNamespace('devtools', quietly = TRUE)) install.packages('devtools', repos = 'https://cloud.r-project.org', lib = Sys.getenv('R_LIBS_USER'))"
+    echo "[...] Ensuring devtools and remotes are installed..."
+    Rscript -e "dir.create(Sys.getenv('R_LIBS_USER'), recursive = TRUE, showWarnings = FALSE); for (pkg in c('devtools', 'remotes')) { if (!requireNamespace(pkg, quietly = TRUE)) install.packages(pkg, repos = 'https://cloud.r-project.org', lib = Sys.getenv('R_LIBS_USER')) }"
     echo "[...] Installing package dependencies..."
     (cd "$PROJECT_DIR" && Rscript -e "devtools::install_deps()")
-    echo "[OK] R dependencies installed"
+    echo "[...] Installing framework package from GitHub..."
+    Rscript -e "remotes::install_git('https://github.com/table1/framework')"
+    echo "[OK] R dependencies and framework package installed"
 else
     echo "[SKIP] No renv.lock or DESCRIPTION found"
 fi

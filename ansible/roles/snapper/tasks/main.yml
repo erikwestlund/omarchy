@@ -1,11 +1,32 @@
 ---
 # Snapper configuration for BTRFS snapshots
+# Only enabled on desktop (snapper_enabled: true)
+
+# Remove old frequent timer (migrating to hourly)
+- name: Stop and disable old frequent timer
+  systemd:
+    name: snapper-timeline-frequent.timer
+    enabled: false
+    state: stopped
+  become: true
+  ignore_errors: true
+
+- name: Remove old frequent timer files
+  file:
+    path: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - /etc/systemd/system/snapper-timeline-frequent.timer
+    - /etc/systemd/system/snapper-timeline-frequent.service
+  notify: reload systemd
 
 - name: Ensure snapper is installed
   pacman:
     name: snapper
     state: present
   become: true
+  when: snapper_enabled | default(false)
 
 - name: Deploy snapper home config
   template:
@@ -15,40 +36,26 @@
     group: root
     mode: "0640"
   become: true
+  when: snapper_enabled | default(false)
 
-- name: Deploy frequent snapshot timer
+- name: Deploy 2am cleanup timer
   template:
-    src: snapper-timeline-frequent.timer.j2
-    dest: /etc/systemd/system/snapper-timeline-frequent.timer
+    src: snapper-cleanup.timer.j2
+    dest: /etc/systemd/system/snapper-cleanup.timer
     owner: root
     group: root
     mode: "0644"
   become: true
   notify: reload systemd
+  when: snapper_enabled | default(false)
 
-- name: Deploy frequent snapshot service
-  template:
-    src: snapper-timeline-frequent.service.j2
-    dest: /etc/systemd/system/snapper-timeline-frequent.service
-    owner: root
-    group: root
-    mode: "0644"
-  become: true
-  notify: reload systemd
-
-- name: Disable default hourly timeline timer
+- name: Enable hourly timeline timer
   systemd:
     name: snapper-timeline.timer
-    enabled: false
-    state: stopped
-  become: true
-
-- name: Enable frequent snapshot timer
-  systemd:
-    name: snapper-timeline-frequent.timer
     enabled: true
     state: started
   become: true
+  when: snapper_enabled | default(false)
 
 - name: Enable snapper cleanup timer
   systemd:
@@ -56,8 +63,29 @@
     enabled: true
     state: started
   become: true
+  when: snapper_enabled | default(false)
 
 - name: Sync ACL for snapshots directory
   command: snapper -c home set-config SYNC_ACL=yes
   become: true
   changed_when: false
+  when: snapper_enabled | default(false)
+
+# Disable snapper on machines where it's not enabled
+- name: Stop and disable timeline timer (when snapper disabled)
+  systemd:
+    name: snapper-timeline.timer
+    enabled: false
+    state: stopped
+  become: true
+  when: not (snapper_enabled | default(false))
+  ignore_errors: true
+
+- name: Stop and disable cleanup timer (when snapper disabled)
+  systemd:
+    name: snapper-cleanup.timer
+    enabled: false
+    state: stopped
+  become: true
+  when: not (snapper_enabled | default(false))
+  ignore_errors: true
