@@ -17,6 +17,7 @@ pacman_packages:
   - rclone
   - age
   - htop
+  - iotop
   - tree
   - openssh
   - gnupg
@@ -207,6 +208,7 @@ config_dirs_copy:
 # Config directories to SYMLINK (no ansible processing needed)
 config_dirs_symlink:
   - darkman
+  - elephant
   - ghostty
   - omarchy
   - projects

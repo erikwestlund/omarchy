@@ -8,8 +8,16 @@ keyd_system_shortcuts:
     - { key: a, action: "C-a" }      # Select all
     - { key: f, action: "C-f" }      # Find
     - { key: z, action: "C-z" }      # Undo
+    - { key: left, action: "home" }  # Start of line
+    - { key: right, action: "end" }  # End of line
+    - { key: up, action: "C-home" }  # Top of document
+    - { key: down, action: "C-end" } # Bottom of document
   meta_shift:
     - { key: z, action: "C-S-z" }    # Redo
+    - { key: left, action: "S-home" }   # Select to start of line
+    - { key: right, action: "S-end" }   # Select to end of line
+    - { key: up, action: "C-S-home" }   # Select to top of document
+    - { key: down, action: "C-S-end" }  # Select to bottom of document
   meta_alt:
     - { key: l, action: "C-l" }      # Address bar (browser)
 

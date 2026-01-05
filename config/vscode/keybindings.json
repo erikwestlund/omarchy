@@ -124,11 +124,5 @@
     { "key": "ctrl+0", "command": "workbench.action.lastEditorInGroup" },
 
     // Line continuation in terminal with Shift+Enter
-    { "key": "shift+enter", "command": "workbench.action.terminal.sendSequence", "args": { "text": "\\\n" }, "when": "terminalFocus" },
-
-    // Mac-style line/document selection with Super+Shift+Arrow
-    { "key": "meta+shift+left", "command": "cursorHomeSelect", "when": "editorTextFocus" },
-    { "key": "meta+shift+right", "command": "cursorEndSelect", "when": "editorTextFocus" },
-    { "key": "meta+shift+up", "command": "cursorTopSelect", "when": "editorTextFocus" },
-    { "key": "meta+shift+down", "command": "cursorBottomSelect", "when": "editorTextFocus" }
+    { "key": "shift+enter", "command": "workbench.action.terminal.sendSequence", "args": { "text": "\\\n" }, "when": "terminalFocus" }
 ]

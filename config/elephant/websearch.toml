@@ -1,0 +1,10 @@
+[[entries]]
+default = true
+name = "DuckDuckGo"
+url = "https://duckduckgo.com/?q=%TERM%"
+icon = "/home/erik/.config/elephant/icons/duckduckgo.png"
+
+[[entries]]
+name = "Google"
+url = "https://www.google.com/search?q=%TERM%"
+icon = "/home/erik/.config/elephant/icons/google.png"
