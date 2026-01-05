@@ -250,6 +250,9 @@ webapps:
   - name: Claude
     url: "https://claude.ai/new"
     icon: claude-ai-light.webp
+  - name: Plex
+    url: "https://app.plex.tv"
+    icon: plex.png
 
 # Packages to remove (cleanup from Omarchy base)
 cleanup_pacman_packages:
