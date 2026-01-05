@@ -26,4 +26,4 @@ done <<< "$sessions"
 # Remove trailing newline
 tooltip=${tooltip%\\n}
 
-echo "{\"text\": \" 󰞷  $count     \", \"tooltip\": \"$tooltip\"}"
+echo "{\"text\": \" 󰞷  $count       \", \"tooltip\": \"$tooltip\"}"

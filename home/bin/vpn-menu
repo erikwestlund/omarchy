@@ -1,51 +1,152 @@
 #!/bin/bash
-# VPN menu - manage non-JHU VPNs (Tailscale, etc.)
+# VPN menu - manage Tailscale and PIA VPNs
 
-# Check Tailscale status
-if tailscale status --json 2>/dev/null | jq -e '.BackendState == "Running"' >/dev/null 2>&1; then
-    # Tailscale is up
-    action=$(echo -e "Down\nStatus\nExit Node...\nPrefs" | walker --dmenu -p "Tailscale:")
-else
-    # Tailscale is down or stopped
-    action=$(echo -e "Up\nStatus\nPrefs" | walker --dmenu -p "Tailscale:")
-fi
+# Get Tailscale status
+get_tailscale_status() {
+    if tailscale status --json 2>/dev/null | jq -e '.BackendState == "Running"' >/dev/null 2>&1; then
+        echo "Up"
+    else
+        echo "Down"
+    fi
+}
 
-case "$action" in
-    Up)
-        tailscale up && notify-send "Tailscale" "Connected"
-        ;;
-    Down)
-        tailscale down && notify-send "Tailscale" "Disconnected"
-        ;;
-    Status)
-        status=$(tailscale status 2>&1)
-        if [ -z "$status" ]; then
-            notify-send "Tailscale" "Not running" --urgency=critical
-        else
-            # Show status in a terminal window
-            ghostty -e bash -c "tailscale status; echo; echo 'Press any key to close...'; read -n1"
-        fi
-        ;;
-    "Exit Node...")
-        # Get list of exit nodes
-        nodes=$(tailscale exit-node list 2>/dev/null | tail -n +2 | awk '{print $1, $2}' | sed 's/^/  /')
-        if [ -z "$nodes" ]; then
-            notify-send "Tailscale" "No exit nodes available" --urgency=normal
-        else
-            # Add "None (direct)" option at the top
-            selected=$(echo -e "None (direct)\n$nodes" | walker --dmenu -p "Exit Node:")
-            if [ -n "$selected" ]; then
-                if [ "$selected" = "None (direct)" ]; then
-                    tailscale set --exit-node= && notify-send "Tailscale" "Exit node cleared"
-                else
-                    node_id=$(echo "$selected" | awk '{print $1}')
-                    tailscale set --exit-node="$node_id" && notify-send "Tailscale" "Exit node set to $node_id"
+# Get PIA status
+get_pia_status() {
+    if ! command -v piactl &>/dev/null; then
+        echo "Not installed"
+        return
+    fi
+    local state
+    state=$(timeout 1 piactl get connectionstate 2>/dev/null)
+    if [ -z "$state" ]; then
+        echo "Daemon stopped"
+        return
+    fi
+    case "$state" in
+        Connected) echo "Up" ;;
+        Connecting|Reconnecting) echo "Connecting" ;;
+        Disconnecting) echo "Disconnecting" ;;
+        *) echo "Down" ;;
+    esac
+}
+
+# Tailscale submenu
+tailscale_menu() {
+    local ts_status
+    ts_status=$(get_tailscale_status)
+
+    if [ "$ts_status" = "Up" ]; then
+        action=$(echo -e "Down\nStatus\nExit Node...\nPrefs" | walker --dmenu -p "Tailscale ($ts_status):")
+    else
+        action=$(echo -e "Up\nStatus\nPrefs" | walker --dmenu -p "Tailscale ($ts_status):")
+    fi
+
+    case "$action" in
+        Up)
+            tailscale up && notify-send "Tailscale" "Connected"
+            ;;
+        Down)
+            tailscale down && notify-send "Tailscale" "Disconnected"
+            ;;
+        Status)
+            status=$(tailscale status 2>&1)
+            if [ -z "$status" ]; then
+                notify-send "Tailscale" "Not running" --urgency=critical
+            else
+                ghostty -e bash -c "tailscale status; echo; echo 'Press any key to close...'; read -n1"
+            fi
+            ;;
+        "Exit Node...")
+            nodes=$(tailscale exit-node list 2>/dev/null | tail -n +2 | awk '{print $1, $2}' | sed 's/^/  /')
+            if [ -z "$nodes" ]; then
+                notify-send "Tailscale" "No exit nodes available" --urgency=normal
+            else
+                selected=$(echo -e "None (direct)\n$nodes" | walker --dmenu -p "Exit Node:")
+                if [ -n "$selected" ]; then
+                    if [ "$selected" = "None (direct)" ]; then
+                        tailscale set --exit-node= && notify-send "Tailscale" "Exit node cleared"
+                    else
+                        node_id=$(echo "$selected" | awk '{print $1}')
+                        tailscale set --exit-node="$node_id" && notify-send "Tailscale" "Exit node set to $node_id"
+                    fi
                 fi
             fi
-        fi
-        ;;
-    Prefs)
-        # Show preferences in terminal
-        ghostty -e bash -c "echo 'Tailscale Preferences:'; echo; tailscale status --json | jq '.Prefs' | less; echo; echo 'Press any key to close...'; read -n1"
-        ;;
-esac
+            ;;
+        Prefs)
+            ghostty -e bash -c "echo 'Tailscale Preferences:'; echo; tailscale status --json | jq '.Prefs' | less; echo; echo 'Press any key to close...'; read -n1"
+            ;;
+    esac
+}
+
+# PIA submenu
+pia_menu() {
+    if ! command -v piactl &>/dev/null; then
+        notify-send "PIA" "Not installed. Run ansible to install piavpn-bin." --urgency=critical
+        return
+    fi
+
+    local pia_status
+    pia_status=$(get_pia_status)
+
+    if [ "$pia_status" = "Daemon stopped" ]; then
+        action=$(echo -e "Start daemon\nStatus" | walker --dmenu -p "PIA (Daemon stopped):")
+        case "$action" in
+            "Start daemon")
+                sudo systemctl start piavpn && notify-send "PIA" "Daemon started"
+                ;;
+            Status)
+                notify-send "PIA" "Daemon is not running. Start it first."
+                ;;
+        esac
+        return
+    fi
+
+    local current_region
+    current_region=$(timeout 1 piactl get region 2>/dev/null || echo "unknown")
+
+    if [ "$pia_status" = "Up" ]; then
+        action=$(echo -e "Down\nRegion...\nStatus" | walker --dmenu -p "PIA ($current_region):")
+    else
+        action=$(echo -e "Up\nRegion...\nStatus" | walker --dmenu -p "PIA ($pia_status):")
+    fi
+
+    case "$action" in
+        Up)
+            piactl background enable
+            piactl connect && notify-send "PIA" "Connecting..."
+            ;;
+        Down)
+            piactl disconnect && notify-send "PIA" "Disconnected"
+            ;;
+        "Region...")
+            regions=$(timeout 2 piactl get regions 2>/dev/null | sort)
+            if [ -z "$regions" ]; then
+                notify-send "PIA" "Could not get regions" --urgency=critical
+            else
+                selected=$(echo "$regions" | walker --dmenu -p "PIA Region:")
+                if [ -n "$selected" ]; then
+                    piactl set region "$selected" && notify-send "PIA" "Region set to $selected"
+                fi
+            fi
+            ;;
+        Status)
+            ghostty -e bash -c "echo 'PIA Status:'; echo; echo 'Connection: $(piactl get connectionstate)'; echo 'Region: $(piactl get region)'; echo 'Public IP: $(piactl get vpnip 2>/dev/null || echo N/A)'; echo 'Protocol: $(piactl get protocol)'; echo; echo 'Press any key to close...'; read -n1"
+            ;;
+    esac
+}
+
+# Main menu - show both VPNs with status
+main_menu() {
+    local ts_status pia_status
+    ts_status=$(get_tailscale_status)
+    pia_status=$(get_pia_status)
+
+    choice=$(echo -e "Tailscale ($ts_status)\nPIA ($pia_status)" | walker --dmenu -p "VPN:")
+
+    case "$choice" in
+        Tailscale*) tailscale_menu ;;
+        PIA*) pia_menu ;;
+    esac
+}
+
+main_menu

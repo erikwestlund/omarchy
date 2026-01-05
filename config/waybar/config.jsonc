@@ -28,10 +28,11 @@
     ],
     "modules-center": ["custom/media", "custom/update", "custom/screenrecording-indicator"],
     "modules-right": [
-      "group/tray-expander",
-      "custom/tmux",
       "custom/vpn",
       "custom/tailscale",
+      "custom/pia",
+      "group/tray-expander",
+      "custom/tmux",
       "bluetooth",
       "network",
       "pulseaudio",
@@ -164,6 +165,13 @@
       "tooltip": true,
       "on-click": "~/.bin/vpn-menu"
     },
+    "custom/pia": {
+      "exec": "~/.config/waybar/scripts/pia.sh",
+      "return-type": "json",
+      "interval": 10,
+      "tooltip": true,
+      "on-click": "~/.bin/vpn-menu"
+    },
     "custom/tmux": {
       "exec": "~/.config/waybar/scripts/tmux.sh",
       "return-type": "json",
@@ -271,10 +279,11 @@
     ],
     "modules-center": ["custom/media", "custom/update", "custom/screenrecording-indicator"],
     "modules-right": [
-      "group/tray-expander",
-      "custom/tmux",
       "custom/vpn",
       "custom/tailscale",
+      "custom/pia",
+      "group/tray-expander",
+      "custom/tmux",
       "bluetooth",
       "network",
       "pulseaudio",
@@ -400,6 +409,13 @@
     },
     "custom/tailscale": {
       "exec": "~/.config/waybar/scripts/tailscale.sh",
+      "return-type": "json",
+      "interval": 10,
+      "tooltip": true,
+      "on-click": "~/.bin/vpn-menu"
+    },
+    "custom/pia": {
+      "exec": "~/.config/waybar/scripts/pia.sh",
       "return-type": "json",
       "interval": 10,
       "tooltip": true,

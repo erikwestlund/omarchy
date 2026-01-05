@@ -164,6 +164,7 @@ aur_packages:
 
   # VPN
   - pulse-secure
+  - piavpn-bin
 
   # Remote desktop
   - icaclient

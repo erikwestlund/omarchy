@@ -96,8 +96,37 @@
     enabled: true
     state: started
 
+- name: Enable and start PIA VPN service
+  become: true
+  ansible.builtin.systemd:
+    name: piavpn
+    enabled: true
+    state: started
+  when: "'piavpn-bin' in aur_packages"
+
+- name: Create PIA login file
+  ansible.builtin.copy:
+    content: "{{ pia_username }}\n{{ pia_password }}\n"
+    dest: /tmp/.pia_login
+    mode: '0600'
+  when: "'piavpn-bin' in aur_packages"
+  no_log: true
+
+- name: Login to PIA
+  ansible.builtin.command: piactl login /tmp/.pia_login
+  register: pia_login
+  failed_when: pia_login.rc != 0 and 'Already logged in' not in pia_login.stderr
+  changed_when: pia_login.rc == 0
+  when: "'piavpn-bin' in aur_packages"
+
+- name: Remove PIA login file
+  ansible.builtin.file:
+    path: /tmp/.pia_login
+    state: absent
+  when: "'piavpn-bin' in aur_packages"
+
 - name: Install Claude Code
   ansible.builtin.shell: |
-    curl -fsSL https://claude.ai/install.sh | bash
+    curl -fsSL https://claude.ai/install.sh -o /tmp/claude-install.sh && bash /tmp/claude-install.sh --force
   args:
-    creates: "{{ ansible_facts.env.HOME }}/.claude/local/claude"
+    creates: "{{ ansible_facts.env.HOME }}/.local/bin/claude"

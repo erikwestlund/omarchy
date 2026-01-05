@@ -13,7 +13,7 @@ backend_state=$(echo "$status" | jq -r '.BackendState')
 if [ "$backend_state" = "Running" ]; then
     hostname=$(echo "$status" | jq -r '.Self.HostName')
     ip=$(echo "$status" | jq -r '.TailscaleIPs[0]')
-    echo "{\"text\": \" 󰖂     \", \"class\": \"connected\", \"tooltip\": \"Tailscale: $hostname\\n$ip\"}"
+    echo "{\"text\": \"󰖂     \", \"class\": \"connected\", \"tooltip\": \"Tailscale: $hostname\\n$ip\"}"
 else
     echo '{"text": "", "class": "disconnected"}'
 fi

@@ -159,6 +159,22 @@ window#waybar {
   padding: 0;
 }
 
+#custom-vpn,
+#custom-tailscale,
+#custom-pia {
+  color: #bdd4ff;
+  margin: 0;
+  padding: 0;
+}
+
+#custom-vpn.disconnected,
+#custom-tailscale.disconnected,
+#custom-pia.disconnected {
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
 #battery {
   font-family: 'JetBrainsMono Nerd Font', sans-serif;
   min-width: 12px;
