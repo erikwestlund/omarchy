@@ -368,14 +368,14 @@ bs-restore() {
     docker exec -i better-shoes-postgres psql -U better_shoes -d better_shoes < "/home/erik/Projects/better-shoes/storage/app/dumps/$file" 2>&1 | tail -100
 }
 # END PROJECT better-shoes
-# BEGIN PROJECT ohdsi-dr-screening-treatment-patterns
-alias ldrtp="~/Omarchy/projects/ohdsi-dr-screening-treatment-patterns/launch"
-alias kdrtp="~/Omarchy/projects/ohdsi-dr-screening-treatment-patterns/kill"
-alias tmdrtp="~/Omarchy/projects/ohdsi-dr-screening-treatment-patterns/tmux.sh"
-alias bdrtp="~/Omarchy/projects/ohdsi-dr-screening-treatment-patterns/bootstrap"
-alias pmdrtp="cd ~/Omarchy/projects/ohdsi-dr-screening-treatment-patterns"
-alias drtp="cd /home/erik/Projects/ohdsi-dr-screening-treatment-patterns"
-# END PROJECT ohdsi-dr-screening-treatment-patterns
+# BEGIN PROJECT ohdsi-diabetic-retinopathy-screening
+alias ldrtp="~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening/launch"
+alias kdrtp="~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening/kill"
+alias tmdrtp="~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening/tmux.sh"
+alias bdrtp="~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening/bootstrap"
+alias pmdrtp="cd ~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening"
+alias drtp="cd /home/erik/Projects/ohdsi-diabetic-retinopathy-screening"
+# END PROJECT ohdsi-diabetic-retinopathy-screening
 # BEGIN PROJECT flint
 alias lfl="~/Omarchy/projects/flint/launch"
 alias kfl="~/Omarchy/projects/flint/kill"

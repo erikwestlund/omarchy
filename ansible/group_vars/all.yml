@@ -270,9 +270,11 @@ cleanup_webapps:
   - "Google Contacts.desktop"
   - "Google Messages.desktop"
   - "Google Photos.desktop"
+  - "google-maps-geo-handler.desktop"
   - "HEY.desktop"
   - "WhatsApp.desktop"
   - "X.desktop"
+  - "xdvi.desktop"
 
 # Remmina remote desktop profiles
 remmina_profiles: []

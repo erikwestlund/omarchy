@@ -3,23 +3,26 @@
 │ Super+Space  Launcher │ Super+Sh+T Teams      │ Alt+←/→    Prev/next  │ Super+Sh+P Commands   │ Alt+Sh+HJKL Swap      │ k{x}  kill            │
 │ Super+Alt+Sp Menu     │ Super+Sh+R Slack      │ Prefix+Tab Next win   │ Ctrl+,     Settings   │ Super+Sh+,/. Width    │ tm{x} tmux            │
 │ Super+Q      Close    │ Super+Sh+G GitHub     │ Prefix+>/< Nxt/prv ss │ Super+T    Terminal   │ Super+Sh+[/] Height   │ b{x}  bootstrap       │
-│ Super+F      Fullscrn │ Super+Sh+U Claude     ├─ Ghostty ─────────────┤ Super+S    Save       │ Alt+J       Split     │ {x}   cd ~/Projects   │
-│ Super+V      Float    │ Super+Sh+B Browser    │ Ctrl+Sh+N  New tab    │ Super+W    Close/Kill │ Super+Sh+D  Layout    ├───────────────────────┤
-│ Super+Y      Scratch  │ Super+Sh+N Obsidian   │ Ctrl+Sh+W  Close tab  │ Super+F    Find       ├─ Developer ───────────┤ bs     better-shoes   │
-├─ Workspaces ──────────┤ Super+Sh+S Spotify    ├─ Screenshots ─────────┤ Super+Z    Undo       │ Ctrl+Sh+C   Dev Tools │ drtp   ohdsi-dr       │
-│ Super+1-9,0  Switch   │ Super+Sh+E Email      │ Super+Ctrl+2 Full     │ Super+Sh+Z Redo       │ Ctrl+Sh+I   Inspect   │ fw     framework      │
-│ Super+Sh+#   Move win │ Super+Sh+/ 1Password  │ Super+Ctrl+3 Select   │ Super+[/]  Ed/Term    │ F12         Console   │ fwsite framework-site │
-│ Super+grave  Utility  │ Ctrl+Sh+X  1Pass menu ├─ Utilities ───────────┤ Super+Alt+[/] Prev/Nxt│                       │ hl     homelab        │
-│                       ├─ Config ──────────────┤ Super+Ctrl+S Search   │ Super+Alt+N New file  │                       │ mhmi   mh-missing     │
-├─ Media (no Fn) ───────┤ vault-edit Edit vault │ Super+Ctrl+C Calc     │ Ctrl+K     Delete line│                       │ na     naaccord       │
-│ Mute/Vol+/-  Direct   │ secrets-pull Pull B2  │ Super+Ctrl+J JHU VPN  │ Ctrl+D     Duplicate  │                       │ om     omarchy        │
-│ Bright+/-    Direct   │ om-sync    Git pull   │ Super+Ctrl+V VPN      │ Alt+Sh+↑/↓ Move line  │                       │ park   parkukb        │
-│ Prev/Play/Nx Direct   │ om         Playbook   │ Super+Alt+V  Clipbrd  │ Alt+↑/↓    Doc start  │                       │ peq    pequod         │
+│ Ctrl+Sh+M   Fullscrn  │ Super+Sh+U Claude     ├─ Ghostty ─────────────┤ Super+S    Save       │ Alt+J       Split     │ {x}   cd ~/Projects   │
+│ Super+Y      Scratch  │ Super+Sh+B Browser    │ Ctrl+Sh+N  New tab    │ Super+W    Close/Kill │ Super+Sh+D  Layout    ├───────────────────────┤
+├─ Workspaces ──────────┤ Super+Sh+N Obsidian   │ Ctrl+Sh+W  Close tab  │ Super+F    Find       ├─ Developer ───────────┤ bs     better-shoes   │
+│ Super+1-9,0  Switch   │ Super+Sh+S Spotify    ├─ Screenshots ─────────┤ Super+Z    Undo       │ Ctrl+Sh+C   Dev Tools │ drtp   ohdsi-dr       │
+│ Super+Sh+#   Move win │ Super+Sh+E Email      │ Super+Ctrl+2 Full     │ Super+Sh+Z Redo       │ Ctrl+Sh+I   Inspect   │ fw     framework      │
+│ Super+grave  Utility  │ Super+Sh+/ 1Password  │ Super+Ctrl+3 Select   │ Super+[/]  Ed/Term    │ F12         Console   │ fwsite framework-site │
+│                       │ Ctrl+Sh+X  1Pass menu ├─ Utilities ───────────┤ Super+Alt+[/] Prev/Nxt├─ Window Mgmt ─────────┤ hl     homelab        │
+├─ Media (no Fn) ───────┼─ Config ──────────────┤ Super+Ctrl+S Search   │ Super+Alt+N New file  │ Sup+Alt+N   Float     │ mhmi   mh-missing     │
+│ Mute/Vol+/-  Direct   │ vault-edit Edit vault │ Super+Ctrl+C Calc     │ Ctrl+K     Delete line│ Sup+Alt+M   Focus     │ na     naaccord       │
+│ Bright+/-    Direct   │ secrets-pull Pull B2  │ Super+Ctrl+J JHU VPN  │ Ctrl+D     Duplicate  │ Super+Y     Scratch   │ om     omarchy        │
+│ Prev/Play/Nx Direct   │ om-sync    Git pull   │ Super+Ctrl+V VPN      │ Alt+Sh+↑/↓ Move line  │ Super+LMB   Move win  │ park   parkukb        │
+│                       │ om         Playbook   │ Super+Alt+V  Clipbrd  │ Alt+↑/↓    Doc start  │ Super+RMB   Resize    │ peq    pequod         │
 │                       │                       │ Super+Ctrl+M Clamshel │ Ctrl+↑/↓   Page Up/Dn │                       │ tnt    tnt-syphilis   │
-│                       │                       │ Super+Ctrl+D Display  │ Super+E    Sidebar    │                       │                       │
-├─ Help ────────────────┼─ Resume Fixes ────────┼─ Text (keyd) ─────────┤ Super+Alt+L Format    │                       │                       │
-│ Alt+K        Hotkeys  │ frs  Diag status      │ Opt+Sh+←/→ Line sel   │ Ctrl+1-9   Tabs       │                       │                       │
-│ Super+Alt+H  Cheatsht │ frg  GPU recovery     │ Opt+Enter  C-Enter    │ Ctrl+J     Panel      │                       │                       │
-│ Super+Alt+J  Agenda   │ frc  CPU freq reset   │ ksteam     Kill Steam │ Ctrl+Sh+J/K Panel ↑/↓ │                       │                       │
+├─ Help ────────────────┼─ Resume Fixes ────────┤ Super+Ctrl+D Display  │ Super+E    Sidebar    │                       │                       │
+│ Alt+K        Hotkeys  │ frs  Diag status      ├─ Text (keyd) ─────────┤ Super+Alt+L Format    │                       │                       │
+│ Super+Alt+H  Cheatsht │ frg  GPU recovery     │ Opt+Sh+←/→ Line sel   │ Ctrl+1-9   Tabs       │                       │                       │
+│ Super+Alt+J  Agenda   │ frc  CPU freq reset   │ Opt+Enter  C-Enter    │ Ctrl+J     Panel      │                       │                       │
+│                       │                       │ ksteam     Kill Steam │ Ctrl+Sh+J/K Panel ↑/↓ │                       │                       │
 │                       │                       │                       │ Super+D    Multi-sel  │                       │                       │
 └───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┘
+
+
+test

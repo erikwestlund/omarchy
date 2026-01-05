@@ -16,10 +16,27 @@
     state: absent
   when: cleanup_aur_packages | default([]) | length > 0
 
-# Remove unwanted webapp desktop files
+# Remove unwanted webapp desktop files (user-created)
 - name: Remove unwanted webapp desktop files
   ansible.builtin.file:
     path: "{{ ansible_facts.env.HOME }}/.local/share/applications/{{ item }}"
     state: absent
   loop: "{{ cleanup_webapps }}"
-  when: cleanup_webapps | default([]) | length > 0
+  when:
+    - cleanup_webapps | default([]) | length > 0
+    - item is not match('^[a-z]')  # Skip lowercase names (system files)
+
+# Hide system desktop files by creating override stubs
+- name: Hide system desktop files
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/{{ item }}"
+    content: |
+      [Desktop Entry]
+      Type=Application
+      Hidden=true
+      NoDisplay=true
+    mode: "0644"
+  loop: "{{ cleanup_webapps }}"
+  when:
+    - cleanup_webapps | default([]) | length > 0
+    - item is match('^[a-z]')  # Only lowercase names (system files like xdvi.desktop)

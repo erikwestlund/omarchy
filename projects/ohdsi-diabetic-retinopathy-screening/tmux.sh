@@ -1,8 +1,8 @@
 #!/bin/bash
-# Tmux session for ohdsi-dr-screening-treatment-patterns (rstats)
+# Tmux session for ohdsi-diabetic-retinopathy-screening (rstats)
 
 SESSION="drtp"
-PROJECT_DIR="/home/erik/Projects/ohdsi-dr-screening-treatment-patterns"
+PROJECT_DIR="/home/erik/Projects/ohdsi-diabetic-retinopathy-screening"
 VENV_ACTIVATE="source .venv/bin/activate"
 
 # Disable VS Code shell integration that causes OSC escape sequence leaks

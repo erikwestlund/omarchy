@@ -1,9 +1,9 @@
 #!/bin/bash
-# Kill script for ohdsi-dr-screening-treatment-patterns
+# Kill script for ohdsi-diabetic-retinopathy-screening
 
 # === Project Config ===
-PROJECT_NAME="ohdsi-dr-screening-treatment-patterns"
-PROJECT_DIR="/home/erik/Projects/ohdsi-dr-screening-treatment-patterns"
+PROJECT_NAME="ohdsi-diabetic-retinopathy-screening"
+PROJECT_DIR="/home/erik/Projects/ohdsi-diabetic-retinopathy-screening"
 EDITOR="vscode"
 # DOCKER_COMPOSE=false
 
@@ -33,4 +33,4 @@ for addr in $EDITOR_ADDRS; do
     hyprctl dispatch closewindow "address:$addr" 2>/dev/null
 done
 
-echo "Done! $PROJECT_NAME stopped."
+echo 'Done! $PROJECT_NAME stopped."

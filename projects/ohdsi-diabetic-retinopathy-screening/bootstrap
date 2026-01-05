@@ -1,14 +1,14 @@
 #!/bin/bash
-# Bootstrap script for ohdsi-dr-screening-treatment-patterns - ensures project is ready to run
+# Bootstrap script for ohdsi-diabetic-retinopathy-screening - ensures project is ready to run
 # Run this on a fresh machine or when setting up the project
 
 set -e
 
 # === Project Config ===
-PROJECT_NAME="ohdsi-dr-screening-treatment-patterns"
-PROJECT_DIR="/home/erik/Projects/ohdsi-dr-screening-treatment-patterns"
+PROJECT_NAME="ohdsi-diabetic-retinopathy-screening"
+PROJECT_DIR="/home/erik/Projects/ohdsi-diabetic-retinopathy-screening"
 GIT_REPO=""
-SECRETS_DIR="$HOME/.secrets/ohdsi-dr-screening-treatment-patterns"
+SECRETS_DIR="$HOME/.secrets/ohdsi-diabetic-retinopathy-screening"
 
 
 echo "Bootstrapping $PROJECT_NAME..."
