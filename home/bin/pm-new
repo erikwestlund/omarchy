@@ -167,6 +167,10 @@ fi
 # 8. Alias
 echo ""
 echo "Alias creates: l{alias} (launch), k{alias} (kill), tm{alias} (tmux), b{alias} (bootstrap), pm{alias} (PM dir), {alias} (project dir)"
+echo "              vs{alias} (VS Code), nv{alias} (NeoVim), p{alias} (Positron)"
+if [ "$DOCKER_COMPOSE" = true ]; then
+    echo "              d{alias} (docker up), dd{alias} (docker down)"
+fi
 read -p "Alias (e.g., 'hl' creates lhl, khl, tmhl, bhl, pmhl, hl): " PROJECT_ALIAS
 if [ -z "$PROJECT_ALIAS" ]; then
     echo "Error: Alias is required"
@@ -282,6 +286,13 @@ echo "   b$PROJECT_ALIAS   →  Bootstrap project (clone, secrets, build)"
 echo "   pm$PROJECT_ALIAS  →  cd to project management dir"
 if [ -n "$PROJECT_PATH" ]; then
     echo "   $PROJECT_ALIAS    →  cd to project code"
+    echo "   vs$PROJECT_ALIAS  →  Open VS Code to workspace"
+    echo "   nv$PROJECT_ALIAS  →  Open NeoVim in project dir"
+    echo "   p$PROJECT_ALIAS   →  Open Positron in project dir"
+fi
+if [ "$DOCKER_COMPOSE" = true ]; then
+    echo "   d$PROJECT_ALIAS   →  Docker compose up"
+    echo "   dd$PROJECT_ALIAS  →  Docker compose down"
 fi
 echo ""
 echo "FILES CREATED"

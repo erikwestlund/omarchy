@@ -7,7 +7,7 @@ set -e
 # === Project Config ===
 PROJECT_NAME="tnt-syphilis"
 PROJECT_DIR="/home/erik/Projects/tnt-syphilis"
-GIT_REPO=""
+GIT_REPO="git@github.com:erikwestlund/tnt-syphilis.git"
 SECRETS_DIR="$HOME/.secrets/tnt-syphilis"
 
 

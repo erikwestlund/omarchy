@@ -136,6 +136,8 @@ Projects generate command aliases (configured via `~/Omarchy/config/projects/pro
 | `b{alias}` | Bootstrap project | `bpeq` sets up pequod |
 | `pm{alias}` | cd to project config | `pmpeq` → `~/Omarchy/projects/pequod` |
 | `{alias}` | cd to project code | `peq` → `~/Projects/pequod` |
+| `d{alias}` | Docker compose up | `dpeq` starts Docker services |
+| `dd{alias}` | Docker compose down | `ddpeq` stops Docker services |
 
 ## Configuration
 

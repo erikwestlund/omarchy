@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Unifi Network
+Comment=Unifi Network Controller
+GenericName=Network Management
+Exec=omarchy-launch-webapp "https://unifi.ui.com/consoles/1C0B8B18F0D8000000000927FE2A0000000009A5BB4F00000000683F1972:601624196/network/default/dashboard"
+Icon=/home/erik/.local/share/icons/unifi.webp
+Type=Application
+StartupNotify=false
+Categories=Network;System;
+Keywords=unifi;network;router;

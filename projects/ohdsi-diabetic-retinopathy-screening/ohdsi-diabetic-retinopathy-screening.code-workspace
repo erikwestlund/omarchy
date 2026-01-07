@@ -2,6 +2,15 @@
 	"folders": [
 		{
 			"path": "/home/erik/Projects/ohdsi-diabetic-retinopathy-screening"
+		},
+		{
+			"path": "../../../Projects/legacy/semaglutide-naion-results"
+		},
+		{
+			"path": "../../../Projects/other-repos/Gde2025DiabeticRetinopathyScreening"
+		},
+		{
+			"path": "../../../Projects/other-repos/OhdsiReportGenerator"
 		}
 	]
 }

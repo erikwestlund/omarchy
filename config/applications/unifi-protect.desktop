@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Unifi Protect
+Comment=Unifi Protect NVR
+GenericName=Security Cameras
+Exec=omarchy-launch-webapp "https://unifi.ui.com/consoles/6C63F8E8542600000000094888ED0000000009C882AC000000006876CE89:747021346/protect/dashboard/all"
+Icon=/home/erik/.local/share/icons/unifi-protect.webp
+Type=Application
+StartupNotify=false
+Categories=Network;Security;
+Keywords=unifi;protect;nvr;cameras;security;

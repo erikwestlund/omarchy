@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Unifi Drive
+Comment=Unifi Drive NAS
+GenericName=Network Storage
+Exec=omarchy-launch-webapp "https://unifi.ui.com/consoles/D8B3708BEE790000000007A692B9000000000808C0B90000000064D18FC0:1329967531/drive/dashboard"
+Icon=/home/erik/.local/share/icons/unifi-drive.webp
+Type=Application
+StartupNotify=false
+Categories=Network;FileTransfer;
+Keywords=unifi;drive;nas;storage;

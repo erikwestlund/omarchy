@@ -1,5 +1,5 @@
-# Project launcher defaults for desktop
-# Deployed by ansible - edit host_vars/desktop.yml to change
+# Project launcher defaults for laptop
+# Deployed by ansible - edit host_vars/laptop.yml to change
 
 DEFAULT_WS=1
-SPLIT_WS=false
+SPLIT_WS=true

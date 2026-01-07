@@ -146,7 +146,7 @@
     block: "{{ project_yml_lines | join('\n') }}"
     insertafter: EOF
 
-- name: Add project aliases to .aliases (with project dir)
+- name: Add project aliases to .aliases (with project dir, with docker)
   ansible.builtin.blockinfile:
     path: "{{ omarchy_repo }}/home/.aliases"
     marker: "# {mark} PROJECT {{ project_name }}"
@@ -158,7 +158,29 @@
       alias b{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/bootstrap"
       alias pm{{ project_alias }}="cd ~/Omarchy/projects/{{ project_name }}"
       alias {{ project_alias }}="cd {{ project_path }}"
-  when: project_path | length > 0
+      alias vs{{ project_alias }}="code ~/Omarchy/projects/{{ project_name }}/{{ workspace_filename }}.code-workspace"
+      alias nv{{ project_alias }}="(cd {{ project_path }} && nvim .)"
+      alias p{{ project_alias }}="(cd {{ project_path }} && /usr/share/positron/bin/positron .)"
+      alias d{{ project_alias }}="(cd {{ project_path }} && docker compose up -d)"
+      alias dd{{ project_alias }}="(cd {{ project_path }} && docker compose down)"
+  when: project_path | length > 0 and docker_compose | default(false) | bool
+
+- name: Add project aliases to .aliases (with project dir, no docker)
+  ansible.builtin.blockinfile:
+    path: "{{ omarchy_repo }}/home/.aliases"
+    marker: "# {mark} PROJECT {{ project_name }}"
+    insertbefore: "# Auto-generated project aliases"
+    block: |
+      alias l{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/launch"
+      alias k{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/kill"
+      alias tm{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/tmux.sh"
+      alias b{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/bootstrap"
+      alias pm{{ project_alias }}="cd ~/Omarchy/projects/{{ project_name }}"
+      alias {{ project_alias }}="cd {{ project_path }}"
+      alias vs{{ project_alias }}="code ~/Omarchy/projects/{{ project_name }}/{{ workspace_filename }}.code-workspace"
+      alias nv{{ project_alias }}="(cd {{ project_path }} && nvim .)"
+      alias p{{ project_alias }}="(cd {{ project_path }} && /usr/share/positron/bin/positron .)"
+  when: project_path | length > 0 and not (docker_compose | default(false) | bool)
 
 - name: Add project aliases to .aliases (no project dir)
   ansible.builtin.blockinfile:
@@ -185,6 +207,8 @@
         b{{ project_alias }}   - Bootstrap project (clone, secrets, build)
         pm{{ project_alias }}  - cd to project management dir
         {{ project_alias }}    - cd to {{ project_path }}
+        d{{ project_alias }}   - Docker compose up
+        dd{{ project_alias }}  - Docker compose down
 
       Laravel files created (if missing):
         - docker-compose.yml in {{ project_path }}
@@ -196,7 +220,7 @@
         3. Run 'l{{ project_alias }}' to launch
   when: project_type == 'laravel'
 
-- name: Show completion message (other types)
+- name: Show completion message (other types with docker)
   ansible.builtin.debug:
     msg: |
       Project '{{ project_name }}' created!
@@ -208,4 +232,20 @@
         b{{ project_alias }}   - Bootstrap project (clone, secrets, build)
         pm{{ project_alias }}  - cd to project management dir
         {{ project_alias }}    - cd to {{ project_path }}
-  when: project_type != 'laravel'
+        d{{ project_alias }}   - Docker compose up
+        dd{{ project_alias }}  - Docker compose down
+  when: project_type != 'laravel' and docker_compose | default(false) | bool
+
+- name: Show completion message (other types without docker)
+  ansible.builtin.debug:
+    msg: |
+      Project '{{ project_name }}' created!
+
+      Aliases (reload shell to use):
+        l{{ project_alias }}   - Launch project (VS Code, docker, etc.)
+        k{{ project_alias }}   - Kill project (stop docker, close windows)
+        tm{{ project_alias }}  - Launch tmux session
+        b{{ project_alias }}   - Bootstrap project (clone, secrets, build)
+        pm{{ project_alias }}  - cd to project management dir
+        {{ project_alias }}    - cd to {{ project_path }}
+  when: project_type != 'laravel' and not (docker_compose | default(false) | bool)

@@ -136,6 +136,7 @@ aur_packages:
   - nodejs-nodemon
   - nodejs-vite
   - tableplus
+  - beekeeper-studio-bin
   - sublime-merge
   - insomnia-bin
   - ansible
@@ -170,13 +171,14 @@ aur_packages:
 
   # Remote desktop
   - icaclient
-  - nomachine
 
   # Email
   - fastmail
 
 # JHU VPN configuration
-jh_vpn_url: "https://vpn.jh.edu"
+jh_vpn_url: "vpn.jh.edu"
+jh_vpn_name: "JH"
+jh_vpn_user: "ewestlu1@jh.edu"
 
 # Theme settings
 theme_name: base-theme
@@ -285,8 +287,3 @@ remmina_profiles: []
 # Remmina desktop launchers
 remmina_desktops: []
 
-# NoMachine desktop launchers
-nomachine_desktops: []
-
-# NoMachine sessions (deployed as .nxs files)
-nomachine_sessions: []

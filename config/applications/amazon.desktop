@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Amazon
+Comment=Amazon Shopping
+GenericName=Shopping
+Exec=omarchy-launch-webapp "https://amazon.com"
+Icon=/home/erik/.local/share/icons/amazon.webp
+Type=Application
+StartupNotify=false
+Categories=Network;Shopping;
+Keywords=amazon;shopping;

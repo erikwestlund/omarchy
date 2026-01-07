@@ -51,11 +51,6 @@ use_power_profiles_daemon: true
 # Snapper snapshots disabled on laptop
 snapper_enabled: false
 
-# AMD GPU resume fix - adds amdgpu.dcdebugmask=0x10 kernel parameter
-# Fixes stutter/lag after resume from suspend (DMCUB/PSR bug)
-# See: system/etc/limine-entry-tool.d/amdgpu-resume-fix.conf
-amdgpu_resume_fix: true
-
 # Additional laptop-specific packages (merged with all.yml)
 extra_pacman_packages:
   - power-profiles-daemon

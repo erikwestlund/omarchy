@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Nginx Proxy Manager
+Comment=Nginx Proxy Manager
+GenericName=Reverse Proxy
+Exec=omarchy-launch-webapp "https://npm.pequod.sh/"
+Icon=/home/erik/.local/share/icons/nginx-proxy-manager.webp
+Type=Application
+StartupNotify=false
+Categories=Network;System;
+Keywords=nginx;proxy;reverse;npm;

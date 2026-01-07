@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=eBay
+Comment=eBay Marketplace
+GenericName=Shopping
+Exec=omarchy-launch-webapp "https://ebay.com"
+Icon=/home/erik/.local/share/icons/ebay.webp
+Type=Application
+StartupNotify=false
+Categories=Network;Shopping;
+Keywords=ebay;shopping;auction;

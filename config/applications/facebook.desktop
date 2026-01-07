@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Facebook
+Comment=Facebook Social Network
+GenericName=Social Media
+Exec=omarchy-launch-webapp "https://facebook.com"
+Icon=/home/erik/.local/share/icons/facebook.webp
+Type=Application
+StartupNotify=false
+Categories=Network;Social;
+Keywords=facebook;social;

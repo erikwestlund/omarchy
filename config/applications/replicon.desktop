@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Replicon
+Comment=Replicon Timesheet
+GenericName=Timesheet
+Exec=omarchy-launch-webapp "https://na8.replicon.com/JHBSchool/my/timesheet/current"
+Icon=/home/erik/.local/share/icons/replicon.ico
+Type=Application
+StartupNotify=false
+Categories=Network;Office;
+Keywords=replicon;timesheet;time;

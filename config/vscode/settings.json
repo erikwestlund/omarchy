@@ -1,4 +1,4 @@
-{ "workbench.colorTheme": "Catppuccin Mocha",
+{ "workbench.colorTheme": "null",
     "workbench.iconTheme": "catppuccin-mocha",
     "editor.minimap.enabled": false,
     "editor.fontFamily": "'JetBrains Mono', 'Fira Code', monospace",
@@ -7,7 +7,9 @@
     "terminal.integrated.fontSize": 12,
     
     "terminal.integrated.commandsToSkipShell": [
-        "workbench.action.closeWindow"
+        "workbench.action.closeWindow",
+        "workbench.action.toggleSidebarVisibility"
     ],
-    "security.workspace.trust.untrustedFiles": "open"
+    "security.workspace.trust.untrustedFiles": "open",
+    "explorer.confirmDelete": false
 }

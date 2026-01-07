@@ -14,3 +14,31 @@
     src: jhvpn-up.j2
     dest: "{{ ansible_facts.env.HOME }}/.bin/jhvpn-up"
     mode: '0755'
+
+- name: Ensure Pulse Secure connection store directory exists
+  become: true
+  ansible.builtin.file:
+    path: /var/lib/pulsesecure/pulse
+    state: directory
+    mode: '0755'
+
+- name: Check if JH VPN connection exists in connstore.dat
+  ansible.builtin.shell: grep -q 'friendly-name. "{{ jh_vpn_name }}"' /var/lib/pulsesecure/pulse/connstore.dat 2>/dev/null
+  register: jh_vpn_exists
+  failed_when: false
+  changed_when: false
+
+- name: Add JH VPN connection to connstore.dat
+  become: true
+  ansible.builtin.blockinfile:
+    path: /var/lib/pulsesecure/pulse/connstore.dat
+    marker: "; {mark} ANSIBLE MANAGED - JH VPN"
+    block: |
+      ive "{{ 99999999999999 | random | hash('md5') }}" {
+        connection-source: "user"
+        friendly-name: "{{ jh_vpn_name }}"
+        uri: "{{ jh_vpn_url }}"
+        username: "{{ jh_vpn_user }}"
+      }
+    insertafter: "^;"
+  when: jh_vpn_exists.rc != 0

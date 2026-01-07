@@ -31,33 +31,3 @@
   ansible.builtin.debug:
     msg: "No AMD GPU detected, skipping driver installation"
   when: amd_gpu_check.rc != 0
-
-# AMD GPU resume fix (kernel parameter for DMCUB/PSR bug)
-# Adds amdgpu.dcdebugmask=0x10 to disable PSR which causes stutter after resume
-# See: https://gitlab.freedesktop.org/drm/amd/-/issues/2708
-- name: Add AMD GPU resume fix kernel parameter
-  become: true
-  ansible.builtin.blockinfile:
-    path: /etc/default/limine
-    marker: "# {mark} AMD GPU resume fix"
-    block: |
-      # Fixes stutter/lag after resume from suspend (DMCUB/PSR bug)
-      # See: https://gitlab.freedesktop.org/drm/amd/-/issues/2708
-      KERNEL_CMDLINE[default]+=" amdgpu.dcdebugmask=0x10"
-    state: present
-  register: amdgpu_resume_fix_added
-  when: amdgpu_resume_fix | default(false)
-
-- name: Remove AMD GPU resume fix kernel parameter
-  become: true
-  ansible.builtin.blockinfile:
-    path: /etc/default/limine
-    marker: "# {mark} AMD GPU resume fix"
-    state: absent
-  register: amdgpu_resume_fix_removed
-  when: not (amdgpu_resume_fix | default(false))
-
-- name: Regenerate boot config after kernel parameter change
-  become: true
-  ansible.builtin.command: limine-update
-  when: amdgpu_resume_fix_added.changed or amdgpu_resume_fix_removed.changed

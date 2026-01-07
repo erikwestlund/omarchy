@@ -62,7 +62,20 @@ for secret in "${SECRETS[@]}"; do
     fi
 done
 
-# === 3. Build Docker images ===
+# === 3. Create Docker data directory ===
+if [ -f "$PROJECT_DIR/.env" ]; then
+    DOCKER_DATA_DIR=$(grep '^DOCKER_DATA_DIR=' "$PROJECT_DIR/.env" | cut -d'=' -f2)
+    if [ -n "$DOCKER_DATA_DIR" ] && [ ! -d "$DOCKER_DATA_DIR" ]; then
+        echo "[...] Creating Docker data directory: $DOCKER_DATA_DIR"
+        sudo mkdir -p "$DOCKER_DATA_DIR"
+        sudo chown "$USER:$USER" "$DOCKER_DATA_DIR"
+        echo "[OK] Docker data directory created"
+    elif [ -n "$DOCKER_DATA_DIR" ]; then
+        echo "[OK] Docker data directory exists: $DOCKER_DATA_DIR"
+    fi
+fi
+
+# === 4. Build Docker images ===
 if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
     echo "[...] Building Docker images..."
     (cd "$PROJECT_DIR" && docker compose build)
@@ -71,7 +84,7 @@ else
     echo "[SKIP] No docker-compose.yml found"
 fi
 
-# === 4. Install PHP dependencies ===
+# === 5. Install PHP dependencies ===
 if [ -f "$PROJECT_DIR/composer.json" ]; then
     echo "[...] Installing PHP dependencies..."
     (cd "$PROJECT_DIR" && docker compose run --rm php composer install)
@@ -80,7 +93,7 @@ else
     echo "[SKIP] No composer.json found"
 fi
 
-# === 5. Install Node dependencies ===
+# === 6. Install Node dependencies ===
 if [ -f "$PROJECT_DIR/package.json" ]; then
     echo "[...] Installing Node dependencies..."
     (cd "$PROJECT_DIR" && npm install)

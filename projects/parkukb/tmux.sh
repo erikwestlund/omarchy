@@ -26,7 +26,6 @@ TABNO=1
 
 # --- bash ---
 tmux new-session -d -s $SESSION -n "bash" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "$VENV_ACTIVATE" C-m
 TABNO=$((TABNO+1))
 
 # --- claude-1 (opus) ---
@@ -56,12 +55,11 @@ TABNO=$((TABNO+1))
 
 # --- python ---
 tmux new-window -t $SESSION:$TABNO -n "python" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "$VENV_ACTIVATE && python3" C-m
+tmux send-keys -t $SESSION:$TABNO "[ -d .venv ] && $VENV_ACTIVATE && python3" C-m
 TABNO=$((TABNO+1))
 
 # --- project ---
 tmux new-window -t $SESSION:$TABNO -n "project" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "$VENV_ACTIVATE" C-m
 TABNO=$((TABNO+1))
 
 # Select first window

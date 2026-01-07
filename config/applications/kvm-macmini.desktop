@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=KVM: Mac Mini
+Comment=Mac Mini KVM Console
+GenericName=Remote Console
+Exec=omarchy-launch-webapp "https://macmini-kvm.pequod.sh"
+Icon=/home/erik/.local/share/icons/kvm.webp
+Type=Application
+StartupNotify=false
+Categories=Network;System;
+Keywords=kvm;remote;console;macmini;mac;

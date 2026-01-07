@@ -53,6 +53,14 @@ TABNO=$((TABNO+1))
 tmux new-window -t $SESSION:$TABNO -n "project" -c "$PROJECT_DIR"
 TABNO=$((TABNO+1))
 
+# --- prod-web ---
+tmux new-window -t $SESSION:$TABNO -n "prod-web" -c "$PROJECT_DIR"
+TABNO=$((TABNO+1))
+
+# --- prod-services ---
+tmux new-window -t $SESSION:$TABNO -n "prod-services" -c "$PROJECT_DIR"
+TABNO=$((TABNO+1))
+
 # Select first window
 tmux select-window -t $SESSION:1
 

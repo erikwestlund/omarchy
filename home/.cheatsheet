@@ -2,7 +2,7 @@
 │ Super+Return Terminal │ Super+Sh+O Outlook    │ Shift+←/→  Prev/next  │ Super+P    Files      │ Super+HJKL  Focus     │ l{x}  launch          │
 │ Super+Space  Launcher │ Super+Sh+T Teams      │ Alt+←/→    Prev/next  │ Super+Sh+P Commands   │ Alt+Sh+HJKL Swap      │ k{x}  kill            │
 │ Super+Alt+Sp Menu     │ Super+Sh+R Slack      │ Prefix+Tab Next win   │ Ctrl+,     Settings   │ Super+Sh+,/. Width    │ tm{x} tmux            │
-│ Super+Q      Close    │ Super+Sh+G GitHub     │ Prefix+>/< Nxt/prv ss │ Super+T    Terminal   │ Super+Sh+[/] Height   │ b{x}  bootstrap       │
+│ Super+Q      Quit app │ Super+Sh+G GitHub     │ Prefix+>/< Nxt/prv ss │ Super+T    Terminal   │ Super+Sh+[/] Height   │ b{x}  bootstrap       │
 │ Ctrl+Sh+M   Fullscrn  │ Super+Sh+U Claude     ├─ Ghostty ─────────────┤ Super+S    Save       │ Alt+J       Split     │ {x}   cd ~/Projects   │
 │ Super+Y      Scratch  │ Super+Sh+B Browser    │ Ctrl+Sh+N  New tab    │ Super+W    Close/Kill │ Super+Sh+D  Layout    ├───────────────────────┤
 ├─ Workspaces ──────────┤ Super+Sh+N Obsidian   │ Ctrl+Sh+W  Close tab  │ Super+F    Find       ├─ Developer ───────────┤ bs     better-shoes   │
@@ -16,10 +16,10 @@
 │ Prev/Play/Nx Direct   │ om-sync    Git pull   │ Super+Ctrl+V VPN      │ Alt+Sh+↑/↓ Move line  │ Super+Y     Scratch   │ park   parkukb        │
 │                       │ om         Playbook   │ Super+Alt+V  Clipbrd  │ Ctrl+↑/↓   Page Up/Dn │ Super+LMB   Move win  │ peq    pequod         │
 │                       │                       │ Super+Ctrl+M Clamshel │ Super+E    Sidebar    │ Super+RMB   Resize    │ tnt    tnt-syphilis   │
-├─ Help ────────────────┼─ Resume Fixes ────────┤ Super+Ctrl+D Display  │                       │                       │                       │
-│ Alt+K        Hotkeys  │ frs  Diag status      ├─ Text Nav (keyd) ─────┤ Super+Alt+L Format    │                       │                       │
-│ Super+Alt+H  Cheatsht │ frg  GPU recovery     │ Alt+←/→  Line st/end  │ Ctrl+1-9   Tabs       │                       │                       │
-│ Super+Alt+J  Agenda   │ frc  CPU freq reset   │ Alt+↑/↓  Doc top/btm  │ Ctrl+J     Panel      │                       │                       │
+├─ Help ────────────────┼───────────────────────┤ Super+Ctrl+D Display  │                       │                       │                       │
+│ Alt+K        Hotkeys  │                       ├─ Text Nav (keyd) ─────┤ Super+Alt+L Format    │                       │                       │
+│ Super+Alt+H  Cheatsht │                       │ Alt+←/→  Line st/end  │ Ctrl+1-9   Tabs       │                       │                       │
+│ Super+Alt+J  Agenda   │                       │ Alt+↑/↓  Doc top/btm  │ Ctrl+J     Panel      │                       │                       │
 │                       │                       │ +Shift   Select       │ Ctrl+Sh+J/K Panel ↑/↓ │                       │                       │
 │                       │                       │ ksteam   Kill Steam   │ Super+D    Multi-sel  │                       │                       │
 └───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┴───────────────────────┘

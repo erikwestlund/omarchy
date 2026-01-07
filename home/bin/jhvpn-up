@@ -1,7 +1,7 @@
 #!/bin/bash
 # Connect to JH VPN using Pulse Secure client
 
-JH_VPN_URL="https://vpn.jh.edu"
+JH_VPN_URL="vpn.jh.edu"
 
 # If UI already running, just show it
 if pgrep -f pulseUI > /dev/null 2>&1; then

@@ -239,7 +239,8 @@ alias win-spice="virt-viewer --connect qemu:///system win11"
 alias pm-sync="om --tags projects,dotfiles"
 
 # Project shortcuts
-# l{alias} = launch | k{alias} = kill | t{alias} = tmux | pm{alias} = project mgmt | {alias} = project dir
+# l{alias} = launch | k{alias} = kill | tm{alias} = tmux | pm{alias} = project mgmt | {alias} = project dir
+# vs{alias} = VS Code | nv{alias} = NeoVim | p{alias} = Positron | d{alias} = docker up | dd{alias} = docker down
 
 # BEGIN PROJECT omarchy
 alias lom="~/Omarchy/projects/omarchy/launch"
@@ -247,6 +248,8 @@ alias kom="~/Omarchy/projects/omarchy/kill"
 alias tmom="~/Omarchy/projects/omarchy/tmux.sh"
 alias bom="~/Omarchy/projects/omarchy/bootstrap"
 alias pmom="cd ~/Omarchy/projects/omarchy"
+alias vsom="code ~/Omarchy/projects/omarchy/omarchy.code-workspace"
+alias nvom="(cd ~/Omarchy && nvim .)"
 # Note: 'om' is the ansible function, use 'omarchy' or 'oma' to cd
 # END PROJECT omarchy
 
@@ -264,6 +267,8 @@ alias tmhl="~/Omarchy/projects/homelab/tmux.sh"
 alias bhl="~/Omarchy/projects/homelab/bootstrap"
 alias pmhl="cd ~/Omarchy/projects/homelab"
 alias hl="cd /home/erik/Projects/homelab"
+alias vshl="code ~/Omarchy/projects/homelab/homelab.code-workspace"
+alias nvhl="(cd /home/erik/Projects/homelab && nvim .)"
 # END PROJECT homelab
 # BEGIN PROJECT framework
 alias lfw="~/Omarchy/projects/framework/launch"
@@ -272,6 +277,9 @@ alias tmfw="~/Omarchy/projects/framework/tmux.sh"
 alias bfw="~/Omarchy/projects/framework/bootstrap"
 alias pmfw="cd ~/Omarchy/projects/framework"
 alias fw="cd /home/erik/Projects/framework"
+alias vsfw="code ~/Omarchy/projects/framework/framework.code-workspace"
+alias nvfw="(cd /home/erik/Projects/framework && nvim .)"
+alias pfw="(cd /home/erik/Projects/framework && /usr/share/positron/bin/positron .)"
 # END PROJECT framework
 # BEGIN PROJECT framework-site
 alias lfws="~/Omarchy/projects/framework-site/launch"
@@ -280,6 +288,10 @@ alias tmfws="~/Omarchy/projects/framework-site/tmux.sh"
 alias bfws="~/Omarchy/projects/framework-site/bootstrap"
 alias pmfws="cd ~/Omarchy/projects/framework-site"
 alias fws="cd /home/erik/Projects/framework-site"
+alias vsfws="code ~/Omarchy/projects/framework-site/framework-site.code-workspace"
+alias nvfws="(cd /home/erik/Projects/framework-site && nvim .)"
+alias dfws="(cd /home/erik/Projects/framework-site && docker compose up -d)"
+alias ddfws="(cd /home/erik/Projects/framework-site && docker compose down)"
 # END PROJECT framework-site
 # BEGIN PROJECT tnt-syphilis
 alias ltnt="~/Omarchy/projects/tnt-syphilis/launch"
@@ -288,6 +300,9 @@ alias tmtnt="~/Omarchy/projects/tnt-syphilis/tmux.sh"
 alias btnt="~/Omarchy/projects/tnt-syphilis/bootstrap"
 alias pmtnt="cd ~/Omarchy/projects/tnt-syphilis"
 alias tnt="cd /home/erik/Projects/tnt-syphilis"
+alias vstnt="code ~/Omarchy/projects/tnt-syphilis/tnt-syphilis.code-workspace"
+alias nvtnt="(cd /home/erik/Projects/tnt-syphilis && nvim .)"
+alias ptnt="(cd /home/erik/Projects/tnt-syphilis && /usr/share/positron/bin/positron .)"
 # END PROJECT tnt-syphilis
 # BEGIN PROJECT naaccord-data-depot
 alias lna="~/Omarchy/projects/naaccord-data-depot/launch"
@@ -296,6 +311,10 @@ alias tmna="~/Omarchy/projects/naaccord-data-depot/tmux.sh"
 alias bna="~/Omarchy/projects/naaccord-data-depot/bootstrap"
 alias pmna="cd ~/Omarchy/projects/naaccord-data-depot"
 alias na="cd /home/erik/Projects/naaccord-data-depot"
+alias vsna="code ~/Omarchy/projects/naaccord-data-depot/naaccord-data-depot.code-workspace"
+alias nvna="(cd /home/erik/Projects/naaccord-data-depot && nvim .)"
+alias dna="(cd /home/erik/Projects/naaccord-data-depot && docker compose up -d)"
+alias ddna="(cd /home/erik/Projects/naaccord-data-depot && docker compose down)"
 # END PROJECT naaccord-data-depot
 # BEGIN PROJECT mh-missing-data
 alias lmhmi="~/Omarchy/projects/mh-missing-data/launch"
@@ -304,6 +323,9 @@ alias tmmhmi="~/Omarchy/projects/mh-missing-data/tmux.sh"
 alias bmhmi="~/Omarchy/projects/mh-missing-data/bootstrap"
 alias pmmhmi="cd ~/Omarchy/projects/mh-missing-data"
 alias mhmi="cd /home/erik/Projects/mh-missing-data"
+alias vsmhmi="code ~/Omarchy/projects/mh-missing-data/mh-missing-data.code-workspace"
+alias nvmhmi="(cd /home/erik/Projects/mh-missing-data && nvim .)"
+alias pmhmi="(cd /home/erik/Projects/mh-missing-data && /usr/share/positron/bin/positron .)"
 # END PROJECT mh-missing-data
 # BEGIN PROJECT parkukb
 alias lpark="~/Omarchy/projects/parkukb/launch"
@@ -312,6 +334,9 @@ alias tmpark="~/Omarchy/projects/parkukb/tmux.sh"
 alias bpark="~/Omarchy/projects/parkukb/bootstrap"
 alias pmpark="cd ~/Omarchy/projects/parkukb"
 alias park="cd /home/erik/Projects/parkukb"
+alias vspark="code ~/Omarchy/projects/parkukb/parkukb.code-workspace"
+alias nvpark="(cd /home/erik/Projects/parkukb && nvim .)"
+alias ppark="(cd /home/erik/Projects/parkukb && /usr/share/positron/bin/positron .)"
 # END PROJECT parkukb
 # BEGIN PROJECT pequod
 alias lpeq="~/Omarchy/projects/pequod/launch"
@@ -320,6 +345,10 @@ alias tmpeq="~/Omarchy/projects/pequod/tmux.sh"
 alias bpeq="~/Omarchy/projects/pequod/bootstrap"
 alias pmpeq="cd ~/Omarchy/projects/pequod"
 alias peq="cd /home/erik/Projects/pequod"
+alias vspeq="code ~/Omarchy/projects/pequod/pequod.code-workspace"
+alias nvpeq="(cd /home/erik/Projects/pequod && nvim .)"
+alias dpeq="(cd /home/erik/Projects/pequod && docker compose up -d)"
+alias ddpeq="(cd /home/erik/Projects/pequod && docker compose down)"
 # END PROJECT pequod
 
 # Laravel/PHP docker wrappers - convention-based auto-detection
@@ -364,6 +393,10 @@ alias tmbs="~/Omarchy/projects/better-shoes/tmux.sh"
 alias bbs="~/Omarchy/projects/better-shoes/bootstrap"
 alias pmbs="cd ~/Omarchy/projects/better-shoes"
 alias bs="cd /home/erik/Projects/better-shoes"
+alias vsbs="code ~/Omarchy/projects/better-shoes/better-shoes.code-workspace"
+alias nvbs="(cd /home/erik/Projects/better-shoes && nvim .)"
+alias dbs="(cd /home/erik/Projects/better-shoes && docker compose up -d)"
+alias ddbs="(cd /home/erik/Projects/better-shoes && docker compose down)"
 
 # Restore better-shoes database from dump
 bs-restore() {
@@ -378,6 +411,9 @@ alias tmdrtp="~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening/tmux.sh"
 alias bdrtp="~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening/bootstrap"
 alias pmdrtp="cd ~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening"
 alias drtp="cd /home/erik/Projects/ohdsi-diabetic-retinopathy-screening"
+alias vsdrtp="code ~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening/ohdsi-diabetic-retinopathy-screening.code-workspace"
+alias nvdrtp="(cd /home/erik/Projects/ohdsi-diabetic-retinopathy-screening && nvim .)"
+alias pdrtp="(cd /home/erik/Projects/ohdsi-diabetic-retinopathy-screening && /usr/share/positron/bin/positron .)"
 # END PROJECT ohdsi-diabetic-retinopathy-screening
 # BEGIN PROJECT flint
 alias lfl="~/Omarchy/projects/flint/launch"
@@ -386,6 +422,10 @@ alias tmfl="~/Omarchy/projects/flint/tmux.sh"
 alias bfl="~/Omarchy/projects/flint/bootstrap"
 alias pmfl="cd ~/Omarchy/projects/flint"
 alias fl="cd /home/erik/Projects/flint"
+alias vsfl="code ~/Omarchy/projects/flint/flint.code-workspace"
+alias nvfl="(cd /home/erik/Projects/flint && nvim .)"
+alias dfl="(cd /home/erik/Projects/flint && docker compose up -d)"
+alias ddfl="(cd /home/erik/Projects/flint && docker compose down)"
 # END PROJECT flint
 # BEGIN PROJECT r50-code-samples-site
 alias lr50code="~/Omarchy/projects/r50-code-samples-site/launch"
@@ -394,6 +434,8 @@ alias tmr50code="~/Omarchy/projects/r50-code-samples-site/tmux.sh"
 alias br50code="~/Omarchy/projects/r50-code-samples-site/bootstrap"
 alias pmr50code="cd ~/Omarchy/projects/r50-code-samples-site"
 alias r50code="cd /home/erik/Projects/erikwestlund-nih/code-samples-site"
+alias vsr50code="code ~/Omarchy/projects/r50-code-samples-site/r50-code-samples-site.code-workspace"
+alias nvr50code="(cd /home/erik/Projects/erikwestlund-nih/code-samples-site && nvim .)"
 # END PROJECT r50-code-samples-site
 # BEGIN PROJECT r50-application
 alias lr50="~/Omarchy/projects/r50-application/launch"
@@ -402,17 +444,13 @@ alias tmr50="~/Omarchy/projects/r50-application/tmux.sh"
 alias br50="~/Omarchy/projects/r50-application/bootstrap"
 alias pmr50="cd ~/Omarchy/projects/r50-application"
 alias r50="cd /home/erik/Projects/r50-application"
+alias vsr50="code ~/Omarchy/projects/r50-application/r50-application.code-workspace"
+alias nvr50="(cd /home/erik/Projects/r50-application && nvim .)"
 # END PROJECT r50-application
 # Auto-generated project aliases
 
 # Sync R2 media to local minio for better-shoes dev
 alias bs-media-sync='rclone sync better-shoes-r2:better-shoes better-shoes-minio:better-shoes-default --progress'
-
-# Post-resume stutter fixes (Framework laptop)
-# See: ~/Omarchy/docs/post-resume-stutter.md
-alias frs="fix-resume-status"   # Show diagnostic info
-alias frg="fix-resume-gpu"      # Try GPU recovery
-alias frc="fix-resume-cpu"      # Try CPU freq reset
 
 # Steam
 alias ksteam="pkill -9 steam"

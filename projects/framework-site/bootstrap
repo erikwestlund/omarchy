@@ -92,7 +92,7 @@ services:
       POSTGRES_USER: framework_site
       POSTGRES_PASSWORD: framework-site-dev-secret
     volumes:
-      - framework-site-postgres-data:/var/lib/postgresql/data
+      - ${DOCKER_DATA_DIR:-./storage/docker}/postgres:/var/lib/postgresql/data
       - ./storage/app/dumps:/dumps
     ports:
       - "127.0.0.1:5434:5432"
@@ -109,7 +109,7 @@ services:
     container_name: framework-site-redis
     restart: on-failure
     volumes:
-      - framework-site-redis-data:/data
+      - ${DOCKER_DATA_DIR:-./storage/docker}/redis:/data
     ports:
       - "127.0.0.1:6382:6379"
     networks:
@@ -132,7 +132,7 @@ services:
       MINIO_ROOT_PASSWORD: framework-site-dev-secret
     command: server /data --console-address ":9001"
     volumes:
-      - framework-site-minio-data:/data
+      - ${DOCKER_DATA_DIR:-./storage/docker}/minio:/data
     networks:
       - framework-site-network
     healthcheck:
@@ -172,11 +172,6 @@ services:
 networks:
   framework-site-network:
     driver: bridge
-
-volumes:
-  framework-site-postgres-data:
-  framework-site-redis-data:
-  framework-site-minio-data:
 DOCKER_COMPOSE_EOF
 echo "[OK] docker-compose.yml generated"
 
@@ -229,7 +224,20 @@ else
     done
 fi
 
-# === 5. Build Docker images ===
+# === 5. Create Docker data directory ===
+if [ -f "$PROJECT_DIR/.env" ]; then
+    DOCKER_DATA_DIR=$(grep '^DOCKER_DATA_DIR=' "$PROJECT_DIR/.env" | cut -d'=' -f2)
+    if [ -n "$DOCKER_DATA_DIR" ] && [ ! -d "$DOCKER_DATA_DIR" ]; then
+        echo "[...] Creating Docker data directory: $DOCKER_DATA_DIR"
+        sudo mkdir -p "$DOCKER_DATA_DIR"
+        sudo chown "$USER:$USER" "$DOCKER_DATA_DIR"
+        echo "[OK] Docker data directory created"
+    elif [ -n "$DOCKER_DATA_DIR" ]; then
+        echo "[OK] Docker data directory exists: $DOCKER_DATA_DIR"
+    fi
+fi
+
+# === 6. Build Docker images ===
 if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
     echo "[...] Building Docker images..."
     (cd "$PROJECT_DIR" && docker compose build)
@@ -238,7 +246,7 @@ else
     echo "[SKIP] No docker-compose.yml found"
 fi
 
-# === 6. Start Docker services ===
+# === 7. Start Docker services ===
 echo "[...] Starting Docker services..."
 (cd "$PROJECT_DIR" && docker compose up -d)
 echo "[OK] Docker services started"
@@ -254,7 +262,7 @@ fi
 echo "[...] Waiting for services to be healthy..."
 sleep 5
 
-# === 7. Install PHP dependencies ===
+# === 8. Install PHP dependencies ===
 if [ -f "$PROJECT_DIR/composer.json" ]; then
     echo "[...] Installing PHP dependencies..."
     (cd "$PROJECT_DIR" && docker compose exec -T php composer install --no-interaction --prefer-dist --optimize-autoloader)
@@ -263,7 +271,7 @@ else
     echo "[SKIP] No composer.json found"
 fi
 
-# === 8. Install Node dependencies ===
+# === 9. Install Node dependencies ===
 if [ -f "$PROJECT_DIR/package.json" ]; then
     echo "[...] Installing Node dependencies..."
     (cd "$PROJECT_DIR" && npm install)

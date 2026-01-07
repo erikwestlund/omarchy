@@ -104,7 +104,20 @@ fi
 # Ensure keys are readable by container (runs as www-data)
 chmod 644 "$CERT_DIR"/*.key 2>/dev/null || true
 
-# === 4. Build Docker images ===
+# === 4. Create Docker data directory ===
+if [ -f "$PROJECT_DIR/.env" ]; then
+    DOCKER_DATA_DIR=$(grep '^DOCKER_DATA_DIR=' "$PROJECT_DIR/.env" | cut -d'=' -f2)
+    if [ -n "$DOCKER_DATA_DIR" ] && [ ! -d "$DOCKER_DATA_DIR" ]; then
+        echo "[...] Creating Docker data directory: $DOCKER_DATA_DIR"
+        sudo mkdir -p "$DOCKER_DATA_DIR"
+        sudo chown "$USER:$USER" "$DOCKER_DATA_DIR"
+        echo "[OK] Docker data directory created"
+    elif [ -n "$DOCKER_DATA_DIR" ]; then
+        echo "[OK] Docker data directory exists: $DOCKER_DATA_DIR"
+    fi
+fi
+
+# === 5. Build Docker images ===
 if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
     echo "[...] Building Docker images..."
     (cd "$PROJECT_DIR" && docker compose build)
@@ -113,7 +126,7 @@ else
     echo "[SKIP] No docker-compose.yml found"
 fi
 
-# === 5. Start services and run migrations ===
+# === 6. Start services and run migrations ===
 if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
     echo "[...] Starting services..."
     (cd "$PROJECT_DIR" && docker compose up -d)
@@ -140,7 +153,7 @@ if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
     echo "[OK] Test users loaded"
 fi
 
-# === 6. Install Node dependencies ===
+# === 7. Install Node dependencies ===
 if [ -f "$PROJECT_DIR/package.json" ]; then
     echo "[...] Installing Node dependencies..."
     (cd "$PROJECT_DIR" && npm install)

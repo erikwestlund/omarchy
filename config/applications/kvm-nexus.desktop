@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=KVM: Nexus
+Comment=Nexus KVM Console
+GenericName=Remote Console
+Exec=omarchy-launch-webapp "https://nexus-kvm.pequod.sh"
+Icon=/home/erik/.local/share/icons/kvm.webp
+Type=Application
+StartupNotify=false
+Categories=Network;System;
+Keywords=kvm;remote;console;nexus;
