@@ -60,7 +60,7 @@ TABNO=$((TABNO+1))
 
 # --- R ---
 tmux new-window -t $SESSION:$TABNO -n "R" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "R" C-m
+tmux send-keys -t $SESSION:$TABNO "cd $PROJECT_DIR && R" C-m
 TABNO=$((TABNO+1))
 
 # --- gui-srv (plumber/dev server on port 8080) ---

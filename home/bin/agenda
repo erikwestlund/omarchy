@@ -1,7 +1,11 @@
 #!/bin/bash
-# Show agenda from cache (synced every 5 minutes)
+# Show calendar and agenda from cache (synced every 5 minutes)
 
 CACHE_FILE="$HOME/.cache/agenda"
+
+# Show current and next month side by side
+cal -m -n 3
+echo ""
 
 if [[ -f "$CACHE_FILE" ]]; then
     cat "$CACHE_FILE"

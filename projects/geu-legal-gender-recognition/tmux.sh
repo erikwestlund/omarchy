@@ -1,8 +1,9 @@
 #!/bin/bash
-# Tmux session for ohdsi-diabetic-retinopathy-screening (rstats)
+# Tmux session for geu-legal-gender-recognition (rstats)
 
-SESSION="drtp"
-PROJECT_DIR="/home/erik/Projects/ohdsi-diabetic-retinopathy-screening"
+SESSION="geulegal"
+PROJECT_DIR="/home/erik/Projects/geu-legal-gender-recognition"
+VENV_ACTIVATE="source .venv/bin/activate"
 
 # Disable VS Code shell integration that causes OSC escape sequence leaks
 export TERM_PROGRAM=
@@ -59,7 +60,7 @@ TABNO=$((TABNO+1))
 
 # --- python ---
 tmux new-window -t $SESSION:$TABNO -n "python" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "cd $PROJECT_DIR && python3" C-m
+tmux send-keys -t $SESSION:$TABNO "cd $PROJECT_DIR && [ -d .venv ] && $VENV_ACTIVATE; python3" C-m
 TABNO=$((TABNO+1))
 
 # --- project ---

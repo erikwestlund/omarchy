@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Boston Globe
+Comment=The Boston Globe News
+GenericName=News
+Exec=omarchy-launch-webapp "https://www.bostonglobe.com"
+Icon=/home/erik/.local/share/icons/bostonglobe.webp
+Type=Application
+StartupNotify=false
+Categories=Network;News;
+Keywords=bostonglobe;boston;news;newspaper;

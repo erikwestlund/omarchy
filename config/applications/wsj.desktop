@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Wall Street Journal
+Comment=The Wall Street Journal News
+GenericName=News
+Exec=omarchy-launch-webapp "https://www.wsj.com"
+Icon=/home/erik/.local/share/icons/wsj.webp
+Type=Application
+StartupNotify=false
+Categories=Network;News;
+Keywords=wsj;wallstreet;journal;news;newspaper;finance;

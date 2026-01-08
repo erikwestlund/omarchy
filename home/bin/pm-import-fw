@@ -1,0 +1,233 @@
+#!/bin/bash
+# Import Framework (R stats) projects into Omarchy project management
+# Discovers framework projects in ~/Projects that don't already have PM entries
+
+set -e
+
+OMARCHY_DIR="$HOME/Omarchy"
+PROJECTS_DIR="$HOME/Projects"
+PM_DIR="$OMARCHY_DIR/projects"
+
+# Convert to kebab-case: "My Cool App" -> "my-cool-app"
+to_kebab() {
+    echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//'
+}
+
+# Find framework projects (directories with settings.yml containing project_name)
+find_framework_projects() {
+    local found=()
+    
+    # Find all settings.yml files, extract project paths
+    while IFS= read -r settings_file; do
+        local project_dir=$(dirname "$settings_file")
+        local dir_name=$(basename "$project_dir")
+        local pm_name=$(to_kebab "$dir_name")
+        
+        # Skip if already has a PM entry
+        if [ -d "$PM_DIR/$pm_name" ]; then
+            continue
+        fi
+        
+        # Extract project_name from settings.yml
+        local display_name=$(grep "project_name:" "$settings_file" 2>/dev/null | head -1 | sed 's/.*project_name:[[:space:]]*//')
+        if [ -n "$display_name" ]; then
+            found+=("$project_dir|$display_name|$pm_name")
+        fi
+    done < <(find "$PROJECTS_DIR" -maxdepth 2 -name "settings.yml" -type f 2>/dev/null)
+    
+    printf '%s\n' "${found[@]}"
+}
+
+# Display menu and get selection
+select_projects() {
+    local projects=("$@")
+    local count=${#projects[@]}
+    
+    if [ $count -eq 0 ]; then
+        echo "No framework projects found to import."
+        echo ""
+        echo "Framework projects must:"
+        echo "  - Be in ~/Projects/"
+        echo "  - Have a settings.yml file with project_name"
+        echo "  - Not already have a PM entry in ~/Omarchy/projects/"
+        exit 0
+    fi
+    
+    echo "=== Framework Projects Available for Import ==="
+    echo ""
+    echo "Select projects to import (space-separated numbers, or 'a' for all):"
+    echo ""
+    
+    local i=1
+    for proj in "${projects[@]}"; do
+        IFS='|' read -r path name pm_name <<< "$proj"
+        echo "  $i) $name"
+        echo "     Path: $path"
+        echo "     PM name: $pm_name"
+        echo ""
+        ((i++))
+    done
+    
+    read -p "Selection: " selection
+    echo "$selection"
+}
+
+import_project() {
+    local project_path="$1"
+    local display_name="$2"
+    local pm_name="$3"
+    
+    echo ""
+    echo "─────────────────────────────────────────────"
+    echo "Importing: $display_name"
+    echo "─────────────────────────────────────────────"
+    
+    # Check for existing workspace file in the project
+    local existing_workspace=$(find "$project_path" -maxdepth 1 -name "*.code-workspace" -type f 2>/dev/null | head -1)
+    
+    # Default values for rstats projects
+    local project_type="rstats"
+    local docker_compose="false"
+    
+    # Ask for alias
+    local suggested_alias=$(echo "$pm_name" | cut -c1-3)
+    read -p "Alias (e.g., '$suggested_alias' creates l$suggested_alias, k$suggested_alias, etc.) [$suggested_alias]: " project_alias
+    project_alias="${project_alias:-$suggested_alias}"
+    
+    # Ask for editor
+    echo ""
+    echo "Preferred editor:"
+    echo "  1) vscode   - VS Code (default)"
+    echo "  2) positron - Positron"
+    echo "  3) neovim   - Neovim"
+    read -p "Editor [1-3, default=1]: " editor_choice
+    
+    case "$editor_choice" in
+        2) project_editor="positron" ;;
+        3) project_editor="neovim" ;;
+        *) project_editor="vscode" ;;
+    esac
+    
+    # Ask for default workspace
+    read -p "Default workspace [1]: " default_ws
+    default_ws="${default_ws:-1}"
+    
+    # Summary
+    echo ""
+    echo "=== Import Summary ==="
+    echo "Name:      $display_name"
+    echo "Type:      $project_type"
+    echo "Editor:    $project_editor"
+    echo "Alias:     $project_alias"
+    echo "Default WS: $default_ws"
+    echo "PM dir:    ~/Omarchy/projects/$pm_name"
+    echo "Project:   $project_path"
+    echo ""
+    read -p "Import this project? [Y/n]: " confirm
+    if [[ "$confirm" =~ ^[Nn] ]]; then
+        echo "Skipped."
+        return 1
+    fi
+    
+    # Run Ansible
+    echo ""
+    echo "Creating project management entry..."
+    
+    ANSIBLE_CMD="ANSIBLE_CONFIG=$OMARCHY_DIR/ansible/ansible.cfg ansible-playbook \
+        \"$OMARCHY_DIR/ansible/playbook.yml\" \
+        --limit \"$(cat ~/.machine)\" \
+        --tags new-project \
+        -e \"project_name=$pm_name\" \
+        -e \"project_alias=$project_alias\" \
+        -e \"project_type=$project_type\" \
+        -e \"project_editor=$project_editor\" \
+        -e \"docker_compose=$docker_compose\" \
+        -e \"default_ws=$default_ws\" \
+        -e \"project_path=$project_path\""
+    
+    eval $ANSIBLE_CMD
+    
+    echo ""
+    echo "Imported: $display_name"
+    echo "  Aliases: l$project_alias, k$project_alias, tm$project_alias, b$project_alias, pm$project_alias, $project_alias"
+    
+    return 0
+}
+
+# Main
+echo "=== Import Framework Projects ==="
+echo ""
+echo "Scanning ~/Projects for framework projects..."
+echo ""
+
+# Find all eligible projects
+mapfile -t projects < <(find_framework_projects)
+
+if [ ${#projects[@]} -eq 0 ]; then
+    echo "No framework projects found to import."
+    echo ""
+    echo "Framework projects must:"
+    echo "  - Be in ~/Projects/"
+    echo "  - Have a settings.yml file with project_name"
+    echo "  - Not already have a PM entry in ~/Omarchy/projects/"
+    exit 0
+fi
+
+# Display and select
+echo "Found ${#projects[@]} framework project(s) available for import:"
+echo ""
+
+i=1
+for proj in "${projects[@]}"; do
+    IFS='|' read -r path name pm_name <<< "$proj"
+    echo "  $i) $name"
+    echo "     Path: $path"
+    echo "     PM name: $pm_name"
+    echo ""
+    ((i++))
+done
+
+echo "Enter selection (space-separated numbers, 'a' for all, or 'q' to quit):"
+read -p "> " selection
+
+if [[ "$selection" == "q" ]]; then
+    echo "Cancelled."
+    exit 0
+fi
+
+# Parse selection
+selected_indices=()
+if [[ "$selection" == "a" ]]; then
+    for ((i=0; i<${#projects[@]}; i++)); do
+        selected_indices+=($i)
+    done
+else
+    for num in $selection; do
+        if [[ "$num" =~ ^[0-9]+$ ]] && [ "$num" -ge 1 ] && [ "$num" -le ${#projects[@]} ]; then
+            selected_indices+=($((num - 1)))
+        fi
+    done
+fi
+
+if [ ${#selected_indices[@]} -eq 0 ]; then
+    echo "No valid selection. Cancelled."
+    exit 0
+fi
+
+# Import selected projects
+imported=0
+for idx in "${selected_indices[@]}"; do
+    IFS='|' read -r path name pm_name <<< "${projects[$idx]}"
+    if import_project "$path" "$name" "$pm_name"; then
+        ((imported++))
+    fi
+done
+
+# Final summary
+echo ""
+echo "════════════════════════════════════════════════════════════════"
+echo "  Import complete! $imported project(s) imported."
+echo "════════════════════════════════════════════════════════════════"
+echo ""
+echo "Run 'source ~/.aliases' to reload aliases, or start a new shell."
+echo ""

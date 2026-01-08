@@ -54,12 +54,12 @@ TABNO=$((TABNO+1))
 
 # --- R ---
 tmux new-window -t $SESSION:$TABNO -n "R" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "R" C-m
+tmux send-keys -t $SESSION:$TABNO "cd $PROJECT_DIR && R" C-m
 TABNO=$((TABNO+1))
 
 # --- python ---
 tmux new-window -t $SESSION:$TABNO -n "python" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "python3" C-m
+tmux send-keys -t $SESSION:$TABNO "cd $PROJECT_DIR && python3" C-m
 TABNO=$((TABNO+1))
 
 # --- project ---

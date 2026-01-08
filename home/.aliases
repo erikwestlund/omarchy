@@ -447,6 +447,17 @@ alias r50="cd /home/erik/Projects/r50-application"
 alias vsr50="code ~/Omarchy/projects/r50-application/r50-application.code-workspace"
 alias nvr50="(cd /home/erik/Projects/r50-application && nvim .)"
 # END PROJECT r50-application
+# BEGIN PROJECT geu-legal-gender-recognition
+alias lgeulegal="~/Omarchy/projects/geu-legal-gender-recognition/launch"
+alias kgeulegal="~/Omarchy/projects/geu-legal-gender-recognition/kill"
+alias tmgeulegal="~/Omarchy/projects/geu-legal-gender-recognition/tmux.sh"
+alias bgeulegal="~/Omarchy/projects/geu-legal-gender-recognition/bootstrap"
+alias pmgeulegal="cd ~/Omarchy/projects/geu-legal-gender-recognition"
+alias geulegal="cd /home/erik/Projects/geu-legal-gender-recognition"
+alias vsgeulegal="code ~/Omarchy/projects/geu-legal-gender-recognition/geu-legal-gender-recognition.code-workspace"
+alias nvgeulegal="(cd /home/erik/Projects/geu-legal-gender-recognition && nvim .)"
+alias pgeulegal="/usr/share/positron/bin/positron ~/Omarchy/projects/geu-legal-gender-recognition/geu-legal-gender-recognition.code-workspace"
+# END PROJECT geu-legal-gender-recognition
 # Auto-generated project aliases
 
 # Sync R2 media to local minio for better-shoes dev

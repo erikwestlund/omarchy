@@ -130,6 +130,7 @@ pacman_packages:
 # Packages installed via AUR (yay)
 aur_packages:
   # Dev tools
+  - sublime-text-4
   - visual-studio-code-bin
   - openai-codex-bin
   - opencode-bin

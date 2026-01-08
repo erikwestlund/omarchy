@@ -51,7 +51,7 @@ TABNO=$((TABNO+1))
 
 # --- python ---
 tmux new-window -t $SESSION:$TABNO -n "python" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "[ -d .venv ] && source .venv/bin/activate && python3" C-m
+tmux send-keys -t $SESSION:$TABNO "cd $PROJECT_DIR && [ -d .venv ] && source .venv/bin/activate; python3" C-m
 TABNO=$((TABNO+1))
 
 # --- project ---

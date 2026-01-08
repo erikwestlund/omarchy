@@ -149,3 +149,11 @@ projects:
     extras:
       default_ws: 8
 # END PROJECT r50-application
+# BEGIN PROJECT geu-legal-gender-recognition
+  - name: geu-legal-gender-recognition
+    alias: geulegal
+    type: rstats
+    path: ~/Projects/geu-legal-gender-recognition
+    extras:
+      default_ws: 7
+# END PROJECT geu-legal-gender-recognition

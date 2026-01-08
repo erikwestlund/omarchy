@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=New York Times
+Comment=The New York Times News
+GenericName=News
+Exec=omarchy-launch-webapp "https://www.nytimes.com"
+Icon=/home/erik/.local/share/icons/nytimes.webp
+Type=Application
+StartupNotify=false
+Categories=Network;News;
+Keywords=nytimes;news;newspaper;
