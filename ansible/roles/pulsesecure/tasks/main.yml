@@ -32,6 +32,8 @@
   become: true
   ansible.builtin.blockinfile:
     path: /var/lib/pulsesecure/pulse/connstore.dat
+    create: true
+    mode: '0644'
     marker: "; {mark} ANSIBLE MANAGED - JH VPN"
     block: |
       ive "{{ 99999999999999 | random | hash('md5') }}" {

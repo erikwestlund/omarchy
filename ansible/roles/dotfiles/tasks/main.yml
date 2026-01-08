@@ -314,6 +314,28 @@
   loop_control:
     label: "{{ item.path | basename }}"
 
+- name: Ensure icons directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.local/share/icons"
+    state: directory
+    mode: '0755'
+
+- name: Find icon files
+  ansible.builtin.find:
+    paths: "{{ omarchy_repo }}/local/share/icons"
+    patterns: "*.png,*.webp,*.ico,*.svg"
+  register: icon_files
+
+- name: Symlink icon files
+  ansible.builtin.file:
+    src: "{{ item.path }}"
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/icons/{{ item.path | basename }}"
+    state: link
+    force: true
+  loop: "{{ icon_files.files }}"
+  loop_control:
+    label: "{{ item.path | basename }}"
+
 - name: Remove old darkman script directories
   ansible.builtin.file:
     path: "{{ ansible_facts.env.HOME }}/.config/darkman/{{ item }}"
