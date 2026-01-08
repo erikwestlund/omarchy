@@ -288,7 +288,7 @@ if [ -n "$PROJECT_PATH" ]; then
     echo "   $PROJECT_ALIAS    →  cd to project code"
     echo "   vs$PROJECT_ALIAS  →  Open VS Code to workspace"
     echo "   nv$PROJECT_ALIAS  →  Open NeoVim in project dir"
-    echo "   p$PROJECT_ALIAS   →  Open Positron in project dir"
+    echo "   p$PROJECT_ALIAS   →  Open Positron to workspace"
 fi
 if [ "$DOCKER_COMPOSE" = true ]; then
     echo "   d$PROJECT_ALIAS   →  Docker compose up"

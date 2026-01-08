@@ -160,7 +160,7 @@
       alias {{ project_alias }}="cd {{ project_path }}"
       alias vs{{ project_alias }}="code ~/Omarchy/projects/{{ project_name }}/{{ workspace_filename }}.code-workspace"
       alias nv{{ project_alias }}="(cd {{ project_path }} && nvim .)"
-      alias p{{ project_alias }}="(cd {{ project_path }} && /usr/share/positron/bin/positron .)"
+      alias p{{ project_alias }}="/usr/share/positron/bin/positron ~/Omarchy/projects/{{ project_name }}/{{ workspace_filename }}.code-workspace"
       alias d{{ project_alias }}="(cd {{ project_path }} && docker compose up -d)"
       alias dd{{ project_alias }}="(cd {{ project_path }} && docker compose down)"
   when: project_path | length > 0 and docker_compose | default(false) | bool
@@ -179,7 +179,7 @@
       alias {{ project_alias }}="cd {{ project_path }}"
       alias vs{{ project_alias }}="code ~/Omarchy/projects/{{ project_name }}/{{ workspace_filename }}.code-workspace"
       alias nv{{ project_alias }}="(cd {{ project_path }} && nvim .)"
-      alias p{{ project_alias }}="(cd {{ project_path }} && /usr/share/positron/bin/positron .)"
+      alias p{{ project_alias }}="/usr/share/positron/bin/positron ~/Omarchy/projects/{{ project_name }}/{{ workspace_filename }}.code-workspace"
   when: project_path | length > 0 and not (docker_compose | default(false) | bool)
 
 - name: Add project aliases to .aliases (no project dir)

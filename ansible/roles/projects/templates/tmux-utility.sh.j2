@@ -27,13 +27,18 @@ TABNO=1
 tmux new-session -d -s $SESSION -n "bash" -c "$PROJECT_DIR"
 TABNO=$((TABNO+1))
 
-# --- claude-1 (opus) ---
-tmux new-window -t $SESSION:$TABNO -n "claude-1" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "claude --model opus" C-m
+# --- opencode-1 ---
+tmux new-window -t $SESSION:$TABNO -n "opencode-1" -c "$PROJECT_DIR"
+tmux send-keys -t $SESSION:$TABNO "opencode" C-m
 TABNO=$((TABNO+1))
 
-# --- claude-2 (opus) ---
-tmux new-window -t $SESSION:$TABNO -n "claude-2" -c "$PROJECT_DIR"
+# --- opencode-2 ---
+tmux new-window -t $SESSION:$TABNO -n "opencode-2" -c "$PROJECT_DIR"
+tmux send-keys -t $SESSION:$TABNO "opencode" C-m
+TABNO=$((TABNO+1))
+
+# --- claude (opus) ---
+tmux new-window -t $SESSION:$TABNO -n "claude" -c "$PROJECT_DIR"
 tmux send-keys -t $SESSION:$TABNO "claude --model opus" C-m
 TABNO=$((TABNO+1))
 

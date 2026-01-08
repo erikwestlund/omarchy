@@ -120,3 +120,12 @@
     - role: projects
       tags: new-project
       when: project_name is defined
+
+  tasks:
+    - name: Remove project
+      ansible.builtin.include_tasks:
+        file: roles/projects/tasks/remove.yml
+        apply:
+          tags: remove-project
+      tags: remove-project
+      when: project_name is defined

@@ -1,0 +1,41 @@
+---
+# Remove project management setup
+# Called with: ansible-playbook playbook.yml --tags remove-project -e "project_name=foo project_alias=f"
+
+- name: Remove project directory from repo
+  ansible.builtin.file:
+    path: "{{ omarchy_repo }}/projects/{{ project_name }}"
+    state: absent
+
+- name: Remove project entry from projects.yml
+  ansible.builtin.blockinfile:
+    path: "{{ omarchy_repo }}/config/projects/projects.yml"
+    marker: "# {mark} PROJECT {{ project_name }}"
+    state: absent
+
+- name: Remove project aliases from .aliases
+  ansible.builtin.blockinfile:
+    path: "{{ omarchy_repo }}/home/.aliases"
+    marker: "# {mark} PROJECT {{ project_name }}"
+    state: absent
+
+- name: Remove code directory if requested
+  ansible.builtin.file:
+    path: "{{ remove_code_dir }}"
+    state: absent
+  when: remove_code_dir is defined and remove_code_dir | length > 0
+
+- name: Show removal message
+  ansible.builtin.debug:
+    msg: |
+      Project '{{ project_name }}' removed!
+
+      Removed:
+        - Project management: {{ omarchy_repo }}/projects/{{ project_name }}
+        - Aliases block from ~/.aliases
+        - Entry from projects.yml
+        {% if remove_code_dir is defined and remove_code_dir | length > 0 %}
+        - Code directory: {{ remove_code_dir }}
+        {% endif %}
+
+      Reload your shell to apply alias changes.

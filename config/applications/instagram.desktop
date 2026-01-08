@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Instagram
+Comment=Instagram Social Network
+GenericName=Social Media
+Exec=omarchy-launch-webapp "https://instagram.com"
+Icon=/home/erik/.local/share/icons/instagram.webp
+Type=Application
+StartupNotify=false
+Categories=Network;Social;
+Keywords=instagram;social;photos;

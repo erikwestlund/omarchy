@@ -1,0 +1,138 @@
+#!/bin/bash
+# Interactive project removal
+# Removes project management files, aliases, and optionally the code directory
+
+set -e
+
+OMARCHY_DIR="$HOME/Omarchy"
+PROJECTS_DIR="$HOME/Projects"
+PM_DIR="$OMARCHY_DIR/projects"
+PROJECTS_YML="$OMARCHY_DIR/config/projects/projects.yml"
+ALIASES_FILE="$OMARCHY_DIR/home/.aliases"
+
+echo "=== Remove Project ==="
+echo ""
+echo "Available projects:"
+echo ""
+
+# List projects from projects.yml (name and alias)
+projects=()
+while IFS= read -r line; do
+    if [[ "$line" =~ ^[[:space:]]*-[[:space:]]*name:[[:space:]]*(.+)$ ]]; then
+        current_name="${BASH_REMATCH[1]}"
+    elif [[ "$line" =~ ^[[:space:]]*alias:[[:space:]]*(.+)$ ]]; then
+        current_alias="${BASH_REMATCH[1]}"
+        projects+=("$current_name|$current_alias")
+    fi
+done < "$PROJECTS_YML"
+
+# Display projects with numbers
+i=1
+for proj in "${projects[@]}"; do
+    name="${proj%%|*}"
+    alias="${proj##*|}"
+    # Check if project dir exists
+    if [ -d "$PM_DIR/$name" ]; then
+        echo "  $i) $name (alias: $alias)"
+    else
+        echo "  $i) $name (alias: $alias) [config only - no dir]"
+    fi
+    ((i++))
+done
+
+echo ""
+read -p "Select project number to remove (or 'q' to quit): " SELECTION
+
+if [[ "$SELECTION" == "q" || "$SELECTION" == "Q" ]]; then
+    echo "Cancelled."
+    exit 0
+fi
+
+# Validate selection
+if ! [[ "$SELECTION" =~ ^[0-9]+$ ]] || [ "$SELECTION" -lt 1 ] || [ "$SELECTION" -gt "${#projects[@]}" ]; then
+    echo "Error: Invalid selection"
+    exit 1
+fi
+
+# Get selected project
+selected="${projects[$((SELECTION-1))]}"
+PROJECT_NAME="${selected%%|*}"
+PROJECT_ALIAS="${selected##*|}"
+
+# Find project path from projects.yml
+PROJECT_PATH=""
+in_project=false
+while IFS= read -r line; do
+    if [[ "$line" =~ ^[[:space:]]*-[[:space:]]*name:[[:space:]]*${PROJECT_NAME}$ ]]; then
+        in_project=true
+    elif [[ "$in_project" == true && "$line" =~ ^[[:space:]]*path:[[:space:]]*(.+)$ ]]; then
+        PROJECT_PATH="${BASH_REMATCH[1]}"
+        # Expand tilde
+        PROJECT_PATH="${PROJECT_PATH/#\~/$HOME}"
+        break
+    elif [[ "$in_project" == true && "$line" =~ ^[[:space:]]*-[[:space:]]*name: ]]; then
+        # Hit next project, stop
+        break
+    fi
+done < "$PROJECTS_YML"
+
+echo ""
+echo "=== Selected: $PROJECT_NAME ==="
+echo ""
+
+# Show what will be removed
+echo "Will remove:"
+echo "  1. Project management dir: $PM_DIR/$PROJECT_NAME"
+echo "  2. Aliases from ~/.aliases (l$PROJECT_ALIAS, k$PROJECT_ALIAS, tm$PROJECT_ALIAS, etc.)"
+echo "  3. Entry from projects.yml"
+
+# Check if code directory exists
+REMOVE_CODE_DIR=false
+if [ -n "$PROJECT_PATH" ] && [ -d "$PROJECT_PATH" ]; then
+    echo ""
+    echo "Found code directory: $PROJECT_PATH"
+    read -p "Also remove code directory? [y/N]: " REMOVE_CODE
+    if [[ "$REMOVE_CODE" =~ ^[Yy] ]]; then
+        REMOVE_CODE_DIR=true
+        echo "  4. Code directory: $PROJECT_PATH"
+    fi
+fi
+
+echo ""
+read -p "Proceed with removal? [y/N]: " CONFIRM
+if [[ ! "$CONFIRM" =~ ^[Yy] ]]; then
+    echo "Cancelled."
+    exit 0
+fi
+
+echo ""
+echo "Removing project..."
+
+# Run Ansible to do the actual removal
+ANSIBLE_CMD="ANSIBLE_CONFIG=$OMARCHY_DIR/ansible/ansible.cfg ansible-playbook \
+    \"$OMARCHY_DIR/ansible/playbook.yml\" \
+    --limit \"$(cat ~/.machine)\" \
+    --tags remove-project \
+    -e \"project_name=$PROJECT_NAME\" \
+    -e \"project_alias=$PROJECT_ALIAS\""
+
+if [ "$REMOVE_CODE_DIR" = true ]; then
+    ANSIBLE_CMD="$ANSIBLE_CMD -e \"remove_code_dir=$PROJECT_PATH\""
+fi
+
+eval $ANSIBLE_CMD
+
+echo ""
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║  Project '$PROJECT_NAME' removed!                             "
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+echo "Removed:"
+echo "  - Project management: $PM_DIR/$PROJECT_NAME"
+echo "  - Aliases: l$PROJECT_ALIAS, k$PROJECT_ALIAS, tm$PROJECT_ALIAS, b$PROJECT_ALIAS, pm$PROJECT_ALIAS, $PROJECT_ALIAS, etc."
+echo "  - Entry from projects.yml"
+if [ "$REMOVE_CODE_DIR" = true ]; then
+    echo "  - Code directory: $PROJECT_PATH"
+fi
+echo ""
+echo "Run 'source ~/.aliases' or start a new shell to apply changes."

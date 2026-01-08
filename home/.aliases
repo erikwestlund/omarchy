@@ -279,7 +279,7 @@ alias pmfw="cd ~/Omarchy/projects/framework"
 alias fw="cd /home/erik/Projects/framework"
 alias vsfw="code ~/Omarchy/projects/framework/framework.code-workspace"
 alias nvfw="(cd /home/erik/Projects/framework && nvim .)"
-alias pfw="(cd /home/erik/Projects/framework && /usr/share/positron/bin/positron .)"
+alias pfw="/usr/share/positron/bin/positron ~/Omarchy/projects/framework/framework.code-workspace"
 # END PROJECT framework
 # BEGIN PROJECT framework-site
 alias lfws="~/Omarchy/projects/framework-site/launch"
@@ -302,7 +302,7 @@ alias pmtnt="cd ~/Omarchy/projects/tnt-syphilis"
 alias tnt="cd /home/erik/Projects/tnt-syphilis"
 alias vstnt="code ~/Omarchy/projects/tnt-syphilis/tnt-syphilis.code-workspace"
 alias nvtnt="(cd /home/erik/Projects/tnt-syphilis && nvim .)"
-alias ptnt="(cd /home/erik/Projects/tnt-syphilis && /usr/share/positron/bin/positron .)"
+alias ptnt="/usr/share/positron/bin/positron ~/Omarchy/projects/tnt-syphilis/tnt-syphilis.code-workspace"
 # END PROJECT tnt-syphilis
 # BEGIN PROJECT naaccord-data-depot
 alias lna="~/Omarchy/projects/naaccord-data-depot/launch"
@@ -325,7 +325,7 @@ alias pmmhmi="cd ~/Omarchy/projects/mh-missing-data"
 alias mhmi="cd /home/erik/Projects/mh-missing-data"
 alias vsmhmi="code ~/Omarchy/projects/mh-missing-data/mh-missing-data.code-workspace"
 alias nvmhmi="(cd /home/erik/Projects/mh-missing-data && nvim .)"
-alias pmhmi="(cd /home/erik/Projects/mh-missing-data && /usr/share/positron/bin/positron .)"
+alias pmhmi="/usr/share/positron/bin/positron ~/Omarchy/projects/mh-missing-data/mh-missing-data.code-workspace"
 # END PROJECT mh-missing-data
 # BEGIN PROJECT parkukb
 alias lpark="~/Omarchy/projects/parkukb/launch"
@@ -336,7 +336,7 @@ alias pmpark="cd ~/Omarchy/projects/parkukb"
 alias park="cd /home/erik/Projects/parkukb"
 alias vspark="code ~/Omarchy/projects/parkukb/parkukb.code-workspace"
 alias nvpark="(cd /home/erik/Projects/parkukb && nvim .)"
-alias ppark="(cd /home/erik/Projects/parkukb && /usr/share/positron/bin/positron .)"
+alias ppark="/usr/share/positron/bin/positron ~/Omarchy/projects/parkukb/parkukb.code-workspace"
 # END PROJECT parkukb
 # BEGIN PROJECT pequod
 alias lpeq="~/Omarchy/projects/pequod/launch"
@@ -413,7 +413,7 @@ alias pmdrtp="cd ~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening"
 alias drtp="cd /home/erik/Projects/ohdsi-diabetic-retinopathy-screening"
 alias vsdrtp="code ~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening/ohdsi-diabetic-retinopathy-screening.code-workspace"
 alias nvdrtp="(cd /home/erik/Projects/ohdsi-diabetic-retinopathy-screening && nvim .)"
-alias pdrtp="(cd /home/erik/Projects/ohdsi-diabetic-retinopathy-screening && /usr/share/positron/bin/positron .)"
+alias pdrtp="/usr/share/positron/bin/positron ~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening/ohdsi-diabetic-retinopathy-screening.code-workspace"
 # END PROJECT ohdsi-diabetic-retinopathy-screening
 # BEGIN PROJECT flint
 alias lfl="~/Omarchy/projects/flint/launch"

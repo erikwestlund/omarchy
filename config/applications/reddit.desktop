@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Reddit
+Comment=Reddit Social Network
+GenericName=Social Media
+Exec=omarchy-launch-webapp "https://reddit.com"
+Icon=/home/erik/.local/share/icons/reddit.webp
+Type=Application
+StartupNotify=false
+Categories=Network;Social;
+Keywords=reddit;social;news;

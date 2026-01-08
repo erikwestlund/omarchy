@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Home Assistant
+Comment=Home Assistant Dashboard
+GenericName=Home Automation
+Exec=omarchy-launch-webapp "https://ha.pequod.sh"
+Icon=/home/erik/.local/share/icons/home-assistant.webp
+Type=Application
+StartupNotify=false
+Categories=Network;Utility;
+Keywords=home;assistant;automation;smart;

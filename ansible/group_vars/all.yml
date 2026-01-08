@@ -132,6 +132,7 @@ aur_packages:
   # Dev tools
   - visual-studio-code-bin
   - openai-codex-bin
+  - opencode-bin
   - nvm
   - nodejs-nodemon
   - nodejs-vite
