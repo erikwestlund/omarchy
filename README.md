@@ -56,14 +56,16 @@ The `~/.machine` file determines which host ansible targets when using `om`.
 | Setting | Laptop | Desktop |
 |---------|--------|---------|
 | `split_windows` | true (small screen) | false (big screen) |
-| `show_battery` | true | false |
-| `keyboards` | framework, logitech | logitech |
+| `show_battery` | true | - |
+| `keyboards` | framework, logitech, logitech-bluetooth | logitech |
 | `is_framework` | true | false |
 | `cpu_governor` | power-profiles-daemon | performance |
-| `hypr_gaps_out` | 4 | 3 |
+| `hypr_gaps_in` | 2 | 3 |
+| `hypr_gaps_out` | 4 | 6 |
 | `hypr_rounding` | 16 | 12 |
+| `snapper_enabled` | false | true |
 
-Host vars also control: waybar styling, theme background, extra packages.
+Host vars also control: waybar styling, Windows VM RDP settings, extra packages.
 
 ## Structure
 
@@ -71,18 +73,19 @@ Host vars also control: waybar styling, theme background, extra packages.
 omarchy/
 ├── ansible/              # Ansible playbooks and roles
 │   ├── playbook.yml      # Main entry point
-│   ├── windows-vm.yml    # Optional Windows VM setup (separate)
-│   ├── inventory.yml     # Hosts: laptop, desktop
+│   ├── windows-vm.yml    # Optional Windows VM setup
+│   ├── inventory.yml     # Hosts: laptop, desktop, minio-dev
 │   ├── group_vars/       # Shared config (packages, dotfiles lists)
 │   ├── host_vars/        # Per-machine settings
-│   ├── vault/            # Encrypted secrets
-│   └── roles/            # dotfiles, packages, keyd, secrets, etc.
+│   ├── vault/            # Encrypted secrets (ansible-vault)
+│   └── roles/            # dotfiles, packages, keyd, secrets, nas, syncthing, etc.
 ├── home/                 # Files symlinked to ~/
-│   ├── .aliases          # Shell aliases
+│   ├── .aliases          # Shell aliases (includes project shortcuts)
 │   ├── .bashrc           # Bash config
 │   ├── .bashrc.local     # Machine-local bash config
 │   ├── .tmux.conf        # Tmux config
 │   ├── .gitconfig        # Git config
+│   ├── .cheatsheet       # Personal cheatsheet
 │   └── bin/              # Scripts copied to ~/.bin/
 ├── config/               # Directories synced to ~/.config/
 │   ├── hypr/             # Hyprland (bindings, looknfeel, monitors)
@@ -90,12 +93,16 @@ omarchy/
 │   ├── starship.toml     # Shell prompt
 │   ├── ghostty/          # Terminal
 │   ├── vscode/           # VS Code settings
+│   ├── positron/         # Positron IDE settings
+│   ├── omarchy/          # Omarchy theme config
 │   └── ...
+├── local/                # Local data (icons, etc.)
 ├── system/               # System files (copied with sudo)
 │   └── etc/              # → /etc/
 ├── projects/             # Project launcher scripts
-├── scripts/              # Setup scripts
-└── docs/manual/          # Omarchy manual reference
+├── scripts/              # Setup/utility scripts
+├── docs/manual/          # Omarchy manual reference
+└── bootstrap.sh          # Initial setup script
 ```
 
 ## Workflow
@@ -125,24 +132,33 @@ om-desktop            # Force desktop target
 | Source | Destination | Method |
 |--------|-------------|--------|
 | `home/.foo` | `~/.foo` | Symlink |
-| `home/bin/*` | `~/.bin/*` | Copy |
+| `home/bin/*` | `~/.bin/*` | Copy (mode 0755) |
 | `config/dir/` | `~/.config/dir/` | Symlink or Copy* |
 | `config/starship.toml` | `~/.config/starship.toml` | Symlink |
 | `system/etc/*` | `/etc/*` | Copy (sudo) |
 
-*Some config dirs are symlinked, others copied (for ansible templating). See `group_vars/all.yml` for lists.
+*Config dirs are either symlinked or copied depending on whether ansible processing is needed:
+
+**Symlinked** (no processing): darkman, elephant, ghostty, omarchy, projects, systemd, wireplumber, xdg-desktop-portal
+
+**Copied** (templates/mode changes): hypr, waybar
+
+**Special handling**: vscode, positron (managed by vscode role)
 
 ## Key Aliases
 
-After running ansible, these are available:
+After running ansible, these are available (defined in `home/.aliases`):
 
 ### Omarchy
 
 | Alias | Action |
 |-------|--------|
 | `om` | Run full ansible playbook |
-| `om --tags X` | Run specific tags (dotfiles, packages, keyd, secrets) |
+| `om --tags X` | Run specific tags (dotfiles, packages, keyd, secrets, webapps, vscode) |
 | `om-laptop` / `om-desktop` | Force target machine |
+| `om-config` | Shortcut for `om --tags dotfiles` |
+| `om-packages` | Shortcut for `om --tags packages` |
+| `om-apps` | Shortcut for `om --tags packages,webapps` |
 | `omarchy` / `oma` | cd to ~/Omarchy |
 
 ### Git
@@ -154,6 +170,7 @@ After running ansible, these are available:
 | `ac` | git add . && git commit -am |
 | `pushmain` / `pullmain` | push/pull origin main |
 | `ghclone user/repo` | Clone from GitHub via SSH |
+| `wippush` | git add . && commit "wip" && push |
 
 ### Docker
 
@@ -161,7 +178,7 @@ After running ansible, these are available:
 |-------|--------|
 | `d` / `dc` | docker / docker compose |
 | `dcu` / `dcd` | docker compose up/down |
-| `dps` | docker ps |
+| `dps` / `dpsa` | docker ps / docker ps -a |
 
 ### Tmux
 
@@ -179,6 +196,14 @@ After running ansible, these are available:
 | `secrets-pull` | Pull & decrypt from B2 |
 | `secrets-push` | Encrypt & push to B2 |
 
+### VS Code
+
+| Alias | Action |
+|-------|--------|
+| `vspush` | Push local VS Code settings to repo |
+| `vspull` | Pull repo VS Code settings to local |
+| `vscode-sync` | Deploy VS Code settings via ansible |
+
 ### Windows VM
 
 | Alias | Action |
@@ -192,26 +217,35 @@ Projects have launcher scripts in `~/Omarchy/projects/{project}/`:
 
 | File | Purpose |
 |------|---------|
-| `launch` | Open VS Code, start docker, switch workspace |
+| `launch` | Open VS Code/Positron, start docker, switch workspace |
 | `kill` | Stop docker, close windows |
 | `tmux.sh` | Launch tmux session |
+| `bootstrap` | One-time project setup (clone, install deps) |
+| `*.code-workspace` | VS Code workspace file |
 
 ### Project Aliases
 
-Each project gets aliases based on its short name:
+Each project gets aliases based on its short name (defined in `home/.aliases`):
 
 | Pattern | Example (alias: `fw`) |
 |---------|----------------------|
-| `p{alias}` | `pfw` - launch project |
-| `pk{alias}` | `pkfw` - kill project |
+| `l{alias}` | `lfw` - launch project |
+| `k{alias}` | `kfw` - kill project |
 | `tm{alias}` | `tmfw` - tmux session |
+| `b{alias}` | `bfw` - bootstrap project |
 | `pm{alias}` | `pmfw` - cd to project management dir |
+| `vs{alias}` | `vsfw` - open in VS Code |
+| `nv{alias}` | `nvfw` - open in NeoVim |
+| `p{alias}` | `pfw` - open in Positron (if applicable) |
+| `d{alias}` | `dfw` - docker compose up (if applicable) |
+| `dd{alias}` | `ddfw` - docker compose down (if applicable) |
 | `{alias}` | `fw` - cd to project code dir |
 
-### Create New Project
+### Create/Remove Projects
 
 ```bash
-pm-new    # Interactive project scaffolding
+pm-new      # Interactive project scaffolding
+pm-remove   # Remove project and aliases
 ```
 
 ## Secrets
@@ -427,6 +461,7 @@ tmux source-file ~/.tmux.conf
 
 ## Reference
 
-- [Omarchy Manual](https://learn.omacom.io/2/the-omarchy-manual/91/welcome-to-omarchy)
+- [Omarchy Website](https://omarchy.org)
 - [Hyprland Wiki](https://wiki.hyprland.org/)
+- Local docs in `docs/manual/`
 - See `CLAUDE.md` for AI assistant instructions

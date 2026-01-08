@@ -16,14 +16,18 @@ This ensures all configuration is tracked, reproducible, and can be restored.
 omarchy/
 ├── ansible/          # Ansible playbooks and roles
 │   ├── playbook.yml  # Main entry point
+│   ├── windows-vm.yml # Optional Windows VM setup
+│   ├── inventory.yml # Hosts: laptop, desktop, minio-dev
 │   ├── group_vars/   # Shared config (packages, dotfile lists)
 │   ├── host_vars/    # Per-machine settings (laptop.yml, desktop.yml)
-│   └── roles/        # dotfiles, packages, keyd, secrets, vms, etc.
+│   ├── vault/        # Encrypted secrets (ansible-vault)
+│   └── roles/        # dotfiles, packages, keyd, secrets, nas, syncthing, etc.
 ├── home/             # Dotfiles symlinked to ~/
 ├── config/           # Config dirs/files → ~/.config/ (symlink or copy)
+├── local/            # Local data (icons, etc.)
 ├── system/           # System files copied to / (requires sudo)
 ├── projects/         # Project launcher scripts
-├── scripts/          # Setup scripts
+├── scripts/          # Setup/utility scripts
 └── docs/manual/      # Omarchy manual reference
 ```
 
@@ -38,7 +42,7 @@ omarchy/
 
 ### Currently Symlinked
 - `home/` dotfiles → `~/` (defined in `home_dotfiles` variable)
-- `config/` directories in `config_dirs_symlink`: darkman, ghostty, omarchy, projects, systemd, wireplumber, xdg-desktop-portal
+- `config/` directories in `config_dirs_symlink`: darkman, elephant, ghostty, omarchy, projects, systemd, wireplumber, xdg-desktop-portal
 - `config/starship.toml` → `~/.config/starship.toml`
 
 ### Currently Copied (require ansible processing)
