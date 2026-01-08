@@ -3,21 +3,21 @@
 │ Super+Space    Launcher   │ T Teams      N Obsidian   │ Ctrl+Sh+N    New tab    │ Super+Sh+P   Commands    │ Super+HJKL    Focus     │ pm-new         New proj │
 │ Super+Alt+Sp   Menu       │ R Slack      S Spotify    │ Ctrl+Sh+W    Close tab  │ Super+F      Find        │ Alt+Sh+HJKL   Swap      │ pm-import-fw   Import R │
 │ Super+Q        Close      │ G GitHub     E Email      │                         │ Super+E      Sidebar     │ Super+Sh+,/.  Width     ├─────────────────────────┤
-│ Ctrl+Sh+M      Maximize   │ U Claude     / 1Pass      │ Tmux:                   │                          │ Super+Sh+[/]  Height    │ bs       better-shoes   │
-│ Super+Y        Scratch    │ Ctrl+Sh+X    1Pass menu   │ Shift+←/→    Prev/next  │ Editing:                 │ Alt+J         Split     │ drtp     ohdsi-dr       │
-├─ Workspaces ──────────────┼───────────────────────────┤ Alt+←/→      Prev/next  │ Super+S      Save        │ Super+Sh+D    Layout    │ fw       framework      │
-│ Super+1-9,0    Switch     │ Screenshots:              │ Prefix+Tab   Next win   │ Super+W      Close       │                         │ fwsite   framework-site │
-│ Super+Sh+#     Move win   │ Super+Ctrl+2 Full         │ Prefix+>/<   Sessions   │ Super+Z/Sh+Z Undo/Redo   │ Window Mgmt:            │ hl       homelab        │
-│ Super+grave    Utility    │ Super+Ctrl+3 Select       │                         │ Ctrl+K       Delete ln   │ Super+Arr     Focus     │ mhmi     mh-missing     │
-├─ Media ───────────────────┼───────────────────────────┤ Text Nav (keyd):        │ Ctrl+D       Duplicate   │ Super+Sh+Arr  Swap      │ na       naaccord       │
-│ Mute  Vol+/-   Bright+/-  │ Utilities:                │ Alt+←/→      Line start/│ Alt+Sh+↑/↓   Move line   │ Sup+Alt+N     Float     │ om       omarchy        │
-│ Prev  Play     Next       │ Super+Ctrl+S Search       │              end        │ Ctrl+↑/↓     Pg Up/Down  │ Super+LMB     Move      │ park     parkukb        │
-├─ Help ────────────────────┤ Super+Ctrl+C Calc         │ Alt+↑/↓      Doc top/bot│ Super+Alt+L  Format      │ Super+RMB     Resize    │ peq      pequod         │
-│ Alt+K          Hotkeys    │ Super+Alt+V  Clipbrd      │ +Shift       Select     │                          │                         │ tnt      tnt-syphilis   │
-│ Super+Alt+H    Cheatsht   │ Super+Ctrl+V VPN          │                         │ Navigation:              │ Developer:              │                         │
-│ Super+Alt+J    Cal+Agenda │ Super+Ctrl+J JHU VPN      │ Commands:               │ Super+[/]    Ed/Term     │ Ctrl+Sh+C     Dev Tools │                         │
-│                           │ Super+Ctrl+M Clamshell    │ ksteam       Kill Steam │ Super+Alt+[/] Tabs       │ Ctrl+Sh+I     Inspect   │                         │
-├─ Config ──────────────────┤ Super+Ctrl+D Display      │                         │ Super+Alt+N  New file    │ F12           Console   │                         │
+│ Super+O        Float+Pin  │ U Claude     / 1Pass      │ Tmux:                   │                          │ Super+Sh+[/]  Height    │ bs       better-shoes   │
+│ Ctrl+Sh+M      Maximize   │ Ctrl+Sh+X    1Pass menu   │ Shift+←/→    Prev/next  │ Editing:                 │ Alt+J         Split     │ drtp     ohdsi-dr       │
+│ Super+Y        Scratch    │                           │ Alt+←/→      Prev/next  │ Super+S      Save        │ Super+Sh+D    Layout    │ fw       framework      │
+├─ Workspaces ──────────────┼───────────────────────────┤ Prefix+Tab   Next win   │ Super+W      Close       │                         │ fwsite   framework-site │
+│ Super+1-9,0    Switch     │ Screenshots:              │ Prefix+>/<   Sessions   │ Super+Z/Sh+Z Undo/Redo   │ Window Mgmt:            │ hl       homelab        │
+│ Super+Sh+#     Move win   │ Super+Ctrl+2 Full         │                         │ Ctrl+K       Delete ln   │ Super+Arr     Focus     │ mhmi     mh-missing     │
+│ Super+grave    Utility    │ Super+Ctrl+3 Select       │ Text Nav (keyd):        │ Ctrl+D       Duplicate   │ Super+Sh+Arr  Swap      │ na       naaccord       │
+├─ Media ───────────────────┼───────────────────────────┤ Alt+←/→      Line start/│ Alt+Sh+↑/↓   Move line   │ Sup+Alt+N     Float     │ om       omarchy        │
+│ Mute  Vol+/-   Bright+/-  │ Utilities:                │              end        │ Ctrl+↑/↓     Pg Up/Down  │ Super+LMB     Move      │ park     parkukb        │
+│ Prev  Play     Next       │ Super+Ctrl+S Search       │ Alt+↑/↓      Doc top/bot│ Super+Alt+L  Format      │ Super+RMB     Resize    │ peq      pequod         │
+├─ Help ────────────────────┤ Super+Ctrl+C Calc         │ +Shift       Select     │                          │                         │ tnt      tnt-syphilis   │
+│ Alt+K          Hotkeys    │ Super+Alt+V  Clipbrd      │                         │ Navigation:              │ Developer:              │                         │
+│ Super+Alt+H    Cheatsht   │ Super+Ctrl+V VPN          │ Commands:               │ Super+[/]    Ed/Term     │ Ctrl+Sh+C     Dev Tools │                         │
+│ Super+Alt+J    Cal+Agenda │ Super+Ctrl+J JHU VPN      │ ksteam       Kill Steam │ Super+Alt+[/] Tabs       │ Ctrl+Sh+I     Inspect   │                         │
+├─ Config ──────────────────┤                           │                         │ Super+Alt+N  New file    │ F12           Console   │                         │
 │ om             Playbook   │                           │                         │ Ctrl+1-9     Tabs        │                         │                         │
 │ om-sync        Git pull   │                           │                         │ Ctrl+J/Sh+J/K Panel      │                         │                         │
 │ vault-edit     Secrets    │                           │                         │ Super+D      Multi-sel   │                         │                         │

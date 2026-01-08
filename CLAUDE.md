@@ -86,6 +86,36 @@ ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/
 - `~/.config/omarchy/[theme]/` - Theme-specific files
 - `/etc/udev/rules.d/` - udev rules (device permissions, etc.)
 
+## Keybindings
+
+Keybindings come from multiple sources and are merged at runtime:
+
+| Source | Location | Description |
+|--------|----------|-------------|
+| **Omarchy base** | `/usr/share/omarchy/hypr/` | Default Omarchy bindings (read-only, from package) |
+| **This repo** | `config/hypr/bindings.conf` | Personal overrides and additions |
+| **Omarchy scripts** | `/usr/share/omarchy/bin/` | Scripts referenced by base bindings |
+| **Personal scripts** | `home/bin/` | Custom scripts for bindings |
+
+### Resolving Active Bindings
+
+To see all active bindings at runtime:
+```bash
+hyprctl binds                    # All bindings with details
+hyprctl binds | grep -i "key"    # Search for specific key
+Alt+K                            # Opens hotkey viewer (GUI)
+```
+
+### Adding/Modifying Bindings
+
+1. Check if binding exists in Omarchy base (`/usr/share/omarchy/hypr/`)
+2. Override or add in `config/hypr/bindings.conf`
+3. Use `hyprctl reload` to apply changes (or they auto-apply for symlinked files)
+
+### Cheatsheet
+
+Personal quick-reference: `home/.cheatsheet` (view with `Super+Alt+H`)
+
 ## Omarchy Basics
 
 - **Super + Space** - App launcher
