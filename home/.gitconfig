@@ -54,6 +54,9 @@
 	p = push
 	l = pull
 
+	# Remotes
+	rao = "!f() { git remote add origin git@github.com:$1.git; }; f"
+
 	# Logs
 	log = log --oneline --decorate --graph
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit

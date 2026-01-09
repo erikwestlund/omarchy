@@ -113,7 +113,34 @@ pia_menu() {
     case "$action" in
         Up)
             piactl background enable
-            piactl connect && notify-send "PIA" "Connecting..."
+            # Check if we need to login first
+            if ! piactl connect 2>/dev/null; then
+                # Extract credentials from vault and login
+                vault_file="$HOME/Omarchy/ansible/vault/secrets.yml"
+                if [[ -f "$vault_file" ]]; then
+                    creds=$(ANSIBLE_CONFIG="$HOME/Omarchy/ansible/ansible.cfg" ansible-vault view "$vault_file" 2>/dev/null)
+                    username=$(echo "$creds" | grep '^pia_username:' | awk '{print $2}')
+                    password=$(echo "$creds" | grep '^pia_password:' | awk '{print $2}')
+                    if [[ -n "$username" && -n "$password" ]]; then
+                        login_file=$(mktemp)
+                        chmod 600 "$login_file"
+                        printf '%s\n%s\n' "$username" "$password" > "$login_file"
+                        if piactl login "$login_file" 2>/dev/null; then
+                            rm -f "$login_file"
+                            piactl connect && notify-send "PIA" "Connecting..."
+                        else
+                            rm -f "$login_file"
+                            notify-send "PIA" "Login failed" --urgency=critical
+                        fi
+                    else
+                        notify-send "PIA" "Could not read credentials from vault" --urgency=critical
+                    fi
+                else
+                    notify-send "PIA" "Vault file not found. Run secrets-pull first." --urgency=critical
+                fi
+            else
+                notify-send "PIA" "Connecting..."
+            fi
             ;;
         Down)
             piactl disconnect && notify-send "PIA" "Disconnected"

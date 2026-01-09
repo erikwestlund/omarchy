@@ -1,13 +1,3 @@
 {
-    "terminal.integrated.commandsToSkipShell": [
-        "workbench.action.closeWindow",
-        "workbench.action.toggleSidebarVisibility"
-    ],
-    "workbench.iconTheme": "catppuccin-mocha",
-    "files.associations": {
-        "renv.lock": "json"
-    },
-    "workbench.colorTheme": "Catppuccin Mocha",
-    "terminal.integrated.fontSize": 13,
-    "explorer.confirmDelete": false
+    "workbench.iconTheme": "catppuccin-mocha"
 }
