@@ -132,7 +132,7 @@ aur_packages:
   # Dev tools
   - sublime-text-4
   - visual-studio-code-bin
-  - openai-codex-bin
+  - openai-codex
   - opencode-bin
   - nvm
   - nodejs-nodemon
