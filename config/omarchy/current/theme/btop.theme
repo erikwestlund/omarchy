@@ -1,0 +1,69 @@
+# ────────────────────────────────────────────────────────────
+# BTOP THEME — Rainy Night City (matches your wallpaper)
+# ────────────────────────────────────────────────────────────
+
+# Transparent / dark night background
+theme[main_bg]="#1e2030"
+
+# Main text – soft grey-blue (city lights)
+theme[main_fg]="#cdd3e1"
+
+# Titles – magenta accent (neon signs)
+theme[title]="#b48ead"
+
+# Highlight text – cyan accent (neon glow)
+theme[hi_fg]="#88c0d0"
+
+# Selected row – deeper night shade
+theme[selected_bg]="#14151f"
+
+# Selected row text – bright white-blue
+theme[selected_fg]="#e8f1ff"
+
+# Inactive/dim text – distant-building grey
+theme[inactive_fg]="#7d8291"
+
+# Misc text – magenta accent
+theme[proc_misc]="#b48ead"
+
+# Box outlines – subtle green accent
+theme[cpu_box]="#a3be8c"
+theme[mem_box]="#a3be8c"
+theme[net_box]="#a3be8c"
+theme[proc_box]="#a3be8c"
+
+# Divider lines – same subtle outline tone
+theme[div_line]="#292b3b"
+
+# Graph gradients – neon city colors
+theme[temp_start]="#5e81ac"
+theme[temp_mid]="#81a1c1"
+theme[temp_end]="#88c0d0"
+
+theme[cpu_start]="#5e81ac"
+theme[cpu_mid]="#81a1c1"
+theme[cpu_end]="#a3be8c"
+
+theme[free_start]="#5e81ac"
+theme[free_mid]="#ebcb8b"
+theme[free_end]="#ebcb8b"
+
+theme[cached_start]="#d08770"
+theme[cached_mid]="#ebcb8b"
+theme[cached_end]="#ebcb8b"
+
+theme[available_start]="#88c0d0"
+theme[available_mid]="#8fbcbb"
+theme[available_end]="#8fbcbb"
+
+theme[used_start]="#a3be8c"
+theme[used_mid]="#a3be8c"
+theme[used_end]="#a3be8c"
+
+theme[download_start]="#ebcb8b"
+theme[download_mid]="#88c0d0"
+theme[download_end]="#5e81ac"
+
+theme[upload_start]="#d08770"
+theme[upload_mid]="#b48ead"
+theme[upload_end]="#b48ead"
