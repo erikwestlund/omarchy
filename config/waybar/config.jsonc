@@ -139,6 +139,7 @@
     "custom/weather": {
       "exec": "~/.config/waybar/scripts/weather.sh",
       "interval": 300,
+      "signal": 4,
       "tooltip": false,
       "on-click": "xdg-open \"https://wttr.in/$(cat /tmp/weather_location 2>/dev/null || echo Milton,MA)\""
     },
@@ -388,6 +389,7 @@
     "custom/weather": {
       "exec": "~/.config/waybar/scripts/weather.sh",
       "interval": 300,
+      "signal": 4,
       "tooltip": false,
       "on-click": "xdg-open \"https://wttr.in/$(cat /tmp/weather_location 2>/dev/null || echo Milton,MA)\""
     },

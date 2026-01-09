@@ -1,0 +1,15 @@
+#!/bin/bash
+# Force refresh weather cache and signal waybar to update
+
+WEATHER_CACHE="/tmp/weather_data"
+
+# Remove cache to force refresh
+rm -f "$WEATHER_CACHE"
+
+# Run weather script to populate cache
+~/.config/waybar/scripts/weather.sh > /dev/null
+
+# Signal waybar to refresh the weather widget
+pkill -SIGRTMIN+4 waybar 2>/dev/null || true
+
+echo "Weather refreshed"
