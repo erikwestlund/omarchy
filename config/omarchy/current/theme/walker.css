@@ -1,9 +1,9 @@
 @define-color selected-text #d6e7ff;   
 @define-color text #cdd3e1;              
-@define-color base #13141acc;               
-@define-color border #292b3b;            
-@define-color foreground #cdd3e1;         
-@define-color background #13141acc;       
+@define-color base #13141af0;
+@define-color border #292b3b;
+@define-color foreground #cdd3e1;
+@define-color background #13141af0;       
 @define-color hover #8c92a3;             
 @define-color selected-box #4a79a8;            
 
