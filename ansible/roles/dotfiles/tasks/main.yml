@@ -365,6 +365,22 @@
     mode: '0755'
   when: theme_name is defined
 
+- name: Check if theme path is a directory (not symlink)
+  ansible.builtin.stat:
+    path: "{{ ansible_facts.env.HOME }}/.config/omarchy/current/theme"
+  register: theme_path
+  when: theme_name is defined
+
+- name: Remove theme directory if not a symlink
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/omarchy/current/theme"
+    state: absent
+  when:
+    - theme_name is defined
+    - theme_path.stat.exists | default(false)
+    - theme_path.stat.isdir | default(false)
+    - not (theme_path.stat.islnk | default(false))
+
 - name: Set current theme symlink
   ansible.builtin.file:
     src: "{{ ansible_facts.env.HOME }}/.config/omarchy/themes/{{ theme_name }}"
