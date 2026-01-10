@@ -3,13 +3,18 @@
 # Only enabled on desktop (snapper_enabled: true)
 
 # Remove old frequent timer (migrating to hourly)
+- name: Check if old frequent timer exists
+  stat:
+    path: /etc/systemd/system/snapper-timeline-frequent.timer
+  register: frequent_timer
+
 - name: Stop and disable old frequent timer
   systemd:
     name: snapper-timeline-frequent.timer
     enabled: false
     state: stopped
   become: true
-  ignore_errors: true
+  when: frequent_timer.stat.exists
 
 - name: Remove old frequent timer files
   file:
