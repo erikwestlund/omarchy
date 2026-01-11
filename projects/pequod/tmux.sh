@@ -58,6 +58,13 @@ tmux new-window -t $SESSION:$TABNO -n "npm" -c "$PROJECT_DIR"
 tmux send-keys -t $SESSION:$TABNO "npm run dev" C-m
 TABNO=$((TABNO+1))
 
+# --- stripe ---
+tmux new-window -t $SESSION:$TABNO -n "stripe" -c "$PROJECT_DIR"
+if command -v stripe &>/dev/null; then
+    tmux send-keys -t $SESSION:$TABNO "stripe listen --forward-to http://academic.test/stripe/webhook --events customer.subscription.created,customer.subscription.updated,customer.subscription.deleted,invoice.payment_failed,checkout.session.completed --print-secret" C-m
+fi
+TABNO=$((TABNO+1))
+
 # --- artisan ---
 tmux new-window -t $SESSION:$TABNO -n "artisan" -c "$PROJECT_DIR"
 TABNO=$((TABNO+1))

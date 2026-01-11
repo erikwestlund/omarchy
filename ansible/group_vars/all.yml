@@ -134,6 +134,7 @@ aur_packages:
   - visual-studio-code-bin
   - openai-codex
   - opencode-bin
+  - stripe-cli
   - nvm
   - nodejs-nodemon
   - nodejs-vite

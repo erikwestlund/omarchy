@@ -55,7 +55,7 @@ sleep 0.3
 # Start tmux session (if not already running)
 TMUX_SCRIPT="$HOME/Omarchy/projects/pequod/tmux.sh"
 if [ -x "$TMUX_SCRIPT" ]; then
-    "$TMUX_SCRIPT" </dev/null &
+    "$TMUX_SCRIPT" </dev/null 2>/dev/null &
     sleep 0.5
 fi
 
@@ -137,7 +137,7 @@ else
             # Switch to browser workspace, open browser, wait for it to appear
             hyprctl dispatch workspace $BROWSER_WS
             sleep 0.3
-            chromium --new-window "$VIEW_URL" &
+            chromium --new-window "$VIEW_URL" 2>/dev/null &
 
             # Wait for browser window to appear
             for i in {1..20}; do
