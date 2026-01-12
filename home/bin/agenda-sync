@@ -10,5 +10,5 @@ gcalcli agenda \
     --nostarted \
     --details=end \
     "$(date +%Y-%m-%d)" \
-    "$(date -d '+3 days' +%Y-%m-%d)" \
+    "$(date -d '+7 days' +%Y-%m-%d)" \
     > "$CACHE_FILE" 2>/dev/null
