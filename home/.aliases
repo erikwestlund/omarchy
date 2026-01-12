@@ -98,6 +98,30 @@ alias localip="hostname -I | awk '{print \$1}'"
 # Flush DNS cache (systemd-resolved)
 alias flushdns="sudo systemd-resolve --flush-caches"
 
+# Printer management (Brother MFC-L2710DW)
+alias printer-status="lpstat -p -d && echo && lpstat -o 2>/dev/null || echo 'No jobs in queue'"
+printer-reset() {
+    echo "Restarting cups-browsed..."
+    sudo systemctl restart cups-browsed
+    sleep 3
+
+    # Check if printer came back via discovery
+    if lpstat -p 2>/dev/null | grep -q "Brother_MFC_L2710DW.*idle"; then
+        echo "Printer rediscovered successfully"
+        lpstat -p -d
+        return 0
+    fi
+
+    # Re-add with direct IPP connection
+    echo "Rediscovery failed, adding direct connection..."
+    lpadmin -x Brother_MFC_L2710DW_series 2>/dev/null
+    lpadmin -p Brother_MFC_L2710DW -E -v "ipp://brother-printer.local/ipp/print" -m everywhere
+    lpadmin -d Brother_MFC_L2710DW
+
+    echo "Done:"
+    lpstat -p -d
+}
+
 # NVMe SMART info
 nvme-info() {
     sudo nvme list
