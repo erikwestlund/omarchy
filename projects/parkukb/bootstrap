@@ -73,6 +73,10 @@ if [ -f "$PROJECT_DIR/requirements.txt" ] || [ -f "$PROJECT_DIR/pyproject.toml" 
         (cd "$PROJECT_DIR" && .venv/bin/pip install -e .)
     fi
     echo "[OK] Python dependencies installed"
+
+    echo "[...] Ensuring dxpy is installed..."
+    (cd "$PROJECT_DIR" && .venv/bin/pip install dxpy)
+    echo "[OK] dxpy installed"
 else
     echo "[SKIP] No requirements.txt or pyproject.toml found"
 fi

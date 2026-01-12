@@ -26,6 +26,7 @@ TABNO=1
 
 # --- bash ---
 tmux new-session -d -s $SESSION -n "bash" -c "$PROJECT_DIR"
+tmux send-keys -t $SESSION:1 "[ -d .venv ] && $VENV_ACTIVATE" C-m
 TABNO=$((TABNO+1))
 
 # --- claude-1 (opus) ---
