@@ -124,5 +124,8 @@
     { "key": "ctrl+0", "command": "workbench.action.lastEditorInGroup" },
 
     // Line continuation in terminal with Shift+Enter
-    { "key": "shift+enter", "command": "workbench.action.terminal.sendSequence", "args": { "text": "\\\n" }, "when": "terminalFocus" }
+    { "key": "shift+enter", "command": "workbench.action.terminal.sendSequence", "args": { "text": "\\\n" }, "when": "terminalFocus" },
+
+    // Pass Ctrl+O to terminal (for OpenCode settings, etc.)
+    { "key": "ctrl+o", "command": "workbench.action.terminal.sendSequence", "args": { "text": "\u000f" }, "when": "terminalFocus" }
 ]
