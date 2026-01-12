@@ -32,17 +32,37 @@ om() {
 }
 alias om-laptop="ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l laptop"
 alias om-desktop="ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l desktop"
-alias om-config='om --tags dotfiles'
+
+# om-* ansible tag shortcuts (use 'om' for full playbook)
+alias om-dotfiles='om --tags dotfiles'
+alias om-config='om --tags dotfiles'  # alias for om-dotfiles
 alias om-packages='om --tags packages'
 alias om-webapps='om --tags webapps'
 alias om-apps='om --tags packages,webapps'
 alias om-software='om --tags packages,webapps'
 alias om-secrets='om --tags secrets'
 alias om-keyd='om --tags keyd'
+alias om-vscode='om --tags vscode'
+alias om-vscode-ext='om --tags vscode -e "vscode_install_extensions=true"'
+alias om-framework='om --tags framework'
+alias om-nas='om --tags nas'
+alias om-syncthing='om --tags syncthing'
+alias om-sshd='om --tags sshd'
+alias om-chromium='om --tags chromium'
+alias om-snapper='om --tags snapper'
+alias om-cleanup='om --tags cleanup'
+alias om-remotes='om --tags remotes'
+alias om-dnsmasq='om --tags dnsmasq'
+alias om-caddy='om --tags caddy'
+alias om-vpn='om --tags pulsesecure'
+alias om-gpu='om --tags amd-gpu,intel-gpu'
+alias om-openrgb='om --tags openrgb'
+alias om-all='om'
+alias om-sync='git -C ~/Omarchy pull && git -C ~/Omarchy push'
+
+# Legacy aliases
 alias vscode-sync='om --tags vscode'
 alias vscode-sync-ext='om --tags vscode -e "vscode_install_extensions=true"'
-alias om-all='om'
-alias om-sync='git -C ~/Omarchy pull'
 
 # Ansible
 alias ap="ansible-playbook"

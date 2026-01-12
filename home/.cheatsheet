@@ -6,7 +6,7 @@
 │ Super+O        Float+Pin  │ U Claude     / 1Pass      │ Tmux:                   │                          │ Super+Sh+[/]  Height    │ bs       better-shoes   │
 │ Ctrl+Sh+M      Maximize   │ Ctrl+Sh+X    1Pass menu   │ Shift+←/→    Prev/next  │ Editing:                 │ Alt+J         Split     │ drtp     ohdsi-dr       │
 │ Super+Y        Scratch    │                           │ Alt+←/→      Prev/next  │ Super+S      Save        │ Super+Sh+D    Layout    │ fw       framework      │
-├─ Workspaces ──────────────┼───────────────────────────┤ Prefix+Tab   Next win   │ Super+W      Close       │                         │ fwsite   framework-site │
+├─ Workspaces ──────────────┼───────────────────────────┤ Prefix+Tab   Next win   │ Super+W      Close       │                         │ fws      framework-site │
 │ Super+1-9,0    Switch     │ Screenshots:              │ Prefix+>/<   Sessions   │ Super+Z/Sh+Z Undo/Redo   │ Window Mgmt:            │ hl       homelab        │
 │ Super+Sh+#     Move win   │ Super+Ctrl+2 Full         │                         │ Ctrl+K       Delete ln   │ Super+Arr     Focus     │ mhmi     mh-missing     │
 │ Super+grave    Utility    │ Super+Ctrl+3 Select       │ Text Nav (keyd):        │ Ctrl+D       Duplicate   │ Super+Sh+Arr  Swap      │ na       naaccord       │
@@ -14,12 +14,13 @@
 │ Mute  Vol+/-   Bright+/-  │ Utilities:                │              end        │ Ctrl+↑/↓     Pg Up/Down  │ Super+LMB     Move      │ park     parkukb        │
 │ Prev  Play     Next       │ Super+Ctrl+S Search       │ Alt+↑/↓      Doc top/bot│ Super+Alt+L  Format      │ Super+RMB     Resize    │ peq      pequod         │
 ├─ Help ────────────────────┤ Super+Ctrl+C Calc         │ +Shift       Select     │                          │                         │ tnt      tnt-syphilis   │
-│ Alt+K          Hotkeys    │ Super+Alt+V  Clipbrd      │                         │ Navigation:              │ Developer:              │                         │
-│ Super+Alt+H    Cheatsht   │ Super+Ctrl+V VPN          │ Commands:               │ Super+[/]    Ed/Term     │ Ctrl+Sh+C     Dev Tools │                         │
-│ Super+Alt+J    Cal+Agenda │ Super+Ctrl+J JHU VPN      │ ksteam       Kill Steam │ Super+Alt+[/] Tabs       │ Ctrl+Sh+I     Inspect   │                         │
-├─ Config ──────────────────┤                           │                         │ Super+Alt+N  New file    │ F12           Console   │                         │
-│ om             Playbook   │                           │                         │ Ctrl+1-9     Tabs        │                         │                         │
-│ om-sync        Git pull   │                           │                         │ Ctrl+J/Sh+J/K Panel      │                         │                         │
-│ vault-edit     Secrets    │                           │                         │ Super+D      Multi-sel   │                         │                         │
-│ secrets-pull   Pull B2    │                           │                         │                          │                         │                         │
+│ Alt+K          Hotkeys    │ Super+Alt+V  Clipbrd      │                         │ Navigation:              │ Developer:              ├─────────────────────────┤
+│ Super+Alt+H    Cheatsht   │ Super+Ctrl+V VPN          │ Commands:               │ Super+[/]    Ed/Term     │ Ctrl+Sh+C     Dev Tools │ Ansible (om-*):         │
+│ Super+Alt+J    Cal+Agenda │ Super+Ctrl+J JHU VPN      │ ksteam       Kill Steam │ Super+Alt+[/] Tabs       │ Ctrl+Sh+I     Inspect   │ om           Full run   │
+├─ Secrets ─────────────────┼───────────────────────────┼─────────────────────────┤ Super+Alt+N  New file    │ F12           Console   │ om-sync      Git sync   │
+│ vault-edit     Edit vault │ Ansible (om-*):           │ Common:                 │ Ctrl+1-9     Tabs        │                         │ om-dotfiles  Configs    │
+│ secrets-push   Push B2    │ om-dotfiles  Configs      │ om-apps      Pkgs+webap │ Ctrl+J/Sh+J/K Panel      │                         │ om-packages  Packages   │
+│ secrets-pull   Pull B2    │ om-packages  Packages     │ om-cleanup   Cleanup    │ Super+D      Multi-sel   │                         │ om-keyd      Keyd       │
+│                           │ om-keyd      Keyd remap   │ om-framework Laptop     │                          │                         │ om-secrets   Secrets    │
+│                           │ om-vscode    VS Code      │ om-nas       NAS mounts │                          │                         │ om-vscode    VS Code    │
 └───────────────────────────┴───────────────────────────┴─────────────────────────┴──────────────────────────┴─────────────────────────┴─────────────────────────┘
