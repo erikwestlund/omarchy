@@ -36,3 +36,21 @@ php -v          # runs local php
 ```
 
 No configuration needed - just follow the naming convention.
+
+### Printer Management
+
+Aliases for managing the Brother MFC-L2710DW network printer.
+
+**Commands:**
+- `printer-status` - Shows printer state, default printer, and any queued jobs
+- `printer-reset` - Resets the printer connection (restarts CUPS, re-adds printer)
+
+**Setup:**
+- Uses direct IPP connection to `brother-printer.local` (mDNS hostname)
+- `cups-browsed` is disabled to prevent duplicate printer entries
+- Printer is configured as system default
+
+**When to use `printer-reset`:**
+- Printer shows "disabled" or connection errors
+- Print jobs stuck in queue
+- After network changes or printer power cycle

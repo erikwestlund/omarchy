@@ -90,6 +90,9 @@
     - role: sshd
       tags: sshd
 
+    - role: printer
+      tags: printer
+
     - role: chromium
       tags: chromium
 

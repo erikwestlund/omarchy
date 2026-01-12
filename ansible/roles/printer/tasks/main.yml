@@ -1,0 +1,50 @@
+---
+# Printer configuration role
+# Sets up Brother MFC-L2710DW via direct IPP connection
+
+- name: Ensure CUPS is installed
+  become: true
+  ansible.builtin.pacman:
+    name:
+      - cups
+      - cups-filters
+    state: present
+
+- name: Ensure CUPS service is running
+  become: true
+  ansible.builtin.systemd:
+    name: cups
+    state: started
+    enabled: true
+
+- name: Disable cups-browsed to prevent duplicate printers
+  become: true
+  ansible.builtin.systemd:
+    name: cups-browsed
+    state: stopped
+    enabled: false
+  ignore_errors: true
+
+- name: Remove auto-discovered duplicate printer if exists
+  ansible.builtin.command:
+    cmd: lpadmin -x Brother_MFC_L2710DW_series
+  register: remove_duplicate
+  changed_when: remove_duplicate.rc == 0
+  failed_when: false
+
+- name: Check if printer already configured
+  ansible.builtin.command:
+    cmd: lpstat -v Brother_MFC_L2710DW
+  register: printer_check
+  changed_when: false
+  failed_when: false
+
+- name: Add Brother printer with direct IPP connection
+  ansible.builtin.command:
+    cmd: lpadmin -p Brother_MFC_L2710DW -E -v "ipp://brother-printer.local/ipp/print" -m everywhere
+  when: printer_check.rc != 0 or 'brother-printer.local' not in printer_check.stdout
+
+- name: Set Brother printer as default
+  ansible.builtin.command:
+    cmd: lpadmin -d Brother_MFC_L2710DW
+  changed_when: false
