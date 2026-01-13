@@ -1,0 +1,51 @@
+#!/bin/bash
+# Pull project artifacts from NAS
+set -e
+
+PROJECTS_DIR="$HOME/Projects"
+NAS_DIR="/mnt/nas/WorkArtifacts"
+
+# Determine project
+if [[ -n "$1" ]]; then
+    PROJECT="$1"
+    PROJECT_DIR="$PROJECTS_DIR/$PROJECT"
+else
+    # Derive from current directory if under Projects
+    CURRENT_DIR="$(pwd)"
+    if [[ "$CURRENT_DIR" == "$PROJECTS_DIR/"* ]]; then
+        # Extract project name (first directory under Projects)
+        REL_PATH="${CURRENT_DIR#$PROJECTS_DIR/}"
+        PROJECT="${REL_PATH%%/*}"
+        PROJECT_DIR="$PROJECTS_DIR/$PROJECT"
+    else
+        echo "Error: Not in a project directory and no project specified"
+        echo "Usage: artifacts-pull [project]"
+        exit 1
+    fi
+fi
+
+if [[ ! -d "$PROJECT_DIR" ]]; then
+    echo "Error: Project directory not found: $PROJECT_DIR"
+    exit 1
+fi
+
+# Trigger autofs mount
+ls "$NAS_DIR" > /dev/null 2>&1 || true
+
+NAS_PROJECT_DIR="$NAS_DIR/$PROJECT"
+if [[ ! -d "$NAS_PROJECT_DIR" ]]; then
+    echo "Error: No artifacts found on NAS for project: $PROJECT"
+    echo "Expected: $NAS_PROJECT_DIR"
+    exit 1
+fi
+
+echo "Project: $PROJECT"
+echo "Source: $NAS_PROJECT_DIR/"
+echo "Destination: $PROJECT_DIR"
+
+echo ""
+echo "Syncing..."
+rsync -av --update --progress "$NAS_PROJECT_DIR/" "$PROJECT_DIR/"
+
+echo ""
+echo "Done. Artifacts pulled from NAS."

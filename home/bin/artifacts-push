@@ -1,0 +1,76 @@
+#!/bin/bash
+# Push project artifacts to NAS
+set -e
+
+PROJECTS_DIR="$HOME/Projects"
+NAS_DIR="/mnt/nas/WorkArtifacts"
+
+# Default patterns if no .artifacts file exists
+DEFAULT_PATTERNS=(
+    "inputs/"
+    "outputs/"
+    "framework.db"
+)
+
+# Determine project
+if [[ -n "$1" ]]; then
+    PROJECT="$1"
+    PROJECT_DIR="$PROJECTS_DIR/$PROJECT"
+else
+    # Derive from current directory if under Projects
+    CURRENT_DIR="$(pwd)"
+    if [[ "$CURRENT_DIR" == "$PROJECTS_DIR/"* ]]; then
+        # Extract project name (first directory under Projects)
+        REL_PATH="${CURRENT_DIR#$PROJECTS_DIR/}"
+        PROJECT="${REL_PATH%%/*}"
+        PROJECT_DIR="$PROJECTS_DIR/$PROJECT"
+    else
+        echo "Error: Not in a project directory and no project specified"
+        echo "Usage: artifacts-push [project]"
+        exit 1
+    fi
+fi
+
+if [[ ! -d "$PROJECT_DIR" ]]; then
+    echo "Error: Project directory not found: $PROJECT_DIR"
+    exit 1
+fi
+
+echo "Project: $PROJECT"
+echo "Source: $PROJECT_DIR"
+echo "Destination: $NAS_DIR/$PROJECT/"
+
+# Build rsync include/exclude list
+RSYNC_ARGS=()
+
+# Check for .artifacts file
+ARTIFACTS_FILE="$PROJECT_DIR/.artifacts"
+if [[ -f "$ARTIFACTS_FILE" ]]; then
+    echo "Using patterns from .artifacts"
+    while IFS= read -r pattern || [[ -n "$pattern" ]]; do
+        # Skip empty lines and comments
+        [[ -z "$pattern" || "$pattern" == \#* ]] && continue
+        RSYNC_ARGS+=(--include="$pattern" --include="$pattern**")
+    done < "$ARTIFACTS_FILE"
+else
+    echo "Using default patterns (inputs/, outputs/, framework.db)"
+    for pattern in "${DEFAULT_PATTERNS[@]}"; do
+        RSYNC_ARGS+=(--include="$pattern" --include="$pattern**")
+    done
+fi
+
+# Exclude everything else
+RSYNC_ARGS+=(--exclude="*")
+
+# Trigger autofs mount
+ls "$NAS_DIR" > /dev/null 2>&1 || true
+
+# Create project directory on NAS if needed
+mkdir -p "$NAS_DIR/$PROJECT"
+
+echo ""
+echo "Syncing..."
+rsync -av --update --progress "${RSYNC_ARGS[@]}" "$PROJECT_DIR/" "$NAS_DIR/$PROJECT/"
+
+echo ""
+echo "Done. Artifacts pushed to NAS."
