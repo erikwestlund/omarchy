@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Name=OnlyOffice Document
+GenericName=Word Processor
+Comment=Create and edit documents
+Type=Application
+Exec=/usr/bin/onlyoffice-desktopeditors --new:word %F
+Terminal=false
+Icon=onlyoffice-document
+Keywords=Text;Document;Word;doc;docx;odt;rtf;
+Categories=Office;WordProcessor;
+StartupWMClass=ONLYOFFICE

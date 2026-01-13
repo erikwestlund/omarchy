@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Name=OnlyOffice Presentation
+GenericName=Presentation Editor
+Comment=Create and edit presentations
+Type=Application
+Exec=/usr/bin/onlyoffice-desktopeditors --new:slide %F
+Terminal=false
+Icon=onlyoffice-presentation
+Keywords=Presentation;PowerPoint;ppt;pptx;odp;
+Categories=Office;Presentation;
+StartupWMClass=ONLYOFFICE

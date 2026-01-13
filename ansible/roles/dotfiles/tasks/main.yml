@@ -71,6 +71,13 @@
     state: link
     force: true
 
+- name: Symlink mimeapps.list (default applications)
+  ansible.builtin.file:
+    src: "{{ config_src }}/mimeapps.list"
+    dest: "{{ ansible_facts.env.HOME }}/.config/mimeapps.list"
+    state: link
+    force: true
+
 - name: Deploy host-specific Hyprland config
   ansible.builtin.template:
     src: looknfeel-host.conf.j2

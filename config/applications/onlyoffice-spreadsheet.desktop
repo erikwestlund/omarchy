@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Name=OnlyOffice Spreadsheet
+GenericName=Spreadsheet Editor
+Comment=Create and edit spreadsheets
+Type=Application
+Exec=/usr/bin/onlyoffice-desktopeditors --new:cell %F
+Terminal=false
+Icon=onlyoffice-spreadsheet
+Keywords=Spreadsheet;Excel;xls;xlsx;ods;csv;
+Categories=Office;Spreadsheet;
+StartupWMClass=ONLYOFFICE

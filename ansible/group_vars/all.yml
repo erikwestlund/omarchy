@@ -178,6 +178,9 @@ aur_packages:
   # Email
   - fastmail
 
+  # Office
+  - onlyoffice-bin
+
 # JHU VPN configuration
 jh_vpn_url: "vpn.jh.edu"
 jh_vpn_name: "JH"
