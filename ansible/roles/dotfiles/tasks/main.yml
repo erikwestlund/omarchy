@@ -13,6 +13,68 @@
     mode: '0644'
   when: not machine_file.stat.exists
 
+# Theme setup - must run BEFORE hypr config sync to avoid race condition
+# (Hyprland auto-reloads when config files change, needs theme to exist)
+- name: Ensure omarchy config directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/omarchy"
+    state: directory
+    mode: '0755'
+
+- name: Ensure omarchy current directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/omarchy/current"
+    state: directory
+    mode: '0755'
+  when: theme_name is defined
+
+- name: Check if theme path exists
+  ansible.builtin.stat:
+    path: "{{ ansible_facts.env.HOME }}/.config/omarchy/current/theme"
+  register: theme_path
+  when: theme_name is defined
+
+# Migrate existing directory to symlink structure (one-time migration)
+# This must happen BEFORE hypr config syncs to avoid race condition
+- name: Migrate theme directory to symlink structure
+  ansible.builtin.shell: |
+    cd {{ ansible_facts.env.HOME }}/.config/omarchy/current
+    mv theme theme-active
+    ln -s theme-active theme
+  when:
+    - theme_name is defined
+    - theme_path.stat.exists | default(false)
+    - theme_path.stat.isdir | default(false)
+    - not (theme_path.stat.islnk | default(false))
+
+# Bootstrap theme only if it doesn't exist at all (first run)
+- name: Bootstrap theme-active directory (first run only)
+  ansible.builtin.copy:
+    src: "{{ ansible_facts.env.HOME }}/.config/omarchy/themes/{{ theme_name }}/"
+    dest: "{{ ansible_facts.env.HOME }}/.config/omarchy/current/theme-active/"
+    remote_src: true
+    mode: preserve
+  when:
+    - theme_name is defined
+    - not (theme_path.stat.exists | default(false))
+
+- name: Bootstrap theme symlink (first run only)
+  ansible.builtin.file:
+    src: "{{ ansible_facts.env.HOME }}/.config/omarchy/current/theme-active"
+    dest: "{{ ansible_facts.env.HOME }}/.config/omarchy/current/theme"
+    state: link
+  when:
+    - theme_name is defined
+    - not (theme_path.stat.exists | default(false))
+
+- name: Set theme background
+  ansible.builtin.file:
+    src: "{{ ansible_facts.env.HOME }}/.config/omarchy/current/theme/backgrounds/{{ theme_background }}"
+    dest: "{{ ansible_facts.env.HOME }}/.config/omarchy/current/background"
+    state: link
+    force: true
+  when: theme_background is defined
+
 # Config directories that need ansible processing (templates, mode changes)
 - name: Check which config directories to copy exist
   ansible.builtin.stat:
@@ -186,6 +248,13 @@
     state: link
     force: true
 
+- name: Override omarchy-theme-set with atomic swap version
+  ansible.builtin.file:
+    src: "{{ ansible_facts.env.HOME }}/.bin/omarchy-theme-set"
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/omarchy/bin/omarchy-theme-set"
+    state: link
+    force: true
+
 - name: Override omarchy screensaver with custom version
   ansible.builtin.file:
     src: "{{ ansible_facts.env.HOME }}/.bin/omarchy-cmd-screensaver"
@@ -352,58 +421,13 @@
     - dark-mode.d
 
 # Project launcher defaults
-- name: Ensure omarchy config directory exists
-  ansible.builtin.file:
-    path: "{{ ansible_facts.env.HOME }}/.config/omarchy"
-    state: directory
-    mode: '0755'
-
 - name: Deploy project launcher defaults
   ansible.builtin.template:
     src: project-defaults.sh.j2
     dest: "{{ ansible_facts.env.HOME }}/.config/omarchy/project-defaults.sh"
     mode: '0644'
 
-# Theme setup
-- name: Ensure omarchy current directory exists
-  ansible.builtin.file:
-    path: "{{ ansible_facts.env.HOME }}/.config/omarchy/current"
-    state: directory
-    mode: '0755'
-  when: theme_name is defined
-
-- name: Check if theme path is a directory (not symlink)
-  ansible.builtin.stat:
-    path: "{{ ansible_facts.env.HOME }}/.config/omarchy/current/theme"
-  register: theme_path
-  when: theme_name is defined
-
-- name: Remove theme directory if not a symlink
-  ansible.builtin.file:
-    path: "{{ ansible_facts.env.HOME }}/.config/omarchy/current/theme"
-    state: absent
-  when:
-    - theme_name is defined
-    - theme_path.stat.exists | default(false)
-    - theme_path.stat.isdir | default(false)
-    - not (theme_path.stat.islnk | default(false))
-
-- name: Set current theme symlink
-  ansible.builtin.file:
-    src: "{{ ansible_facts.env.HOME }}/.config/omarchy/themes/{{ theme_name }}"
-    dest: "{{ ansible_facts.env.HOME }}/.config/omarchy/current/theme"
-    state: link
-    force: true
-  when: theme_name is defined
-
-- name: Set theme background
-  ansible.builtin.file:
-    src: "{{ ansible_facts.env.HOME }}/.config/omarchy/current/theme/backgrounds/{{ theme_background }}"
-    dest: "{{ ansible_facts.env.HOME }}/.config/omarchy/current/background"
-    state: link
-    force: true
-  when: theme_background is defined
-
+# Apply theme (symlinks already set up at start of playbook)
 - name: Apply theme
   ansible.builtin.command:
     cmd: "{{ ansible_facts.env.HOME }}/.local/share/omarchy/bin/omarchy-theme-set {{ theme_name }}"

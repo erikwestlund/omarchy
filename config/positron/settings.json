@@ -1,5 +1,5 @@
 {
-    "workbench.iconTheme": "catppuccin-macchiato",
+    "workbench.iconTheme": "catppuccin-mocha",
     "files.associations": {
         "renv.lock": "json"
     },

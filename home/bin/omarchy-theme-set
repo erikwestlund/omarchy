@@ -1,0 +1,85 @@
+#!/bin/bash
+
+# Override of omarchy-theme-set with atomic theme swapping
+# Fixes race condition where hyprland.conf is missing during theme switch
+# Uses symlink + ln -sfn for truly atomic swap
+
+if [[ -z $1 ]]; then
+  echo "Usage: omarchy-theme-set <theme-name>"
+  exit 1
+fi
+
+CURRENT_DIR="$HOME/.config/omarchy/current"
+CURRENT_THEME_PATH="$CURRENT_DIR/theme"
+THEME_ACTIVE="$CURRENT_DIR/theme-active"
+THEME_NEW="$CURRENT_DIR/theme-new"
+USER_THEMES_PATH="$HOME/.config/omarchy/themes"
+OMARCHY_THEMES_PATH="$OMARCHY_PATH/themes"
+
+THEME_NAME=$(echo "$1" | sed -E 's/<[^>]+>//g' | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+
+if [[ -d "$USER_THEMES_PATH/$THEME_NAME" ]]; then
+  THEME_PATH="$USER_THEMES_PATH/$THEME_NAME"
+elif [[ -d "$OMARCHY_THEMES_PATH/$THEME_NAME" ]]; then
+  THEME_PATH="$OMARCHY_THEMES_PATH/$THEME_NAME"
+else
+  echo "Theme '$THEME_NAME' does not exist"
+  exit 1
+fi
+
+# Setup clean new theme directory
+rm -rf "$THEME_NEW"
+mkdir -p "$THEME_NEW"
+
+# Copy static configs
+cp -r "$THEME_PATH/"* "$THEME_NEW/" 2>/dev/null
+
+# Generate dynamic configs
+omarchy-theme-set-templates
+
+# ATOMIC SWAP using symlink
+# Ansible handles migration from directory to symlink structure.
+# Here we just need to swap theme-active atomically.
+
+# If theme is still a directory (ansible migration not run yet), migrate first
+if [[ -d "$CURRENT_THEME_PATH" && ! -L "$CURRENT_THEME_PATH" ]]; then
+  mv "$CURRENT_THEME_PATH" "$THEME_ACTIVE"
+  ln -s "$THEME_ACTIVE" "$CURRENT_THEME_PATH"
+fi
+
+# Swap theme-active: old -> backup, new -> active
+rm -rf "$THEME_ACTIVE.old"
+[[ -d "$THEME_ACTIVE" ]] && mv "$THEME_ACTIVE" "$THEME_ACTIVE.old"
+mv "$THEME_NEW" "$THEME_ACTIVE"
+
+# Ensure symlink points to theme-active (atomic update)
+ln -s "$THEME_ACTIVE" "$CURRENT_THEME_PATH.tmp"
+mv -Tf "$CURRENT_THEME_PATH.tmp" "$CURRENT_THEME_PATH"
+
+rm -rf "$THEME_ACTIVE.old"
+
+# Store theme name for reference
+echo "$THEME_NAME" > "$HOME/.config/omarchy/current/theme.name"
+
+# Change background with theme
+omarchy-theme-bg-next
+
+# Restart components to apply new theme
+if pgrep -x waybar >/dev/null; then
+  omarchy-restart-waybar
+fi
+omarchy-restart-swayosd
+omarchy-restart-terminal
+omarchy-restart-hyprctl
+omarchy-restart-btop
+omarchy-restart-opencode
+omarchy-restart-mako
+
+# Change app-specific themes
+omarchy-theme-set-gnome
+omarchy-theme-set-browser
+omarchy-theme-set-vscode
+omarchy-theme-set-obsidian
+
+# Call hook on theme set
+omarchy-hook theme-set "$THEME_NAME"

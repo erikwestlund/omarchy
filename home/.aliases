@@ -145,6 +145,10 @@ alias OPTIONS='curl -s -X OPTIONS'
 alias stfu="pamixer -m"
 alias pumpitup="pamixer --set-volume 100"
 
+# Waybar
+alias waybar-start="waybar &"
+alias waybar-restart="pkill waybar; waybar &"
+
 # Lock screen (requires i3lock, swaylock, or similar)
 alias afk="loginctl lock-session"
 
