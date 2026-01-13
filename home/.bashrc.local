@@ -6,3 +6,7 @@ shopt -s autocd
 
 # R user library - keep out of ~/
 export R_LIBS_USER="$HOME/.R/library"
+
+# Go - keep out of ~/
+export GOPATH="$HOME/.cache/go"
+export GOMODCACHE="$HOME/.cache/go/mod"

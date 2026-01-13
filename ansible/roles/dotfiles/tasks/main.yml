@@ -140,6 +140,30 @@
     state: link
     force: true
 
+# Sublime Text config (nested path structure)
+- name: Ensure Sublime Text User config directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/sublime-text/Packages/User"
+    state: directory
+    mode: '0755'
+
+- name: Find Sublime Text config files in repo
+  ansible.builtin.find:
+    paths: "{{ config_src }}/sublime-text/Packages/User"
+    patterns: "*"
+    file_type: file
+  register: sublime_files
+
+- name: Symlink Sublime Text User config files
+  ansible.builtin.file:
+    src: "{{ item.path }}"
+    dest: "{{ ansible_facts.env.HOME }}/.config/sublime-text/Packages/User/{{ item.path | basename }}"
+    state: link
+    force: true
+  loop: "{{ sublime_files.files }}"
+  loop_control:
+    label: "{{ item.path | basename }}"
+
 - name: Deploy host-specific Hyprland config
   ansible.builtin.template:
     src: looknfeel-host.conf.j2
