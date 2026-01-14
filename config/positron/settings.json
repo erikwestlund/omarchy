@@ -3,5 +3,8 @@
     "files.associations": {
         "renv.lock": "json"
     },
-    "workbench.colorTheme": "Catppuccin Mocha"
+    "workbench.colorTheme": "Catppuccin Mocha",
+    "terminal.integrated.commandsToSkipShell": [
+        "workbench.action.toggleSidebarVisibility"
+    ]
 }

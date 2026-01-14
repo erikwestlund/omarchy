@@ -1,76 +1,102 @@
 #!/bin/bash
 # Push project artifacts to NAS
+# Usage: artifacts-push [project]  - push one project
+#        artifacts-push            - push all projects with artifacts
 set -e
 
 PROJECTS_DIR="$HOME/Projects"
 NAS_DIR="/mnt/nas/WorkArtifacts"
 
-# Default patterns if no .artifacts file exists
-DEFAULT_PATTERNS=(
+# Default patterns for framework projects (auto-detected via framework.db)
+FRAMEWORK_PATTERNS=(
     "inputs/"
     "outputs/"
     "framework.db"
 )
 
-# Determine project
-if [[ -n "$1" ]]; then
-    PROJECT="$1"
-    PROJECT_DIR="$PROJECTS_DIR/$PROJECT"
-else
-    # Derive from current directory if under Projects
-    CURRENT_DIR="$(pwd)"
-    if [[ "$CURRENT_DIR" == "$PROJECTS_DIR/"* ]]; then
-        # Extract project name (first directory under Projects)
-        REL_PATH="${CURRENT_DIR#$PROJECTS_DIR/}"
-        PROJECT="${REL_PATH%%/*}"
-        PROJECT_DIR="$PROJECTS_DIR/$PROJECT"
-    else
-        echo "Error: Not in a project directory and no project specified"
-        echo "Usage: artifacts-push [project]"
-        exit 1
+push_project() {
+    local PROJECT="$1"
+    local PROJECT_DIR="$PROJECTS_DIR/$PROJECT"
+
+    if [[ ! -d "$PROJECT_DIR" ]]; then
+        echo "Error: Project directory not found: $PROJECT_DIR"
+        return 1
     fi
-fi
 
-if [[ ! -d "$PROJECT_DIR" ]]; then
-    echo "Error: Project directory not found: $PROJECT_DIR"
-    exit 1
-fi
+    echo "=== $PROJECT ==="
+    echo "Source: $PROJECT_DIR"
+    echo "Destination: $NAS_DIR/$PROJECT/"
 
-echo "Project: $PROJECT"
-echo "Source: $PROJECT_DIR"
-echo "Destination: $NAS_DIR/$PROJECT/"
+    # Build rsync include/exclude list
+    local RSYNC_ARGS=()
+    local ARTIFACTS_FILE="$PROJECT_DIR/.artifacts"
 
-# Build rsync include/exclude list
-RSYNC_ARGS=()
+    # Check for .artifacts file first
+    if [[ -f "$ARTIFACTS_FILE" ]] && [[ -s "$ARTIFACTS_FILE" ]]; then
+        echo "Using patterns from .artifacts"
+        while IFS= read -r pattern || [[ -n "$pattern" ]]; do
+            # Skip empty lines and comments
+            [[ -z "$pattern" || "$pattern" == \#* ]] && continue
+            RSYNC_ARGS+=(--include="$pattern" --include="$pattern**")
+        done < "$ARTIFACTS_FILE"
+    # Auto-detect framework projects via framework.db
+    elif [[ -f "$PROJECT_DIR/framework.db" ]]; then
+        echo "Detected framework project (framework.db found)"
+        for pattern in "${FRAMEWORK_PATTERNS[@]}"; do
+            RSYNC_ARGS+=(--include="$pattern" --include="$pattern**")
+        done
+    else
+        echo "No .artifacts file and no framework.db - skipping"
+        echo ""
+        return 0
+    fi
 
-# Check for .artifacts file
-ARTIFACTS_FILE="$PROJECT_DIR/.artifacts"
-if [[ -f "$ARTIFACTS_FILE" ]]; then
-    echo "Using patterns from .artifacts"
-    while IFS= read -r pattern || [[ -n "$pattern" ]]; do
-        # Skip empty lines and comments
-        [[ -z "$pattern" || "$pattern" == \#* ]] && continue
-        RSYNC_ARGS+=(--include="$pattern" --include="$pattern**")
-    done < "$ARTIFACTS_FILE"
-else
-    echo "Using default patterns (inputs/, outputs/, framework.db)"
-    for pattern in "${DEFAULT_PATTERNS[@]}"; do
-        RSYNC_ARGS+=(--include="$pattern" --include="$pattern**")
-    done
-fi
+    # Exclude everything else
+    RSYNC_ARGS+=(--exclude="*")
 
-# Exclude everything else
-RSYNC_ARGS+=(--exclude="*")
+    # Create project directory on NAS if needed
+    mkdir -p "$NAS_DIR/$PROJECT"
+
+    rsync -av --update --progress "${RSYNC_ARGS[@]}" "$PROJECT_DIR/" "$NAS_DIR/$PROJECT/"
+    echo ""
+}
+
+has_artifacts() {
+    local PROJECT_DIR="$1"
+    # Has .artifacts file with content, or has framework.db
+    [[ -f "$PROJECT_DIR/.artifacts" && -s "$PROJECT_DIR/.artifacts" ]] || [[ -f "$PROJECT_DIR/framework.db" ]]
+}
 
 # Trigger autofs mount
 ls "$NAS_DIR" > /dev/null 2>&1 || true
 
-# Create project directory on NAS if needed
-mkdir -p "$NAS_DIR/$PROJECT"
+if [[ -n "$1" ]]; then
+    # Single project specified
+    push_project "$1"
+elif [[ "$(pwd)" == "$PROJECTS_DIR/"* ]]; then
+    # In a project directory, push that project
+    REL_PATH="${PWD#$PROJECTS_DIR/}"
+    PROJECT="${REL_PATH%%/*}"
+    push_project "$PROJECT"
+else
+    # No argument and not in project dir: push all projects with artifacts
+    echo "Pushing all projects with artifacts..."
+    echo ""
 
-echo ""
-echo "Syncing..."
-rsync -av --update --progress "${RSYNC_ARGS[@]}" "$PROJECT_DIR/" "$NAS_DIR/$PROJECT/"
+    FOUND=0
+    for PROJECT_DIR in "$PROJECTS_DIR"/*/; do
+        [[ -d "$PROJECT_DIR" ]] || continue
+        PROJECT="$(basename "$PROJECT_DIR")"
+        if has_artifacts "$PROJECT_DIR"; then
+            push_project "$PROJECT"
+            FOUND=$((FOUND + 1))
+        fi
+    done
 
-echo ""
-echo "Done. Artifacts pushed to NAS."
+    if [[ $FOUND -eq 0 ]]; then
+        echo "No projects found with artifacts"
+        exit 1
+    fi
+
+    echo "Done. Pushed $FOUND project(s)."
+fi

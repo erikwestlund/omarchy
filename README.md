@@ -352,6 +352,35 @@ pm-new      # Interactive project scaffolding
 pm-remove   # Remove project and aliases
 ```
 
+### Project Artifacts
+
+Large project files (inputs, outputs, databases) are synced to NAS rather than git. Use `artifacts-push` and `artifacts-pull` to sync.
+
+```bash
+artifacts-push              # Push all projects with .artifacts file
+artifacts-push project      # Push specific project
+artifacts-pull              # Pull all projects from NAS
+artifacts-pull project      # Pull specific project
+```
+
+When inside a project directory, both commands operate on that project.
+
+#### .artifacts File
+
+Create a `.artifacts` file in your project root to specify which files/directories to sync:
+
+```
+# Lines starting with # are comments
+inputs/
+outputs/
+results/
+*.db
+```
+
+**Auto-detection**: Projects with `framework.db` at the root are automatically detected and use default patterns (`inputs/`, `outputs/`, `framework.db`) without needing a `.artifacts` file.
+
+Artifacts are stored on NAS at `/mnt/nas/WorkArtifacts/{project}/`.
+
 ## Secrets
 
 Secrets are encrypted with age and stored in Backblaze B2. Ansible vault stores B2/age credentials.

@@ -21,6 +21,6 @@
 │ vault-edit     Edit vault │ Ansible (om-*):           │ Common:                 │ Ctrl+1-9     Tabs        │                         │ om-dotfiles  Configs    │
 │ secrets-push   Push B2    │ om-dotfiles  Configs      │ om-apps      Pkgs+webap │ Ctrl+J/Sh+J/K Panel      │                         │ om-packages  Packages   │
 │ secrets-pull   Pull B2    │ om-packages  Packages     │ om-cleanup   Cleanup    │ Super+D      Multi-sel   │                         │ om-keyd      Keyd       │
-│                           │ om-keyd      Keyd remap   │ om-framework Laptop     │                          │                         │ om-secrets   Secrets    │
+│ S+A+Sh+K       Memory     │ om-keyd      Keyd remap   │ om-framework Laptop     │                          │                         │ om-secrets   Secrets    │
 │                           │ om-vscode    VS Code      │ om-nas       NAS mounts │                          │                         │ om-vscode    VS Code    │
 └───────────────────────────┴───────────────────────────┴─────────────────────────┴──────────────────────────┴─────────────────────────┴─────────────────────────┘

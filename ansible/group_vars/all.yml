@@ -100,6 +100,7 @@ pacman_packages:
   # Clipboard
   - cliphist
   - wl-clipboard
+  - wl-clip-persist
   - wtype
 
   # Bluetooth
@@ -207,6 +208,7 @@ syncthing_screenshots_folder_id: "erik-screenshots"
 syncthing_scans_folder_id: "scans"
 syncthing_chromium_folder_id: "erik-chromium"
 syncthing_photos_folder_id: "erik-photos"
+syncthing_downloads_folder_id: "erik-downloads"
 
 
 # Config directories to COPY (require ansible processing like templates or mode changes)

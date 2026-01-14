@@ -1,51 +1,87 @@
 #!/bin/bash
 # Pull project artifacts from NAS
+# Usage: artifacts-pull [project]  - pull one project
+#        artifacts-pull            - pull all projects that exist on NAS
 set -e
 
 PROJECTS_DIR="$HOME/Projects"
 NAS_DIR="/mnt/nas/WorkArtifacts"
 
-# Determine project
-if [[ -n "$1" ]]; then
-    PROJECT="$1"
-    PROJECT_DIR="$PROJECTS_DIR/$PROJECT"
-else
-    # Derive from current directory if under Projects
-    CURRENT_DIR="$(pwd)"
-    if [[ "$CURRENT_DIR" == "$PROJECTS_DIR/"* ]]; then
-        # Extract project name (first directory under Projects)
-        REL_PATH="${CURRENT_DIR#$PROJECTS_DIR/}"
-        PROJECT="${REL_PATH%%/*}"
-        PROJECT_DIR="$PROJECTS_DIR/$PROJECT"
-    else
-        echo "Error: Not in a project directory and no project specified"
-        echo "Usage: artifacts-pull [project]"
-        exit 1
-    fi
-fi
+pull_project() {
+    local PROJECT="$1"
+    local PROJECT_DIR="$PROJECTS_DIR/$PROJECT"
+    local NAS_PROJECT_DIR="$NAS_DIR/$PROJECT"
 
-if [[ ! -d "$PROJECT_DIR" ]]; then
-    echo "Error: Project directory not found: $PROJECT_DIR"
-    exit 1
-fi
+    if [[ ! -d "$PROJECT_DIR" ]]; then
+        echo "Warning: Local project directory not found: $PROJECT_DIR (skipping)"
+        return 0
+    fi
+
+    if [[ ! -d "$NAS_PROJECT_DIR" ]]; then
+        echo "Warning: No artifacts on NAS for: $PROJECT (skipping)"
+        return 0
+    fi
+
+    echo "=== $PROJECT ==="
+    echo "Source: $NAS_PROJECT_DIR/"
+    echo "Destination: $PROJECT_DIR"
+
+    rsync -av --update --progress "$NAS_PROJECT_DIR/" "$PROJECT_DIR/"
+    echo ""
+}
 
 # Trigger autofs mount
 ls "$NAS_DIR" > /dev/null 2>&1 || true
 
-NAS_PROJECT_DIR="$NAS_DIR/$PROJECT"
-if [[ ! -d "$NAS_PROJECT_DIR" ]]; then
-    echo "Error: No artifacts found on NAS for project: $PROJECT"
-    echo "Expected: $NAS_PROJECT_DIR"
-    exit 1
+if [[ -n "$1" ]]; then
+    # Single project specified
+    PROJECT_DIR="$PROJECTS_DIR/$1"
+    NAS_PROJECT_DIR="$NAS_DIR/$1"
+
+    if [[ ! -d "$PROJECT_DIR" ]]; then
+        echo "Error: Project directory not found: $PROJECT_DIR"
+        exit 1
+    fi
+
+    if [[ ! -d "$NAS_PROJECT_DIR" ]]; then
+        echo "Error: No artifacts found on NAS for project: $1"
+        exit 1
+    fi
+
+    pull_project "$1"
+elif [[ "$(pwd)" == "$PROJECTS_DIR/"* ]]; then
+    # In a project directory, pull that project
+    REL_PATH="${PWD#$PROJECTS_DIR/}"
+    PROJECT="${REL_PATH%%/*}"
+    NAS_PROJECT_DIR="$NAS_DIR/$PROJECT"
+
+    if [[ ! -d "$NAS_PROJECT_DIR" ]]; then
+        echo "Error: No artifacts found on NAS for project: $PROJECT"
+        exit 1
+    fi
+
+    pull_project "$PROJECT"
+else
+    # No argument and not in project dir: pull all projects on NAS
+    echo "Pulling all projects from NAS..."
+    echo ""
+
+    FOUND=0
+    for NAS_PROJECT_DIR in "$NAS_DIR"/*/; do
+        [[ -d "$NAS_PROJECT_DIR" ]] || continue
+        PROJECT="$(basename "$NAS_PROJECT_DIR")"
+
+        # Only pull if local project exists
+        if [[ -d "$PROJECTS_DIR/$PROJECT" ]]; then
+            pull_project "$PROJECT"
+            FOUND=$((FOUND + 1))
+        fi
+    done
+
+    if [[ $FOUND -eq 0 ]]; then
+        echo "No matching projects found"
+        exit 1
+    fi
+
+    echo "Done. Pulled $FOUND project(s)."
 fi
-
-echo "Project: $PROJECT"
-echo "Source: $NAS_PROJECT_DIR/"
-echo "Destination: $PROJECT_DIR"
-
-echo ""
-echo "Syncing..."
-rsync -av --update --progress "$NAS_PROJECT_DIR/" "$PROJECT_DIR/"
-
-echo ""
-echo "Done. Artifacts pulled from NAS."

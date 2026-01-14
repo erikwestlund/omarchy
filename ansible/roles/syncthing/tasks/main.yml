@@ -70,6 +70,7 @@
     - Screenshots
     - Scans
     - Photos
+    - Downloads
 
 - name: Create .stfolder markers for all sync directories
   ansible.builtin.file:
@@ -83,6 +84,7 @@
     - Screenshots
     - Scans
     - Photos
+    - Downloads
   changed_when: false
 
 - name: Add Documents folder
@@ -243,3 +245,18 @@
     syncthing cli config folders {{ syncthing_photos_folder_id }} devices add
     --device-id {{ syncthing_server_device_id }}
   when: syncthing_photos_folder_id not in syncthing_folders.stdout
+
+# Downloads sync
+- name: Add Downloads folder
+  ansible.builtin.command: >
+    syncthing cli config folders add
+    --id "{{ syncthing_downloads_folder_id }}"
+    --label "Downloads"
+    --path ~/Downloads
+  when: syncthing_downloads_folder_id not in syncthing_folders.stdout
+
+- name: Associate Downloads with server
+  ansible.builtin.command: >
+    syncthing cli config folders {{ syncthing_downloads_folder_id }} devices add
+    --device-id {{ syncthing_server_device_id }}
+  when: syncthing_downloads_folder_id not in syncthing_folders.stdout
