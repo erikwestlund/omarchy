@@ -26,15 +26,6 @@ rclone copy :b2,account=$B2_KEY,key=$B2_SECRET:erik-secrets/bootstrap/secrets.ym
 # 6. Run playbook (aliases not available yet, use full command)
 # -K prompts for sudo password
 ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l laptop -K  # or desktop
-
-# 7. Switch to SSH remote
-git -C ~/Omarchy remote set-url origin git@github.com:erikwestlund/omarchy.git
-
-# 8. Load SSH key (deployed by secrets role in step 6)
-eval "$(ssh-agent -s)" && ssh-add ~/.ssh/id_ed25519
-
-# 9. Reload shell to get aliases, then use 'om' for future runs
-exec bash
 ```
 
 ## Machines
@@ -98,8 +89,7 @@ omarchy/
 │   └── etc/              # → /etc/
 ├── projects/             # Project launcher scripts
 ├── scripts/              # Setup/utility scripts
-├── docs/manual/          # Omarchy manual reference
-└── bootstrap.sh          # Initial setup script
+└── docs/manual/          # Omarchy manual reference
 ```
 
 ## Applications
