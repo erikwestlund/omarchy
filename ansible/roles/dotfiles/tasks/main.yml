@@ -386,6 +386,18 @@
     state: directory
     mode: '0755'
 
+- name: Check if darkman mode file exists
+  ansible.builtin.stat:
+    path: "{{ ansible_facts.env.HOME }}/.local/share/darkman/mode"
+  register: darkman_mode_file
+
+- name: Set default darkman mode to light (first run only)
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/darkman/mode"
+    content: "light"
+    mode: '0644'
+  when: not darkman_mode_file.stat.exists
+
 - name: Deploy darkman mode scripts
   ansible.builtin.copy:
     src: "{{ omarchy_repo }}/local/share/darkman/"
