@@ -239,40 +239,97 @@ om-desktop            # Force desktop target
 
 **Special handling**: vscode, positron (managed by vscode role)
 
-## Key Aliases
+## Aliases
 
 After running ansible, these are available (defined in `home/.aliases`):
+
+### Navigation
+
+| Alias | Action |
+|-------|--------|
+| `..` / `...` / `....` | Go up 1/2/3 directories |
+| `~` | cd to home |
+| `-` | cd to previous directory |
+| `dl` / `dt` | cd to Downloads / Desktop |
+| `p` / `projects` | cd to ~/Projects |
+| `pm` | cd to ~/Omarchy/projects |
 
 ### Omarchy
 
 | Alias | Action |
 |-------|--------|
 | `om` | Run full ansible playbook |
-| `om --tags X` | Run specific tags (dotfiles, packages, keyd, secrets, webapps, vscode) |
+| `om --tags X` | Run specific tags |
 | `om-laptop` / `om-desktop` | Force target machine |
-| `om-config` | Shortcut for `om --tags dotfiles` |
-| `om-packages` | Shortcut for `om --tags packages` |
-| `om-apps` | Shortcut for `om --tags packages,webapps` |
+| `om-dotfiles` / `om-config` | Deploy dotfiles |
+| `om-packages` | Deploy packages |
+| `om-apps` / `om-software` | Deploy packages + webapps |
+| `om-webapps` | Deploy webapps only |
+| `om-secrets` | Deploy secrets |
+| `om-keyd` | Deploy keyboard config |
+| `om-vscode` | Deploy VS Code settings |
+| `om-vscode-ext` | Deploy VS Code + install extensions |
+| `om-framework` | Deploy Framework laptop config |
+| `om-nas` | Deploy NAS mounts |
+| `om-syncthing` | Deploy Syncthing config |
+| `om-sshd` | Deploy SSH server config |
+| `om-printer` | Deploy printer config |
+| `om-chromium` | Deploy Chromium config |
+| `om-snapper` | Deploy Snapper snapshots |
+| `om-cleanup` | Run cleanup tasks |
+| `om-remotes` | Deploy remote configs |
+| `om-dnsmasq` | Deploy dnsmasq |
+| `om-caddy` | Deploy Caddy |
+| `om-vpn` | Deploy VPN config |
+| `om-gpu` | Deploy GPU config |
+| `om-openrgb` | Deploy OpenRGB |
+| `om-sync` | Git pull && push Omarchy repo |
 | `omarchy` / `oma` | cd to ~/Omarchy |
 
 ### Git
 
 | Alias | Action |
 |-------|--------|
+| `g` | git |
 | `s` / `gs` | git status |
+| `gsv` | git status -v |
+| `gb` | git branch |
+| `ga` | git add |
+| `gap` | git add -p (patch mode) |
+| `gc` | git commit --verbose |
+| `gca` | git commit -a --verbose |
+| `gcm` | git commit -m |
+| `gcam` | git commit -a -m |
+| `gam` | git commit --amend --verbose |
+| `gm` | git merge |
+| `gd` | git diff |
+| `gds` | git diff --stat |
+| `gdc` | git diff --cached |
 | `co` / `gco` | git checkout |
-| `ac` | git add . && git commit -am |
-| `pushmain` / `pullmain` | push/pull origin main |
-| `ghclone user/repo` | Clone from GitHub via SSH |
+| `gcob` | git checkout -b |
+| `ac` / `gac` | git add . && git commit -am |
 | `wippush` | git add . && commit "wip" && push |
+| `rao` / `grao` | git remote add origin |
+| `ghclone user/repo` | Clone from GitHub via SSH |
+| `pushmain` / `pullmain` | push/pull origin main |
+| `pushmaster` / `pullmaster` | push/pull origin master |
+| `pushdev` / `pulldev` | push/pull origin dev |
+| `pushstaging` / `pullstaging` | push/pull origin staging |
+| `pushall` | git push --all origin |
 
 ### Docker
 
 | Alias | Action |
 |-------|--------|
-| `d` / `dc` | docker / docker compose |
-| `dcu` / `dcd` | docker compose up/down |
+| `d` | docker |
+| `dc` | docker compose |
+| `dcu` / `dcd` | docker compose up / down |
+| `dcb` | docker compose build |
 | `dps` / `dpsa` | docker ps / docker ps -a |
+| `di` | docker images |
+| `dls` / `dlsa` | docker container ls / ls -a |
+| `dclean` | docker system prune -f |
+| `dcleanall` | docker system prune -a -f |
 
 ### Tmux
 
@@ -280,7 +337,24 @@ After running ansible, these are available (defined in `home/.aliases`):
 |-------|--------|
 | `tmnew NAME` | tmux new -s NAME |
 | `tma NAME` | tmux attach -t NAME |
+| `tmd` | tmux detach |
+| `tmk NAME` | tmux kill-session -t NAME |
+| `tmkk` | tmux kill-server |
 | `tmls` | tmux ls |
+
+### Arch Linux (pacman/yay)
+
+| Alias | Action |
+|-------|--------|
+| `pac` | sudo pacman |
+| `pacs` | sudo pacman -S (install) |
+| `pacr` / `pacrs` | sudo pacman -R / -Rs (remove) |
+| `pacu` | sudo pacman -Syu (update) |
+| `pacq` / `pacqs` | pacman -Q / -Qs (query) |
+| `pacss` | pacman -Ss (search) |
+| `yays` | yay -S (install AUR) |
+| `yayu` | yay -Syu (update all) |
+| `yayss` | yay -Ss (search AUR) |
 
 ### Secrets
 
@@ -294,16 +368,105 @@ After running ansible, these are available (defined in `home/.aliases`):
 
 | Alias | Action |
 |-------|--------|
-| `vspush` | Push local VS Code settings to repo |
-| `vspull` | Pull repo VS Code settings to local |
-| `vscode-sync` | Deploy VS Code settings via ansible |
+| `vspush` | Push local settings to repo |
+| `vspull` | Pull repo settings to local |
+| `vscode-sync` | Deploy via ansible |
+
+### Calendar
+
+| Alias | Action |
+|-------|--------|
+| `cal` | Show week calendar |
+| `calm` | Show month calendar |
+| `agenda` | Show upcoming events |
+| `today` | Show today's events |
+
+### Files & Output
+
+| Alias | Action |
+|-------|--------|
+| `ls` | ls --color=auto |
+| `l` | ls -lF |
+| `la` | ls -lAF |
+| `lsd` | List directories only |
+| `clip` | Copy to clipboard |
+| `c` | Copy without newline |
+| `path` | Print PATH entries |
+
+### Network & System
+
+| Alias | Action |
+|-------|--------|
+| `myip` | Get public IP |
+| `localip` | Get local IP |
+| `flushdns` | Flush DNS cache |
+| `week` | Get week number |
+| `afk` | Lock screen |
+| `reload` | Reload shell |
+
+### HTTP Methods
+
+| Alias | Action |
+|-------|--------|
+| `GET` / `POST` / `PUT` / `DELETE` | curl -X METHOD |
+| `HEAD` | curl -I |
+| `OPTIONS` | curl -X OPTIONS |
+
+### Media & Hardware
+
+| Alias | Action |
+|-------|--------|
+| `stfu` | Mute audio |
+| `pumpitup` | Volume to 100% |
+| `nvme-info` | Show NVMe SMART info |
+| `printer-status` | Show printer status |
+| `printer-reset` | Reset printer connection |
+
+### Waybar
+
+| Alias | Action |
+|-------|--------|
+| `waybar-start` | Start waybar |
+| `waybar-restart` | Restart waybar |
+
+### Python
+
+| Alias | Action |
+|-------|--------|
+| `pvenv` | Activate venv |
+| `pym` | python manage.py |
+| `rundj` | python manage.py runserver |
+
+### Laravel/PHP (Docker)
+
+Auto-detects if in `~/Projects/{name}` with `{name}-php` container running:
+
+| Command | Action |
+|---------|--------|
+| `php` | Run PHP (container or local) |
+| `art` | Run php artisan |
+| `composer` | Run composer |
+
+### NeoVim
+
+| Alias | Action |
+|-------|--------|
+| `nv` | nvim |
 
 ### Windows VM
 
 | Alias | Action |
 |-------|--------|
-| `win-spice` | Connect to Windows VM via SPICE (for setup) |
-| `windows` | Launch Windows VM via RDP (daily use) |
+| `win-spice` | Connect via SPICE (for setup) |
+| `windows` | Launch via RDP (daily use) |
+
+### Other
+
+| Alias | Action |
+|-------|--------|
+| `ap` | ansible-playbook |
+| `map` | xargs -n1 |
+| `ksteam` | Kill Steam |
 
 ## Projects
 
