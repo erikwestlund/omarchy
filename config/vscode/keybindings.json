@@ -98,7 +98,10 @@
 
     // Toggle sidebar (Super+E via keyd -> Ctrl+E)
     { "key": "ctrl+b", "command": "-workbench.action.toggleSidebarVisibility" },
-    { "key": "ctrl+e", "command": "workbench.action.toggleSidebarVisibility" },
+    { "key": "ctrl+e", "command": "workbench.action.toggleSidebarVisibility", "when": "!terminalFocus" },
+
+    // Pass Ctrl+E to terminal (end of line in shell)
+    { "key": "ctrl+e", "command": "workbench.action.terminal.sendSequence", "args": { "text": "\u0005" }, "when": "terminalFocus" },
 
     // Kill terminal with Super+W (via keyd -> Ctrl+W)
     { "key": "ctrl+w", "command": "workbench.action.terminal.kill", "when": "terminalFocus" },

@@ -1,3 +1,17 @@
 [
-	{ "keys": ["super+d"], "command": "find_under_expand" }
+	{ "keys": ["super+d"], "command": "find_under_expand" },
+	{ "keys": ["super+c"], "command": "copy" },
+	{ "keys": ["super+x"], "command": "cut" },
+	{ "keys": ["super+v"], "command": "paste" },
+	{ "keys": ["super+a"], "command": "select_all" },
+	{ "keys": ["super+z"], "command": "undo" },
+	{ "keys": ["super+shift+z"], "command": "redo" },
+	{ "keys": ["super+s"], "command": "save" },
+	{ "keys": ["super+w"], "command": "close" },
+	{ "keys": ["super+q"], "command": "close_window" },
+	{ "keys": ["super+f"], "command": "show_panel", "args": {"panel": "find", "reverse": false} },
+	{ "keys": ["super+p"], "command": "show_overlay", "args": {"overlay": "goto", "show_files": true} },
+	{ "keys": ["super+shift+p"], "command": "show_overlay", "args": {"overlay": "command_palette"} },
+	{ "keys": ["super+g"], "command": "find_next" },
+	{ "keys": ["super+/"], "command": "toggle_comment", "args": { "block": false } }
 ]

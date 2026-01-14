@@ -154,55 +154,30 @@ Installed as Chromium desktop entries: Outlook, Outlook Calendar (Day/Week views
 
 ## Waybar
 
-The status bar at the top of the screen. Config in `config/waybar/`.
-
-### Files
-
-| File | Purpose |
-|------|---------|
-| `config.jsonc` | Module layout and behavior |
-| `style.css` | Styling |
-| `scripts/` | Custom module scripts |
+Status bar config in `config/waybar/`. Files: `config.jsonc` (modules), `style.css` (styling), `scripts/` (custom modules).
 
 ### Layout
 
-The config defines two bar profiles:
-- **external** - for external monitors (DP-*, HDMI-*)
-- **laptop** - for built-in display (eDP-1)
+- **Left**: Workspace indicators (U, 1-12) with window counts
+- **Center**: Media player, update indicator
+- **Right**: VPN, tray, tmux, bluetooth, network, audio, CPU, battery (laptop only), dark mode, weather, clock
 
-Each bar has three sections:
-- **Left**: Workspace indicators (U, 1-12)
-- **Center**: Media player, update indicator, screen recording
-- **Right**: VPN, tailscale, tray, tmux, bluetooth, network, audio, CPU, battery, dark mode, weather, clock
+### Custom Scripts
 
-### Workspace Indicators
+| Script | Purpose |
+|--------|---------|
+| `workspace.sh` | Workspace window counts |
+| `darkman.sh` | Light/dark mode indicator |
+| `weather.sh` | Weather display |
+| `vpn.sh` / `tailscale.sh` / `pia.sh` | VPN status |
+| `tmux.sh` | Active tmux sessions |
 
-Each workspace (U, 1-12) has its own module that shows:
-- Window count in that workspace
-- Visual indicator when workspace is active
-- Click to switch to that workspace
+### Host-Specific Changes
 
-The workspace script (`scripts/workspace.sh`) queries Hyprland for window counts.
-
-### Custom Modules
-
-| Module | Script | Purpose |
-|--------|--------|---------|
-| `custom/darkman` | `darkman.sh` | Light/dark mode toggle |
-| `custom/weather` | `weather.sh` | Weather display |
-| `custom/media` | `media.sh` | Now playing info |
-| `custom/vpn` | `vpn.sh` | JHU VPN status |
-| `custom/tailscale` | `tailscale.sh` | Tailscale status |
-| `custom/pia` | `pia.sh` | PIA VPN status |
-| `custom/tmux` | `tmux.sh` | Active tmux sessions |
-| `custom/workspace` | `workspace.sh` | Workspace window counts |
-
-### Host-Specific Styling
-
-Ansible deploys `waybar-host.css` with per-machine values from `host_vars/`:
-- Font sizes
-- Margins and padding
-- Border radius
+Ansible modifies the deployed config per machine:
+- **Laptop**: Adds battery module
+- **Desktop**: Adds extra CPU icon spacing (no battery)
+- **Both**: Applies margins/height from `host_vars/`, deploys `waybar-host.css` with font sizes
 
 ## Light/Dark Mode
 

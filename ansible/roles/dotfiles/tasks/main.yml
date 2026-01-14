@@ -209,8 +209,8 @@
 - name: Add battery module to waybar on laptops
   ansible.builtin.replace:
     path: "{{ ansible_facts.env.HOME }}/.config/waybar/config.jsonc"
-    regexp: '"cpu",(\s*)"custom/weather"'
-    replace: '"cpu",\1"battery",\1"custom/weather"'
+    regexp: '"cpu",(\s*)"custom/darkman"'
+    replace: '"cpu",\1"battery",\1"custom/darkman"'
   when: show_battery | default(false)
 
 - name: Add extra spacing to CPU icon on desktop (no battery)
