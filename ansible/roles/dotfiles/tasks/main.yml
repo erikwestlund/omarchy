@@ -511,3 +511,16 @@
     mode: '0644'
     content: |
       enabled=False
+
+# GTK/GNOME settings
+- name: Set GTK4 file chooser to sort directories first
+  community.general.dconf:
+    key: "/org/gtk/gtk4/settings/file-chooser/sort-directories-first"
+    value: "true"
+    state: present
+
+- name: Set GTK3 file chooser to sort directories first
+  community.general.dconf:
+    key: "/org/gtk/settings/file-chooser/sort-directories-first"
+    value: "true"
+    state: present
