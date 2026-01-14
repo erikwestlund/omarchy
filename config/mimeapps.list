@@ -68,3 +68,7 @@ application/vnd.openxmlformats-officedocument.presentationml.presentation=onlyof
 application/vnd.oasis.opendocument.text=onlyoffice-desktopeditors.desktop
 application/vnd.oasis.opendocument.spreadsheet=onlyoffice-desktopeditors.desktop
 application/vnd.oasis.opendocument.presentation=onlyoffice-desktopeditors.desktop
+
+# Zoom
+x-scheme-handler/zoommtg=Zoom.desktop
+x-scheme-handler/zoomus=Zoom.desktop
