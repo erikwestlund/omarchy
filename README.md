@@ -23,20 +23,17 @@ echo "laptop" > ~/.machine   # or "desktop"
 rclone copy :b2,account=$B2_KEY,key=$B2_SECRET:erik-secrets/bootstrap/secrets.yml \
   ~/Omarchy/ansible/vault/
 
-# 6. Add GitHub SSH host key (first time only)
-ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-# 7. Run playbook (aliases not available yet, use full command)
+# 6. Run playbook (aliases not available yet, use full command)
 # -K prompts for sudo password
 ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l laptop -K  # or desktop
 
-# 8. Switch to SSH remote
+# 7. Switch to SSH remote
 git -C ~/Omarchy remote set-url origin git@github.com:erikwestlund/omarchy.git
 
-# 9. Load SSH key (deployed by secrets role in step 7)
+# 8. Load SSH key (deployed by secrets role in step 6)
 eval "$(ssh-agent -s)" && ssh-add ~/.ssh/id_ed25519
 
-# 10. Reload shell to get aliases, then use 'om' for future runs
+# 9. Reload shell to get aliases, then use 'om' for future runs
 exec bash
 ```
 
@@ -104,6 +101,138 @@ omarchy/
 ├── docs/manual/          # Omarchy manual reference
 └── bootstrap.sh          # Initial setup script
 ```
+
+## Applications
+
+Packages and apps managed by ansible. See `ansible/group_vars/all.yml` for full lists.
+
+### Installed via Pacman
+
+| Category | Packages |
+|----------|----------|
+| Core | coreutils, findutils, grep, sed, rsync, rclone, age, htop, iotop, tree, openssh, gnupg, wget, curl |
+| Archive | p7zip, pigz |
+| Network | iperf3, lynx, tailscale, syncthing, openconnect, webkit2gtk |
+| Hardware | bolt, fwupd, lm_sensors, nvme-cli |
+| Development | cmake, pkg-config, imagemagick, ffmpeg, yt-dlp, python-pip, nodejs, npm, jq, socat |
+| Shell | zsh, tmux |
+| Fonts | inter-font, ttf-font-awesome, ttf-jetbrains-mono |
+| Git | git-lfs |
+| R/Stats | r, gcc-fortran |
+| LaTeX | texlive-basic, texlive-latex, texlive-latexrecommended, texlive-latexextra, texlive-fontsrecommended, texlive-xetex, texlive-bibtexextra |
+| Browsers | firefox |
+| Media | vlc, isoimagewriter |
+| Gaming | steam, lutris, gnutls, lib32-gnutls |
+| Desktop | flameshot, cliphist, wl-clipboard, wtype, bluez-utils, darkman, geoclue, wev |
+| Virtualization | libvirt, qemu-full, virt-manager, virt-viewer, dnsmasq, bridge-utils, edk2-ovmf, swtpm, freerdp, remmina, libvncserver, openbsd-netcat |
+
+### Installed via AUR
+
+| Category | Packages |
+|----------|----------|
+| Dev Tools | sublime-text-4, visual-studio-code-bin, openai-codex, opencode-bin, stripe-cli, nvm, nodejs-nodemon, nodejs-vite, tableplus, beekeeper-studio-bin, sublime-merge, insomnia-bin, ansible, doctl-bin |
+| Communication | slack-desktop, zoom, bluebubbles-bin |
+| R Ecosystem | rstudio-desktop-bin, quarto-cli-bin, positron-ide-devel-bin |
+| Research | zotero |
+| Hyprland | hyprswitch |
+| Calendar | morgen-bin, gcalcli |
+| Benchmarking | geekbench |
+| VPN | pulse-secure, piavpn-bin |
+| Remote | icaclient |
+| Email | fastmail |
+| Office | onlyoffice-bin |
+
+### Web Apps
+
+Installed as Chromium desktop entries: Outlook, Outlook Calendar (Day/Week views), Word, Excel, PowerPoint, Teams, Claude, Plex
+
+### Removed (Omarchy defaults we don't use)
+
+**Packages**: alacritty, kdenlive, signal-desktop, xournalpp
+
+**Web apps**: Figma, Fizzy, Google Contacts, Google Messages, Google Photos, Google Maps, HEY, WhatsApp, X
+
+## Waybar
+
+The status bar at the top of the screen. Config in `config/waybar/`.
+
+### Files
+
+| File | Purpose |
+|------|---------|
+| `config.jsonc` | Module layout and behavior |
+| `style.css` | Styling |
+| `scripts/` | Custom module scripts |
+
+### Layout
+
+The config defines two bar profiles:
+- **external** - for external monitors (DP-*, HDMI-*)
+- **laptop** - for built-in display (eDP-1)
+
+Each bar has three sections:
+- **Left**: Workspace indicators (U, 1-12)
+- **Center**: Media player, update indicator, screen recording
+- **Right**: VPN, tailscale, tray, tmux, bluetooth, network, audio, CPU, battery, dark mode, weather, clock
+
+### Workspace Indicators
+
+Each workspace (U, 1-12) has its own module that shows:
+- Window count in that workspace
+- Visual indicator when workspace is active
+- Click to switch to that workspace
+
+The workspace script (`scripts/workspace.sh`) queries Hyprland for window counts.
+
+### Custom Modules
+
+| Module | Script | Purpose |
+|--------|--------|---------|
+| `custom/darkman` | `darkman.sh` | Light/dark mode toggle |
+| `custom/weather` | `weather.sh` | Weather display |
+| `custom/media` | `media.sh` | Now playing info |
+| `custom/vpn` | `vpn.sh` | JHU VPN status |
+| `custom/tailscale` | `tailscale.sh` | Tailscale status |
+| `custom/pia` | `pia.sh` | PIA VPN status |
+| `custom/tmux` | `tmux.sh` | Active tmux sessions |
+| `custom/workspace` | `workspace.sh` | Workspace window counts |
+
+### Host-Specific Styling
+
+Ansible deploys `waybar-host.css` with per-machine values from `host_vars/`:
+- Font sizes
+- Margins and padding
+- Border radius
+
+## Light/Dark Mode
+
+Uses [darkman](https://darkman.whynothugo.nl/) for GTK theme switching.
+
+### Configuration
+
+Darkman is configured for **manual mode only** - it won't auto-switch at sunrise/sunset. Toggle manually via the waybar widget or command line.
+
+Config in `config/darkman/config.yaml`:
+```yaml
+usegeoclue: false    # Disables automatic switching
+portal: true         # Exposes mode to apps via XDG portal
+dbusserver: true     # Required for toggle command
+```
+
+### Usage
+
+- **Click waybar widget** - Toggle between light/dark
+- `darkman set light` - Set light mode
+- `darkman set dark` - Set dark mode
+- `darkman toggle` - Toggle current mode
+- `darkman get` - Print current mode
+
+### What Changes
+
+When mode changes, darkman runs scripts in `~/.local/share/darkman/`:
+- `gtk-theme.sh` - Sets GTK theme (Adwaita/Adwaita-dark) and color-scheme preference
+
+Apps that respect the XDG portal color-scheme setting will follow automatically.
 
 ## Workflow
 
@@ -279,17 +408,17 @@ The ansible vault (`ansible/vault/secrets.yml`) must contain these secrets:
 
 ```yaml
 # B2 storage (for secrets backup)
-vault_b2_key_id: "..."
-vault_b2_app_key: "..."
-vault_b2_bucket: "..."
+b2_key_id: "..."
+b2_app_key: "..."
+b2_bucket: "..."
 
 # Age encryption
-vault_age_secret_key: "AGE-SECRET-KEY-..."
-vault_age_public_key: "age1..."
+age_secret_key: "AGE-SECRET-KEY-..."
+age_public_key: "age1..."
 
 # NAS credentials
-vault_nas_erik_username: "..."
-vault_nas_erik_password: "..."
+nas_erik_username: "..."
+nas_erik_password: "..."
 
 # GitHub Container Registry (optional - for pulling private images)
 github_username: "your-github-username"

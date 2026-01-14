@@ -1,10 +1,9 @@
 # Darkman configuration
-# Set location manually (Boston)
-lat: 42.36
-lng: -71.06
+# Manual mode only - no automatic sunrise/sunset switching
+usegeoclue: false
 
 # Portal integration (exposes preference to apps via XDG portal)
 portal: true
 
-# D-Bus API
+# D-Bus API (required for toggle command)
 dbusserver: true
