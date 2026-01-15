@@ -293,6 +293,13 @@
     state: link
     force: true
 
+- name: Override omarchy gnome theme to use darkman mode
+  ansible.builtin.file:
+    src: "{{ ansible_facts.env.HOME }}/.bin/omarchy-theme-set-gnome"
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/omarchy/bin/omarchy-theme-set-gnome"
+    state: link
+    force: true
+
 - name: Override omarchy power profiles list with custom version
   ansible.builtin.file:
     src: "{{ ansible_facts.env.HOME }}/.bin/omarchy-powerprofiles-list"

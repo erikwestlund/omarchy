@@ -1,0 +1,49 @@
+#!/bin/bash
+# Fetch and display tasks from Morgen API
+# Outputs two sections: INBOX (no due date or due today) and LATER (future due dates)
+
+set -euo pipefail
+
+# Load API key from secrets config
+SECRETS_CONFIG="$HOME/.config/secrets/config"
+if [[ -f "$SECRETS_CONFIG" ]]; then
+    # shellcheck source=/dev/null
+    source "$SECRETS_CONFIG"
+fi
+
+if [[ -z "${MORGEN_API_KEY:-}" ]]; then
+    echo "Error: MORGEN_API_KEY not set" >&2
+    exit 1
+fi
+
+API_URL="https://api.morgen.so/v3/tasks/list?limit=100"
+TODAY=$(date +%Y-%m-%d)
+
+# Fetch tasks from Morgen API
+response=$(curl -sS --max-time 10 \
+    -H "accept: application/json" \
+    -H "Authorization: ApiKey $MORGEN_API_KEY" \
+    "$API_URL")
+
+# Check for errors
+if echo "$response" | jq -e '.message' >/dev/null 2>&1; then
+    echo "API Error: $(echo "$response" | jq -r '.message')" >&2
+    exit 1
+fi
+
+# Parse and categorize tasks
+# Inbox: no due date OR due today or overdue, not completed
+# Later: due date in the future, not completed
+echo "$response" | jq -r --arg today "$TODAY" '
+    .data.tasks // []
+    | map(select(.progress == "needs-action" or .progress == "in-process"))
+    | {
+        inbox: [.[] | select(.due == null or (.due | split("T")[0]) <= $today)],
+        later: [.[] | select(.due != null and (.due | split("T")[0]) > $today)]
+      }
+    | "INBOX",
+      (.inbox | sort_by(.position) | reverse | .[] | "  \(.title)" + if .due then " [\(.due | split("T")[0])]" else "" end),
+      "",
+      "LATER",
+      (.later | sort_by(.due) | .[] | "  \(.title) [\(.due | split("T")[0])]")
+'

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=Zoom
+Comment=Video Conferencing
+Exec=/home/erik/.bin/zoom-scaled %U
+Terminal=false
+Type=Application
+Icon=/home/erik/.local/share/icons/Zoom.png
+StartupNotify=true
+Categories=Network;VideoConference;
+MimeType=x-scheme-handler/zoommtg;x-scheme-handler/zoomus;

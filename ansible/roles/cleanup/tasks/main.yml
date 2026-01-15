@@ -40,3 +40,9 @@
   when:
     - cleanup_webapps | default([]) | length > 0
     - item is match('^[a-z]')  # Only lowercase names (system files like xdvi.desktop)
+
+# Remove Zoom webapp plumbing (replaced with native client)
+- name: Remove Zoom webapp handler script
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.local/share/omarchy/bin/omarchy-webapp-handler-zoom"
+    state: absent

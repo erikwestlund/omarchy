@@ -1,0 +1,17 @@
+#!/bin/bash
+# Launch Zoom with HiDPI scaling for XWayland
+# If Zoom window exists, focus it (switch workspaces if needed)
+# If no window (tray only), kill and restart fresh
+
+if hyprctl clients | grep -q "class: zoom"; then
+    # Window exists - focus it
+    hyprctl dispatch focuswindow "class:zoom"
+    exit 0
+fi
+
+# No window - kill any tray instance and start fresh
+pkill -x zoom 2>/dev/null
+sleep 0.3
+
+export QT_SCALE_FACTOR=2
+exec /usr/bin/zoom "$@"

@@ -1,6 +1,7 @@
 [Unit]
-Description=Sync Google Calendar agenda
+Description=Sync Google Calendar agenda and Morgen tasks
 
 [Service]
 Type=oneshot
 ExecStart=/home/erik/.bin/agenda-sync
+ExecStart=/home/erik/.bin/morgen-tasks-sync

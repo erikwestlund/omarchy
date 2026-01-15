@@ -1,14 +1,62 @@
 #!/bin/bash
-# Show calendar and agenda from cache (synced every 5 minutes)
+# Show calendar, agenda, and tasks from cache (synced every 5 minutes)
 
-CACHE_FILE="$HOME/.cache/agenda"
+AGENDA_CACHE="$HOME/.cache/agenda"
+TASKS_CACHE="$HOME/.cache/morgen-tasks"
 
 # Show current and next month side by side
 cal -n 3
 echo ""
 
-if [[ -f "$CACHE_FILE" ]]; then
-    cat "$CACHE_FILE"
+# Show calendar events
+if [[ -f "$AGENDA_CACHE" ]]; then
+    cat "$AGENDA_CACHE"
 else
     echo "Agenda not yet synced. Run: agenda-sync"
+fi
+
+# Show tasks if cache exists
+if [[ -f "$TASKS_CACHE" ]] && [[ -s "$TASKS_CACHE" ]]; then
+    echo ""
+    echo ""
+
+    # Parse tasks into inbox and later sections
+    inbox_tasks=()
+    later_tasks=()
+    current_section=""
+
+    while IFS= read -r line; do
+        if [[ "$line" == "INBOX" ]]; then
+            current_section="inbox"
+        elif [[ "$line" == "LATER" ]]; then
+            current_section="later"
+        elif [[ -n "$line" && "$line" =~ ^[[:space:]] ]]; then
+            if [[ "$current_section" == "inbox" ]]; then
+                inbox_tasks+=("$line")
+            elif [[ "$current_section" == "later" ]]; then
+                later_tasks+=("$line")
+            fi
+        fi
+    done < "$TASKS_CACHE"
+
+    # Calculate column width (half terminal minus some padding)
+    term_width=$(tput cols 2>/dev/null || echo 80)
+    col_width=$(( (term_width - 4) / 2 ))
+
+    # Print headers
+    printf "%-${col_width}s  %s\n" "INBOX" "LATER"
+    printf "%-${col_width}s  %s\n" "$(printf '%*s' "$col_width" '' | tr ' ' '-')" "$(printf '%*s' "$col_width" '' | tr ' ' '-')"
+
+    # Print tasks side by side
+    max_lines=${#inbox_tasks[@]}
+    [[ ${#later_tasks[@]} -gt $max_lines ]] && max_lines=${#later_tasks[@]}
+
+    for ((i=0; i<max_lines; i++)); do
+        left="${inbox_tasks[$i]:-}"
+        right="${later_tasks[$i]:-}"
+        # Truncate if too long
+        left="${left:0:$col_width}"
+        right="${right:0:$col_width}"
+        printf "%-${col_width}s  %s\n" "$left" "$right"
+    done
 fi

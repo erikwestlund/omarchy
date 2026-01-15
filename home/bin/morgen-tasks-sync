@@ -1,0 +1,6 @@
+#!/bin/bash
+# Sync Morgen tasks to cache file
+
+CACHE_FILE="$HOME/.cache/morgen-tasks"
+
+morgen-tasks > "$CACHE_FILE" 2>/dev/null || true
