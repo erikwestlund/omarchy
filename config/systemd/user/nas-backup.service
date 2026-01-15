@@ -1,0 +1,8 @@
+[Unit]
+Description=Backup home directory to NAS
+
+[Service]
+Type=oneshot
+ExecStart=%h/.bin/nas-backup
+StandardOutput=journal
+StandardError=journal

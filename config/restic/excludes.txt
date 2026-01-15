@@ -1,0 +1,58 @@
+# Caches
+.cache
+.npm/_cacache
+.local/share/Trash
+.local/share/baloo
+
+# Build artifacts
+node_modules
+target
+__pycache__
+.venv
+venv
+.tox
+.eggs
+*.egg-info
+
+# Large generated files
+*.iso
+*.qcow2
+*.vmdk
+
+# Synced elsewhere / can be re-downloaded
+.local/share/Steam
+.steam
+
+# Git objects (can be re-fetched)
+.git/objects
+
+# IDE caches
+.idea
+.vscode-server
+
+# Temporary files
+*.tmp
+*.swp
+*~
+.DS_Store
+
+# Browser caches
+.config/chromium/Default/Service Worker
+.config/chromium/Default/Cache
+.config/google-chrome
+
+# Electron app caches
+.config/Code/CachedData
+.config/Code/Cache
+.config/Slack/Cache
+.config/discord/Cache
+
+# Package manager caches
+.cargo/registry
+.rustup/toolchains
+.gradle/caches
+.m2/repository
+
+# Container/VM data
+.local/share/containers
+.local/share/libvirt

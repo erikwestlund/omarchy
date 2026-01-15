@@ -1,0 +1,60 @@
+#!/bin/bash
+# Add a task to Morgen
+# Usage: addtask "Task title" [list]
+#   list: inbox (default), future/later
+
+set -euo pipefail
+
+# Load API key from secrets config
+SECRETS_CONFIG="$HOME/.config/secrets/config"
+if [[ -f "$SECRETS_CONFIG" ]]; then
+    # shellcheck source=/dev/null
+    source "$SECRETS_CONFIG"
+fi
+
+if [[ -z "${MORGEN_API_KEY:-}" ]]; then
+    echo "Error: MORGEN_API_KEY not set" >&2
+    exit 1
+fi
+
+if [[ -z "${1:-}" ]]; then
+    echo "Usage: addtask \"Task title\" [inbox|future]" >&2
+    exit 1
+fi
+
+TITLE="$1"
+LIST="${2:-inbox}"
+
+# Map list names to IDs
+case "${LIST,,}" in
+    inbox)
+        TASK_LIST_ID="inbox"
+        ;;
+    future|later)
+        TASK_LIST_ID="da08b5b4-e54c-4734-80cf-3047e9bd2dac@morgen.so"
+        ;;
+    *)
+        echo "Unknown list: $LIST (use inbox or future)" >&2
+        exit 1
+        ;;
+esac
+
+# Create task via API
+response=$(curl -sS --max-time 10 \
+    -X POST \
+    -H "accept: application/json" \
+    -H "Authorization: ApiKey $MORGEN_API_KEY" \
+    -H "Content-Type: application/json" \
+    -d "{\"title\": \"$TITLE\", \"taskListId\": \"$TASK_LIST_ID\"}" \
+    "https://api.morgen.so/v3/tasks/create")
+
+# Check for errors
+if echo "$response" | jq -e '.message' >/dev/null 2>&1; then
+    echo "Error: $(echo "$response" | jq -r '.message')" >&2
+    exit 1
+fi
+
+echo "Added: $TITLE → $LIST"
+
+# Refresh cache
+"$HOME/.bin/morgen-tasks-sync" 2>/dev/null &

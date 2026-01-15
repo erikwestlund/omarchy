@@ -504,3 +504,9 @@ alias bs-media-sync='rclone sync better-shoes-r2:better-shoes better-shoes-minio
 
 # Steam
 alias ksteam="pkill -9 steam"
+
+# Audio fix (restart PipeWire when browser loses audio)
+alias audio-fix='systemctl --user restart pipewire pipewire-pulse && echo "PipeWire restarted"'
+
+# Morgen tasks
+alias tasks='morgen-tasks'

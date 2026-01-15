@@ -51,6 +51,11 @@ use_power_profiles_daemon: true
 # Snapper snapshots disabled on laptop
 snapper_enabled: false
 
+# NAS backup (hourly on laptop, skip when battery low)
+backup_enabled: true
+backup_calendar: "hourly"
+backup_battery_threshold: 40  # Skip backup below this battery %
+
 # Additional laptop-specific packages (merged with all.yml)
 extra_pacman_packages:
   - power-profiles-daemon

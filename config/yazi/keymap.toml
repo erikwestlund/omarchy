@@ -1,0 +1,62 @@
+# Yazi keymap - Finder-like bookmarks
+
+[[manager.prepend_keymap]]
+on = ["g", "h"]
+run = "cd ~"
+desc = "Go to Home"
+
+[[manager.prepend_keymap]]
+on = ["g", "d"]
+run = "cd ~/Documents"
+desc = "Go to Documents"
+
+[[manager.prepend_keymap]]
+on = ["g", "D"]
+run = "cd ~/Downloads"
+desc = "Go to Downloads"
+
+[[manager.prepend_keymap]]
+on = ["g", "p"]
+run = "cd ~/Projects"
+desc = "Go to Projects"
+
+[[manager.prepend_keymap]]
+on = ["g", "s"]
+run = "cd ~/Screenshots"
+desc = "Go to Screenshots"
+
+[[manager.prepend_keymap]]
+on = ["g", "n"]
+run = "cd /mnt/nas"
+desc = "Go to NAS"
+
+[[manager.prepend_keymap]]
+on = ["g", "o"]
+run = "cd ~/Work/OneDrive"
+desc = "Go to OneDrive"
+
+[[manager.prepend_keymap]]
+on = ["g", "c"]
+run = "cd ~/.config"
+desc = "Go to Config"
+
+[[manager.prepend_keymap]]
+on = ["g", "O"]
+run = "cd ~/Omarchy"
+desc = "Go to Omarchy"
+
+[[manager.prepend_keymap]]
+on = ["g", "t"]
+run = "cd ~/.local/share/Trash/files"
+desc = "Go to Trash"
+
+# Quick actions
+[[manager.prepend_keymap]]
+on = ["<Space>"]
+run = "toggle"
+desc = "Toggle selection"
+
+[[manager.prepend_keymap]]
+on = ["<Enter>"]
+run = "open"
+desc = "Open file"

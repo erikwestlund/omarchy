@@ -49,6 +49,10 @@ cpu_governor: performance
 # Snapper snapshots (desktop only, cleanup at 2am)
 snapper_enabled: true
 
+# NAS backup (every 15 minutes on desktop)
+backup_enabled: true
+backup_calendar: "*:0/15"
+
 # Additional desktop-specific packages (merged with all.yml)
 extra_pacman_packages:
   - i2c-tools

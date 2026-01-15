@@ -1,0 +1,33 @@
+# Yazi config - Finder-like experience
+
+[manager]
+# Layout ratio: parent / current / preview
+# More space for preview like Finder
+ratio = [1, 3, 4]
+
+# Sort directories first, then by name
+sort_by = "natural"
+sort_sensitive = false
+sort_reverse = false
+sort_dir_first = true
+
+# Show hidden files (toggle with .)
+show_hidden = false
+show_symlink = true
+
+[preview]
+# Enable previews
+tab_size = 2
+max_width = 1000
+max_height = 1000
+
+# Image preview (if supported)
+image_filter = "triangle"
+image_quality = 75
+sixel_fraction = 15
+
+[opener]
+# Open with default app
+open = [
+  { run = 'xdg-open "$@"', desc = "Open", for = "linux" }
+]

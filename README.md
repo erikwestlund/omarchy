@@ -60,13 +60,14 @@ Host vars also control: waybar styling, Windows VM RDP settings, extra packages.
 ```
 omarchy/
 ├── ansible/              # Ansible playbooks and roles
-│   ├── playbook.yml      # Main entry point
+│   ├── playbook.yml      # Main entry point (workstations)
+│   ├── restic-server.yml # Restic backup server (Proxmox VM)
 │   ├── windows-vm.yml    # Optional Windows VM setup
-│   ├── inventory.yml     # Hosts: laptop, desktop, minio-dev
+│   ├── inventory.yml     # Hosts: laptop, desktop, restic, hatchery
 │   ├── group_vars/       # Shared config (packages, dotfiles lists)
 │   ├── host_vars/        # Per-machine settings
 │   ├── vault/            # Encrypted secrets (ansible-vault)
-│   └── roles/            # dotfiles, packages, keyd, secrets, nas, syncthing, etc.
+│   └── roles/            # dotfiles, packages, keyd, proxmox-vm, etc.
 ├── home/                 # Files symlinked to ~/
 │   ├── .aliases          # Shell aliases (includes project shortcuts)
 │   ├── .bashrc           # Bash config
@@ -577,6 +578,9 @@ age_public_key: "age1..."
 nas_erik_username: "..."
 nas_erik_password: "..."
 
+# Restic backup password
+restic_password: "..."
+
 # GitHub Container Registry (optional - for pulling private images)
 github_username: "your-github-username"
 github_pat: "ghp_..."  # needs read:packages scope
@@ -674,6 +678,69 @@ Configure resolution/scaling in `host_vars/desktop.yml`:
 ```yaml
 windows_vm_resolution: "1920x1080"
 windows_vm_scale: "100"  # 200 for HiDPI
+```
+
+## Restic Backup Server
+
+A dedicated VM on the Proxmox homelab for backup management:
+- **Cleanup job**: Daily at 3am, prunes old snapshots (24 hourly, 7 daily, 4 weekly, 6 monthly)
+- **Backrest**: Web UI for browsing/restoring snapshots at http://restic.lan:9898
+
+### Deploy/Redeploy
+
+```bash
+ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/restic-server.yml
+```
+
+This will:
+1. Create/recreate VM 106 on Proxmox (hatchery.lan) from Ubuntu 24.04 cloud image
+2. Configure cloud-init with SSH key
+3. Mount NAS share (`//192.168.1.10/SystemSnapshots`)
+4. Install restic and set up cleanup timer
+5. Install Backrest web UI
+
+### Configuration
+
+The playbook is at `ansible/restic-server.yml`. Key settings:
+
+| Setting | Value |
+|---------|-------|
+| VM ID | 106 |
+| Hostname | restic |
+| IP | 192.168.1.27 (DHCP, MAC: BC:24:11:3C:FC:F2) |
+| Memory | 1GB |
+| Storage | bolt (ZFS) |
+| NAS Mount | `/mnt/nas/SystemSnapshots` |
+
+### Backrest Setup
+
+After deployment, open http://restic.lan:9898 and add your repository:
+- **Path**: `/mnt/nas/SystemSnapshots`
+- **Password**: (from vault: `restic_password`)
+
+### Manual Cleanup
+
+```bash
+ssh restic.lan "sudo /usr/local/bin/restic-cleanup"
+```
+
+### Proxmox VM Role
+
+The `proxmox-vm` role can deploy VMs from cloud images to Proxmox. Used by `restic-server.yml` but reusable for other VMs:
+
+```yaml
+- hosts: localhost
+  vars:
+    proxmox_host: hatchery.lan
+    vm_id: 107
+    vm_name: myvm
+    vm_memory: 2048
+    vm_mac_address: "AA:BB:CC:DD:EE:FF"
+    cloud_image_url: "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+    cloudinit_user: erik
+    proxmox_storage: bolt
+  roles:
+    - proxmox-vm
 ```
 
 ## Adding a New Machine

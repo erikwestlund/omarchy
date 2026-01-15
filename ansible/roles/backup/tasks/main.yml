@@ -1,0 +1,124 @@
+---
+# NAS backup using restic
+
+- name: Install restic
+  become: true
+  community.general.pacman:
+    name: restic
+    state: present
+  when: backup_enabled | default(false)
+
+- name: Create restic config directory
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/restic"
+    state: directory
+    mode: '0700'
+  when: backup_enabled | default(false)
+
+- name: Deploy restic password file
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.config/restic/password"
+    content: "{{ restic_password }}"
+    mode: '0600'
+  when: backup_enabled | default(false)
+  no_log: true
+
+- name: Deploy restic excludes file
+  ansible.builtin.copy:
+    src: "{{ omarchy_repo }}/config/restic/excludes.txt"
+    dest: "{{ ansible_facts.env.HOME }}/.config/restic/excludes.txt"
+    mode: '0644'
+  when: backup_enabled | default(false)
+
+- name: Check if restic repository is initialized
+  ansible.builtin.command:
+    cmd: restic -r {{ backup_repository }} --password-file {{ ansible_facts.env.HOME }}/.config/restic/password snapshots
+  register: restic_check
+  changed_when: false
+  failed_when: false
+  when: backup_enabled | default(false)
+
+- name: Initialize restic repository
+  ansible.builtin.command:
+    cmd: restic -r {{ backup_repository }} --password-file {{ ansible_facts.env.HOME }}/.config/restic/password init
+  when:
+    - backup_enabled | default(false)
+    - restic_check.rc != 0
+    - "'Is there a repository at the following location' in restic_check.stderr or 'unable to open config file' in restic_check.stderr"
+
+# Timer schedule is set via drop-in (base timer is in config/systemd/user/)
+- name: Create nas-backup timer drop-in directory
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/systemd/user/nas-backup.timer.d"
+    state: directory
+    mode: '0755'
+  when: backup_enabled | default(false)
+
+- name: Deploy nas-backup timer schedule override
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.config/systemd/user/nas-backup.timer.d/schedule.conf"
+    mode: '0644'
+    content: |
+      [Timer]
+      OnCalendar={{ backup_calendar }}
+  when: backup_enabled | default(false)
+  notify: reload user systemd
+
+# Service environment is set via drop-in (base service is in config/systemd/user/)
+- name: Create nas-backup service drop-in directory
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/systemd/user/nas-backup.service.d"
+    state: directory
+    mode: '0755'
+  when: backup_enabled | default(false)
+
+- name: Deploy nas-backup service environment override
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.config/systemd/user/nas-backup.service.d/environment.conf"
+    mode: '0644'
+    content: |
+      [Service]
+      Environment=BACKUP_REPOSITORY={{ backup_repository }}
+      Environment=BACKUP_PASSWORD_FILE=%h/.config/restic/password
+      Environment=BACKUP_EXCLUDES=%h/.config/restic/excludes.txt
+      Environment=BACKUP_NAS_IP={{ backup_nas_ip }}
+      Environment=BACKUP_BATTERY_THRESHOLD={{ backup_battery_threshold }}
+      Environment=BACKUP_PING_TIMEOUT={{ backup_ping_timeout }}
+      Environment=BACKUP_MOUNT_TIMEOUT={{ backup_mount_timeout }}
+      Environment=BACKUP_NICE_LEVEL={{ backup_nice_level }}
+      Environment=BACKUP_IONICE_CLASS={{ backup_ionice_class }}
+  when: backup_enabled | default(false)
+  notify: reload user systemd
+
+- name: Flush handlers to reload systemd
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable and start nas-backup timer
+  ansible.builtin.systemd:
+    name: nas-backup.timer
+    enabled: true
+    state: started
+    scope: user
+  when: backup_enabled | default(false)
+
+# Cleanup when disabled
+- name: Stop and disable nas-backup timer (when backup disabled)
+  ansible.builtin.systemd:
+    name: nas-backup.timer
+    enabled: false
+    state: stopped
+    scope: user
+  when: not (backup_enabled | default(false))
+  ignore_errors: true
+
+- name: Remove timer drop-in directory (when backup disabled)
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/systemd/user/nas-backup.timer.d"
+    state: absent
+  when: not (backup_enabled | default(false))
+
+- name: Remove service drop-in directory (when backup disabled)
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/systemd/user/nas-backup.service.d"
+    state: absent
+  when: not (backup_enabled | default(false))

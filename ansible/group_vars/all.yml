@@ -19,6 +19,7 @@ pacman_packages:
   - htop
   - iotop
   - tree
+  - yazi
   - openssh
   - gnupg
   - wget
@@ -227,6 +228,7 @@ config_dirs_symlink:
   - systemd
   - wireplumber
   - xdg-desktop-portal
+  - yazi
 
 # Home dotfiles to sync (home/.foo -> ~/.foo)
 home_dotfiles:

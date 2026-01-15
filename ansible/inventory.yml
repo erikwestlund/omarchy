@@ -10,3 +10,9 @@ all:
     minio-dev:
       ansible_host: minio-dev.lan
       ansible_user: erik
+    restic:
+      ansible_host: restic.lan
+      ansible_user: erik
+    hatchery:
+      ansible_host: hatchery.lan
+      ansible_user: root

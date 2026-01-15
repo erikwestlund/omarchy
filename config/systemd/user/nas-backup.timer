@@ -1,0 +1,10 @@
+[Unit]
+Description=NAS Backup Timer
+
+[Timer]
+OnBootSec=5min
+# OnCalendar set via drop-in override (host-specific)
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,63 @@
+#!/bin/bash
+# Backup home directory to NAS using restic
+# Runs via systemd timer, skips gracefully if conditions not met
+# Configuration via environment variables (set by systemd service)
+
+set -e
+
+# Configuration (with defaults)
+REPO="${BACKUP_REPOSITORY:-/mnt/nas/SystemSnapshots}"
+PASSWORD_FILE="${BACKUP_PASSWORD_FILE:-$HOME/.config/restic/password}"
+EXCLUDES="${BACKUP_EXCLUDES:-$HOME/.config/restic/excludes.txt}"
+NAS_IP="${BACKUP_NAS_IP:-192.168.1.10}"
+BATTERY_THRESHOLD="${BACKUP_BATTERY_THRESHOLD:-40}"
+PING_TIMEOUT="${BACKUP_PING_TIMEOUT:-1}"
+MOUNT_TIMEOUT="${BACKUP_MOUNT_TIMEOUT:-10}"
+NICE_LEVEL="${BACKUP_NICE_LEVEL:-19}"
+IONICE_CLASS="${BACKUP_IONICE_CLASS:-3}"
+
+# On laptops, skip if battery is low (preserve power when it matters)
+if [[ -d /sys/class/power_supply/BAT0 ]]; then
+    battery_level=$(cat /sys/class/power_supply/BAT0/capacity 2>/dev/null || echo "100")
+    if [[ "$battery_level" -lt "$BATTERY_THRESHOLD" ]]; then
+        echo "Battery at ${battery_level}% (<${BATTERY_THRESHOLD}%), skipping backup"
+        exit 0
+    fi
+fi
+
+# Quick ping check before triggering autofs mount (avoids network timeout on offline NAS)
+if ! ping -c 1 -W "$PING_TIMEOUT" "$NAS_IP" &>/dev/null; then
+    echo "NAS not reachable, skipping backup"
+    exit 0
+fi
+
+# Verify mount is accessible (this triggers autofs)
+if ! timeout "$MOUNT_TIMEOUT" ls "$REPO" &>/dev/null; then
+    echo "NAS share not available, skipping backup"
+    exit 0
+fi
+
+# Check password file exists
+if [[ ! -f "$PASSWORD_FILE" ]]; then
+    echo "Error: Password file not found at $PASSWORD_FILE"
+    exit 1
+fi
+
+# Build exclude args
+EXCLUDE_ARGS=""
+if [[ -f "$EXCLUDES" ]]; then
+    EXCLUDE_ARGS="--exclude-file $EXCLUDES"
+fi
+
+# Run backup with low priority (don't compete with user work)
+echo "Starting backup of $HOME to $REPO"
+nice -n "$NICE_LEVEL" ionice -c "$IONICE_CLASS" restic -r "$REPO" \
+    --password-file "$PASSWORD_FILE" \
+    $EXCLUDE_ARGS \
+    backup "$HOME" \
+    --tag "plan:$(hostname)" \
+    --tag "$(hostname)" \
+    --tag "home" \
+    --one-file-system
+
+echo "Backup completed: $(date)"

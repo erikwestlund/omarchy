@@ -4,5 +4,6 @@
     "editor.minimap.enabled": false,
     "terminal.integrated.commandsToSkipShell": [
         "workbench.action.toggleSidebarVisibility"
-    ]
+    ],
+    "terminal.integrated.fontSize": 13
 }

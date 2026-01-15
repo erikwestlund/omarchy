@@ -57,6 +57,7 @@
       ISOs  -fstype=cifs,credentials=/etc/nas-creds,uid=erik,gid=erik,iocharset=utf8  ://192.168.1.10/ISOs
       Research  -fstype=cifs,credentials=/etc/nas-creds,uid=erik,gid=erik,iocharset=utf8  ://192.168.1.10/Research
       WorkArtifacts  -fstype=cifs,credentials=/etc/nas-creds,uid=erik,gid=erik,iocharset=utf8  ://192.168.1.10/WorkArtifacts
+      SystemSnapshots  -fstype=cifs,credentials=/etc/nas-creds,uid=erik,gid=erik,iocharset=utf8  ://192.168.1.10/SystemSnapshots
   notify: Restart autofs
 
 - name: Enable and start autofs

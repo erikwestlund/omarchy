@@ -1,26 +1,26 @@
-┌─ Window Management ───────┬─ Apps (Super+Shift+) ─────┬─ Terminal ──────────────┬─ Editor (VS/Positron) ───┬─ Neovim ────────────────┬─ Projects ──────────────┐
+┌─ Window Management ───────┬─ Apps (Super+Shift+) ─────┬─ Terminal ──────────────┬─ Editor (VS/Positron) ───┬─ Yazi (Sup+Ctrl+Y) ─────┬─ Projects ──────────────┐
 │ Super+Return   Terminal   │ O Outlook    B Browser    │ Ghostty:                │ Super+P      Files       │ Navigation:             │ Aliases: l k tm b {x}   │
-│ Super+Space    Launcher   │ T Teams      N Obsidian   │ Ctrl+Sh+N    New tab    │ Super+Sh+P   Commands    │ Super+HJKL    Focus     │ pm-new         New proj │
-│ Super+Alt+Sp   Menu       │ R Slack      S Spotify    │ Ctrl+Sh+T    View tabs  │ Super+F      Find        │ Alt+Sh+HJKL   Swap      │ pm-import-fw   Import R │
-│ Super+Q        Close      │ G GitHub     E Email      │ Ctrl+Sh+E/O  Split ↓/→  │ Super+E      Sidebar     │ Super+Sh+,/.  Width     ├─────────────────────────┤
-│ Super+O        Float+Pin  │ U Claude     / 1Pass      │ Ctrl+Alt+Arr Move split │                          │ Super+Sh+[/]  Height    │ bs       better-shoes   │
-│ Ctrl+Sh+M      Maximize   │ Ctrl+Sh+X    1Pass menu   │ Alt+W        Close tab  │ Editing:                 │ Alt+J         Split     │ drtp     ohdsi-dr       │
-│ Super+Y        Scratch    │                           │ Alt+←/→      Prev/next  │ Super+S      Save        │ Super+Sh+D    Layout    │ fw       framework      │
-├─ Workspaces ──────────────┼───────────────────────────┤ Prefix+Tab   Next win   │ Super+W      Close       │                         │ fws      framework-site │
-│ Super+1-9,0    Switch     │ Screenshots:              │ Prefix+>/<   Sessions   │ Super+Z/Sh+Z Undo/Redo   │ Window Mgmt:            │ hl       homelab        │
-│ Super+Sh+#     Move win   │ Super+Ctrl+2 Full         │                         │ Ctrl+K       Delete ln   │ Super+Arr     Focus     │ mhmi     mh-missing     │
-│ Super+grave    Utility    │ Super+Ctrl+3 Select       │ Text Nav (keyd):        │ Ctrl+D       Duplicate   │ Super+Sh+Arr  Swap      │ na       naaccord       │
-├─ Media ───────────────────┼───────────────────────────┤ Alt+←/→      Line start/│ Alt+Sh+↑/↓   Move line   │ Sup+Alt+N     Float     │ om       omarchy        │
-│ Mute  Vol+/-   Bright+/-  │ Utilities:                │              end        │ Ctrl+↑/↓     Pg Up/Down  │ Super+LMB     Move      │ park     parkukb        │
-│ Prev  Play     Next       │ Super+Ctrl+S Search       │ Alt+↑/↓      Doc top/bot│ Super+Alt+L  Format      │ Super+RMB     Resize    │ peq      pequod         │
-├─ Help ────────────────────┤ Super+Ctrl+C Calc         │ +Shift       Select     │                          │                         │ tnt      tnt-syphilis   │
-│ Alt+K          Hotkeys    │ Super+Alt+V  Clipbrd      │                         │ Navigation:              │ Developer:              ├─────────────────────────┤
-│ Super+Alt+H    Cheatsht   │ Super+Ctrl+V VPN          │ Commands:               │ Super+[/]    Ed/Term     │ Ctrl+Sh+C     Dev Tools │ Ansible (om-*):         │
-│ Super+Alt+J    Cal+Agenda │ Super+Ctrl+J JHU VPN      │ ksteam       Kill Steam │ Super+Alt+[/] Tabs       │ Ctrl+Sh+I     Inspect   │ om           Full run   │
-├─ Secrets ─────────────────┼───────────────────────────┼─────────────────────────┤ Super+Alt+N  New file    │ F12           Console   │ om-sync      Git sync   │
-│ vault-edit     Edit vault │ Ansible (om-*):           │ Common:                 │ Ctrl+1-9     Tabs        │                         │ om-dotfiles  Configs    │
-│ secrets-push   Push B2    │ om-dotfiles  Configs      │ om-apps      Pkgs+webap │ Ctrl+J/Sh+J/K Panel      │                         │ om-packages  Packages   │
-│ secrets-pull   Pull B2    │ om-packages  Packages     │ om-cleanup   Cleanup    │ Super+D      Multi-sel   │                         │ om-keyd      Keyd       │
+│ Super+Space    Launcher   │ T Teams      N Obsidian   │ Ctrl+Sh+N    New tab    │ Super+Sh+P   Commands    │ h/l          Left/Right │ pm-new         New proj │
+│ Super+Alt+Sp   Menu       │ R Slack      S Spotify    │ Ctrl+Sh+T    View tabs  │ Super+F      Find        │ j/k          Down/Up    │ pm-import-fw   Import R │
+│ Super+Q        Close      │ G GitHub     E Email      │ Ctrl+Sh+E/O  Split ↓/→  │ Super+E      Sidebar     │ Enter        Open       ├─────────────────────────┤
+│ Super+O        Float+Pin  │ U Claude     / 1Pass      │ Ctrl+Alt+Arr Move split │                          │ q            Quit       │ bs       better-shoes   │
+│ Ctrl+Sh+M      Maximize   │ Ctrl+Sh+X    1Pass menu   │ Alt+W        Close tab  │ Editing:                 │                         │ drtp     ohdsi-dr       │
+│ Super+Y        Scratch    │                           │ Alt+←/→      Prev/next  │ Super+S      Save        │ Bookmarks (g+key):      │ fw       framework      │
+├─ Workspaces ──────────────┼───────────────────────────┤ Prefix+Tab   Next win   │ Super+W      Close       │ h Home    d Docs        │ fws      framework-site │
+│ Super+1-9,0    Switch     │ Screenshots:              │ Prefix+>/<   Sessions   │ Super+Z/Sh+Z Undo/Redo   │ D Downloads p Projects  │ hl       homelab        │
+│ Super+Sh+#     Move win   │ Super+Ctrl+2 Full         │                         │ Ctrl+K       Delete ln   │ n NAS     o OneDrive    │ mhmi     mh-missing     │
+│ Super+grave    Utility    │ Super+Ctrl+3 Select       │ Text Nav (keyd):        │ Ctrl+D       Duplicate   │ s Screenshots t Trash   │ na       naaccord       │
+├─ Media ───────────────────┼───────────────────────────┤ Alt+←/→      Line start/│ Alt+Sh+↑/↓   Move line   │                         │ om       omarchy        │
+│ Mute  Vol+/-   Bright+/-  │ Utilities:  Ctrl+Y Yazi   │              end        │ Ctrl+↑/↓     Pg Up/Down  │ Actions:                │ park     parkukb        │
+│ Prev  Play     Next       │ Super+Ctrl+S Search       │ Alt+↑/↓      Doc top/bot│ Super+Alt+L  Format      │ Space  Select           │ peq      pequod         │
+├─ Help ────────────────────┤ Super+Ctrl+C Calc         │ +Shift       Select     │                          │ y/p    Copy/Paste       │ tnt      tnt-syphilis   │
+│ Alt+K          Hotkeys    │ Super+Alt+V  Clipbrd      │                         │ Navigation:              │ d      Delete           ├─────────────────────────┤
+│ Super+Alt+H    Cheatsht   │ Super+Ctrl+V VPN          │ Commands:               │ Super+[/]    Ed/Term     │ a      Create file      │ Ansible (om-*):         │
+│ Super+Alt+J    Cal+Agenda │ Super+Ctrl+J JHU VPN      │ tasks        List tasks │ Super+Alt+[/] Tabs       │ A      Create dir       │ om           Full run   │
+├─ Secrets ─────────────────┼───────────────────────────┼─────────────────────────┤ Super+Alt+N  New file    │ r      Rename           │ om-sync      Git sync   │
+│ vault-edit     Edit vault │ Ansible (om-*):           │ Common:                 │ Ctrl+1-9     Tabs        │ .      Toggle hidden    │ om-dotfiles  Configs    │
+│ secrets-push   Push B2    │ om-dotfiles  Configs      │ om-apps      Pkgs+webap │ Ctrl+J/Sh+J/K Panel      │ /      Search           │ om-packages  Packages   │
+│ secrets-pull   Pull B2    │ om-packages  Packages     │ om-cleanup   Cleanup    │ Super+D      Multi-sel   │ ~      Go home          │ om-keyd      Keyd       │
 │ S+A+Sh+K       Memory     │ om-keyd      Keyd remap   │ om-framework Laptop     │                          │                         │ om-secrets   Secrets    │
 │                           │ om-vscode    VS Code      │ om-nas       NAS mounts │                          │                         │ om-vscode    VS Code    │
 └───────────────────────────┴───────────────────────────┴─────────────────────────┴──────────────────────────┴─────────────────────────┴─────────────────────────┘
