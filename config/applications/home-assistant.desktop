@@ -2,7 +2,7 @@
 Name=Home Assistant
 Comment=Home Assistant Dashboard
 GenericName=Home Automation
-Exec=omarchy-launch-webapp "https://ha.pequod.sh"
+Exec=omarchy-launch-or-focus-webapp "Home Assistant" "https://ha.pequod.sh"
 Icon=/home/erik/.local/share/icons/home-assistant.webp
 Type=Application
 StartupNotify=false

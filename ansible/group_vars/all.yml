@@ -149,7 +149,6 @@ aur_packages:
 
   # Communication
   - slack-desktop
-  - zoom
   - bluebubbles-bin
 
   # R ecosystem
@@ -277,7 +276,8 @@ cleanup_pacman_packages:
   - signal-desktop
   - xournalpp
 
-cleanup_aur_packages: []
+cleanup_aur_packages:
+  - zoom
 
 # Desktop files to remove (webapps and unwanted launchers)
 cleanup_webapps:

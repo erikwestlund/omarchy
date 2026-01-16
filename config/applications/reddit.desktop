@@ -2,7 +2,7 @@
 Name=Reddit
 Comment=Reddit Social Network
 GenericName=Social Media
-Exec=omarchy-launch-webapp "https://reddit.com"
+Exec=omarchy-launch-or-focus-webapp "Reddit" "https://reddit.com"
 Icon=/home/erik/.local/share/icons/reddit.webp
 Type=Application
 StartupNotify=false

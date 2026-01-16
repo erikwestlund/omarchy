@@ -2,7 +2,7 @@
 Name=Gmail
 Comment=Gmail Email
 GenericName=Email
-Exec=omarchy-launch-webapp "https://mail.google.com"
+Exec=omarchy-launch-or-focus-webapp "Gmail" "https://mail.google.com"
 Icon=/home/erik/.local/share/icons/gmail.webp
 Type=Application
 StartupNotify=false

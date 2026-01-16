@@ -2,7 +2,7 @@
 Name=KVM: Hatchery
 Comment=Hatchery KVM Console
 GenericName=Remote Console
-Exec=omarchy-launch-webapp "https://hatchery-kvm.pequod.sh"
+Exec=omarchy-launch-or-focus-webapp "KVM: Hatchery" "https://hatchery-kvm.pequod.sh"
 Icon=/home/erik/.local/share/icons/kvm.webp
 Type=Application
 StartupNotify=false

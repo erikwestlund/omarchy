@@ -2,7 +2,7 @@
 Name=Immich
 Comment=Immich Photo Library
 GenericName=Photos
-Exec=omarchy-launch-webapp "https://immich.pequod.sh"
+Exec=omarchy-launch-or-focus-webapp "Immich" "https://immich.pequod.sh"
 Icon=/home/erik/.local/share/icons/immich.webp
 Type=Application
 StartupNotify=false

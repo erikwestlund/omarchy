@@ -2,7 +2,7 @@
 Name=New York Times
 Comment=The New York Times News
 GenericName=News
-Exec=omarchy-launch-webapp "https://www.nytimes.com"
+Exec=omarchy-launch-or-focus-webapp "New York Times" "https://www.nytimes.com"
 Icon=/home/erik/.local/share/icons/nytimes.webp
 Type=Application
 StartupNotify=false

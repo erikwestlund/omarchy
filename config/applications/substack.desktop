@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Substack
+Comment=Substack Newsletter Platform
+GenericName=Newsletter
+Exec=omarchy-launch-or-focus-webapp "Substack" "https://substack.com"
+Icon=/home/erik/.local/share/icons/substack.webp
+Type=Application
+StartupNotify=false
+Categories=Network;News;
+Keywords=substack;newsletter;blog;

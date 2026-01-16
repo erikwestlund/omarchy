@@ -2,7 +2,7 @@
 Name=Pi-hole
 Comment=Pi-hole DNS Ad Blocker
 GenericName=DNS Filter
-Exec=omarchy-launch-webapp "https://pihole.pequod.sh/admin/"
+Exec=omarchy-launch-or-focus-webapp "Pi-hole" "https://pihole.pequod.sh/admin/"
 Icon=/home/erik/.local/share/icons/pihole.webp
 Type=Application
 StartupNotify=false

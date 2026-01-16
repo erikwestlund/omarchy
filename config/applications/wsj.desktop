@@ -2,7 +2,7 @@
 Name=Wall Street Journal
 Comment=The Wall Street Journal News
 GenericName=News
-Exec=omarchy-launch-webapp "https://www.wsj.com"
+Exec=omarchy-launch-or-focus-webapp "Wall Street Journal" "https://www.wsj.com"
 Icon=/home/erik/.local/share/icons/wsj.webp
 Type=Application
 StartupNotify=false

@@ -2,7 +2,7 @@
 Name=Nginx Proxy Manager
 Comment=Nginx Proxy Manager
 GenericName=Reverse Proxy
-Exec=omarchy-launch-webapp "https://npm.pequod.sh/"
+Exec=omarchy-launch-or-focus-webapp "Nginx Proxy Manager" "https://npm.pequod.sh/"
 Icon=/home/erik/.local/share/icons/nginx-proxy-manager.webp
 Type=Application
 StartupNotify=false

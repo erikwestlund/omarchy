@@ -2,7 +2,7 @@
 Name=eBay
 Comment=eBay Marketplace
 GenericName=Shopping
-Exec=omarchy-launch-webapp "https://ebay.com"
+Exec=omarchy-launch-or-focus-webapp "eBay" "https://ebay.com"
 Icon=/home/erik/.local/share/icons/ebay.webp
 Type=Application
 StartupNotify=false

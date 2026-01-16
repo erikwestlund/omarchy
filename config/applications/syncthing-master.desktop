@@ -2,7 +2,7 @@
 Name=Syncthing (Master)
 Comment=Syncthing Master Server
 GenericName=File Sync
-Exec=omarchy-launch-webapp "https://syncthing.pequod.sh/"
+Exec=omarchy-launch-or-focus-webapp "Syncthing (Master)" "https://syncthing.pequod.sh/"
 Icon=/home/erik/.local/share/icons/syncthing.webp
 Type=Application
 StartupNotify=false

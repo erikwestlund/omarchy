@@ -2,7 +2,7 @@
 Name=Proxmox: Nexus
 Comment=Proxmox Nexus Server
 GenericName=Virtualization
-Exec=omarchy-launch-webapp "https://nexus.pequod.sh"
+Exec=omarchy-launch-or-focus-webapp "Proxmox: Nexus" "https://nexus.pequod.sh"
 Icon=/home/erik/.local/share/icons/proxmox.webp
 Type=Application
 StartupNotify=false

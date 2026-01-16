@@ -1,0 +1,23 @@
+#!/bin/bash
+# Simple app killer - shows running apps, lets you pick one to kill
+# Uses fzf for selection
+
+# Get unique application names (filter out system noise)
+# Focus on user processes with recognizable names
+apps=$(ps -u "$USER" -o comm= | sort -u | grep -vE '^(\[|bash|zsh|sh|fish|dbus|systemd|pipewire|wireplumber|Hyprland|Xwayland|waybar|mako|swayidle|swayosd|darkman|polkit|ssh-agent|gpg-agent|gnome-keyring|xdg-|at-spi|gvfs|udisks|tracker|evolution|goa-|ibus|fcitx|kded|baloo|pulseaudio|\.)')
+
+if [[ -z "$apps" ]]; then
+    echo "No killable apps found"
+    exit 0
+fi
+
+# Let user pick
+selected=$(echo "$apps" | fzf --height=40% --reverse --prompt="Kill app: ")
+
+if [[ -z "$selected" ]]; then
+    exit 0
+fi
+
+# Kill all processes matching the name
+echo "Killing: $selected"
+pkill -x "$selected" && echo "Done" || echo "Failed (may need sudo)"

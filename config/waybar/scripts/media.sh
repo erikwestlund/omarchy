@@ -6,7 +6,8 @@ if pgrep -x "teams" >/dev/null || pgrep -f "teams-for-linux" >/dev/null; then
     exit 0
 fi
 
-if pgrep -x "zoom" >/dev/null; then
+# Check for Zoom webapp (chromium window with Zoom in title)
+if hyprctl clients -j | jq -e '.[] | select(.class == "chromium" and (.title | test("Zoom"; "i")))' >/dev/null 2>&1; then
     echo '{"text": " Zoom Meeting", "class": "zoom"}'
     exit 0
 fi

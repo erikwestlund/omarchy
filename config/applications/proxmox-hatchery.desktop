@@ -2,7 +2,7 @@
 Name=Proxmox: Hatchery
 Comment=Proxmox Hatchery Server
 GenericName=Virtualization
-Exec=omarchy-launch-webapp "https://hatchery.pequod.sh"
+Exec=omarchy-launch-or-focus-webapp "Proxmox: Hatchery" "https://hatchery.pequod.sh"
 Icon=/home/erik/.local/share/icons/proxmox.webp
 Type=Application
 StartupNotify=false

@@ -1,6 +1,12 @@
 ---
 # Remove unwanted applications that come with Omarchy base
 
+# Remove native Zoom artifacts (reverted to webapp)
+- name: Remove Zoom desktop file override
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.local/share/applications/Zoom.desktop"
+    state: absent
+
 # Remove unwanted packages
 - name: Remove unwanted pacman packages
   become: true
@@ -41,8 +47,3 @@
     - cleanup_webapps | default([]) | length > 0
     - item is match('^[a-z]')  # Only lowercase names (system files like xdvi.desktop)
 
-# Remove Zoom webapp plumbing (replaced with native client)
-- name: Remove Zoom webapp handler script
-  ansible.builtin.file:
-    path: "{{ ansible_facts.env.HOME }}/.local/share/omarchy/bin/omarchy-webapp-handler-zoom"
-    state: absent

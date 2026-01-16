@@ -2,7 +2,7 @@
 Name=Instagram
 Comment=Instagram Social Network
 GenericName=Social Media
-Exec=omarchy-launch-webapp "https://instagram.com"
+Exec=omarchy-launch-or-focus-webapp "Instagram" "https://instagram.com"
 Icon=/home/erik/.local/share/icons/instagram.webp
 Type=Application
 StartupNotify=false

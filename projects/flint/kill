@@ -15,6 +15,12 @@ echo "Stopping $PROJECT_NAME..."
 #     (cd "$PROJECT_DIR" && docker compose down)
 # fi
 
+# Kill tmux session for this project
+if tmux has-session -t "$PROJECT_NAME" 2>/dev/null; then
+    echo "Killing tmux session..."
+    tmux kill-session -t "$PROJECT_NAME"
+fi
+
 # Close editor windows for this project
 echo "Closing $EDITOR..."
 case "$EDITOR" in

@@ -15,7 +15,7 @@
 │ Prev  Play     Next       │ Super+Ctrl+S Search       │ Alt+↑/↓      Doc top/bot│ Super+Alt+L  Format      │ Space  Select           │ peq      pequod         │
 ├─ Help ────────────────────┤ Super+Ctrl+C Calc         │ +Shift       Select     │                          │ y/p    Copy/Paste       │ tnt      tnt-syphilis   │
 │ Alt+K          Hotkeys    │ Super+Alt+V  Clipbrd      │                         │ Navigation:              │ d      Delete           ├─────────────────────────┤
-│ Super+Alt+H    Cheatsht   │ Super+Ctrl+V VPN          │ Commands:               │ Super+[/]    Ed/Term     │ a      Create file      │ Ansible (om-*):         │
+│ Super+Alt+H    Cheatsht   │ Super+Ctrl+V VPN          │ Commands:  kill-app     │ Super+[/]    Ed/Term     │ a      Create file      │ Ansible (om-*):         │
 │ Super+Alt+J    Cal+Agenda │ Super+Ctrl+J JHU VPN      │ tasks        List tasks │ Super+Alt+[/] Tabs       │ A      Create dir       │ om           Full run   │
 ├─ Secrets ─────────────────┼───────────────────────────┼─────────────────────────┤ Super+Alt+N  New file    │ r      Rename           │ om-sync      Git sync   │
 │ vault-edit     Edit vault │ Ansible (om-*):           │ Common:                 │ Ctrl+1-9     Tabs        │ .      Toggle hidden    │ om-dotfiles  Configs    │

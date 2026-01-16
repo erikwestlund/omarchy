@@ -2,7 +2,7 @@
 Name=Syncthing (Local)
 Comment=Syncthing Local Instance
 GenericName=File Sync
-Exec=omarchy-launch-webapp "http://local.syncthing.lan/"
+Exec=omarchy-launch-or-focus-webapp "Syncthing (Local)" "http://local.syncthing.lan/"
 Icon=/home/erik/.local/share/icons/syncthing.webp
 Type=Application
 StartupNotify=false

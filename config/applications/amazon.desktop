@@ -2,7 +2,7 @@
 Name=Amazon
 Comment=Amazon Shopping
 GenericName=Shopping
-Exec=omarchy-launch-webapp "https://amazon.com"
+Exec=omarchy-launch-or-focus-webapp "Amazon" "https://amazon.com"
 Icon=/home/erik/.local/share/icons/amazon.webp
 Type=Application
 StartupNotify=false

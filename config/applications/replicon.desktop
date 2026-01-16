@@ -2,7 +2,7 @@
 Name=Replicon
 Comment=Replicon Timesheet
 GenericName=Timesheet
-Exec=omarchy-launch-webapp "https://na8.replicon.com/JHBSchool/my/timesheet/current"
+Exec=omarchy-launch-or-focus-webapp "Replicon" "https://na8.replicon.com/JHBSchool/my/timesheet/current"
 Icon=/home/erik/.local/share/icons/replicon.webp
 Type=Application
 StartupNotify=false
