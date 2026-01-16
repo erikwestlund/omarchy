@@ -222,7 +222,6 @@ config_dirs_symlink:
   - elephant
   - ghostty
   - omarchy
-  - opencode
   - projects
   - systemd
   - wireplumber

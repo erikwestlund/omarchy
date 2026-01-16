@@ -140,6 +140,19 @@
     state: link
     force: true
 
+# OpenCode config (copy file, not directory - OpenCode creates its own files there)
+- name: Ensure opencode config directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/opencode"
+    state: directory
+    mode: '0755'
+
+- name: Copy opencode config file
+  ansible.builtin.copy:
+    src: "{{ config_src }}/opencode/opencode.json"
+    dest: "{{ ansible_facts.env.HOME }}/.config/opencode/opencode.json"
+    mode: '0644'
+
 # Sublime Text config (nested path structure)
 - name: Ensure Sublime Text User config directory exists
   ansible.builtin.file:
