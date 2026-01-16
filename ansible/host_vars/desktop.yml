@@ -55,5 +55,6 @@ backup_calendar: "*:0/15"
 
 # Additional desktop-specific packages (merged with all.yml)
 extra_pacman_packages:
+  - ddcutil
   - i2c-tools
   - openrgb

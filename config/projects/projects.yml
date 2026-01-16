@@ -48,6 +48,8 @@ projects:
     alias: fws
     type: laravel
     path: ~/Projects/framework-site
+    extras:
+      view_url: http://framework-site.test
     ports:
       vite: 5176
       nginx: 8032
@@ -157,3 +159,21 @@ projects:
     extras:
       default_ws: 7
 # END PROJECT geu-legal-gender-recognition
+# BEGIN PROJECT wordle-group
+  - name: wordle-group
+    alias: wg
+    type: laravel
+    path: ~/Projects/wordle-group
+    extras:
+      view_url: http://wordlegroup.test
+      default_ws: 7
+    ports:
+      vite: 5178
+      nginx: 8033
+      postgres: 5443
+      redis: 6394
+      minio_api: 9015
+      minio_console: 9016
+      mailpit_smtp: 1033
+      mailpit_web: 8034
+# END PROJECT wordle-group

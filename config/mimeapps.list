@@ -54,7 +54,7 @@ video/x-theora+ogg=mpv.desktop
 application/ogg=mpv.desktop
 
 # Email
-x-scheme-handler/mailto=HEY.desktop
+x-scheme-handler/mailto=chromium.desktop
 
 # Microsoft Office formats - OnlyOffice
 application/msword=onlyoffice-desktopeditors.desktop

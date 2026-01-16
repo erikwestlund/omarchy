@@ -24,17 +24,14 @@ User configs override defaults - don't edit system files directly.
 
 ## Workspace Bindings
 
-F-key navigation is implemented:
-
 | Binding | Action |
 |---------|--------|
-| F1-F12 | Switch to workspace 1-12 |
-| Alt + F1-F12 | Move window to workspace 1-12 |
-| Super + grave | Toggle special workspace |
-| Alt + h/j/k/l | Move focus (vim-style) |
-| Alt + Shift + h/j/k/l | Swap windows |
-
-Note: Alt+F9 is broken by Framework EC firmware - use Super+Shift+9 to move windows to workspace 9.
+| Super + 1-0 | Switch to workspace 1-10 |
+| Super + minus/equal | Switch to workspace 11-12 |
+| Super + Shift + 1-0 | Move window to workspace 1-10 |
+| Super + grave | Toggle utility workspace |
+| Super + h/j/k/l | Move focus (vim-style) |
+| Super + Shift + h/j/k/l | Swap windows |
 
 ## Reference
 

@@ -1,0 +1,34 @@
+#!/bin/bash
+# Brightness control - uses brightnessctl for laptop screens, ddcutil for external monitors
+
+STEP="${2:-5}"
+
+# Check if brightnessctl has any backlight devices
+if brightnessctl -l 2>/dev/null | grep -q "backlight"; then
+    # Laptop internal display - use brightnessctl
+    case "$1" in
+        up)   brightnessctl set "+${STEP}%" ;;
+        down) brightnessctl set "${STEP}%-" ;;
+        *)    echo "Usage: brightness up|down [step]"; exit 1 ;;
+    esac
+else
+    # External monitor - use ddcutil
+    if ! command -v ddcutil &>/dev/null; then
+        notify-send "Brightness" "ddcutil not installed" -t 2000
+        exit 1
+    fi
+
+    current=$(ddcutil getvcp 10 2>/dev/null | grep -oP 'current value =\s*\K\d+')
+    if [ -z "$current" ]; then
+        notify-send "Brightness" "No DDC/CI display found" -t 2000
+        exit 1
+    fi
+
+    case "$1" in
+        up)   new=$((current + STEP)); [ $new -gt 100 ] && new=100 ;;
+        down) new=$((current - STEP)); [ $new -lt 0 ] && new=0 ;;
+        *)    echo "Usage: brightness up|down [step]"; exit 1 ;;
+    esac
+
+    ddcutil setvcp 10 "$new" 2>/dev/null
+fi

@@ -1,5 +1,12 @@
 ---
-# OpenRGB configuration - turn off RAM RGB on boot
+# OpenRGB and DDC/CI configuration (i2c access for RGB control and monitor brightness)
+
+- name: Add user to i2c group for DDC/CI access
+  ansible.builtin.user:
+    name: erik
+    groups: i2c
+    append: true
+  become: true
 
 - name: Load i2c-dev module at boot
   ansible.builtin.copy:

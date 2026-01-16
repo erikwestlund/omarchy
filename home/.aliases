@@ -497,6 +497,19 @@ alias vsgeulegal="code ~/Omarchy/projects/geu-legal-gender-recognition/geu-legal
 alias nvgeulegal="(cd /home/erik/Projects/geu-legal-gender-recognition && nvim .)"
 alias pgeulegal="/usr/share/positron/bin/positron ~/Omarchy/projects/geu-legal-gender-recognition/geu-legal-gender-recognition.code-workspace"
 # END PROJECT geu-legal-gender-recognition
+# BEGIN PROJECT wordle-group
+alias lwg="~/Omarchy/projects/wordle-group/launch"
+alias kwg="~/Omarchy/projects/wordle-group/kill"
+alias tmwg="~/Omarchy/projects/wordle-group/tmux.sh"
+alias bwg="~/Omarchy/projects/wordle-group/bootstrap"
+alias pmwg="cd ~/Omarchy/projects/wordle-group"
+alias wg="cd /home/erik/Projects/wordle-group"
+alias vswg="code ~/Omarchy/projects/wordle-group/wordle-group.code-workspace"
+alias nvwg="(cd /home/erik/Projects/wordle-group && nvim .)"
+alias pwg="/usr/share/positron/bin/positron ~/Omarchy/projects/wordle-group/wordle-group.code-workspace"
+alias dwg="(cd /home/erik/Projects/wordle-group && docker compose up -d)"
+alias ddwg="(cd /home/erik/Projects/wordle-group && docker compose down)"
+# END PROJECT wordle-group
 # Auto-generated project aliases
 
 # Sync R2 media to local minio for better-shoes dev
