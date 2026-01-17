@@ -11,36 +11,6 @@ leftmeta = leftalt
 rightalt = rightmeta
 rightmeta = rightalt
 
-# Swap media keys with F-keys
-# Without Fn: get F-key
-# With Fn: get media function
-mute = f1
-volumedown = f2
-volumeup = f3
-previoussong = f4
-playpause = f5
-nextsong = f6
-brightnessdown = f7
-brightnessup = f8
-# rfkill is remapped to f10 via hwdb
-sysrq = f11
-media = f12
-
-f1 = mute
-f2 = volumedown
-f3 = volumeup
-f4 = previoussong
-f5 = playpause
-f6 = nextsong
-f7 = brightnessdown
-f8 = brightnessup
-f11 = sysrq
-f12 = media
-
-# F9 hardware sends meta+p combo (becomes alt+p after swap)
-[alt]
-p = f9
-
 [meta]
 # System-wide shortcuts
 {% for shortcut in keyd_system_shortcuts.meta %}
