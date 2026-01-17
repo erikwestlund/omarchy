@@ -1,0 +1,15 @@
+--- a/keylightc.c
++++ b/keylightc.c
+@@ -49,9 +49,10 @@
+ // SD_LISTEN_FDS_START, but we don't want to link to systemd
+ #define BRIGHTNESS_FD 3
+
+-// This must be set exactly to the number of elements in the array or else a segfault will occur
+-#define SEARCH_DEVICE_COUNT 2
++// This must be set exactly to the number of elements in the array
++#define SEARCH_DEVICE_COUNT 3
+ static char const *const restrict search_devices[SEARCH_DEVICE_COUNT]={
++	"keyd virtual keyboard",
+ 	"AT Translated Set 2 keyboard",
+ 	"PIXA3854:00 093A:0274 Touchpad",
+ };

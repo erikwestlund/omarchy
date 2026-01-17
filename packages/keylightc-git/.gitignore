@@ -1,0 +1,5 @@
+src/
+pkg/
+keylightc/
+*.pkg.tar.zst
+*.pkg.tar.zst.sig

@@ -1,0 +1,7 @@
+---
+# Framework laptop role defaults
+
+# Keyboard backlight daemon (keylightc)
+keylightc_enabled: true
+keylightc_brightness: 50       # Brightness level when active (1-100)
+keylightc_timeout: 10          # Activity timeout in seconds

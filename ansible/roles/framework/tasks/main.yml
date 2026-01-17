@@ -28,3 +28,75 @@
 #   notify:
 #     - Update hwdb
 #     - Trigger udev
+
+# Keyboard backlight daemon - auto-dims keyboard when idle
+# Using patched version with keyd virtual keyboard support
+- name: Ensure build dependencies for keylightc
+  become: true
+  community.general.pacman:
+    name:
+      - base-devel
+      - git
+    state: present
+  when: keylightc_enabled | default(true)
+
+- name: Check if keylightc has keyd support
+  ansible.builtin.shell: strings /usr/bin/keylightc 2>/dev/null | grep -q "keyd virtual keyboard"
+  register: keylightc_check
+  changed_when: false
+  failed_when: false
+  when: keylightc_enabled | default(true)
+
+- name: Build and install keylightc (patched for keyd)
+  ansible.builtin.shell: |
+    cd {{ omarchy_repo }}/packages/keylightc-git
+    makepkg -si --noconfirm
+  when:
+    - keylightc_enabled | default(true)
+    - keylightc_check.rc != 0
+
+- name: Create keylightc service drop-in directory
+  become: true
+  ansible.builtin.file:
+    path: /etc/systemd/system/keylightc.service.d
+    state: directory
+    mode: '0755'
+  when: keylightc_enabled | default(true)
+
+- name: Configure keylightc settings
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/keylightc.service.d/override.conf
+    mode: '0644'
+    content: |
+      [Service]
+      ExecStart=
+      ExecStart=/usr/bin/keylightc --brightness {{ keylightc_brightness }} --timeout {{ keylightc_timeout }}
+  when: keylightc_enabled | default(true)
+  notify: Restart keylightc
+
+- name: Enable and start keylightc
+  become: true
+  ansible.builtin.systemd:
+    name: keylightc
+    enabled: true
+    state: started
+    daemon_reload: true
+  when: keylightc_enabled | default(true)
+
+# Cleanup when disabled
+- name: Stop and disable keylightc (when disabled)
+  become: true
+  ansible.builtin.systemd:
+    name: keylightc
+    enabled: false
+    state: stopped
+  when: not (keylightc_enabled | default(true))
+  ignore_errors: true
+
+- name: Remove keylightc drop-in (when disabled)
+  become: true
+  ansible.builtin.file:
+    path: /etc/systemd/system/keylightc.service.d
+    state: absent
+  when: not (keylightc_enabled | default(true))

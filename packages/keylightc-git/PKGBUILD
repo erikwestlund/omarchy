@@ -1,0 +1,38 @@
+# Maintainer: HurricanePootis <hurricanepootis@protonmail.com>
+# Modified: Added keyd virtual keyboard support
+pkgname=keylightc-git
+pkgver=r94.6336fee
+pkgrel=2
+pkgdesc="Daemon for Framework laptops to handle keyboard backlight controls (with keyd support)"
+arch=('x86_64')
+url="https://gitlab.com/mamarley/keylightc"
+license=('GPL-2.0-or-later')
+depends=('glibc')
+makedepends=('git')
+provides=("${pkgname::-4}")
+conflicts=("${pkgname::-4}")
+source=("git+$url.git"
+        "keyd-support.patch")
+sha256sums=('SKIP'
+            'SKIP')
+
+pkgver() {
+	cd "$srcdir/${pkgname::-4}"
+	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short=7 HEAD)"
+}
+
+prepare() {
+	cd "$srcdir/${pkgname::-4}"
+	sed -i 's/$(CFLAGS)/$(CFLAGS) $(LDFLAGS)/g' Makefile
+	patch -p1 < "$srcdir/keyd-support.patch"
+}
+
+build() {
+	cd "$srcdir/${pkgname::-4}"
+	make
+}
+
+package() {
+	cd "$srcdir/${pkgname::-4}"
+	make DESTDIR="$pkgdir/" install
+}
