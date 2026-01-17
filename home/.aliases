@@ -443,17 +443,17 @@ bs-restore() {
     docker exec -i better-shoes-postgres psql -U better_shoes -d better_shoes < "/home/erik/Projects/better-shoes/storage/app/dumps/$file" 2>&1 | tail -100
 }
 # END PROJECT better-shoes
-# BEGIN PROJECT ohdsi-diabetic-retinopathy-screening
-alias ldrtp="~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening/launch"
-alias kdrtp="~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening/kill"
-alias tmdrtp="~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening/tmux.sh"
-alias bdrtp="~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening/bootstrap"
-alias pmdrtp="cd ~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening"
-alias drtp="cd /home/erik/Projects/ohdsi-diabetic-retinopathy-screening"
-alias vsdrtp="code ~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening/ohdsi-diabetic-retinopathy-screening.code-workspace"
-alias nvdrtp="(cd /home/erik/Projects/ohdsi-diabetic-retinopathy-screening && nvim .)"
-alias pdrtp="/usr/share/positron/bin/positron ~/Omarchy/projects/ohdsi-diabetic-retinopathy-screening/ohdsi-diabetic-retinopathy-screening.code-workspace"
-# END PROJECT ohdsi-diabetic-retinopathy-screening
+# BEGIN PROJECT ohdsi-diabetic-retinopathy-treatment-patterns
+alias ldrtp="~/Omarchy/projects/ohdsi-diabetic-retinopathy-treatment-patterns/launch"
+alias kdrtp="~/Omarchy/projects/ohdsi-diabetic-retinopathy-treatment-patterns/kill"
+alias tmdrtp="~/Omarchy/projects/ohdsi-diabetic-retinopathy-treatment-patterns/tmux.sh"
+alias bdrtp="~/Omarchy/projects/ohdsi-diabetic-retinopathy-treatment-patterns/bootstrap"
+alias pmdrtp="cd ~/Omarchy/projects/ohdsi-diabetic-retinopathy-treatment-patterns"
+alias drtp="cd /home/erik/Projects/ohdsi-diabetic-retinopathy-treatment-patterns"
+alias vsdrtp="code ~/Omarchy/projects/ohdsi-diabetic-retinopathy-treatment-patterns/ohdsi-diabetic-retinopathy-treatment-patterns.code-workspace"
+alias nvdrtp="(cd /home/erik/Projects/ohdsi-diabetic-retinopathy-treatment-patterns && nvim .)"
+alias pdrtp="/usr/share/positron/bin/positron ~/Omarchy/projects/ohdsi-diabetic-retinopathy-treatment-patterns/ohdsi-diabetic-retinopathy-treatment-patterns.code-workspace"
+# END PROJECT ohdsi-diabetic-retinopathy-treatment-patterns
 # BEGIN PROJECT flint
 alias lfl="~/Omarchy/projects/flint/launch"
 alias kfl="~/Omarchy/projects/flint/kill"

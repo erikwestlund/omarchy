@@ -112,15 +112,15 @@ projects:
     extras:
       default_ws: 7
 # END PROJECT tnt-syphilis
-# BEGIN PROJECT ohdsi-diabetic-retinopathy-screening
-  - name: ohdsi-diabetic-retinopathy-screening
+# BEGIN PROJECT ohdsi-diabetic-retinopathy-treatment-patterns
+  - name: ohdsi-diabetic-retinopathy-treatment-patterns
     alias: drtp
     type: rstats
-    path: ~/Projects/ohdsi-diabetic-retinopathy-screening
+    path: ~/Projects/ohdsi-diabetic-retinopathy-treatment-patterns
     extras:
       default_ws: 7
       editor: positron
-# END PROJECT ohdsi-diabetic-retinopathy-screening
+# END PROJECT ohdsi-diabetic-retinopathy-treatment-patterns
 # BEGIN PROJECT mh-missing-data
   - name: mh-missing-data
     alias: mhmi

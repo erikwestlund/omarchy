@@ -1,9 +1,9 @@
 #!/bin/bash
-# Kill script for ohdsi-diabetic-retinopathy-screening
+# Kill script for ohdsi-diabetic-retinopathy-treatment-patterns
 
 # === Project Config ===
-PROJECT_NAME="ohdsi-diabetic-retinopathy-screening"
-PROJECT_DIR="/home/erik/Projects/ohdsi-diabetic-retinopathy-screening"
+PROJECT_NAME="ohdsi-diabetic-retinopathy-treatment-patterns"
+PROJECT_DIR="/home/erik/Projects/ohdsi-diabetic-retinopathy-treatment-patterns"
 EDITOR="vscode"
 # DOCKER_COMPOSE=false
 
