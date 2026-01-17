@@ -33,6 +33,7 @@ pacman_packages:
   - iperf3
   - lynx
   - tailscale
+  - ufw
   - syncthing
   - openconnect
   - webkit2gtk

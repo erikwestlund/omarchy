@@ -28,6 +28,22 @@
     state: started
   become: true
 
+- name: Check if UFW is installed
+  ansible.builtin.command: which ufw
+  register: ufw_installed
+  failed_when: false
+  changed_when: false
+
+- name: Allow SSH through UFW from LAN only
+  community.general.ufw:
+    rule: allow
+    from_ip: 192.168.1.0/24
+    port: '22'
+    proto: tcp
+    comment: 'SSH from LAN only'
+  become: true
+  when: ufw_installed.rc == 0
+
 - name: Deploy authorized_keys
   ansible.builtin.copy:
     src: authorized_keys
