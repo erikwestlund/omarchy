@@ -1,35 +1,45 @@
 #!/bin/bash
 # Navigate to next/previous workspace that has windows
 # Usage: workspace-with-windows.sh next|prev
+# Order: numeric workspaces (1-12), then named workspaces (U), wrapping both ways
 
 direction=$1
-current_ws=$(hyprctl activeworkspace -j | jq '.id')
+current_ws=$(hyprctl activeworkspace -j | jq -r '.name')
 
-# Get sorted list of workspace IDs that have windows (active workspaces)
-active_workspaces=($(hyprctl workspaces -j | jq -r '.[].id' | sort -n))
+# Build ordered list: numeric workspaces first (sorted), then named workspaces
+# Named workspaces have negative IDs in Hyprland
+readarray -t numeric_ws < <(hyprctl workspaces -j | jq -r '.[] | select(.id > 0) | .id' | sort -n)
+readarray -t named_ws < <(hyprctl workspaces -j | jq -r '.[] | select(.id < 0) | .name' | sort)
 
-if [ "$direction" = "next" ]; then
-    # Find first workspace with ID > current
-    for ws in "${active_workspaces[@]}"; do
-        if [ "$ws" -gt "$current_ws" ]; then
-            hyprctl dispatch workspace "$ws"
-            exit 0
-        fi
-    done
-    # Wrap to first if none found
-    [ "${#active_workspaces[@]}" -gt 0 ] && hyprctl dispatch workspace "${active_workspaces[0]}"
-else
-    # Find last workspace with ID < current
-    target=""
-    for ws in "${active_workspaces[@]}"; do
-        if [ "$ws" -lt "$current_ws" ]; then
-            target=$ws
-        fi
-    done
-    if [ -n "$target" ]; then
-        hyprctl dispatch workspace "$target"
-    else
-        # Wrap to last if none found
-        [ "${#active_workspaces[@]}" -gt 0 ] && hyprctl dispatch workspace "${active_workspaces[-1]}"
+# Combine into ordered list (numbers first, then named)
+ordered_ws=("${numeric_ws[@]}" "${named_ws[@]}")
+
+# Find current position in ordered list
+current_idx=-1
+for i in "${!ordered_ws[@]}"; do
+    if [ "${ordered_ws[$i]}" = "$current_ws" ]; then
+        current_idx=$i
+        break
     fi
+done
+
+# If current workspace not in list (empty?), go to first
+if [ "$current_idx" -eq -1 ]; then
+    [ "${#ordered_ws[@]}" -gt 0 ] && hyprctl dispatch workspace "${ordered_ws[0]}"
+    exit 0
+fi
+
+count=${#ordered_ws[@]}
+if [ "$direction" = "next" ]; then
+    next_idx=$(( (current_idx + 1) % count ))
+else
+    next_idx=$(( (current_idx - 1 + count) % count ))
+fi
+
+target="${ordered_ws[$next_idx]}"
+# Named workspaces need "name:" prefix
+if [[ "$target" =~ ^[0-9]+$ ]]; then
+    hyprctl dispatch workspace "$target"
+else
+    hyprctl dispatch workspace "name:$target"
 fi
