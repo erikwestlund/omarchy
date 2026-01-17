@@ -11,8 +11,8 @@ current_ws=$(hyprctl activeworkspace -j | jq -r '.name')
 readarray -t numeric_ws < <(hyprctl workspaces -j | jq -r '.[] | select(.id > 0) | .id' | sort -n)
 readarray -t named_ws < <(hyprctl workspaces -j | jq -r '.[] | select(.id < 0 and (.name | startswith("special:") | not)) | .name' | sort)
 
-# Combine into ordered list (numbers first, then named)
-ordered_ws=("${numeric_ws[@]}" "${named_ws[@]}")
+# Combine into ordered list: U first, then numbers
+ordered_ws=("${named_ws[@]}" "${numeric_ws[@]}")
 
 # Find current position in ordered list
 current_idx=-1
