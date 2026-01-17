@@ -1,6 +1,25 @@
 ---
 # SSH server configuration
-# Enables sshd and manages authorized_keys
+# Enables sshd and deploys authorized_keys for incoming connections
+# Note: SSH client config (~/.ssh/config) comes from secrets-pull, not here
+# Requires secrets role to run first (sets up ~/.ssh symlink from secrets-pull)
+
+- name: Check if SSH directory exists
+  ansible.builtin.stat:
+    path: "{{ ansible_facts.env.HOME }}/.ssh"
+  register: ssh_dir
+
+- name: Ensure .ssh directory exists (if not symlinked by secrets role)
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.ssh"
+    state: directory
+    mode: '0700'
+  when: not ssh_dir.stat.exists
+
+- name: Check if SSH public key exists
+  ansible.builtin.stat:
+    path: "{{ ansible_facts.env.HOME }}/.ssh/erik.pub"
+  register: ssh_pubkey
 
 - name: Enable and start sshd
   ansible.builtin.systemd:
@@ -8,12 +27,6 @@
     enabled: true
     state: started
   become: true
-
-- name: Ensure .ssh directory exists
-  ansible.builtin.file:
-    path: "{{ ansible_facts.env.HOME }}/.ssh"
-    state: directory
-    mode: '0700'
 
 - name: Deploy authorized_keys
   ansible.builtin.copy:
