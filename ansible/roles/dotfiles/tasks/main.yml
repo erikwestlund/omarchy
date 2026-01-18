@@ -496,6 +496,12 @@
     state: directory
     mode: '0755'
 
+- name: Ensure Code directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/Code"
+    state: directory
+    mode: '0755'
+
 # Remove unwanted XDG directories
 - name: Remove unwanted home directories
   ansible.builtin.file:
@@ -507,6 +513,18 @@
     - Pictures
     - Public
     - Wallpapers
+    - Games
+    - intelephense
+
+# Go modules are installed read-only; need shell to force removal
+- name: Remove ~/go directory if exists (Go modules are read-only)
+  ansible.builtin.shell: |
+    if [ -d "{{ ansible_facts.env.HOME }}/go" ]; then
+      chmod -R +w "{{ ansible_facts.env.HOME }}/go" 2>/dev/null || true
+      rm -rf "{{ ansible_facts.env.HOME }}/go"
+    fi
+  args:
+    removes: "{{ ansible_facts.env.HOME }}/go"
 
 - name: Disable XDG user dirs recreation
   ansible.builtin.copy:

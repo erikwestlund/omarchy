@@ -1,0 +1,70 @@
+#!/bin/bash
+# Sync OHDSI R packages from GitHub to ~/Code/ohdsi-packages/
+
+set -e
+
+OHDSI_DIR="$HOME/Code/ohdsi-packages"
+GITHUB_ORG="https://github.com/OHDSI"
+
+PACKAGES=(
+    Achilles
+    Andromeda
+    Atlas
+    Characterization
+    CohortDiagnostics
+    CohortMethod
+    CommonDataModel
+    Cyclops
+    DatabaseConnector
+    DataQualityDashboard
+    Eunomia
+    FeatureExtraction
+    OhdsiReportGenerator
+    PatientLevelPrediction
+    SqlRender
+    Strategus
+)
+
+# Colors for output
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Create directory if needed
+if [[ ! -d "$OHDSI_DIR" ]]; then
+    echo -e "${BLUE}Creating $OHDSI_DIR${NC}"
+    mkdir -p "$OHDSI_DIR"
+fi
+
+cd "$OHDSI_DIR"
+
+for package in "${PACKAGES[@]}"; do
+    if [[ ! -d "$package" ]]; then
+        echo -e "${GREEN}Cloning $package...${NC}"
+        git clone "$GITHUB_ORG/$package.git" "$package"
+    else
+        cd "$package"
+
+        # Fetch to check for updates without modifying working tree
+        git fetch origin --quiet
+
+        # Check if there are any changes
+        LOCAL=$(git rev-parse HEAD)
+        REMOTE=$(git rev-parse @{u} 2>/dev/null || echo "")
+
+        if [[ -z "$REMOTE" ]]; then
+            echo -e "${YELLOW}$package: no upstream tracking branch${NC}"
+        elif [[ "$LOCAL" != "$REMOTE" ]]; then
+            echo -e "${GREEN}Updating $package...${NC}"
+            git pull --quiet
+        else
+            echo -e "${BLUE}$package: already up-to-date${NC}"
+        fi
+
+        cd "$OHDSI_DIR"
+    fi
+done
+
+echo ""
+echo "Done! OHDSI packages synced to $OHDSI_DIR"
