@@ -80,12 +80,12 @@
     // Switch between editor and terminal - removed, Super+[/] now for Hyprland workspace nav
     // Use Ctrl+T to toggle terminal instead
 
-    // Previous/next editor (Super+Alt+[/] via keyd -> Ctrl+Alt+[/])
-    { "key": "ctrl+alt+[", "command": "workbench.action.previousEditor", "when": "!terminalFocus" },
-    { "key": "ctrl+alt+]", "command": "workbench.action.nextEditor", "when": "!terminalFocus" },
-    // Previous/next terminal (Super+Alt+[/] when in terminal)
-    { "key": "ctrl+alt+[", "command": "workbench.action.terminal.focusPrevious", "when": "terminalFocus" },
-    { "key": "ctrl+alt+]", "command": "workbench.action.terminal.focusNext", "when": "terminalFocus" },
+    // Previous/next editor (Ctrl+Shift+[/])
+    { "key": "ctrl+shift+[", "command": "workbench.action.previousEditor", "when": "!terminalFocus" },
+    { "key": "ctrl+shift+]", "command": "workbench.action.nextEditor", "when": "!terminalFocus" },
+    // Previous/next terminal (Ctrl+Shift+[/] when in terminal)
+    { "key": "ctrl+shift+[", "command": "workbench.action.terminal.focusPrevious", "when": "terminalFocus" },
+    { "key": "ctrl+shift+]", "command": "workbench.action.terminal.focusNext", "when": "terminalFocus" },
 
     // Sidebar views (Super+Alt+X/E via keyd -> Ctrl+Alt+X/E)
     { "key": "alt+meta+x", "command": "workbench.view.extensions" },

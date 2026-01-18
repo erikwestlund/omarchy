@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Budget & Expense Tracking
+Comment=Budget & Expense Tracking
+GenericName=Budget
+Exec=/usr/bin/onlyoffice-desktopeditors "/home/erik/Documents/Financial/Budget & Expense Tracking.xlsx"
+Icon=onlyoffice-spreadsheet
+Type=Application
+StartupNotify=false
+Categories=Office;Finance;
+Keywords=budget;expenses;money;finance;
+StartupWMClass=ONLYOFFICE
