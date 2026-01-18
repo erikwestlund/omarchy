@@ -1,0 +1,69 @@
+#!/bin/bash
+# Sync OHDSI R packages from GitHub to ~/Code/ohdsi-packages/
+
+set -e
+
+OHDSI_DIR="$HOME/Code/ohdsi-packages"
+
+# Package definitions: "name|git_url"
+PACKAGES=(
+    "Achilles|https://github.com/OHDSI/Achilles"
+    "Andromeda|https://github.com/OHDSI/Andromeda"
+    "Atlas|https://github.com/OHDSI/Atlas"
+    "Characterization|https://github.com/OHDSI/Characterization"
+    "CohortDiagnostics|https://github.com/OHDSI/CohortDiagnostics"
+    "CohortMethod|https://github.com/OHDSI/CohortMethod"
+    "CommonDataModel|https://github.com/OHDSI/CommonDataModel"
+    "Cyclops|https://github.com/OHDSI/Cyclops"
+    "DatabaseConnector|https://github.com/OHDSI/DatabaseConnector"
+    "DataQualityDashboard|https://github.com/OHDSI/DataQualityDashboard"
+    "Eunomia|https://github.com/OHDSI/Eunomia"
+    "FeatureExtraction|https://github.com/OHDSI/FeatureExtraction"
+    "OhdsiReportGenerator|https://github.com/OHDSI/OhdsiReportGenerator"
+    "PatientLevelPrediction|https://github.com/OHDSI/PatientLevelPrediction"
+    "SqlRender|https://github.com/OHDSI/SqlRender"
+    "Strategus|https://github.com/OHDSI/Strategus"
+    "TreatmentPatterns|https://github.com/mi-erasmusmc/TreatmentPatterns"
+)
+
+# Colors
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+if [[ ! -d "$OHDSI_DIR" ]]; then
+    echo -e "${BLUE}Creating $OHDSI_DIR${NC}"
+    mkdir -p "$OHDSI_DIR"
+fi
+
+cd "$OHDSI_DIR"
+
+for entry in "${PACKAGES[@]}"; do
+    name="${entry%%|*}"
+    url="${entry##*|}"
+
+    if [[ ! -d "$name" ]]; then
+        echo -e "${GREEN}Cloning $name...${NC}"
+        git clone "$url.git" "$name"
+    else
+        cd "$name"
+        git fetch origin --quiet
+
+        LOCAL=$(git rev-parse HEAD)
+        REMOTE=$(git rev-parse @{u} 2>/dev/null || echo "")
+
+        if [[ -z "$REMOTE" ]]; then
+            echo -e "${YELLOW}$name: no upstream tracking branch${NC}"
+        elif [[ "$LOCAL" != "$REMOTE" ]]; then
+            echo -e "${GREEN}Updating $name...${NC}"
+            git pull --quiet
+        else
+            echo -e "${BLUE}$name: up-to-date${NC}"
+        fi
+
+        cd "$OHDSI_DIR"
+    fi
+done
+
+echo -e "\nDone! 17 packages synced to $OHDSI_DIR"
