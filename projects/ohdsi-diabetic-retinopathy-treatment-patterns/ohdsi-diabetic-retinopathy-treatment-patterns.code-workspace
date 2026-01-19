@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "../../../Projects/other-repos/OhdsiReportGenerator"
+		},
+		{
+			"path": "../../../Code/ohdsi-packages/ShinyAppBuilder"
 		}
 	]
 }

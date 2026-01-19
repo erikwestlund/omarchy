@@ -21,6 +21,7 @@ PACKAGES=(
     "FeatureExtraction|https://github.com/OHDSI/FeatureExtraction"
     "OhdsiReportGenerator|https://github.com/OHDSI/OhdsiReportGenerator"
     "PatientLevelPrediction|https://github.com/OHDSI/PatientLevelPrediction"
+    "ShinyAppBuilder|https://github.com/OHDSI/ShinyAppBuilder"
     "SqlRender|https://github.com/OHDSI/SqlRender"
     "Strategus|https://github.com/OHDSI/Strategus"
     "TreatmentPatterns|https://github.com/mi-erasmusmc/TreatmentPatterns"
@@ -66,4 +67,4 @@ for entry in "${PACKAGES[@]}"; do
     fi
 done
 
-echo -e "\nDone! 17 packages synced to $OHDSI_DIR"
+echo -e "\nDone! 18 packages synced to $OHDSI_DIR"

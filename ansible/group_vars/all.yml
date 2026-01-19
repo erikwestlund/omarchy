@@ -89,6 +89,7 @@ pacman_packages:
 
   # Media
   - vlc
+  - transmission-gtk
 
   # Gaming
   - steam
