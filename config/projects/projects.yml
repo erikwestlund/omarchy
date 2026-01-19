@@ -170,10 +170,8 @@ projects:
     ports:
       vite: 5178
       nginx: 8033
-      postgres: 5443
+      mysql: 3307
       redis: 6394
-      minio_api: 9015
-      minio_console: 9016
       mailpit_smtp: 1033
       mailpit_web: 8034
 # END PROJECT wordle-group

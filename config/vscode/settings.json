@@ -1,9 +1,4 @@
 {
-    "workbench.colorTheme": "null",
     "workbench.iconTheme": "catppuccin-mocha",
-    "editor.minimap.enabled": false,
-    "terminal.integrated.commandsToSkipShell": [
-        "workbench.action.toggleSidebarVisibility"
-    ],
-    "terminal.integrated.fontSize": 13
+    "workbench.colorTheme": "Catppuccin Mocha"
 }

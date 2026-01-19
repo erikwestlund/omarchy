@@ -2,10 +2,12 @@
 # Laravel-specific bootstrap tasks
 
 # Get port configuration from projects.yml
+# Supports both postgres and mysql port keys
 - name: Set Laravel port defaults
   ansible.builtin.set_fact:
     nginx_port: "{{ project.ports.nginx | default(8010) }}"
-    postgres_port: "{{ project.ports.postgres | default(5440) }}"
+    postgres_port: "{{ project.ports.postgres | default(project.ports.mysql | default(5440)) }}"
+    mysql_port: "{{ project.ports.mysql | default(project.ports.postgres | default(3306)) }}"
     redis_port: "{{ project.ports.redis | default(6390) }}"
     minio_api_port: "{{ project.ports.minio_api | default(9010) }}"
     minio_console_port: "{{ project.ports.minio_console | default(9011) }}"
@@ -19,6 +21,7 @@
   ansible.builtin.set_fact:
     nginx_port: 8010
     postgres_port: 5440
+    mysql_port: 3306
     redis_port: 6390
     minio_api_port: 9010
     minio_console_port: 9011
@@ -166,27 +169,54 @@
     - docker_compose_for_build.stat.exists
     - php_container_check.stdout | length == 0
 
-# === Fix storage permissions (only if needed) ===
+# === Fix storage permissions ===
+# Docker containers may create files as root, fix ownership first
 - name: Check if storage directory exists
   ansible.builtin.stat:
     path: "{{ project_path }}/storage"
   register: storage_dir
 
-- name: Check storage directory ownership
+- name: Fix storage ownership (Docker may create files as root)
   ansible.builtin.command:
-    cmd: find {{ project_path }}/storage -not -user {{ ansible_facts.env.USER }} -print -quit
-  register: storage_ownership_check
+    cmd: chown -R {{ ansible_facts.env.USER }}:{{ ansible_facts.env.USER }} {{ project_path }}/storage {{ project_path }}/bootstrap/cache
+  become: true
+  when: storage_dir.stat.exists
+  changed_when: false
+
+- name: Fix node_modules ownership (if exists and owned by root)
+  ansible.builtin.command:
+    cmd: chown -R {{ ansible_facts.env.USER }}:{{ ansible_facts.env.USER }} {{ project_path }}/node_modules
+  become: true
+  when: storage_dir.stat.exists
   changed_when: false
   failed_when: false
+
+# Docker containers run as www-data, so storage must be world-writable
+- name: Ensure storage directories exist with proper permissions
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0777'
+  loop:
+    - "{{ project_path }}/storage"
+    - "{{ project_path }}/storage/app"
+    - "{{ project_path }}/storage/app/public"
+    - "{{ project_path }}/storage/framework"
+    - "{{ project_path }}/storage/framework/cache"
+    - "{{ project_path }}/storage/framework/sessions"
+    - "{{ project_path }}/storage/framework/views"
+    - "{{ project_path }}/storage/logs"
+    - "{{ project_path }}/bootstrap/cache"
   when: storage_dir.stat.exists
 
-- name: Fix storage permissions (only if ownership is wrong)
-  ansible.builtin.command:
-    cmd: chown -R {{ ansible_facts.env.USER }}:{{ ansible_facts.env.USER }} {{ project_path }}/storage
-  become: true
-  when:
-    - storage_dir.stat.exists
-    - storage_ownership_check.stdout | length > 0
+- name: Ensure laravel.log exists with proper permissions
+  ansible.builtin.file:
+    path: "{{ project_path }}/storage/logs/laravel.log"
+    state: touch
+    mode: '0666'
+    modification_time: preserve
+    access_time: preserve
+  when: storage_dir.stat.exists
 
 # === Wait for services ===
 - name: Wait for PHP container to be ready
@@ -213,10 +243,38 @@
     path: "{{ project_path }}/package.json"
   register: package_json
 
-- name: Install Node dependencies via npm
+- name: Install Node dependencies via npm (locally, not in container)
   ansible.builtin.command:
-    cmd: docker compose exec -T php npm install
+    cmd: npm install
     chdir: "{{ project_path }}"
   register: npm_install
   changed_when: "'added' in npm_install.stdout"
-  when: package_json.stat.exists and docker_compose_for_build.stat.exists
+  when: package_json.stat.exists
+
+# === Clear and rebuild caches ===
+- name: Clear Laravel config cache
+  ansible.builtin.command:
+    cmd: docker compose exec -T php php artisan config:clear
+    chdir: "{{ project_path }}"
+  register: config_clear
+  changed_when: false
+  failed_when: false
+  when: docker_compose_for_build.stat.exists
+
+- name: Clear Laravel application cache
+  ansible.builtin.command:
+    cmd: docker compose exec -T php php artisan cache:clear
+    chdir: "{{ project_path }}"
+  register: cache_clear
+  changed_when: false
+  failed_when: false
+  when: docker_compose_for_build.stat.exists
+
+- name: Cache Laravel config
+  ansible.builtin.command:
+    cmd: docker compose exec -T php php artisan config:cache
+    chdir: "{{ project_path }}"
+  register: config_cache
+  changed_when: false
+  failed_when: false
+  when: docker_compose_for_build.stat.exists
