@@ -1,0 +1,74 @@
+---
+# Bootstrap a project - idempotent setup for development environment
+# Usage: ansible-playbook playbook.yml --tags bootstrap -e project_name=wordle-group
+#
+# This role:
+# 1. Clones the repo if not present (reads github_repo from projects.yml)
+# 2. Copies secrets from ~/.secrets/{project}/ to project directory
+# 3. For Laravel: generates docker-compose.yml, copies docker configs
+# 4. Builds Docker images
+# 5. Starts Docker services
+# 6. Installs dependencies (composer, npm, renv, pip)
+
+- name: Load projects configuration
+  ansible.builtin.include_vars:
+    file: "{{ omarchy_repo }}/config/projects/projects.yml"
+    name: projects_config
+
+- name: Find project in configuration
+  ansible.builtin.set_fact:
+    project: "{{ projects_config.projects | selectattr('name', 'equalto', project_name) | first | default({}) }}"
+
+- name: Fail if project not found
+  ansible.builtin.fail:
+    msg: "Project '{{ project_name }}' not found in projects.yml"
+  when: project | length == 0
+
+- name: Set project variables
+  ansible.builtin.set_fact:
+    project_path: "{{ project.path | default('') | replace('~', ansible_facts.env.HOME) }}"
+    project_type: "{{ project.type | default('utility') }}"
+    secrets_dir: "{{ ansible_facts.env.HOME }}/.secrets/{{ project_name }}"
+    reference_project: "{{ ansible_facts.env.HOME }}/Projects/pequod"
+
+# github_repo can be passed as extra var or defined in projects.yml in future
+# For now, existing projects already have code cloned
+
+# === 1. Clone or create project directory ===
+- name: Clone project from GitHub
+  ansible.builtin.git:
+    repo: "git@github.com:{{ github_repo }}.git"
+    dest: "{{ project_path }}"
+    accept_hostkey: true
+  when:
+    - project_path | length > 0
+    - github_repo is defined
+    - github_repo | length > 0
+
+- name: Ensure project directory exists
+  ansible.builtin.file:
+    path: "{{ project_path }}"
+    state: directory
+    mode: '0755'
+  when:
+    - project_path | length > 0
+    - github_repo is not defined or github_repo | length == 0
+
+# === 2. Laravel-specific tasks ===
+- name: Include Laravel bootstrap tasks
+  ansible.builtin.include_tasks: laravel.yml
+  when: project_type == 'laravel' and project_path | length > 0
+
+# === 3. Python-specific tasks ===
+- name: Include Python bootstrap tasks
+  ansible.builtin.include_tasks: python.yml
+  when: project_type == 'python' and project_path | length > 0
+
+# === 4. R/Stats-specific tasks ===
+- name: Include R bootstrap tasks
+  ansible.builtin.include_tasks: rstats.yml
+  when: project_type == 'rstats' and project_path | length > 0
+
+- name: Bootstrap complete
+  ansible.builtin.debug:
+    msg: "Bootstrap complete for {{ project_name }}! Run 'l{{ project.alias }}' to launch."

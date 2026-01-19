@@ -1,0 +1,41 @@
+---
+# Python-specific bootstrap tasks
+
+- name: Check if requirements.txt exists
+  ansible.builtin.stat:
+    path: "{{ project_path }}/requirements.txt"
+  register: requirements_txt
+
+- name: Check if pyproject.toml exists
+  ansible.builtin.stat:
+    path: "{{ project_path }}/pyproject.toml"
+  register: pyproject_toml
+
+- name: Check if venv exists and is valid
+  ansible.builtin.stat:
+    path: "{{ project_path }}/.venv/bin/pip"
+  register: venv_pip
+
+# Create venv if requirements or pyproject exists
+- name: Create Python virtual environment
+  ansible.builtin.command:
+    cmd: python3 -m venv .venv
+    chdir: "{{ project_path }}"
+    creates: "{{ project_path }}/.venv/bin/pip"
+  when: (requirements_txt.stat.exists or pyproject_toml.stat.exists) and not venv_pip.stat.exists
+
+- name: Install Python dependencies from requirements.txt
+  ansible.builtin.command:
+    cmd: .venv/bin/pip install -r requirements.txt
+    chdir: "{{ project_path }}"
+  register: pip_install_req
+  changed_when: "'Successfully installed' in pip_install_req.stdout"
+  when: requirements_txt.stat.exists
+
+- name: Install Python package in editable mode from pyproject.toml
+  ansible.builtin.command:
+    cmd: .venv/bin/pip install -e .
+    chdir: "{{ project_path }}"
+  register: pip_install_editable
+  changed_when: "'Successfully installed' in pip_install_editable.stdout"
+  when: pyproject_toml.stat.exists and not requirements_txt.stat.exists

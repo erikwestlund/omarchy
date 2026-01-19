@@ -1,0 +1,222 @@
+---
+# Laravel-specific bootstrap tasks
+
+# Get port configuration from projects.yml
+- name: Set Laravel port defaults
+  ansible.builtin.set_fact:
+    nginx_port: "{{ project.ports.nginx | default(8010) }}"
+    postgres_port: "{{ project.ports.postgres | default(5440) }}"
+    redis_port: "{{ project.ports.redis | default(6390) }}"
+    minio_api_port: "{{ project.ports.minio_api | default(9010) }}"
+    minio_console_port: "{{ project.ports.minio_console | default(9011) }}"
+    mailpit_smtp_port: "{{ project.ports.mailpit_smtp | default(1030) }}"
+    mailpit_web_port: "{{ project.ports.mailpit_web | default(8030) }}"
+    meilisearch_port: "{{ project.ports.meilisearch | default(7700) }}"
+    include_meilisearch: "{{ project.ports.meilisearch is defined }}"
+  when: project.ports is defined
+
+- name: Set Laravel port defaults (no ports defined)
+  ansible.builtin.set_fact:
+    nginx_port: 8010
+    postgres_port: 5440
+    redis_port: 6390
+    minio_api_port: 9010
+    minio_console_port: 9011
+    mailpit_smtp_port: 1030
+    mailpit_web_port: 8030
+    meilisearch_port: 7700
+    include_meilisearch: false
+  when: project.ports is not defined
+
+# === Copy secrets (only if not already in project) ===
+- name: Check if secrets directory exists
+  ansible.builtin.stat:
+    path: "{{ secrets_dir }}"
+  register: secrets_dir_stat
+
+- name: Check if .env exists in project
+  ansible.builtin.stat:
+    path: "{{ project_path }}/.env"
+  register: project_env_stat
+
+- name: Copy .env from secrets (only if missing)
+  ansible.builtin.copy:
+    src: "{{ secrets_dir }}/.env"
+    dest: "{{ project_path }}/.env"
+    mode: '0600'
+    remote_src: true
+  when:
+    - secrets_dir_stat.stat.exists
+    - secrets_dir_stat.stat.isdir
+    - not project_env_stat.stat.exists
+
+- name: Check if auth.json exists in project
+  ansible.builtin.stat:
+    path: "{{ project_path }}/auth.json"
+  register: project_auth_stat
+
+- name: Check if auth.json exists in secrets
+  ansible.builtin.stat:
+    path: "{{ secrets_dir }}/auth.json"
+  register: secrets_auth_stat
+
+- name: Copy auth.json from secrets (only if missing from project but exists in secrets)
+  ansible.builtin.copy:
+    src: "{{ secrets_dir }}/auth.json"
+    dest: "{{ project_path }}/auth.json"
+    mode: '0600'
+    remote_src: true
+  when:
+    - secrets_dir_stat.stat.exists
+    - secrets_dir_stat.stat.isdir
+    - secrets_auth_stat.stat.exists
+    - not project_auth_stat.stat.exists
+
+# === Docker compose ===
+- name: Check if docker-compose.yml exists
+  ansible.builtin.stat:
+    path: "{{ project_path }}/docker-compose.yml"
+  register: docker_compose_stat
+
+- name: Generate docker-compose.yml
+  ansible.builtin.template:
+    src: laravel-docker-compose.yml.j2
+    dest: "{{ project_path }}/docker-compose.yml"
+    mode: '0644'
+  when: not docker_compose_stat.stat.exists
+
+# === Copy Docker configs from reference project ===
+- name: Check if reference project has Docker configs
+  ansible.builtin.stat:
+    path: "{{ reference_project }}/docker/php/Dockerfile"
+  register: reference_docker_stat
+
+- name: Ensure docker/php directory exists
+  ansible.builtin.file:
+    path: "{{ project_path }}/docker/php"
+    state: directory
+    mode: '0755'
+  when: reference_docker_stat.stat.exists
+
+- name: Ensure docker/nginx directory exists
+  ansible.builtin.file:
+    path: "{{ project_path }}/docker/nginx"
+    state: directory
+    mode: '0755'
+  when: reference_docker_stat.stat.exists
+
+- name: Copy Dockerfile from reference project
+  ansible.builtin.copy:
+    src: "{{ reference_project }}/docker/php/Dockerfile"
+    dest: "{{ project_path }}/docker/php/Dockerfile"
+    mode: '0644'
+    remote_src: true
+    force: false  # Don't overwrite if exists
+  when: reference_docker_stat.stat.exists
+
+- name: Copy php.ini from reference project
+  ansible.builtin.copy:
+    src: "{{ reference_project }}/docker/php/php.ini"
+    dest: "{{ project_path }}/docker/php/php.ini"
+    mode: '0644'
+    remote_src: true
+    force: false
+  when: reference_docker_stat.stat.exists
+  ignore_errors: true
+
+- name: Copy nginx config from reference project
+  ansible.builtin.copy:
+    src: "{{ reference_project }}/docker/nginx/default.conf"
+    dest: "{{ project_path }}/docker/nginx/default.conf"
+    mode: '0644'
+    remote_src: true
+    force: false
+  when: reference_docker_stat.stat.exists
+  ignore_errors: true
+
+# === Build Docker images ===
+- name: Check if docker-compose.yml exists for build
+  ansible.builtin.stat:
+    path: "{{ project_path }}/docker-compose.yml"
+  register: docker_compose_for_build
+
+- name: Build Docker images
+  ansible.builtin.command:
+    cmd: docker compose build
+    chdir: "{{ project_path }}"
+  register: docker_build
+  changed_when: "'Building' in docker_build.stdout or 'building' in docker_build.stderr"
+  when: docker_compose_for_build.stat.exists
+
+# === Start Docker services ===
+- name: Check if main container is running
+  ansible.builtin.command:
+    cmd: docker ps --filter "name={{ project_name }}-php" --filter "status=running" --format "{{ '{{' }}.Names{{ '}}' }}"
+  register: php_container_check
+  changed_when: false
+  when: docker_compose_for_build.stat.exists
+
+- name: Start Docker services (only if not already running)
+  ansible.builtin.command:
+    cmd: docker compose up -d
+    chdir: "{{ project_path }}"
+  register: docker_up
+  changed_when: "'Started' in docker_up.stderr or 'Creating' in docker_up.stderr"
+  when:
+    - docker_compose_for_build.stat.exists
+    - php_container_check.stdout | length == 0
+
+# === Fix storage permissions (only if needed) ===
+- name: Check if storage directory exists
+  ansible.builtin.stat:
+    path: "{{ project_path }}/storage"
+  register: storage_dir
+
+- name: Check storage directory ownership
+  ansible.builtin.command:
+    cmd: find {{ project_path }}/storage -not -user {{ ansible_facts.env.USER }} -print -quit
+  register: storage_ownership_check
+  changed_when: false
+  failed_when: false
+  when: storage_dir.stat.exists
+
+- name: Fix storage permissions (only if ownership is wrong)
+  ansible.builtin.command:
+    cmd: chown -R {{ ansible_facts.env.USER }}:{{ ansible_facts.env.USER }} {{ project_path }}/storage
+  become: true
+  when:
+    - storage_dir.stat.exists
+    - storage_ownership_check.stdout | length > 0
+
+# === Wait for services ===
+- name: Wait for PHP container to be ready
+  ansible.builtin.pause:
+    seconds: 5
+  when: docker_compose_for_build.stat.exists
+
+# === Install dependencies ===
+- name: Check if composer.json exists
+  ansible.builtin.stat:
+    path: "{{ project_path }}/composer.json"
+  register: composer_json
+
+- name: Install PHP dependencies via Composer
+  ansible.builtin.command:
+    cmd: docker compose exec -T php composer install --no-interaction --prefer-dist --optimize-autoloader
+    chdir: "{{ project_path }}"
+  register: composer_install
+  changed_when: "'Installing' in composer_install.stdout or 'Updating' in composer_install.stdout"
+  when: composer_json.stat.exists and docker_compose_for_build.stat.exists
+
+- name: Check if package.json exists
+  ansible.builtin.stat:
+    path: "{{ project_path }}/package.json"
+  register: package_json
+
+- name: Install Node dependencies via npm
+  ansible.builtin.command:
+    cmd: docker compose exec -T php npm install
+    chdir: "{{ project_path }}"
+  register: npm_install
+  changed_when: "'added' in npm_install.stdout"
+  when: package_json.stat.exists and docker_compose_for_build.stat.exists

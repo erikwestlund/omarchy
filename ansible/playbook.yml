@@ -127,6 +127,10 @@
       tags: new-project
       when: project_name is defined
 
+    - role: bootstrap
+      tags: bootstrap
+      when: project_name is defined
+
   tasks:
     - name: Remove project
       ansible.builtin.include_tasks:

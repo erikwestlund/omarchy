@@ -1,0 +1,79 @@
+---
+# R/Statistics-specific bootstrap tasks
+
+- name: Check if renv.lock exists
+  ansible.builtin.stat:
+    path: "{{ project_path }}/renv.lock"
+  register: renv_lock
+
+- name: Check if DESCRIPTION exists
+  ansible.builtin.stat:
+    path: "{{ project_path }}/DESCRIPTION"
+  register: description_file
+
+# Restore renv packages if renv.lock exists
+- name: Restore renv packages
+  ansible.builtin.command:
+    cmd: Rscript -e "renv::restore()"
+    chdir: "{{ project_path }}"
+  register: renv_restore
+  changed_when: "'Installing' in renv_restore.stdout or 'installing' in renv_restore.stderr"
+  when: renv_lock.stat.exists
+
+# Install from DESCRIPTION if no renv.lock but DESCRIPTION exists
+- name: Ensure devtools is installed
+  ansible.builtin.command:
+    cmd: >
+      Rscript -e "dir.create(Sys.getenv('R_LIBS_USER'), recursive = TRUE, showWarnings = FALSE);
+      if (!requireNamespace('devtools', quietly = TRUE))
+        install.packages('devtools', repos = 'https://cloud.r-project.org', lib = Sys.getenv('R_LIBS_USER'))"
+  register: devtools_install
+  changed_when: "'Installing' in devtools_install.stdout"
+  when: description_file.stat.exists and not renv_lock.stat.exists
+
+- name: Install package dependencies from DESCRIPTION
+  ansible.builtin.command:
+    cmd: Rscript -e "devtools::install_deps()"
+    chdir: "{{ project_path }}"
+  register: deps_install
+  changed_when: "'Installing' in deps_install.stdout"
+  when: description_file.stat.exists and not renv_lock.stat.exists
+
+# Handle mixed R/Python projects
+- name: Check if requirements.txt exists (for mixed projects)
+  ansible.builtin.stat:
+    path: "{{ project_path }}/requirements.txt"
+  register: requirements_txt
+
+- name: Check if pyproject.toml exists (for mixed projects)
+  ansible.builtin.stat:
+    path: "{{ project_path }}/pyproject.toml"
+  register: pyproject_toml
+
+- name: Check if venv exists
+  ansible.builtin.stat:
+    path: "{{ project_path }}/.venv/bin/pip"
+  register: venv_pip
+
+- name: Create Python virtual environment for mixed project
+  ansible.builtin.command:
+    cmd: python3 -m venv .venv
+    chdir: "{{ project_path }}"
+    creates: "{{ project_path }}/.venv/bin/pip"
+  when: (requirements_txt.stat.exists or pyproject_toml.stat.exists) and not venv_pip.stat.exists
+
+- name: Install Python dependencies for mixed project
+  ansible.builtin.command:
+    cmd: .venv/bin/pip install -r requirements.txt
+    chdir: "{{ project_path }}"
+  register: pip_install
+  changed_when: "'Successfully installed' in pip_install.stdout"
+  when: requirements_txt.stat.exists
+
+- name: Install Python package for mixed project
+  ansible.builtin.command:
+    cmd: .venv/bin/pip install -e .
+    chdir: "{{ project_path }}"
+  register: pip_editable
+  changed_when: "'Successfully installed' in pip_editable.stdout"
+  when: pyproject_toml.stat.exists and not requirements_txt.stat.exists
