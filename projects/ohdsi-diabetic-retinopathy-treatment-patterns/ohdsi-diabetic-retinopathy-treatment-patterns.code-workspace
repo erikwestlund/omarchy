@@ -10,10 +10,7 @@
 			"path": "../../../Projects/other-repos/Gde2025DiabeticRetinopathyScreening"
 		},
 		{
-			"path": "../../../Projects/other-repos/OhdsiReportGenerator"
-		},
-		{
-			"path": "../../../Code/ohdsi-packages/ShinyAppBuilder"
+			"path": "../../../Code/ohdsi-packages"
 		}
 	]
 }

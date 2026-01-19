@@ -69,6 +69,10 @@
     dest: /etc/systemd/system/keylightc.service.d/override.conf
     mode: '0644'
     content: |
+      [Unit]
+      # Restart keylightc when keyd restarts (keyd recreates virtual keyboard device)
+      PartOf=keyd.service
+
       [Service]
       ExecStart=
       ExecStart=/usr/bin/keylightc --brightness {{ keylightc_brightness }} --timeout {{ keylightc_timeout }}
