@@ -70,10 +70,13 @@
     mode: '0644'
     content: |
       [Unit]
-      # Restart keylightc when keyd restarts (keyd recreates virtual keyboard device)
+      # Start after keyd so virtual keyboard exists, restart when keyd restarts
+      After=keyd.service
       PartOf=keyd.service
 
       [Service]
+      # Give keyd a moment to create virtual keyboard device
+      ExecStartPre=/bin/sleep 1
       ExecStart=
       ExecStart=/usr/bin/keylightc --brightness {{ keylightc_brightness }} --timeout {{ keylightc_timeout }}
   when: keylightc_enabled | default(true)

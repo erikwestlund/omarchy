@@ -39,6 +39,14 @@
   register: aur_result
   until: aur_result is succeeded
 
+- name: Install Ruby gems
+  community.general.gem:
+    name: "{{ item }}"
+    state: present
+    user_install: true
+  loop: "{{ ruby_gems | default([]) }}"
+  when: ruby_gems is defined and ruby_gems | length > 0
+
 - name: Set up NVM directory
   ansible.builtin.file:
     path: "{{ ansible_facts.env.HOME }}/.nvm"

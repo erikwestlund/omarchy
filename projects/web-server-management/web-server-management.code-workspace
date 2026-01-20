@@ -1,7 +1,7 @@
 {
 	"folders": [
 		{
-			"path": "{{ project_path | regex_replace('^~', ansible_facts.env.HOME) }}"
+			"path": "/home/erik/Projects/web-server-management"
 		}
 	],
 	"settings": {

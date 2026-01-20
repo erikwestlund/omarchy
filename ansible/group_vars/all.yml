@@ -60,6 +60,10 @@ pacman_packages:
   - zsh
   - tmux
 
+  # Ruby
+  - ruby
+  - ruby-erb
+
   # Fonts
   - inter-font
   - ttf-font-awesome
@@ -118,6 +122,7 @@ pacman_packages:
 
   # Virtualization
   - libvirt
+  - python-proxmoxer
   - qemu-full
   - virt-manager
   - virt-viewer
@@ -183,6 +188,10 @@ aur_packages:
 
   # Office
   - onlyoffice-bin
+
+# Ruby gems (installed via gem install)
+ruby_gems:
+  - kamal
 
 # JHU VPN configuration
 jh_vpn_url: "vpn.jh.edu"

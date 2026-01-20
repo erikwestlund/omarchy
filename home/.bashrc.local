@@ -1,6 +1,9 @@
 # Add local and app directories to PATH
 export PATH="$HOME/.local/bin:/usr/share/positron/bin:$PATH"
 
+# Ruby gems
+export PATH="$HOME/.local/share/gem/ruby/3.4.0/bin:$PATH"
+
 # Enable autocd - type directory name to cd into it
 shopt -s autocd
 

@@ -175,3 +175,9 @@ projects:
       mailpit_smtp: 1033
       mailpit_web: 8034
 # END PROJECT wordle-group
+# BEGIN PROJECT web-server-management
+  - name: web-server-management
+    alias: wsm
+    type: utility
+    path: ~/Projects/web-server-management
+# END PROJECT web-server-management

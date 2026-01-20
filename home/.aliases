@@ -510,6 +510,17 @@ alias pwg="/usr/share/positron/bin/positron ~/Omarchy/projects/wordle-group/word
 alias dwg="(cd /home/erik/Projects/wordle-group && docker compose up -d)"
 alias ddwg="(cd /home/erik/Projects/wordle-group && docker compose down)"
 # END PROJECT wordle-group
+# BEGIN PROJECT web-server-management
+alias lwsm="~/Omarchy/projects/web-server-management/launch"
+alias kwsm="~/Omarchy/projects/web-server-management/kill"
+alias tmwsm="~/Omarchy/projects/web-server-management/tmux.sh"
+alias bwsm="~/Omarchy/projects/web-server-management/bootstrap"
+alias pmwsm="cd ~/Omarchy/projects/web-server-management"
+alias wsm="cd ~/Projects/web-server-management"
+alias vswsm="code ~/Omarchy/projects/web-server-management/web-server-management.code-workspace"
+alias nvwsm="(cd ~/Projects/web-server-management && nvim .)"
+alias pwsm="/usr/share/positron/bin/positron ~/Omarchy/projects/web-server-management/web-server-management.code-workspace"
+# END PROJECT web-server-management
 # Auto-generated project aliases
 
 # Sync R2 media to local minio for better-shoes dev
