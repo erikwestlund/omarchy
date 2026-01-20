@@ -1,4 +1,7 @@
 {
     "workbench.iconTheme": "catppuccin-mocha",
-    "workbench.colorTheme": "null"
+    "workbench.colorTheme": "Catppuccin Mocha",
+    "quarto.render.renderOnSaveShiny": false,
+    "quarto.render.previewType": "external",
+    "makefile.configureOnOpen": true
 }

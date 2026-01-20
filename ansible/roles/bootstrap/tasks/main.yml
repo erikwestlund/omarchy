@@ -30,6 +30,7 @@
     project_type: "{{ project.type | default('utility') }}"
     secrets_dir: "{{ ansible_facts.env.HOME }}/.secrets/{{ project_name }}"
     reference_project: "{{ ansible_facts.env.HOME }}/Projects/pequod"
+    github_repo: "{{ project.github_repo | default('') }}"
 
 # github_repo can be passed as extra var or defined in projects.yml in future
 # For now, existing projects already have code cloned

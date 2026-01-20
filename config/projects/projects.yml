@@ -180,4 +180,5 @@ projects:
     alias: wsm
     type: utility
     path: ~/Projects/web-server-management
+    github_repo: OnPequod/web-server-management
 # END PROJECT web-server-management
