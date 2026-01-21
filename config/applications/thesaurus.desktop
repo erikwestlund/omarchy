@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Thesaurus
+Comment=Thesaurus.com
+GenericName=Thesaurus
+Exec=omarchy-launch-webapp "https://www.thesaurus.com"
+Icon=/home/erik/.local/share/icons/thesaurus.png
+Type=Application
+StartupNotify=false
+Categories=Network;Reference;
+Keywords=thesaurus;synonyms;words;

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Google Maps
+Comment=Google Maps
+GenericName=Maps
+Exec=omarchy-launch-webapp "https://www.google.com/maps"
+Icon=/home/erik/.local/share/icons/google-maps.webp
+Type=Application
+StartupNotify=false
+Categories=Network;Navigation;
+Keywords=maps;directions;navigation;google;

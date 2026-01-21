@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Dictionary
+Comment=Dictionary.com
+GenericName=Dictionary
+Exec=omarchy-launch-webapp "https://www.dictionary.com"
+Icon=/home/erik/.local/share/icons/dictionary.png
+Type=Application
+StartupNotify=false
+Categories=Network;Reference;
+Keywords=dictionary;words;definition;

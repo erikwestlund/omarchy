@@ -15,25 +15,13 @@ The correct workflow:
 
 ## Restarting keyd (IMPORTANT)
 
-After modifying keyd configs, you MUST restart both services:
+After modifying keyd configs, or if keyd-application-mapper stops working (clipboard issues, Super key combos not working in VS Code), restart both services using the shell alias:
 
 ```bash
-# 1. Restart the system keyd service
-sudo systemctl restart keyd
-
-# 2. Restart keyd-application-mapper (for VS Code/app-specific bindings)
-pkill -f keyd-application-mapper
-nohup keyd-application-mapper &>/dev/null &
-
-# 3. Verify both are running
-systemctl status keyd --no-pager | head -5
-ps aux | grep "[k]eyd-application-mapper"
+restart-keyd
 ```
 
-**Quick one-liner:**
-```bash
-sudo systemctl restart keyd && pkill -f keyd-application-mapper; nohup keyd-application-mapper &>/dev/null &
-```
+This restarts both the system keyd service and keyd-application-mapper. Defined in `home/.aliases`.
 
 ## Config Files
 

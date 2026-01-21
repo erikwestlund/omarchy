@@ -149,6 +149,15 @@ alias pumpitup="pamixer --set-volume 100"
 alias waybar-start="waybar &"
 alias waybar-restart="pkill waybar; waybar &"
 
+# keyd (keyboard remapping)
+restart-keyd() {
+    sudo systemctl restart keyd
+    pkill -f keyd-application-mapper
+    sleep 1
+    nohup keyd-application-mapper &>/dev/null &
+    echo "keyd and keyd-application-mapper restarted"
+}
+
 # Lock screen (requires i3lock, swaylock, or similar)
 alias afk="loginctl lock-session"
 
