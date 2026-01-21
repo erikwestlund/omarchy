@@ -1,0 +1,562 @@
+#!/bin/bash
+# Initialize project management from an existing code directory
+# The "inside out" version of pm-new - starts with code, creates management around it
+#
+# Usage:
+#   pm-init              # Interactive - asks for alias first
+#   pm-init obsr         # Check/augment existing project by alias
+#   pm-init ~/Projects/x # Initialize from directory (asks for alias)
+
+set -e
+
+OMARCHY_DIR="$HOME/Omarchy"
+PROJECTS_DIR="$HOME/Projects"
+PM_DIR="$OMARCHY_DIR/projects"
+PROJECTS_YML="$OMARCHY_DIR/config/projects/projects.yml"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+found() { echo -e "  ${GREEN}✓${NC} $1"; }
+missing() { echo -e "  ${RED}✗${NC} $1"; }
+info() { echo -e "  ${BLUE}→${NC} $1"; }
+warn() { echo -e "  ${YELLOW}!${NC} $1"; }
+
+# Convert to kebab-case
+to_kebab() {
+    echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//'
+}
+
+# Find next available port
+next_port() {
+    local service=$1
+    local default=$2
+    local max_port=$(grep "[[:space:]]${service}:" "$PROJECTS_YML" 2>/dev/null | grep -oE '[0-9]+$' | sort -n | tail -1)
+    if [ -n "$max_port" ]; then
+        echo $((max_port + 1))
+    else
+        echo $default
+    fi
+}
+
+# Detect project type from directory contents
+detect_type() {
+    local dir="$1"
+    [ ! -d "$dir" ] && echo "utility" && return
+
+    # Laravel (artisan is definitive)
+    [ -f "$dir/artisan" ] && echo "laravel" && return
+
+    # R/Stats
+    [ -f "$dir/renv.lock" ] || [ -f "$dir/DESCRIPTION" ] && echo "rstats" && return
+    ls "$dir"/*.Rproj 2>/dev/null | head -1 >/dev/null && echo "rstats" && return
+
+    # Python
+    [ -f "$dir/requirements.txt" ] || [ -f "$dir/pyproject.toml" ] || [ -f "$dir/setup.py" ] || [ -f "$dir/manage.py" ] && echo "python" && return
+
+    # PHP (non-Laravel)
+    [ -f "$dir/composer.json" ] && echo "laravel" && return
+
+    echo "utility"
+}
+
+# Detect editor preference
+detect_editor() {
+    local type="$1"
+    [ "$type" = "rstats" ] && echo "positron" && return
+    echo "vscode"
+}
+
+# Detect GitHub repo from git remote
+detect_github_repo() {
+    local dir="$1"
+    [ ! -d "$dir/.git" ] && return
+    local remote=$(cd "$dir" && git remote get-url origin 2>/dev/null || true)
+    [ -n "$remote" ] && echo "$remote" | sed -E 's|^git@github\.com:||; s|^https://github\.com/||; s|\.git$||'
+}
+
+# Detect if Docker is used
+has_docker() {
+    local dir="$1"
+    [ -f "$dir/docker-compose.yml" ] || [ -f "$dir/docker-compose.yaml" ] || [ -f "$dir/Dockerfile" ]
+}
+
+# Get field from projects.yml for a project
+get_field() {
+    local name="$1"
+    local field="$2"
+    sed -n "/# BEGIN PROJECT $name/,/# END PROJECT $name/p" "$PROJECTS_YML" 2>/dev/null | \
+        grep -E "^\s+$field:" | head -1 | sed "s/.*$field:\s*//" | xargs
+}
+
+# Find project name by alias
+find_by_alias() {
+    local alias="$1"
+    grep -E "^\s+alias:\s+$alias\s*$" "$PROJECTS_YML" -B2 2>/dev/null | grep "name:" | head -1 | sed 's/.*name:\s*//' | xargs
+}
+
+# Check if alias exists
+alias_exists() {
+    grep -qE "^\s+alias:\s+$1\s*$" "$PROJECTS_YML" 2>/dev/null
+}
+
+# === MAIN ===
+
+echo ""
+echo "=== pm-init: Project Initialization ==="
+echo ""
+
+# Determine starting point
+START_DIR=""
+START_ALIAS=""
+
+if [ -n "$1" ]; then
+    if [ -d "$1" ]; then
+        START_DIR="$(realpath "$1")"
+        echo "Starting from directory: $START_DIR"
+    else
+        START_ALIAS="$1"
+        echo "Looking up alias: $START_ALIAS"
+    fi
+else
+    # Check if we're in a relevant directory
+    CWD="$(pwd)"
+    if [[ "$CWD" == "$PROJECTS_DIR"/* ]]; then
+        START_DIR="$CWD"
+        echo "Detected project directory: $START_DIR"
+    elif [[ "$CWD" == "$PM_DIR"/* ]]; then
+        PM_NAME=$(basename "$CWD")
+        START_ALIAS=$(get_field "$PM_NAME" "alias")
+        if [ -n "$START_ALIAS" ]; then
+            echo "Detected PM directory for: $PM_NAME (alias: $START_ALIAS)"
+        else
+            echo "In PM directory but project not in projects.yml"
+        fi
+    fi
+fi
+
+echo ""
+
+# If we have a directory but no alias, ask for alias first
+if [ -n "$START_DIR" ] && [ -z "$START_ALIAS" ]; then
+    DIR_NAME=$(basename "$START_DIR")
+
+    # Suggest alias from directory name
+    SUGGESTED=""
+    if [[ "$DIR_NAME" == *-* ]]; then
+        SUGGESTED=$(echo "$DIR_NAME" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++) printf substr($i,1,1)}')
+    fi
+    [ -z "$SUGGESTED" ] || [ ${#SUGGESTED} -lt 2 ] && SUGGESTED="${DIR_NAME:0:3}"
+
+    read -p "Project alias [$SUGGESTED]: " INPUT_ALIAS
+    START_ALIAS="${INPUT_ALIAS:-$SUGGESTED}"
+fi
+
+# If still no alias, ask for it
+if [ -z "$START_ALIAS" ]; then
+    read -p "Project alias: " START_ALIAS
+    if [ -z "$START_ALIAS" ]; then
+        echo "Error: Alias is required"
+        exit 1
+    fi
+fi
+
+ALIAS="$START_ALIAS"
+
+# === DISCOVERY PHASE ===
+echo ""
+echo "Checking what exists for alias '$ALIAS'..."
+echo ""
+
+# Check projects.yml
+PROJECT_NAME=""
+PROJECT_PATH=""
+PROJECT_TYPE=""
+GITHUB_REPO=""
+HAS_YML=false
+
+if alias_exists "$ALIAS"; then
+    HAS_YML=true
+    PROJECT_NAME=$(find_by_alias "$ALIAS")
+    PROJECT_PATH=$(get_field "$PROJECT_NAME" "path")
+    PROJECT_PATH="${PROJECT_PATH/#\~/$HOME}"
+    PROJECT_TYPE=$(get_field "$PROJECT_NAME" "type")
+    GITHUB_REPO=$(get_field "$PROJECT_NAME" "github_repo")
+    found "projects.yml entry: $PROJECT_NAME"
+    [ -n "$PROJECT_TYPE" ] && info "  type: $PROJECT_TYPE"
+    [ -n "$PROJECT_PATH" ] && info "  path: $PROJECT_PATH"
+    [ -n "$GITHUB_REPO" ] && info "  github_repo: $GITHUB_REPO"
+else
+    missing "projects.yml entry (alias '$ALIAS' not found)"
+fi
+
+# Check PM directory
+HAS_PM_DIR=false
+PM_PATH=""
+if [ -n "$PROJECT_NAME" ] && [ -d "$PM_DIR/$PROJECT_NAME" ]; then
+    HAS_PM_DIR=true
+    PM_PATH="$PM_DIR/$PROJECT_NAME"
+    found "PM directory: $PM_PATH"
+elif [ -n "$PROJECT_NAME" ]; then
+    missing "PM directory: $PM_DIR/$PROJECT_NAME"
+fi
+
+# Check PM files
+HAS_LAUNCH=false
+HAS_KILL=false
+HAS_BOOTSTRAP=false
+HAS_TMUX=false
+if [ "$HAS_PM_DIR" = true ]; then
+    [ -f "$PM_PATH/launch" ] && HAS_LAUNCH=true && found "  launch script" || missing "  launch script"
+    [ -f "$PM_PATH/kill" ] && HAS_KILL=true && found "  kill script" || missing "  kill script"
+    [ -f "$PM_PATH/bootstrap" ] && HAS_BOOTSTRAP=true && found "  bootstrap script" || missing "  bootstrap script"
+    [ -f "$PM_PATH/tmux.sh" ] && HAS_TMUX=true && found "  tmux.sh script" || missing "  tmux.sh script"
+fi
+
+# Check code directory
+HAS_CODE_DIR=false
+CODE_DIR_EMPTY=false
+CODE_PATH=""
+if [ -n "$START_DIR" ]; then
+    CODE_PATH="$START_DIR"
+elif [ -n "$PROJECT_PATH" ]; then
+    CODE_PATH="$PROJECT_PATH"
+fi
+
+if [ -n "$CODE_PATH" ] && [ -d "$CODE_PATH" ]; then
+    HAS_CODE_DIR=true
+    # Check if directory is empty or has only hidden files
+    if [ -z "$(ls -A "$CODE_PATH" 2>/dev/null)" ]; then
+        CODE_DIR_EMPTY=true
+        warn "Code directory exists but is EMPTY: $CODE_PATH"
+    else
+        found "Code directory: $CODE_PATH"
+        # Detect characteristics
+        DETECTED_TYPE=$(detect_type "$CODE_PATH")
+        DETECTED_REPO=$(detect_github_repo "$CODE_PATH")
+        DETECTED_DOCKER=$(has_docker "$CODE_PATH" && echo "true" || echo "false")
+
+        info "  detected type: $DETECTED_TYPE"
+        [ -n "$DETECTED_REPO" ] && info "  detected github: $DETECTED_REPO"
+        [ "$DETECTED_DOCKER" = "true" ] && info "  detected docker: yes"
+    fi
+elif [ -n "$CODE_PATH" ]; then
+    missing "Code directory: $CODE_PATH"
+fi
+
+# Check aliases in .aliases file
+HAS_ALIASES=false
+if grep -q "# BEGIN PROJECT $PROJECT_NAME" "$OMARCHY_DIR/home/.aliases" 2>/dev/null; then
+    HAS_ALIASES=true
+    found "Shell aliases in .aliases"
+else
+    missing "Shell aliases in .aliases"
+fi
+
+# === DECISION PHASE ===
+echo ""
+
+# Determine what needs to be done
+NEEDS_YML=false
+NEEDS_PM_FILES=false
+NEEDS_GITHUB=false
+NEEDS_ALIASES=false
+NEEDS_CLONE=false
+
+[ "$HAS_YML" = false ] && NEEDS_YML=true
+[ "$HAS_PM_DIR" = false ] || [ "$HAS_LAUNCH" = false ] || [ "$HAS_KILL" = false ] || [ "$HAS_BOOTSTRAP" = false ] || [ "$HAS_TMUX" = false ] && NEEDS_PM_FILES=true
+# Need github if: entry exists but github_repo is not set
+[ "$HAS_YML" = true ] && [ -z "$GITHUB_REPO" ] && NEEDS_GITHUB=true
+[ "$HAS_ALIASES" = false ] && NEEDS_ALIASES=true
+# Need clone if: code dir missing or empty, and we have (or will have) github_repo
+([ "$HAS_CODE_DIR" = false ] || [ "$CODE_DIR_EMPTY" = true ]) && NEEDS_CLONE=true
+
+# Nothing to do?
+if [ "$NEEDS_YML" = false ] && [ "$NEEDS_PM_FILES" = false ] && [ "$NEEDS_GITHUB" = false ] && [ "$NEEDS_ALIASES" = false ] && [ "$NEEDS_CLONE" = false ]; then
+    echo "Everything looks complete for '$ALIAS'!"
+    exit 0
+fi
+
+# Special case: only need to clone (github already configured)
+if [ "$NEEDS_YML" = false ] && [ "$NEEDS_PM_FILES" = false ] && [ "$NEEDS_GITHUB" = false ] && [ "$NEEDS_ALIASES" = false ] && [ "$NEEDS_CLONE" = true ] && [ -n "$GITHUB_REPO" ]; then
+    echo "Code directory is missing/empty but github_repo is configured."
+    echo ""
+    read -p "Run bootstrap to clone from $GITHUB_REPO? [Y/n]: " RUN_BOOT
+    if [[ ! "$RUN_BOOT" =~ ^[Nn] ]]; then
+        "$PM_PATH/bootstrap"
+    fi
+    exit 0
+fi
+
+# === GATHER INFO PHASE ===
+echo "Actions needed:"
+[ "$NEEDS_YML" = true ] && echo "  - Create projects.yml entry"
+[ "$NEEDS_PM_FILES" = true ] && echo "  - Create/update PM scripts (launch, kill, bootstrap, tmux.sh)"
+[ "$NEEDS_GITHUB" = true ] && echo "  - Add github_repo to projects.yml"
+[ "$NEEDS_ALIASES" = true ] && echo "  - Add shell aliases"
+[ "$NEEDS_CLONE" = true ] && echo "  - Clone code (directory empty/missing)"
+echo ""
+
+# If creating from scratch, gather all info
+if [ "$NEEDS_YML" = true ]; then
+    echo "--- New Project Setup ---"
+    echo ""
+
+    # Project name (for PM dir)
+    if [ -n "$CODE_PATH" ]; then
+        SUGGESTED_NAME=$(to_kebab "$(basename "$CODE_PATH")")
+    else
+        SUGGESTED_NAME=$(to_kebab "$ALIAS")
+    fi
+    read -p "Project name (PM directory) [$SUGGESTED_NAME]: " INPUT_NAME
+    PROJECT_NAME="${INPUT_NAME:-$SUGGESTED_NAME}"
+
+    # Check PM dir doesn't exist
+    if [ -d "$PM_DIR/$PROJECT_NAME" ]; then
+        warn "PM directory already exists: $PM_DIR/$PROJECT_NAME"
+        read -p "Continue anyway? [y/N]: " CONT
+        [[ ! "$CONT" =~ ^[Yy] ]] && exit 1
+    fi
+
+    # Code path
+    if [ -z "$CODE_PATH" ]; then
+        SUGGESTED_PATH="$PROJECTS_DIR/$PROJECT_NAME"
+        read -p "Code directory [$SUGGESTED_PATH]: " INPUT_PATH
+        CODE_PATH="${INPUT_PATH:-$SUGGESTED_PATH}"
+        CODE_PATH="${CODE_PATH/#\~/$HOME}"
+
+        if [ -d "$CODE_PATH" ]; then
+            HAS_CODE_DIR=true
+            DETECTED_TYPE=$(detect_type "$CODE_PATH")
+            DETECTED_REPO=$(detect_github_repo "$CODE_PATH")
+            DETECTED_DOCKER=$(has_docker "$CODE_PATH" && echo "true" || echo "false")
+        fi
+    fi
+    PROJECT_PATH="$CODE_PATH"
+
+    # Type
+    echo ""
+    echo "Project types: 1) utility  2) laravel  3) python  4) rstats"
+    case "$DETECTED_TYPE" in
+        utility) TYPE_DEFAULT=1 ;;
+        laravel) TYPE_DEFAULT=2 ;;
+        python)  TYPE_DEFAULT=3 ;;
+        rstats)  TYPE_DEFAULT=4 ;;
+        *)       TYPE_DEFAULT=1 ;;
+    esac
+    read -p "Type [1-4, default=$TYPE_DEFAULT]: " TYPE_CHOICE
+    TYPE_CHOICE="${TYPE_CHOICE:-$TYPE_DEFAULT}"
+    case "$TYPE_CHOICE" in
+        2) PROJECT_TYPE="laravel" ;;
+        3) PROJECT_TYPE="python" ;;
+        4) PROJECT_TYPE="rstats" ;;
+        *) PROJECT_TYPE="utility" ;;
+    esac
+
+    # Editor
+    DETECTED_EDITOR=$(detect_editor "$PROJECT_TYPE")
+    echo ""
+    echo "Editors: 1) vscode  2) positron  3) neovim"
+    case "$DETECTED_EDITOR" in
+        vscode)   EDITOR_DEFAULT=1 ;;
+        positron) EDITOR_DEFAULT=2 ;;
+        *)        EDITOR_DEFAULT=1 ;;
+    esac
+    read -p "Editor [1-3, default=$EDITOR_DEFAULT]: " EDITOR_CHOICE
+    EDITOR_CHOICE="${EDITOR_CHOICE:-$EDITOR_DEFAULT}"
+    case "$EDITOR_CHOICE" in
+        2) PROJECT_EDITOR="positron" ;;
+        3) PROJECT_EDITOR="neovim" ;;
+        *) PROJECT_EDITOR="vscode" ;;
+    esac
+
+    # Docker
+    echo ""
+    if [ "$DETECTED_DOCKER" = "true" ]; then
+        read -p "Docker detected. Use it? [Y/n]: " USE_DOCKER
+        [[ "$USE_DOCKER" =~ ^[Nn] ]] && DOCKER_COMPOSE=false || DOCKER_COMPOSE=true
+    else
+        read -p "Use Docker Compose? [y/N]: " USE_DOCKER
+        [[ "$USE_DOCKER" =~ ^[Yy] ]] && DOCKER_COMPOSE=true || DOCKER_COMPOSE=false
+    fi
+
+    # Ports for Laravel
+    if [ "$PROJECT_TYPE" = "laravel" ] && [ "$DOCKER_COMPOSE" = true ]; then
+        PORT_VITE=$(next_port vite 5173)
+        PORT_NGINX=$(next_port nginx 8010)
+        PORT_POSTGRES=$(next_port postgres 5440)
+        PORT_REDIS=$(next_port redis 6390)
+        PORT_MEILISEARCH=$(next_port meilisearch 7700)
+        PORT_MINIO_API=$(next_port minio_api 9010)
+        PORT_MINIO_CONSOLE=$(next_port minio_console 9011)
+        PORT_MAILPIT_SMTP=$(next_port mailpit_smtp 1030)
+        PORT_MAILPIT_WEB=$(next_port mailpit_web 8030)
+    fi
+
+    # Workspace
+    echo ""
+    read -p "Default workspace [1]: " DEFAULT_WS
+    DEFAULT_WS="${DEFAULT_WS:-1}"
+
+    # View URL
+    VIEW_URL=""
+    if [ "$PROJECT_TYPE" = "laravel" ]; then
+        KEBAB=$(to_kebab "$PROJECT_NAME")
+        DEFAULT_URL="http://$KEBAB.test"
+        read -p "View URL [$DEFAULT_URL]: " VIEW_URL
+        VIEW_URL="${VIEW_URL:-$DEFAULT_URL}"
+    fi
+
+    # GitHub
+    echo ""
+    if [ -n "$DETECTED_REPO" ]; then
+        read -p "GitHub repo [$DETECTED_REPO]: " GITHUB_REPO
+        GITHUB_REPO="${GITHUB_REPO:-$DETECTED_REPO}"
+    else
+        read -p "GitHub repo (user/repo, Enter to skip): " GITHUB_REPO
+    fi
+fi
+
+# Just adding github_repo to existing project
+if [ "$NEEDS_YML" = false ] && [ "$NEEDS_GITHUB" = true ]; then
+    echo "--- Add GitHub Repository ---"
+    echo ""
+    if [ -n "$DETECTED_REPO" ]; then
+        read -p "GitHub repo [$DETECTED_REPO]: " INPUT_REPO
+        GITHUB_REPO="${INPUT_REPO:-$DETECTED_REPO}"
+    else
+        echo "Enter the GitHub repo in 'user/repo' format (e.g., 'erikwestlund/my-project')"
+        read -p "GitHub repo: " GITHUB_REPO
+    fi
+
+    if [ -z "$GITHUB_REPO" ]; then
+        echo "No GitHub repo provided."
+        NEEDS_GITHUB=false
+        NEEDS_CLONE=false
+    else
+        # Check if this is not erikwestlund's repo - may need HTTPS for SSO
+        REPO_OWNER=$(echo "$GITHUB_REPO" | cut -d'/' -f1)
+        if [ "$REPO_OWNER" != "erikwestlund" ]; then
+            echo ""
+            echo "This repo is owned by '$REPO_OWNER' (not erikwestlund)."
+            echo "Some organizations require HTTPS for SAML SSO authentication."
+            echo ""
+            echo "Clone method:"
+            echo "  1) SSH   - git@github.com:$GITHUB_REPO.git"
+            echo "  2) HTTPS - https://github.com/$GITHUB_REPO.git"
+            echo ""
+            read -p "Method [1-2, default=1]: " CLONE_METHOD
+            if [ "$CLONE_METHOD" = "2" ]; then
+                # Store as full HTTPS URL so ansible knows to use it directly
+                GITHUB_REPO="https://github.com/$GITHUB_REPO"
+                echo "Will use HTTPS: $GITHUB_REPO"
+            fi
+        fi
+    fi
+fi
+
+# === SUMMARY ===
+echo ""
+echo "=== Summary ==="
+echo "Alias:      $ALIAS"
+[ -n "$PROJECT_NAME" ] && echo "Name:       $PROJECT_NAME"
+[ -n "$PROJECT_TYPE" ] && echo "Type:       $PROJECT_TYPE"
+[ -n "$PROJECT_PATH" ] && echo "Code path:  $PROJECT_PATH"
+[ -n "$GITHUB_REPO" ] && echo "GitHub:     $GITHUB_REPO"
+[ -n "$PROJECT_EDITOR" ] && echo "Editor:     $PROJECT_EDITOR"
+[ -n "$DOCKER_COMPOSE" ] && echo "Docker:     $DOCKER_COMPOSE"
+[ -n "$DEFAULT_WS" ] && echo "Workspace:  $DEFAULT_WS"
+[ -n "$VIEW_URL" ] && echo "View URL:   $VIEW_URL"
+echo ""
+echo "Will create/update:"
+[ "$NEEDS_YML" = true ] && echo "  - projects.yml entry"
+[ "$NEEDS_PM_FILES" = true ] && echo "  - PM scripts via ansible"
+[ "$NEEDS_GITHUB" = true ] && [ "$NEEDS_YML" = false ] && echo "  - Add github_repo to projects.yml"
+[ "$NEEDS_ALIASES" = true ] && echo "  - Shell aliases"
+[ "$NEEDS_CLONE" = true ] && [ -n "$GITHUB_REPO" ] && echo "  - Clone repo via bootstrap"
+echo ""
+
+read -p "Proceed? [Y/n]: " CONFIRM
+if [[ "$CONFIRM" =~ ^[Nn] ]]; then
+    echo "Cancelled."
+    exit 0
+fi
+
+# === EXECUTION PHASE ===
+echo ""
+
+# Run ansible for new project or regenerate
+if [ "$NEEDS_YML" = true ] || [ "$NEEDS_PM_FILES" = true ]; then
+    echo "Running ansible..."
+
+    ANSIBLE_CMD="ANSIBLE_CONFIG=$OMARCHY_DIR/ansible/ansible.cfg ansible-playbook \
+        \"$OMARCHY_DIR/ansible/playbook.yml\" \
+        --limit \"$(cat ~/.machine 2>/dev/null || echo laptop)\" \
+        --tags new-project \
+        -e \"project_name=$PROJECT_NAME\" \
+        -e \"project_alias=$ALIAS\" \
+        -e \"project_type=$PROJECT_TYPE\" \
+        -e \"project_editor=${PROJECT_EDITOR:-vscode}\" \
+        -e \"docker_compose=${DOCKER_COMPOSE:-false}\" \
+        -e \"default_ws=${DEFAULT_WS:-1}\" \
+        -e \"project_path=$PROJECT_PATH\""
+
+    [ -n "$GITHUB_REPO" ] && ANSIBLE_CMD="$ANSIBLE_CMD -e \"github_repo=$GITHUB_REPO\""
+    [ -n "$VIEW_URL" ] && ANSIBLE_CMD="$ANSIBLE_CMD -e \"view_url=$VIEW_URL\""
+
+    if [ "$PROJECT_TYPE" = "laravel" ] && [ "$DOCKER_COMPOSE" = true ]; then
+        ANSIBLE_CMD="$ANSIBLE_CMD -e \"vite_port=$PORT_VITE\""
+        ANSIBLE_CMD="$ANSIBLE_CMD -e \"nginx_port=$PORT_NGINX\""
+        ANSIBLE_CMD="$ANSIBLE_CMD -e \"postgres_port=$PORT_POSTGRES\""
+        ANSIBLE_CMD="$ANSIBLE_CMD -e \"redis_port=$PORT_REDIS\""
+        ANSIBLE_CMD="$ANSIBLE_CMD -e \"meilisearch_port=$PORT_MEILISEARCH\""
+        ANSIBLE_CMD="$ANSIBLE_CMD -e \"minio_api_port=$PORT_MINIO_API\""
+        ANSIBLE_CMD="$ANSIBLE_CMD -e \"minio_console_port=$PORT_MINIO_CONSOLE\""
+        ANSIBLE_CMD="$ANSIBLE_CMD -e \"mailpit_smtp_port=$PORT_MAILPIT_SMTP\""
+        ANSIBLE_CMD="$ANSIBLE_CMD -e \"mailpit_web_port=$PORT_MAILPIT_WEB\""
+    fi
+
+    eval $ANSIBLE_CMD
+fi
+
+# Just add github_repo to existing entry
+if [ "$NEEDS_YML" = false ] && [ "$NEEDS_GITHUB" = true ] && [ -n "$GITHUB_REPO" ]; then
+    echo "Adding github_repo to projects.yml..."
+    TEMP_FILE=$(mktemp)
+    awk '
+        /# BEGIN PROJECT '"$PROJECT_NAME"'/ { in_block = 1 }
+        /# END PROJECT '"$PROJECT_NAME"'/ { in_block = 0 }
+        in_block && /^[[:space:]]+type:/ {
+            print
+            print "    github_repo: '"$GITHUB_REPO"'"
+            next
+        }
+        in_block && /^[[:space:]]+github_repo:/ { next }
+        { print }
+    ' "$PROJECTS_YML" > "$TEMP_FILE"
+    mv "$TEMP_FILE" "$PROJECTS_YML"
+fi
+
+# === DONE ===
+echo ""
+echo "Done! Project '$ALIAS' is ready."
+echo ""
+echo "Aliases (reload shell or: source ~/.aliases):"
+echo "  l$ALIAS   - Launch"
+echo "  k$ALIAS   - Kill"
+echo "  b$ALIAS   - Bootstrap"
+echo "  $ALIAS    - cd to code"
+echo "  pm$ALIAS  - cd to PM dir"
+echo ""
+
+# Offer to bootstrap if code dir missing/empty and we have github
+if [ "$NEEDS_CLONE" = true ] && [ -n "$GITHUB_REPO" ]; then
+    read -p "Run bootstrap now to clone the repo? [Y/n]: " RUN_BOOT
+    if [[ ! "$RUN_BOOT" =~ ^[Nn] ]]; then
+        "$PM_DIR/$PROJECT_NAME/bootstrap"
+    fi
+fi

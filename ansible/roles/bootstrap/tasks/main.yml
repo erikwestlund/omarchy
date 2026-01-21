@@ -32,13 +32,60 @@
     reference_project: "{{ ansible_facts.env.HOME }}/Projects/pequod"
     github_repo: "{{ project.github_repo | default('') }}"
 
-# github_repo can be passed as extra var or defined in projects.yml in future
-# For now, existing projects already have code cloned
+# github_repo can be:
+#   - "user/repo" → uses SSH: git@github.com:user/repo.git
+#   - "https://github.com/user/repo" → uses HTTPS directly (for SSO orgs)
 
 # === 1. Clone or create project directory ===
+- name: Warn if running from within project directory
+  ansible.builtin.fail:
+    msg: "Cannot bootstrap while inside the project directory ({{ project_path }}). Please cd elsewhere first."
+  when:
+    - project_path | length > 0
+    - github_repo is defined
+    - github_repo | length > 0
+    - ansible_facts.env.PWD == project_path
+
+- name: Determine git clone URL
+  ansible.builtin.set_fact:
+    git_clone_url: "{{ github_repo if github_repo.startswith('https://') else 'git@github.com:' + github_repo + '.git' }}"
+  when:
+    - github_repo is defined
+    - github_repo | length > 0
+
+- name: Check if project directory exists
+  ansible.builtin.stat:
+    path: "{{ project_path }}"
+  register: project_dir_stat
+  when:
+    - project_path | length > 0
+    - github_repo is defined
+    - github_repo | length > 0
+
+- name: Check if .git directory exists (already cloned)
+  ansible.builtin.stat:
+    path: "{{ project_path }}/.git"
+  register: git_dir_stat
+  when:
+    - project_path | length > 0
+    - github_repo is defined
+    - github_repo | length > 0
+    - project_dir_stat.stat.exists | default(false)
+
+- name: Remove project directory before clone (no .git = not a repo yet)
+  ansible.builtin.file:
+    path: "{{ project_path }}"
+    state: absent
+  when:
+    - project_path | length > 0
+    - github_repo is defined
+    - github_repo | length > 0
+    - project_dir_stat.stat.exists | default(false)
+    - not (git_dir_stat.stat.exists | default(false))
+
 - name: Clone project from GitHub
   ansible.builtin.git:
-    repo: "git@github.com:{{ github_repo }}.git"
+    repo: "{{ git_clone_url }}"
     dest: "{{ project_path }}"
     accept_hostkey: true
   when:

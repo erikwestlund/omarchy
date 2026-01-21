@@ -119,6 +119,11 @@
       - "    type: {{ project_type }}"
       - "    path: {{ project_path_tilde | default('') }}"
 
+- name: Add github_repo if provided
+  ansible.builtin.set_fact:
+    project_yml_lines: "{{ project_yml_lines + ['    github_repo: ' + github_repo] }}"
+  when: github_repo is defined and github_repo | length > 0
+
 - name: Add extras section if needed
   ansible.builtin.set_fact:
     project_yml_lines: "{{ project_yml_lines + ['    extras:'] }}"

@@ -425,6 +425,84 @@ Reference for existing projects (check projects.yml for authoritative source):
 | flint | 5177 | 8031 | 5435 | 6384 | flint.test |
 | naaccord | - | 8040 | - | 6393 | naaccord.test |
 
+## Project Management CLI Tools
+
+Two CLI tools manage project setup:
+
+### pm-new: Create New Project (Outside-In)
+
+Creates a new project from scratch. Use when starting fresh.
+
+```bash
+pm-new
+```
+
+Interactive prompts for:
+1. Project name (display name)
+2. PM directory name (kebab-case)
+3. Project type (utility, laravel, python, rstats)
+4. Editor preference (vscode, positron, neovim)
+5. Docker Compose usage
+6. Default workspace
+7. View URL (for web projects)
+8. Link to existing directory or clone from GitHub
+9. Project alias
+
+Creates all PM scripts, updates projects.yml and aliases, optionally clones repo.
+
+### pm-init: Initialize Existing Project (Inside-Out)
+
+Initialize project management from an existing code directory, or augment an existing project entry. Use when you already have code and want to add PM scaffolding.
+
+```bash
+pm-init              # Interactive - asks for alias first
+pm-init obsr         # Check/augment existing project by alias
+pm-init ~/Projects/x # Initialize from directory
+```
+
+**Discovery Phase** - Reports what exists with ✓/✗:
+```
+Checking what exists for alias 'obsr'...
+
+  ✓ projects.yml entry: observational-research-methods-in-r
+  → type: rstats
+  → path: ~/Projects/observational-research-methods-in-r
+  ✓ PM directory: ~/Omarchy/projects/observational-research-methods-in-r
+  ✓ launch script
+  ✓ kill script
+  ✓ bootstrap script
+  ✓ tmux.sh script
+  ✗ Code directory (not cloned yet)
+  ✓ Shell aliases in .aliases
+
+Actions needed:
+  - Add github_repo to projects.yml
+```
+
+**Auto-detection** from code directory:
+- **Type**: `artisan` → laravel, `renv.lock`/`DESCRIPTION`/`.Rproj` → rstats, `requirements.txt`/`pyproject.toml` → python
+- **GitHub repo**: from git remote origin
+- **Docker**: presence of `docker-compose.yml`
+- **Editor**: rstats defaults to positron, others to vscode
+
+**Augment mode** - If project exists in projects.yml:
+- Only prompts for missing fields (e.g., github_repo)
+- Offers to run bootstrap if code directory missing
+
+**Create mode** - If project doesn't exist:
+- Full setup flow (like pm-new but starting from code)
+- Detects and suggests defaults from directory contents
+
+### When to Use Which
+
+| Scenario | Tool |
+|----------|------|
+| Starting a brand new project | `pm-new` |
+| Have code, need PM scaffolding | `pm-init` (from code dir) |
+| Project in projects.yml, missing github_repo | `pm-init alias` |
+| Check what's configured for a project | `pm-init alias` |
+| Clone existing repo to new machine | `pm-init alias` then bootstrap |
+
 ## See Also
 
 - `/home/erik/Omarchy/ansible/roles/projects/` - Ansible role that generates projects

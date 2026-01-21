@@ -186,6 +186,7 @@ projects:
   - name: observational-research-methods-in-r
     alias: obsr
     type: rstats
+    github_repo: https://github.com/OHDSI-JHU/ME.250.788.SP26
     path: ~/Projects/observational-research-methods-in-r
     extras:
       default_ws: 7
