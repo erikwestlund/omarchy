@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "/home/erik/Projects/clinical-data-visualization"
+		},
+		{
+			"path": "../../../Projects/sparc-data-viz"
+		}
+	],
+	"settings": {
+		"workbench.colorTheme": "Catppuccin Mocha",
+		"workbench.iconTheme": "catppuccin-mocha",
+		"terminal.integrated.env.linux": {
+			"TERM": "xterm-256color"
+		}
+	}
+}

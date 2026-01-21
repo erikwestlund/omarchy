@@ -72,9 +72,21 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+
+# Override: keep HTTPS for OHDSI-JHU (longer prefix wins, requires PAT)
+[url "https://github.com/OHDSI-JHU/"]
+	insteadOf = https://github.com/OHDSI-JHU/
+
+# Default: use SSH for GitHub (applies to non-OHDSI-JHU repos)
 [url "git@github.com:"]
 	insteadOf = https://github.com/
+
+# Credentials
 [credential]
 	helper = cache
-[url "\"git@github.com:\""]
-	insteadOf = https://github.com/
+	useHttpPath = true
+
+# Store OHDSI-JHU credentials persistently (useHttpPath=false so host-only match works)
+[credential "https://github.com"]
+	helper = store --file ~/.git-credentials-ohdsi-jhu
+	useHttpPath = false

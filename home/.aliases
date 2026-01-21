@@ -530,6 +530,28 @@ alias vswsm="code ~/Omarchy/projects/web-server-management/web-server-management
 alias nvwsm="(cd ~/Projects/web-server-management && nvim .)"
 alias pwsm="/usr/share/positron/bin/positron ~/Omarchy/projects/web-server-management/web-server-management.code-workspace"
 # END PROJECT web-server-management
+# BEGIN PROJECT observational-research-methods-in-r
+alias lobsr="~/Omarchy/projects/observational-research-methods-in-r/launch"
+alias kobsr="~/Omarchy/projects/observational-research-methods-in-r/kill"
+alias tmobsr="~/Omarchy/projects/observational-research-methods-in-r/tmux.sh"
+alias bobsr="~/Omarchy/projects/observational-research-methods-in-r/bootstrap"
+alias pmobsr="cd ~/Omarchy/projects/observational-research-methods-in-r"
+alias obsr="cd /home/erik/Projects/observational-research-methods-in-r"
+alias vsobsr="code ~/Omarchy/projects/observational-research-methods-in-r/observational-research-methods-in-r.code-workspace"
+alias nvobsr="(cd /home/erik/Projects/observational-research-methods-in-r && nvim .)"
+alias pobsr="/usr/share/positron/bin/positron ~/Omarchy/projects/observational-research-methods-in-r/observational-research-methods-in-r.code-workspace"
+# END PROJECT observational-research-methods-in-r
+# BEGIN PROJECT clinical-data-visualization
+alias lcdv="~/Omarchy/projects/clinical-data-visualization/launch"
+alias kcdv="~/Omarchy/projects/clinical-data-visualization/kill"
+alias tmcdv="~/Omarchy/projects/clinical-data-visualization/tmux.sh"
+alias bcdv="~/Omarchy/projects/clinical-data-visualization/bootstrap"
+alias pmcdv="cd ~/Omarchy/projects/clinical-data-visualization"
+alias cdv="cd /home/erik/Projects/clinical-data-visualization"
+alias vscdv="code ~/Omarchy/projects/clinical-data-visualization/clinical-data-visualization.code-workspace"
+alias nvcdv="(cd /home/erik/Projects/clinical-data-visualization && nvim .)"
+alias pcdv="/usr/share/positron/bin/positron ~/Omarchy/projects/clinical-data-visualization/clinical-data-visualization.code-workspace"
+# END PROJECT clinical-data-visualization
 # Auto-generated project aliases
 
 # Sync R2 media to local minio for better-shoes dev

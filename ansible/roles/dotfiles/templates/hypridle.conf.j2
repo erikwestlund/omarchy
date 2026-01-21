@@ -8,10 +8,10 @@ general {
     lock_cmd = omarchy-lock-screen                         # lock screen and 1password
     before_sleep_cmd = loginctl lock-session               # lock before suspend.
 {% if hypridle_after_sleep_delay | default(0) > 0 %}
-    # LAPTOP FIX: Add delay after resume to let display stack stabilize
-    # before hyprlock/hyprland interact with it. Prevents black screen on resume.
+    # LAPTOP FIX: Aggressive display wake sequence for AMD GPU s2idle issues.
+    # Wait for GPU to stabilize, force DPMS on, and re-detect monitors.
     # See: https://github.com/basecamp/omarchy/issues/3293
-    after_sleep_cmd = sleep {{ hypridle_after_sleep_delay }} && hyprctl dispatch dpms on
+    after_sleep_cmd = sleep {{ hypridle_after_sleep_delay }} && hyprctl dispatch dpms on && sleep 0.5 && hyprctl dispatch dpms on
 {% else %}
     after_sleep_cmd = hyprctl dispatch dpms on             # to avoid having to press a key twice to turn on the display.
 {% endif %}

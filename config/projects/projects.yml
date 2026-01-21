@@ -182,3 +182,19 @@ projects:
     path: ~/Projects/web-server-management
     github_repo: OnPequod/web-server-management
 # END PROJECT web-server-management
+# BEGIN PROJECT observational-research-methods-in-r
+  - name: observational-research-methods-in-r
+    alias: obsr
+    type: rstats
+    path: ~/Projects/observational-research-methods-in-r
+    extras:
+      default_ws: 7
+# END PROJECT observational-research-methods-in-r
+# BEGIN PROJECT clinical-data-visualization
+  - name: clinical-data-visualization
+    alias: cdv
+    type: rstats
+    path: ~/Projects/clinical-data-visualization
+    extras:
+      default_ws: 8
+# END PROJECT clinical-data-visualization
