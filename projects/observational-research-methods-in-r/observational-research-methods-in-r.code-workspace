@@ -2,6 +2,9 @@
 	"folders": [
 		{
 			"path": "/home/erik/Projects/observational-research-methods-in-r"
+		},
+		{
+			"path": "../../../Code/observational-research-in-r-2025"
 		}
 	],
 	"settings": {

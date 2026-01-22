@@ -123,6 +123,10 @@
       tags: openrgb
       when: inventory_hostname == 'desktop'
 
+    - role: v8
+      tags: v8
+      when: install_v8 | default(false)
+
     - role: projects
       tags: new-project
       when: project_name is defined

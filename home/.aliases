@@ -58,6 +58,7 @@ alias om-caddy='om --tags caddy'
 alias om-vpn='om --tags pulsesecure'
 alias om-gpu='om --tags amd-gpu,intel-gpu'
 alias om-openrgb='om --tags openrgb'
+alias om-v8='om --tags v8 -e install_v8=true'  # V8 for R (compiles from source, 30+ min)
 alias om-all='om'
 alias om-sync='git -C ~/Omarchy pull && git -C ~/Omarchy push'
 

@@ -131,6 +131,26 @@ Personal quick-reference: `home/.cheatsheet` (view with `Super+Alt+H`)
 
 The `nas` Ansible role handles NAS mounts, `syncthing` role handles sync config.
 
+## Optional Heavy Packages
+
+Some packages are excluded from the default install because they compile from source and take a long time. These are available as opt-in roles.
+
+### V8 (for R packages like ggdag)
+
+The `v8-r` AUR package provides Google's V8 JavaScript engine, required by R packages that embed JavaScript (e.g., `ggdag` via `dagitty`). It compiles from source and takes 30+ minutes.
+
+**Not installed by default.** To install:
+
+```bash
+om-v8   # or: om --tags v8 -e install_v8=true
+```
+
+After installing, you can use R packages that depend on V8:
+```r
+install.packages("V8")
+install.packages("ggdag")
+```
+
 ## Notes
 
 - This is Arch Linux, not macOS

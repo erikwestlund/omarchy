@@ -75,6 +75,9 @@ pacman_packages:
   # R and stats
   - r
   - gcc-fortran
+  - gdal       # R spatial packages (sf, etc)
+  - geos       # R spatial packages (sf, etc)
+  - proj       # R spatial packages (sf, etc)
 
   # LaTeX (minimal for Quarto)
   - texlive-basic
@@ -162,6 +165,7 @@ aur_packages:
   - rstudio-desktop-bin
   - quarto-cli-bin
   - positron-ide-devel-bin
+  - udunits   # R spatial packages (sf, etc)
 
   # Research
   - zotero

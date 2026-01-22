@@ -1,0 +1,18 @@
+---
+# Install V8 JavaScript engine for R
+#
+# This is separated from main packages because v8-r compiles from source
+# and takes 30+ minutes. Only install when explicitly needed.
+#
+# Usage:
+#   ansible-playbook playbook.yml -l laptop --tags v8
+
+- name: Install v8-r from AUR (this will take a long time)
+  kewlfft.aur.aur:
+    name: v8-r
+    use: yay
+    state: present
+  retries: 2
+  delay: 10
+  register: v8_result
+  until: v8_result is succeeded

@@ -143,6 +143,20 @@ Installed as Chromium desktop entries: Outlook, Outlook Calendar (Day/Week views
 
 **Web apps**: Figma, Fizzy, Google Contacts, Google Messages, Google Photos, Google Maps, HEY, WhatsApp, X
 
+### Optional (not installed by default)
+
+Some packages are excluded because they compile from source and take a long time.
+
+| Package | Role | Purpose | Install Time |
+|---------|------|---------|--------------|
+| v8-r | `v8` | V8 JavaScript engine for R packages (ggdag, etc.) | 30+ min |
+
+To install:
+
+```bash
+om-v8   # or: om --tags v8 -e install_v8=true
+```
+
 ## Waybar
 
 Status bar config in `config/waybar/`. Files: `config.jsonc` (modules), `style.css` (styling), `scripts/` (custom modules).
@@ -284,6 +298,7 @@ After running ansible, these are available (defined in `home/.aliases`):
 | `om-vpn` | Deploy VPN config |
 | `om-gpu` | Deploy GPU config |
 | `om-openrgb` | Deploy OpenRGB |
+| `om-v8` | Install V8 for R (compiles from source, 30+ min) |
 | `om-sync` | Git pull && push Omarchy repo |
 | `omarchy` / `oma` | cd to ~/Omarchy |
 
