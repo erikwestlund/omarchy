@@ -193,6 +193,9 @@ aur_packages:
   # Office
   - onlyoffice-bin
 
+  # Bootable USB
+  - ventoy-bin
+
 # Ruby gems (installed via gem install)
 ruby_gems:
   - kamal
