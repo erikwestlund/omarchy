@@ -6,5 +6,6 @@
     "workbench.colorTheme": "Catppuccin Mocha",
     "terminal.integrated.commandsToSkipShell": [
         "workbench.action.toggleSidebarVisibility"
-    ]
+    ],
+    "workbench.statusBar.visible": false
 }

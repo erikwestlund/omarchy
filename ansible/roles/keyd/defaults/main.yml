@@ -13,7 +13,7 @@ keyd_system_shortcuts:
     - { key: up, action: "C-home" }  # Top of document
     - { key: down, action: "C-end" } # Bottom of document
   meta_shift:
-    - { key: z, action: "C-S-z" }    # Redo
+    - { key: z, action: "C-y" }      # Redo (Ctrl+Y for OnlyOffice etc)
     - { key: left, action: "S-home" }   # Select to start of line
     - { key: right, action: "S-end" }   # Select to end of line
     - { key: up, action: "C-S-home" }   # Select to top of document

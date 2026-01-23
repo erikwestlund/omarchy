@@ -5,19 +5,20 @@
 │ Super+Q        Close      │ G GitHub     E Email      │ Ctrl+Sh+E/O  Split ↓/→  │ Super+E      Sidebar     │ Enter        Open       ├─────────────────────────┤
 │ Super+O        Float+Pin  │ U Claude     / 1Pass      │ Ctrl+Alt+Arr Move split │                          │ q            Quit       │ bs       better-shoes   │
 │ Ctrl+Sh+M      Maximize   │ Ctrl+Sh+X    1Pass menu   │ Alt+W        Close tab  │ Editing:                 │                         │ drtp     ohdsi-dr       │
-│ Super+Y        Scratch    │                           │ Alt+←/→      Prev/next  │ Super+S      Save        │ Bookmarks (g+key):      │ fw       framework      │
-├─ Workspaces ──────────────┼───────────────────────────┤ Prefix+Tab   Next win   │ Super+W      Close       │ h Home    d Docs        │ fws      framework-site │
-│ Super+1-9,0    Switch     │ Screenshots:              │ Prefix+>/<   Sessions   │ Super+Z/Sh+Z Undo/Redo   │ D Downloads p Projects  │ hl       homelab        │
-│ Super+Sh+#     Move win   │ Super+Ctrl+2 Full         │                         │ Ctrl+K       Delete ln   │ n NAS     o OneDrive    │ mhmi     mh-missing     │
-│ Super+[/]      WS w/wins  │ Super+Ctrl+3 Select       │ Text Nav (keyd):        │ Ctrl+D       Duplicate   │ s Screenshots t Trash   │ na       naaccord       │
-│ Super+Sh+[/]   Move to WS │                           │                         │                          │                         │ nb       naaccord-build │
+│ S+Sh,/. ↔ C+Sh,/. ↕       │                           │ Alt+←/→      Prev/next  │ Super+S      Save        │ Bookmarks (g+key):      │ fw       framework      │
+│ Super+Y        Scratch    │                           │ Prefix+Tab   Next win   │ Super+W      Close       │ h Home    d Docs        │ fws      framework-site │
+├─ Workspaces ──────────────┼───────────────────────────┤ Prefix+>/<   Sessions   │ Super+Z/Sh+Z Undo/Redo   │ D Downloads p Projects  │ hl       homelab        │
+│ Super+1-9,0    Switch     │ Screenshots:              │                         │ Ctrl+K       Delete ln   │ n NAS     o OneDrive    │ mhmi     mh-missing     │
+│ Super+Sh+#     Move win   │ Super+Ctrl+2 Full         │ Text Nav (keyd):        │ Ctrl+D       Duplicate   │ s Screenshots t Trash   │ na       naaccord       │
+│ Super+[/]      WS w/wins  │ Super+Ctrl+3 Select       │                         │                          │                         │ nb       naaccord-build │
+│ Super+Sh+[/]   Move to WS │                           │                         │                          │                         │                         │
 │ Super+grave    Utility    │                           │                         │                          │                         │                         │
 ├─ Media ───────────────────┼───────────────────────────┤ Alt+←/→      Line start/│ Alt+Sh+↑/↓   Move line   │                         │ om       omarchy        │
 │ Mute Vol+/- Brt+/- Fn+Sp  │ Utilities:  Ctrl+Y Yazi   │              end        │ Ctrl+↑/↓     Pg Up/Down  │ Actions:                │ park     parkukb        │
 │ Prev Play Next MX:Fn+Esc  │ Super+Ctrl+S Search       │ Alt+↑/↓      Doc top/bot│ Super+Alt+L  Format      │ Space  Select           │ peq      pequod         │
 ├─ Help ────────────────────┤ Super+Ctrl+C Calc         │ +Shift       Select     │                          │ y/p    Copy/Paste       │ tnt      tnt-syphilis   │
 │ Alt+K          Hotkeys    │ Super+Alt+V  Clipbrd      │                         │ Navigation:              │ d      Delete           ├─────────────────────────┤
-│ Super+Alt+H    Cheatsht   │ Super+Ctrl+V VPN          │ Commands:  kill-app     │ Ctrl+T       Terminal     │ a      Create file      │ Ansible (om-*):         │
+│ Super+Alt+H    Cheatsht   │ Super+Ctrl+V VPN          │ Commands:  kill-app     │ Ctrl+T       Terminal    │ a      Create file      │ Ansible (om-*):         │
 │ Super+Alt+J    Cal+Agenda │ Super+Ctrl+J JHU VPN      │ tasks        List tasks │ Ctrl+Sh+[/]  Tabs        │ A      Create dir       │ om           Full run   │
 ├─ Secrets ─────────────────┼───────────────────────────┼─────────────────────────┤ Super+Alt+N  New file    │ r      Rename           │ om-sync      Git sync   │
 │ vault-edit     Edit vault │ Ansible (om-*):           │ Common:                 │ Ctrl+1-9     Tabs        │ .      Toggle hidden    │ om-dotfiles  Configs    │
