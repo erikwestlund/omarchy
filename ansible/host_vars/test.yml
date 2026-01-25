@@ -27,7 +27,7 @@ hypr_rounding: 8
 hypr_blur_enabled: true
 
 # Monitor scale (1 = standard, 2 = HiDPI/retina)
-hypr_monitor_scale: 1
+hypr_monitor_scale: 1.33
 
 # Waybar styling for standard display
 waybar_border_radius: "0"
