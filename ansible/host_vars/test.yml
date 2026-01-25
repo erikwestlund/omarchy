@@ -1,0 +1,55 @@
+---
+# Test machine configuration
+# Similar to desktop but with 1x display scale (not retina/HiDPI)
+
+# Project launcher defaults
+default_workspace: 1
+split_windows: false
+
+# Windows VM RDP username
+windows_vm_user: "erik"
+# Resolution for 1080p or similar standard display
+windows_vm_resolution: "1920x1020"
+# 1x scale (not retina/HiDPI)
+windows_vm_scale: "100"
+
+# Keyboards connected to this machine
+keyboards:
+  - logitech
+
+# Not a Framework laptop
+is_framework: false
+
+# Hyprland look and feel (smaller values for 1x scale)
+hypr_gaps_in: 2
+hypr_gaps_out: 4
+hypr_rounding: 8
+hypr_blur_enabled: true
+
+# Monitor scale (1 = standard, 2 = HiDPI/retina)
+hypr_monitor_scale: 1
+
+# Waybar styling for standard display
+waybar_border_radius: "0"
+waybar_background: "#151626"
+waybar_margin_left: 0
+waybar_margin_right: 0
+waybar_margin_top: 0
+waybar_margin_bottom: 0
+waybar_font_size: 12
+waybar_icon_spacing: 8
+waybar_json_margin_x: 0
+waybar_json_margin_top: 0
+waybar_json_height: 28
+
+# Theme
+theme_background: "1.png"
+
+# CPU governor
+cpu_governor: performance
+
+# Snapper snapshots disabled for test machine
+snapper_enabled: false
+
+# Backup disabled for test machine
+backup_enabled: false

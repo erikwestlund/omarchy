@@ -1,0 +1,31 @@
+[ids]
+# Logitech Bolt USB Receiver (same as desktop)
+046d:c548
+
+[main]
+# Swap Alt and Super (to match mac-style layout)
+leftalt = leftmeta
+leftmeta = leftalt
+rightalt = rightmeta
+rightmeta = rightalt
+
+[meta]
+# System-wide shortcuts
+{% for shortcut in keyd_system_shortcuts.meta %}
+{{ shortcut.key }} = {{ shortcut.action }}
+{% endfor %}
+
+{% if keyd_system_shortcuts.meta_shift | length > 0 %}
+[meta+shift]
+{% for shortcut in keyd_system_shortcuts.meta_shift %}
+{{ shortcut.key }} = {{ shortcut.action }}
+{% endfor %}
+{% endif %}
+
+[meta+alt]
+{% for shortcut in keyd_system_shortcuts.meta_alt %}
+{{ shortcut.key }} = {{ shortcut.action }}
+{% endfor %}
+
+[alt]
+enter = C-enter

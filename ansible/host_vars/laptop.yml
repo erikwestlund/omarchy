@@ -26,6 +26,9 @@ hypr_gaps_in: 2
 hypr_gaps_out: 4
 hypr_rounding: 16
 
+# Monitor scale (1 = standard, 2 = HiDPI/retina)
+hypr_monitor_scale: 2
+
 # Keyboards connected to this machine (configs deployed for each)
 keyboards:
   - framework

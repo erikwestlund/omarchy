@@ -25,6 +25,9 @@ hypr_gaps_out: 6
 hypr_rounding: 12
 hypr_blur_enabled: true
 
+# Monitor scale (1 = standard, 2 = HiDPI/retina)
+hypr_monitor_scale: 2
+
 # Waybar styling for 6K display - sticky top, no rounding
 waybar_border_radius: "0"
 waybar_background: "#151626"

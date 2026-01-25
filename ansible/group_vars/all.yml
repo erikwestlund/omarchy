@@ -145,7 +145,7 @@ aur_packages:
   - sublime-text-4
   - visual-studio-code-bin
   - openai-codex
-  - opencode-bin
+  - opencode  # Use compiled version (opencode-bin conflicts)
   - stripe-cli
   - nvm
   - nodejs-nodemon

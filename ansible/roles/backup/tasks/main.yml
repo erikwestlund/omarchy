@@ -15,12 +15,21 @@
     mode: '0700'
   when: backup_enabled | default(false)
 
+- name: Check if restic_password is defined
+  ansible.builtin.fail:
+    msg: "restic_password is not defined in vault. Add it with: ansible-vault edit vault/secrets.yml"
+  when:
+    - backup_enabled | default(false)
+    - restic_password is not defined
+
 - name: Deploy restic password file
   ansible.builtin.copy:
     dest: "{{ ansible_facts.env.HOME }}/.config/restic/password"
     content: "{{ restic_password }}"
     mode: '0600'
-  when: backup_enabled | default(false)
+  when:
+    - backup_enabled | default(false)
+    - restic_password is defined
   no_log: true
 
 - name: Deploy restic excludes file
