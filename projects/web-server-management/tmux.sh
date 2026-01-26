@@ -2,7 +2,7 @@
 # Tmux session for web-server-management (utility)
 
 SESSION="wsm"
-PROJECT_DIR="~/Projects/web-server-management"
+PROJECT_DIR="$HOME/Projects/web-server-management"
 
 # Check if session already exists
 tmux has-session -t $SESSION 2>/dev/null
