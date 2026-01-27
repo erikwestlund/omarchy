@@ -1,0 +1,25 @@
+#!/bin/bash
+# Kill processes using audio/video devices
+# Useful when Zoom/etc complains "device in use by another app"
+
+set -e
+
+echo "Finding processes using audio/video devices..."
+
+# Kill processes using video devices
+for dev in /dev/video*; do
+    if [[ -e "$dev" ]]; then
+        if fuser "$dev" 2>/dev/null; then
+            echo "Killing processes on $dev"
+            fuser -k "$dev" 2>/dev/null || true
+        fi
+    fi
+done
+
+# Kill processes using audio (pipewire)
+if pgrep -x pipewire >/dev/null; then
+    echo "Restarting PipeWire..."
+    systemctl --user restart pipewire pipewire-pulse wireplumber 2>/dev/null || true
+fi
+
+echo "Done. Try your meeting app again."
