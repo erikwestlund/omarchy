@@ -51,8 +51,8 @@ theme_background: "1.png"
 # NOTE: Do NOT set cpu_governor here - let power-profiles-daemon manage it dynamically
 use_power_profiles_daemon: true
 
-# Snapper snapshots disabled on laptop
-snapper_enabled: false
+# Snapper snapshots (hourly with automatic cleanup)
+snapper_enabled: true
 
 # NAS backup (hourly on laptop, skip when battery low)
 backup_enabled: true

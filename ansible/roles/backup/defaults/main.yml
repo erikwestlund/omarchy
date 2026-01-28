@@ -1,8 +1,8 @@
 ---
 backup_enabled: false
 backup_calendar: "hourly"
-# Repository path includes hostname for machine isolation
-backup_repository: "/mnt/nas/SystemSnapshots/{{ inventory_hostname }}"
+# Shared repository - restic deduplicates across hosts
+backup_repository: "/mnt/nas/SystemSnapshots"
 backup_nas_ip: "192.168.1.10"
 backup_battery_threshold: 40
 backup_ping_timeout: 1
