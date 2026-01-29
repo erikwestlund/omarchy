@@ -1,0 +1,53 @@
+---
+# Install and configure Zoom for Wayland/PipeWire
+# Reference: https://wiki.archlinux.org/title/Zoom_Meetings
+
+- name: Install Zoom from AUR
+  kewlfft.aur.aur:
+    name: zoom
+    use: yay
+    state: present
+  retries: 3
+  delay: 5
+  register: zoom_result
+  until: zoom_result is succeeded
+
+- name: Enable Wayland screen sharing
+  community.general.ini_file:
+    path: "{{ ansible_facts.env.HOME }}/.config/zoomus.conf"
+    section: General
+    option: enableWaylandShare
+    value: "true"
+    mode: '0644'
+
+- name: Disable mini window
+  community.general.ini_file:
+    path: "{{ ansible_facts.env.HOME }}/.config/zoomus.conf"
+    section: General
+    option: enableMiniWindow
+    value: "false"
+    mode: '0644'
+
+- name: Disable CEF for RAM optimization
+  community.general.ini_file:
+    path: "{{ ansible_facts.env.HOME }}/.config/zoomus.conf"
+    section: ZoomChat
+    option: disableCef
+    value: "true"
+    mode: '0644'
+
+- name: Create Zoom desktop entry override with HiDPI scaling
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/zoom.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Zoom
+      Comment=Zoom Video Conferencing
+      Exec=env QT_SCALE_FACTOR=2 /usr/bin/zoom %U
+      Terminal=false
+      Type=Application
+      Icon=Zoom
+      Categories=Network;VideoConference;
+      MimeType=x-scheme-handler/zoommtg;x-scheme-handler/zoomus;x-scheme-handler/tel;x-scheme-handler/callto;x-scheme-handler/zoomphonecall;x-scheme-handler/zoomrc;application/x-zoom;
+      StartupWMClass=zoom

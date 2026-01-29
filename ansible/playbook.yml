@@ -99,6 +99,9 @@
     - role: chromium
       tags: chromium
 
+    - role: zoom
+      tags: zoom
+
     - role: dnsmasq
       tags: dnsmasq
 

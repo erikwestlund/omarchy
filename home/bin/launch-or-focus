@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Launch or focus a window, handling special workspaces and background processes.
+# Improvements over omarchy-launch-or-focus:
+# - Properly focuses windows in special workspaces (scratchpads)
+# - Handles apps that run in background after window close (like Spotify)
+
+if (($# == 0)); then
+  echo "Usage: launch-or-focus [window-pattern] [launch-command]"
+  exit 1
+fi
+
+WINDOW_PATTERN="$1"
+LAUNCH_COMMAND="${2:-"uwsm-app -- $WINDOW_PATTERN"}"
+
+# Get window info including workspace
+WINDOW_INFO=$(hyprctl clients -j | jq -r --arg p "$WINDOW_PATTERN" '
+  .[] | select((.class|test("\\b" + $p + "\\b";"i")) or (.title|test("\\b" + $p + "\\b";"i")))
+  | "\(.address)|\(.workspace.name)"
+' | head -n1)
+
+if [[ -n $WINDOW_INFO ]]; then
+  WINDOW_ADDRESS="${WINDOW_INFO%|*}"
+  WORKSPACE_NAME="${WINDOW_INFO#*|}"
+
+  # Check if window is in a special workspace
+  if [[ $WORKSPACE_NAME == special:* ]]; then
+    # Toggle the special workspace to show it
+    hyprctl dispatch togglespecialworkspace "${WORKSPACE_NAME#special:}"
+  else
+    # Regular workspace - just focus the window
+    hyprctl dispatch focuswindow "address:$WINDOW_ADDRESS"
+  fi
+else
+  # No window found - launch the app
+  # Running the command again usually brings up the window for apps
+  # that are running in the background (like Spotify)
+  eval exec setsid $LAUNCH_COMMAND
+fi

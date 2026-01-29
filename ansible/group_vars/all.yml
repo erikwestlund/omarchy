@@ -295,11 +295,11 @@ cleanup_pacman_packages:
   - signal-desktop
   - xournalpp
 
-cleanup_aur_packages:
-  - zoom
+cleanup_aur_packages: []
 
 # Desktop files to remove (webapps and unwanted launchers)
 cleanup_webapps:
+  - "Zoom.desktop"  # Using native app instead of web app
   - "Figma.desktop"
   - "Fizzy.desktop"
   - "Google Contacts.desktop"

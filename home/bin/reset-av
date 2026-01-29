@@ -20,6 +20,13 @@ done
 if pgrep -x pipewire >/dev/null; then
     echo "Restarting PipeWire..."
     systemctl --user restart pipewire pipewire-pulse wireplumber 2>/dev/null || true
+    sleep 2
+fi
+
+# Enable Insta360 mic if present
+if pactl list cards short 2>/dev/null | grep -q Insta360; then
+    echo "Enabling Insta360 microphone..."
+    pactl set-card-profile alsa_card.usb-Insta360_Insta360_Link_2C-02 pro-audio 2>/dev/null || true
 fi
 
 echo "Done. Try your meeting app again."
