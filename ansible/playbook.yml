@@ -75,6 +75,10 @@
       tags: framework
       when: is_framework | default(false)
 
+    - role: bluetooth-suspend
+      tags: bluetooth-suspend
+      when: inventory_hostname == 'laptop'
+
     - role: secrets
       tags: secrets
 

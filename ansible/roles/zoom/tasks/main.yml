@@ -36,9 +36,14 @@
     value: "true"
     mode: '0644'
 
+- name: Remove old lowercase zoom.desktop if it exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.local/share/applications/zoom.desktop"
+    state: absent
+
 - name: Create Zoom desktop entry override with HiDPI scaling
   ansible.builtin.copy:
-    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/zoom.desktop"
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/Zoom.desktop"
     mode: '0644'
     content: |
       [Desktop Entry]

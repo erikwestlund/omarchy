@@ -1,0 +1,55 @@
+---
+# Disable Bluetooth during suspend to prevent spurious wake events
+# The Bluetooth controller triggers wake events every ~20 seconds during s2idle,
+# causing the system to fail to stay asleep.
+
+- name: Create Bluetooth suspend service
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/bluetooth-suspend.service
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=Disable Bluetooth before suspend
+      Before=sleep.target
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/bin/rfkill block bluetooth
+      ExecStartPost=/usr/bin/sleep 1
+
+      [Install]
+      WantedBy=sleep.target
+  become: true
+  notify: reload systemd
+
+- name: Create Bluetooth resume service
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/bluetooth-resume.service
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=Re-enable Bluetooth after resume
+      After=suspend.target hibernate.target hybrid-sleep.target
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/bin/rfkill unblock bluetooth
+
+      [Install]
+      WantedBy=suspend.target hibernate.target hybrid-sleep.target
+  become: true
+  notify: reload systemd
+
+- name: Enable Bluetooth suspend service
+  ansible.builtin.systemd:
+    name: bluetooth-suspend.service
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Enable Bluetooth resume service
+  ansible.builtin.systemd:
+    name: bluetooth-resume.service
+    enabled: true
+    daemon_reload: true
+  become: true
