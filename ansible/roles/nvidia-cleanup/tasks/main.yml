@@ -1,0 +1,21 @@
+---
+# Remove NVIDIA packages and services on AMD-only systems
+# Note: linux-firmware-nvidia is kept as it's required by linux-firmware
+
+- name: Remove NVIDIA packages
+  become: true
+  community.general.pacman:
+    name:
+      - nvidia-utils
+      - lib32-nvidia-utils
+      - nvidia-dkms
+      - nvidia-settings
+      - nvidia
+      - libva-nvidia-driver
+      - egl-x11
+      - egl-gbm
+      - egl-wayland
+      - egl-wayland2
+      - eglexternalplatform
+    state: absent
+  ignore_errors: true

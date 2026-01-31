@@ -99,9 +99,7 @@ pacman_packages:
   - vlc
   - transmission-gtk
 
-  # Gaming
-  - steam
-  - lutris
+  # Gaming (gnutls for Wine/Proton compatibility)
   - gnutls
   - lib32-gnutls
 

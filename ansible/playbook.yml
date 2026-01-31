@@ -122,6 +122,10 @@
       tags: amd-gpu
       when: inventory_hostname == 'laptop'
 
+    - role: nvidia-cleanup
+      tags: nvidia-cleanup
+      when: inventory_hostname == 'laptop'
+
     - role: intel-gpu
       tags: intel-gpu
       when: inventory_hostname == 'desktop'
