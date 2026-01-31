@@ -126,5 +126,8 @@
     { "key": "shift+enter", "command": "workbench.action.terminal.sendSequence", "args": { "text": "\\\n" }, "when": "terminalFocus" },
 
     // Pass Ctrl+O to terminal (for OpenCode settings, etc.)
-    { "key": "ctrl+o", "command": "workbench.action.terminal.sendSequence", "args": { "text": "\u000f" }, "when": "terminalFocus" }
+    { "key": "ctrl+o", "command": "workbench.action.terminal.sendSequence", "args": { "text": "\u000f" }, "when": "terminalFocus" },
+
+    // Pass Shift+Tab to terminal (for Claude Code settings navigation)
+    { "key": "shift+tab", "command": "workbench.action.terminal.sendSequence", "args": { "text": "\u001b[Z" }, "when": "terminalFocus" }
 ]

@@ -1,5 +1,9 @@
 # Logitech Unifying Receiver and Bolt Receiver
 # Allow input group to access Logitech receivers for Solaar
+# Disable USB autosuspend to prevent suspend/resume hangs with AMD XHCI
+
+# Disable autosuspend for Bolt Receiver (fixes suspend hang on AMD USB controllers)
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="046d", ATTR{idProduct}=="c548", ATTR{power/autosuspend}="-1"
 
 # Unifying Receiver
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c52b", MODE="0660", GROUP="input"
