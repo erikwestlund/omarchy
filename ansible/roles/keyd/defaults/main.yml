@@ -30,3 +30,4 @@ keyd_browser_shortcuts:
   - { key: r, action: "C-r" }        # Refresh
   - { key: q, action: "C-S-w" }      # Close window
   # z and S-z removed - now in global shortcuts
+
