@@ -376,6 +376,35 @@
   become: true
   when: cpu_governor is defined
 
+# btrfs-cleaner runs at normal I/O priority by default, which causes lag
+# when cleaning up deleted snapshots. Set it to idle priority so it only
+# runs when the system is otherwise idle.
+- name: Deploy btrfs-cleaner ionice service
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/btrfs-cleaner-ionice.service
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=Set btrfs-cleaner to idle I/O priority
+      After=local-fs.target
+
+      [Service]
+      Type=oneshot
+      ExecStart=/bin/sh -c 'pid=$(pgrep -x btrfs-cleaner) && ionice -c 3 -p $pid || true'
+      RemainAfterExit=yes
+
+      [Install]
+      WantedBy=multi-user.target
+  become: true
+
+- name: Enable btrfs-cleaner ionice service
+  ansible.builtin.systemd:
+    name: btrfs-cleaner-ionice.service
+    enabled: true
+    state: started
+    daemon_reload: true
+  become: true
+
 # Laptop power management via power-profiles-daemon
 - name: Enable power-profiles-daemon
   ansible.builtin.systemd:
