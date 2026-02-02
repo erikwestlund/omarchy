@@ -79,6 +79,7 @@ pacman_packages:
   - gdal       # R spatial packages (sf, etc)
   - geos       # R spatial packages (sf, etc)
   - proj       # R spatial packages (sf, etc)
+  - nlopt      # R optimization packages (nloptr, etc)
 
   # LaTeX (minimal for Quarto)
   - texlive-basic
