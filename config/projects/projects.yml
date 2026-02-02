@@ -164,6 +164,7 @@ projects:
     alias: wg
     type: laravel
     path: ~/Projects/wordle-group
+    github_repo: https://github.com/OnPequod/wordlegroup
     extras:
       view_url: http://wordlegroup.test
       default_ws: 7
