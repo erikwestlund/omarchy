@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Launch Zoom or focus existing window if hidden
+
+zoom_window=$(hyprctl clients -j | jq -r '.[] | select(.class == "Zoom Workplace" or .class == "zoom") | .address' | head -1)
+
+if [[ -n "$zoom_window" ]]; then
+    # Zoom window exists, focus it
+    hyprctl dispatch focuswindow "address:$zoom_window"
+else
+    # No window, launch Zoom
+    /usr/bin/zoom "$@"
+fi

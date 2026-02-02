@@ -28,7 +28,7 @@
     value: "false"
     mode: '0644'
 
-- name: Disable CEF for RAM optimization
+- name: Disable CEF in ZoomChat
   community.general.ini_file:
     path: "{{ ansible_facts.env.HOME }}/.config/zoomus.conf"
     section: ZoomChat
@@ -36,12 +36,28 @@
     value: "true"
     mode: '0644'
 
+- name: Disable CEF globally for RAM optimization
+  community.general.ini_file:
+    path: "{{ ansible_facts.env.HOME }}/.config/zoomus.conf"
+    section: General
+    option: disableCef
+    value: "true"
+    mode: '0644'
+
+- name: Use native Wayland (not XWayland)
+  community.general.ini_file:
+    path: "{{ ansible_facts.env.HOME }}/.config/zoomus.conf"
+    section: General
+    option: xwayland
+    value: "false"
+    mode: '0644'
+
 - name: Remove old lowercase zoom.desktop if it exists
   ansible.builtin.file:
     path: "{{ ansible_facts.env.HOME }}/.local/share/applications/zoom.desktop"
     state: absent
 
-- name: Create Zoom desktop entry override with HiDPI scaling
+- name: Create Zoom desktop entry override
   ansible.builtin.copy:
     dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/Zoom.desktop"
     mode: '0644'
@@ -49,7 +65,7 @@
       [Desktop Entry]
       Name=Zoom
       Comment=Zoom Video Conferencing
-      Exec=env QT_SCALE_FACTOR=2 /usr/bin/zoom %U
+      Exec={{ ansible_facts.env.HOME }}/.bin/zoom-launcher %U
       Terminal=false
       Type=Application
       Icon=Zoom
