@@ -84,8 +84,7 @@ hyprctl dispatch workspace $WS
 
 # Start tmux session (if not already running)
 TMUX_SCRIPT="$HOME/Omarchy/projects/framework/tmux.sh"
-if [ -x "$TMUX_SCRIPT" </dev/null &
-    sleep 0.5 ]; then
+if [ -x "$TMUX_SCRIPT" ]; then
     "$TMUX_SCRIPT" </dev/null &
     sleep 0.5
 fi
