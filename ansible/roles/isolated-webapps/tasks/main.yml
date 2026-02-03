@@ -274,3 +274,43 @@
       Icon={{ ansible_facts.env.HOME }}/.local/share/icons/instagram.png
       Categories=Network;
       StartupWMClass=chromium-instagram
+
+# 1Password native messaging support for isolated profiles
+- name: Define isolated Chromium profiles
+  ansible.builtin.set_fact:
+    isolated_chromium_profiles:
+      - chromium-outlook
+      - chromium-youtube
+      - chromium-chatgpt
+      - chromium-claude
+      - chromium-github
+      - chromium-immich
+      - chromium-amazon
+      - chromium-substack
+      - chromium-cloudflare
+      - chromium-office
+      - chromium-unifi
+      - chromium-wsj
+      - chromium-facebook
+      - chromium-instagram
+
+- name: Check if 1Password native messaging host exists
+  ansible.builtin.stat:
+    path: "{{ ansible_facts.env.HOME }}/.config/chromium/NativeMessagingHosts/com.1password.1password.json"
+  register: onepassword_native_host
+
+- name: Ensure NativeMessagingHosts directory exists in isolated profiles
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/{{ item }}/NativeMessagingHosts"
+    state: directory
+    mode: '0700'
+  loop: "{{ isolated_chromium_profiles }}"
+  when: onepassword_native_host.stat.exists
+
+- name: Symlink 1Password native messaging host to isolated profiles
+  ansible.builtin.file:
+    src: "{{ ansible_facts.env.HOME }}/.config/chromium/NativeMessagingHosts/com.1password.1password.json"
+    dest: "{{ ansible_facts.env.HOME }}/.config/{{ item }}/NativeMessagingHosts/com.1password.1password.json"
+    state: link
+  loop: "{{ isolated_chromium_profiles }}"
+  when: onepassword_native_host.stat.exists
