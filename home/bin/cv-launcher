@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Launch CV document
+
+DOC="/home/erik/Work/OneDrive/CV-Biosketch/Erik Westlund - JH CV.docx"
+
+if [[ -f "$DOC" ]]; then
+    xdg-open "$DOC" &
+else
+    notify-send "CV Launcher" "Document not found: $DOC"
+fi

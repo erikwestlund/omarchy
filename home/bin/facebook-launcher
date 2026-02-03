@@ -12,8 +12,8 @@ if [[ -n "$window" ]]; then
     hyprctl dispatch focuswindow "address:$window"
 else
     if [[ -n "$ONEPASS_EXT" ]]; then
-        chromium --user-data-dir="$PROFILE" --load-extension="$ONEPASS_EXT" --app="$URL" &
+        chromium --user-data-dir="$PROFILE" --load-extension="$ONEPASS_EXT" --disable-popup-blocking --app="$URL" &
     else
-        chromium --user-data-dir="$PROFILE" --app="$URL" &
+        chromium --user-data-dir="$PROFILE" --disable-popup-blocking --app="$URL" &
     fi
 fi

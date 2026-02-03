@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=CV
+Comment=Erik Westlund CV
+Exec=/home/erik/.bin/cv-launcher
+Terminal=false
+Type=Application
+Icon=/home/erik/.local/share/icons/word.png
+Categories=Office;
