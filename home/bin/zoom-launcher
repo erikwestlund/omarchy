@@ -1,12 +1,44 @@
 #!/usr/bin/env bash
-# Launch Zoom or focus existing window if hidden
+# Launch Zoom (Flatpak) or focus existing window if hidden
 
-zoom_window=$(hyprctl clients -j | jq -r '.[] | select(.class == "Zoom Workplace" or .class == "zoom") | .address' | head -1)
+ZOOM_CONF="$HOME/.var/app/us.zoom.Zoom/config/zoomus.conf"
+
+# Apply settings that Zoom likes to reset
+apply_settings() {
+    mkdir -p "$(dirname "$ZOOM_CONF")"
+
+    # GPU settings
+    sed -i 's/enablegpucomputeutilization=false/enablegpucomputeutilization=true/' "$ZOOM_CONF" 2>/dev/null
+    sed -i 's/enableCefGpu=false/enableCefGpu=true/' "$ZOOM_CONF" 2>/dev/null
+
+    # SSO org
+    sed -i 's/^forceSSOURL=.*/forceSSOURL=jhjhm/' "$ZOOM_CONF" 2>/dev/null
+
+    # Wayland settings
+    sed -i 's/xwayland=true/xwayland=false/' "$ZOOM_CONF" 2>/dev/null
+    sed -i 's/enableWaylandShare=false/enableWaylandShare=true/' "$ZOOM_CONF" 2>/dev/null
+
+    # CEF enabled (needed for webview/login)
+    sed -i 's/disableCef=true/disableCef=false/' "$ZOOM_CONF" 2>/dev/null
+}
+
+# If a URL is passed (SSO callback, meeting link), always pass it to Zoom
+if [[ "$1" == zoom* ]] || [[ "$1" == http* ]]; then
+    flatpak run us.zoom.Zoom "$@"
+    exit 0
+fi
+
+zoom_window=$(hyprctl clients -j | jq -r '.[] | select(.class == "Zoom Workplace" or .class == "zoom" or .class == "us.zoom.Zoom") | .address' | head -1)
 
 if [[ -n "$zoom_window" ]]; then
     # Zoom window exists, focus it
     hyprctl dispatch focuswindow "address:$zoom_window"
 else
-    # No window, launch Zoom
-    /usr/bin/zoom "$@"
+    # No window - if Zoom is running in background, kill and restart
+    if pgrep -f "/app/extra/zoom/zoom" >/dev/null; then
+        flatpak kill us.zoom.Zoom 2>/dev/null
+        sleep 0.5
+    fi
+    apply_settings
+    flatpak run us.zoom.Zoom "$@" &
 fi

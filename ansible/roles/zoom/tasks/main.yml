@@ -1,20 +1,36 @@
 ---
-# Install and configure Zoom for Wayland/PipeWire
+# Install and configure Zoom via Flatpak for better Wayland/PipeWire stability
+# Flatpak isolates its own PipeWire version, avoiding the "Leave" button hang bug
 # Reference: https://wiki.archlinux.org/title/Zoom_Meetings
 
-- name: Install Zoom from AUR
+- name: Add Flathub remote
+  community.general.flatpak_remote:
+    name: flathub
+    flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
+    state: present
+
+- name: Remove AUR Zoom if installed
   kewlfft.aur.aur:
     name: zoom
     use: yay
+    state: absent
+  ignore_errors: true
+
+- name: Install Zoom Flatpak
+  community.general.flatpak:
+    name: us.zoom.Zoom
     state: present
-  retries: 3
-  delay: 5
-  register: zoom_result
-  until: zoom_result is succeeded
+    remote: flathub
+
+- name: Ensure Flatpak Zoom config directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.var/app/us.zoom.Zoom/config"
+    state: directory
+    mode: '0755'
 
 - name: Enable Wayland screen sharing
   community.general.ini_file:
-    path: "{{ ansible_facts.env.HOME }}/.config/zoomus.conf"
+    path: "{{ ansible_facts.env.HOME }}/.var/app/us.zoom.Zoom/config/zoomus.conf"
     section: General
     option: enableWaylandShare
     value: "true"
@@ -22,34 +38,76 @@
 
 - name: Disable mini window
   community.general.ini_file:
-    path: "{{ ansible_facts.env.HOME }}/.config/zoomus.conf"
+    path: "{{ ansible_facts.env.HOME }}/.var/app/us.zoom.Zoom/config/zoomus.conf"
     section: General
     option: enableMiniWindow
     value: "false"
     mode: '0644'
 
-- name: Disable CEF in ZoomChat
+- name: Enable CEF GPU rendering for crisp UI
   community.general.ini_file:
-    path: "{{ ansible_facts.env.HOME }}/.config/zoomus.conf"
-    section: ZoomChat
-    option: disableCef
+    path: "{{ ansible_facts.env.HOME }}/.var/app/us.zoom.Zoom/config/zoomus.conf"
+    section: General
+    option: enableCefGpu
     value: "true"
     mode: '0644'
 
-- name: Disable CEF globally for RAM optimization
+- name: Enable GPU compute for video processing
   community.general.ini_file:
-    path: "{{ ansible_facts.env.HOME }}/.config/zoomus.conf"
+    path: "{{ ansible_facts.env.HOME }}/.var/app/us.zoom.Zoom/config/zoomus.conf"
     section: General
-    option: disableCef
+    option: enablegpucomputeutilization
     value: "true"
     mode: '0644'
+
+- name: Enable CEF (required for webview)
+  community.general.ini_file:
+    path: "{{ ansible_facts.env.HOME }}/.var/app/us.zoom.Zoom/config/zoomus.conf"
+    section: General
+    option: disableCef
+    value: "false"
+    mode: '0644'
+
+- name: Enable CEF in ZoomChat
+  community.general.ini_file:
+    path: "{{ ansible_facts.env.HOME }}/.var/app/us.zoom.Zoom/config/zoomus.conf"
+    section: ZoomChat
+    option: disableCef
+    value: "false"
+    mode: '0644'
+
+- name: Set HiDPI scale factor for Flatpak
+  ansible.builtin.command:
+    cmd: flatpak override --user --env=QT_SCALE_FACTOR=2 us.zoom.Zoom
+  changed_when: true
+
+- name: Allow Zoom access to keyring for credential storage
+  ansible.builtin.command:
+    cmd: flatpak override --user --talk-name=org.freedesktop.secrets --talk-name=org.freedesktop.portal.Desktop --filesystem=~/.local/share/keyrings us.zoom.Zoom
+  changed_when: true
 
 - name: Use native Wayland (not XWayland)
   community.general.ini_file:
-    path: "{{ ansible_facts.env.HOME }}/.config/zoomus.conf"
+    path: "{{ ansible_facts.env.HOME }}/.var/app/us.zoom.Zoom/config/zoomus.conf"
     section: General
     option: xwayland
     value: "false"
+    mode: '0644'
+
+- name: Enable auto scaling
+  community.general.ini_file:
+    path: "{{ ansible_facts.env.HOME }}/.var/app/us.zoom.Zoom/config/zoomus.conf"
+    section: General
+    option: autoScale
+    value: "true"
+    mode: '0644'
+
+- name: Force SSO login to JHU
+  community.general.ini_file:
+    path: "{{ ansible_facts.env.HOME }}/.var/app/us.zoom.Zoom/config/zoomus.conf"
+    section: General
+    option: forceSSOURL
+    value: "jhjhm"
     mode: '0644'
 
 - name: Remove old lowercase zoom.desktop if it exists
@@ -68,7 +126,21 @@
       Exec={{ ansible_facts.env.HOME }}/.bin/zoom-launcher %U
       Terminal=false
       Type=Application
-      Icon=Zoom
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/zoom.png
       Categories=Network;VideoConference;
       MimeType=x-scheme-handler/zoommtg;x-scheme-handler/zoomus;x-scheme-handler/tel;x-scheme-handler/callto;x-scheme-handler/zoomphonecall;x-scheme-handler/zoomrc;application/x-zoom;
       StartupWMClass=zoom
+
+- name: Hide Flatpak's Zoom desktop entry (use our custom one)
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/us.zoom.Zoom.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      NoDisplay=true
+      Hidden=true
+
+- name: Register Zoom URL scheme handlers
+  ansible.builtin.command:
+    cmd: xdg-mime default Zoom.desktop x-scheme-handler/zoommtg x-scheme-handler/zoomus
+  changed_when: true

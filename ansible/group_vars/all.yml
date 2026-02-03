@@ -123,6 +123,9 @@ pacman_packages:
   # Wayland debugging
   - wev
 
+  # Flatpak (for sandboxed apps like Zoom)
+  - flatpak
+
   # Virtualization
   - libvirt
   - python-proxmoxer

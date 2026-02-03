@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Launch Teams (Flatpak) or focus existing window
+
+teams_window=$(hyprctl clients -j | jq -r '.[] | select(.class == "teams-for-linux" or .class == "Microsoft Teams") | .address' | head -1)
+
+if [[ -n "$teams_window" ]]; then
+    # Teams window exists, focus it
+    hyprctl dispatch focuswindow "address:$teams_window"
+else
+    # No window, launch Teams
+    flatpak run com.github.IsmaelMartinez.teams_for_linux "$@" &
+fi

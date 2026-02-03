@@ -1,0 +1,276 @@
+---
+# Configure isolated Chromium webapps with 1Password extension
+# Each app runs in its own Chromium profile for process isolation
+
+# Desktop entries point to launchers in ~/.bin/ (managed by dotfiles role)
+# Launchers are in home/bin/ which is symlinked
+
+- name: Update Outlook desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/Outlook.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Outlook
+      Comment=Microsoft Outlook
+      Exec={{ ansible_facts.env.HOME }}/.bin/outlook-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/outlook.png
+      Categories=Network;Email;
+      StartupWMClass=chromium-outlook
+
+- name: Update YouTube desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/YouTube.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=YouTube
+      Comment=YouTube
+      Exec={{ ansible_facts.env.HOME }}/.bin/youtube-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/youtube.png
+      Categories=AudioVideo;
+      StartupWMClass=chromium-youtube
+
+- name: Update ChatGPT desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/ChatGPT.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=ChatGPT
+      Comment=ChatGPT
+      Exec={{ ansible_facts.env.HOME }}/.bin/chatgpt-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/chatgpt.png
+      Categories=Network;
+      StartupWMClass=chromium-chatgpt
+
+- name: Update Claude desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/Claude.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Claude
+      Comment=Claude AI
+      Exec={{ ansible_facts.env.HOME }}/.bin/claude-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/claude.png
+      Categories=Network;
+      StartupWMClass=chromium-claude
+
+- name: Update GitHub desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/GitHub.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=GitHub
+      Comment=GitHub
+      Exec={{ ansible_facts.env.HOME }}/.bin/github-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/github.png
+      Categories=Development;
+      StartupWMClass=chromium-github
+
+- name: Update Immich desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/immich.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Immich
+      Comment=Immich Photos
+      Exec={{ ansible_facts.env.HOME }}/.bin/immich-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/immich.png
+      Categories=Graphics;
+      StartupWMClass=chromium-immich
+
+- name: Update Amazon desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/amazon.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Amazon
+      Comment=Amazon
+      Exec={{ ansible_facts.env.HOME }}/.bin/amazon-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/amazon.png
+      Categories=Network;
+      StartupWMClass=chromium-amazon
+
+- name: Update Substack desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/substack.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Substack
+      Comment=Substack
+      Exec={{ ansible_facts.env.HOME }}/.bin/substack-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/substack.png
+      Categories=Network;
+      StartupWMClass=chromium-substack
+
+- name: Update Cloudflare desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/cloudflare.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Cloudflare
+      Comment=Cloudflare Dashboard
+      Exec={{ ansible_facts.env.HOME }}/.bin/cloudflare-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/cloudflare.png
+      Categories=Network;
+      StartupWMClass=chromium-cloudflare
+
+- name: Update Word desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/Word.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Word
+      Comment=Microsoft Word
+      Exec={{ ansible_facts.env.HOME }}/.bin/word-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/word.png
+      Categories=Office;
+      StartupWMClass=chromium-office
+
+- name: Update Excel desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/Excel.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Excel
+      Comment=Microsoft Excel
+      Exec={{ ansible_facts.env.HOME }}/.bin/excel-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/excel.png
+      Categories=Office;
+      StartupWMClass=chromium-office
+
+- name: Update PowerPoint desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/PowerPoint.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=PowerPoint
+      Comment=Microsoft PowerPoint
+      Exec={{ ansible_facts.env.HOME }}/.bin/powerpoint-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/powerpoint.png
+      Categories=Office;
+      StartupWMClass=chromium-office
+
+- name: Update Unifi Network desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/unifi.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Unifi Network
+      Comment=Unifi Network Controller
+      Exec={{ ansible_facts.env.HOME }}/.bin/unifi-network-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/unifi.png
+      Categories=Network;
+      StartupWMClass=chromium-unifi
+
+- name: Update Unifi Drive desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/unifi-drive.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Unifi Drive
+      Comment=Unifi Drive
+      Exec={{ ansible_facts.env.HOME }}/.bin/unifi-drive-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/unifi.png
+      Categories=Network;
+      StartupWMClass=chromium-unifi
+
+- name: Update Unifi Protect desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/unifi-protect.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Unifi Protect
+      Comment=Unifi Protect
+      Exec={{ ansible_facts.env.HOME }}/.bin/unifi-protect-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/unifi.png
+      Categories=Network;
+      StartupWMClass=chromium-unifi
+
+- name: Update WSJ desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/wsj.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Wall Street Journal
+      Comment=WSJ
+      Exec={{ ansible_facts.env.HOME }}/.bin/wsj-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/wsj.png
+      Categories=Network;News;
+      StartupWMClass=chromium-wsj
+
+- name: Update Facebook desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/facebook.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Facebook
+      Comment=Facebook
+      Exec={{ ansible_facts.env.HOME }}/.bin/facebook-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/facebook.png
+      Categories=Network;
+      StartupWMClass=chromium-facebook
+
+- name: Update Instagram desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/instagram.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Instagram
+      Comment=Instagram
+      Exec={{ ansible_facts.env.HOME }}/.bin/instagram-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/instagram.png
+      Categories=Network;
+      StartupWMClass=chromium-instagram

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Launch Instagram in isolated Chromium profile with 1Password
+
+PROFILE="$HOME/.config/chromium-instagram"
+URL="https://instagram.com"
+
+ONEPASS_EXT=$(find ~/.config/chromium/Default/Extensions/aeblfdkhhhdcdjpifhhbdiojplfjncoa -maxdepth 1 -mindepth 1 -type d 2>/dev/null | head -1)
+
+window=$(hyprctl clients -j | jq -r '.[] | select(.class | test("instagram"; "i")) | .address' | head -1)
+
+if [[ -n "$window" ]]; then
+    hyprctl dispatch focuswindow "address:$window"
+else
+    if [[ -n "$ONEPASS_EXT" ]]; then
+        chromium --user-data-dir="$PROFILE" --load-extension="$ONEPASS_EXT" --app="$URL" &
+    else
+        chromium --user-data-dir="$PROFILE" --app="$URL" &
+    fi
+fi
