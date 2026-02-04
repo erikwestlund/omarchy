@@ -22,8 +22,7 @@ dev_sites:
   - domain: local.syncthing.lan
     port: 8384
 
-# Shared dev service proxies (mailpit.*.test, etc.)
-dev_service_proxies:
-  - prefix: mailpit
-    tld: test
-    port: 8034
+# Shared dev services
+dev_sites_extra:
+  - domain: mailpit.test
+    port: 8025

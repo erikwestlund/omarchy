@@ -68,7 +68,22 @@ alias vscode-sync-ext='om --tags vscode -e "vscode_install_extensions=true"'
 
 # Ansible
 alias ap="ansible-playbook"
-alias vault-edit="EDITOR=nvim ansible-vault edit ~/Omarchy/ansible/vault/secrets.yml --vault-password-file ~/.vault_pass"
+function vault-edit {
+  local vault_file="$1"
+
+  if [[ -z "$vault_file" ]]; then
+    # No argument - try to find vault conventionally
+    if [[ -f "./ansible/vault/secrets.yml" ]]; then
+      vault_file="./ansible/vault/secrets.yml"
+    elif [[ -f "./vault/secrets.yml" ]]; then
+      vault_file="./vault/secrets.yml"
+    else
+      vault_file="$HOME/Omarchy/ansible/vault/secrets.yml"
+    fi
+  fi
+
+  EDITOR=nvim ansible-vault edit "$vault_file" --vault-password-file ~/.vault_pass
+}
 
 # Calendar (gcalcli)
 alias cal="gcalcli --calendar Family --calendar JHU --calendar Personal calw"
@@ -236,6 +251,18 @@ alias dls="docker container ls"
 alias dlsa="docker container ls -a"
 alias dclean="docker system prune -f"
 alias dcleanall="docker system prune -a -f"
+
+# Shared mailpit instance (for all dev projects)
+alias mailpit-up="docker compose -f ~/Omarchy/services/mailpit/docker-compose.yml up -d"
+alias mailpit-down="docker compose -f ~/Omarchy/services/mailpit/docker-compose.yml down"
+alias mailpit-logs="docker logs -f mailpit"
+
+# Ensure mailpit is running (used by project launchers)
+ensure-mailpit() {
+    if ! docker ps --format '{{.Names}}' | grep -q '^mailpit$'; then
+        docker compose -f ~/Omarchy/services/mailpit/docker-compose.yml up -d
+    fi
+}
 
 # Tmux aliases
 alias tmnew="tmux new -s"

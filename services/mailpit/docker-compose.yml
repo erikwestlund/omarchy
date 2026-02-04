@@ -1,0 +1,24 @@
+# Shared Mailpit instance for all development projects
+# Web UI: http://mailpit.test (port 8025)
+# SMTP: localhost:1025
+#
+# Usage:
+#   mailpit-up    # Start mailpit
+#   mailpit-down  # Stop mailpit
+#
+# Configure projects to use:
+#   MAIL_HOST=host.docker.internal (from inside containers)
+#   MAIL_HOST=localhost (from host)
+#   MAIL_PORT=1025
+
+services:
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit
+    restart: on-failure
+    ports:
+      - "127.0.0.1:1025:1025"   # SMTP
+      - "127.0.0.1:8025:8025"   # Web UI
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1

@@ -16,10 +16,10 @@ http://{{ site.domain }}{% if site.wildcard | default(false) %}, http://*.{{ sit
 }
 
 {% endfor %}
-{% for svc in dev_service_proxies | default([]) %}
-# {{ svc.prefix }}.*.{{ svc.tld }} -> localhost:{{ svc.port }}
-http://{{ svc.prefix }}.*.{{ svc.tld }} {
-	reverse_proxy localhost:{{ svc.port }}
+{% for site in dev_sites_extra | default([]) %}
+# {{ site.domain }}
+http://{{ site.domain }} {
+	reverse_proxy localhost:{{ site.port }}
 }
 
 {% endfor %}

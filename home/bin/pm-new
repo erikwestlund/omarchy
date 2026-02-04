@@ -92,6 +92,7 @@ else
 fi
 
 # 5b. Auto-assign ports for Laravel projects with Docker
+# Note: Mailpit uses shared instance at mailpit.test (no per-project ports)
 if [ "$PROJECT_TYPE" = "laravel" ] && [ "$DOCKER_COMPOSE" = true ]; then
     # Base ports match projects.yml convention (line 7-10)
     PORT_VITE=$(next_port vite 5173)
@@ -101,8 +102,6 @@ if [ "$PROJECT_TYPE" = "laravel" ] && [ "$DOCKER_COMPOSE" = true ]; then
     PORT_MEILISEARCH=$(next_port meilisearch 7700)
     PORT_MINIO_API=$(next_port minio_api 9010)
     PORT_MINIO_CONSOLE=$(next_port minio_console 9011)
-    PORT_MAILPIT_SMTP=$(next_port mailpit_smtp 1030)
-    PORT_MAILPIT_WEB=$(next_port mailpit_web 8030)
 fi
 
 # 6. Default workspace
@@ -190,7 +189,7 @@ if [ -n "$VIEW_URL" ]; then
 fi
 if [ "$PROJECT_TYPE" = "laravel" ] && [ "$DOCKER_COMPOSE" = true ]; then
     echo "Ports:    vite=$PORT_VITE nginx=$PORT_NGINX postgres=$PORT_POSTGRES redis=$PORT_REDIS"
-    echo "          minio=$PORT_MINIO_API/$PORT_MINIO_CONSOLE mailpit=$PORT_MAILPIT_SMTP/$PORT_MAILPIT_WEB"
+    echo "          minio=$PORT_MINIO_API/$PORT_MINIO_CONSOLE (mailpit shared at mailpit.test)"
 fi
 echo "PM dir:   ~/Omarchy/projects/$PM_NAME"
 if [ -n "$PROJECT_PATH" ]; then
@@ -245,7 +244,7 @@ if [ -n "$VIEW_URL" ]; then
     ANSIBLE_CMD="$ANSIBLE_CMD -e \"view_url=$VIEW_URL\""
 fi
 
-# Pass port assignments for Laravel projects
+# Pass port assignments for Laravel projects (mailpit uses shared instance)
 if [ "$PROJECT_TYPE" = "laravel" ] && [ "$DOCKER_COMPOSE" = true ]; then
     ANSIBLE_CMD="$ANSIBLE_CMD -e \"vite_port=$PORT_VITE\""
     ANSIBLE_CMD="$ANSIBLE_CMD -e \"nginx_port=$PORT_NGINX\""
@@ -254,8 +253,6 @@ if [ "$PROJECT_TYPE" = "laravel" ] && [ "$DOCKER_COMPOSE" = true ]; then
     ANSIBLE_CMD="$ANSIBLE_CMD -e \"meilisearch_port=$PORT_MEILISEARCH\""
     ANSIBLE_CMD="$ANSIBLE_CMD -e \"minio_api_port=$PORT_MINIO_API\""
     ANSIBLE_CMD="$ANSIBLE_CMD -e \"minio_console_port=$PORT_MINIO_CONSOLE\""
-    ANSIBLE_CMD="$ANSIBLE_CMD -e \"mailpit_smtp_port=$PORT_MAILPIT_SMTP\""
-    ANSIBLE_CMD="$ANSIBLE_CMD -e \"mailpit_web_port=$PORT_MAILPIT_WEB\""
 fi
 
 eval $ANSIBLE_CMD

@@ -137,6 +137,19 @@
   when: reference_docker_stat.stat.exists
   ignore_errors: true
 
+# === Ensure shared mailpit is running ===
+- name: Check if shared mailpit container is running
+  ansible.builtin.command:
+    cmd: docker ps --filter "name=^mailpit$" --filter "status=running" --format "{{ '{{' }}.Names{{ '}}' }}"
+  register: mailpit_check
+  changed_when: false
+
+- name: Start shared mailpit container
+  ansible.builtin.command:
+    cmd: docker compose -f {{ ansible_facts.env.HOME }}/Omarchy/services/mailpit/docker-compose.yml up -d
+  when: mailpit_check.stdout | length == 0
+  changed_when: true
+
 # === Build Docker images ===
 - name: Check if docker-compose.yml exists for build
   ansible.builtin.stat:

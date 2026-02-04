@@ -384,7 +384,7 @@ if [ "$NEEDS_YML" = true ]; then
         [[ "$USE_DOCKER" =~ ^[Yy] ]] && DOCKER_COMPOSE=true || DOCKER_COMPOSE=false
     fi
 
-    # Ports for Laravel
+    # Ports for Laravel (mailpit uses shared instance at mailpit.test)
     if [ "$PROJECT_TYPE" = "laravel" ] && [ "$DOCKER_COMPOSE" = true ]; then
         PORT_VITE=$(next_port vite 5173)
         PORT_NGINX=$(next_port nginx 8010)
@@ -393,8 +393,6 @@ if [ "$NEEDS_YML" = true ]; then
         PORT_MEILISEARCH=$(next_port meilisearch 7700)
         PORT_MINIO_API=$(next_port minio_api 9010)
         PORT_MINIO_CONSOLE=$(next_port minio_console 9011)
-        PORT_MAILPIT_SMTP=$(next_port mailpit_smtp 1030)
-        PORT_MAILPIT_WEB=$(next_port mailpit_web 8030)
     fi
 
     # Workspace
@@ -516,8 +514,6 @@ if [ "$NEEDS_YML" = true ] || [ "$NEEDS_PM_FILES" = true ]; then
         ANSIBLE_CMD="$ANSIBLE_CMD -e \"meilisearch_port=$PORT_MEILISEARCH\""
         ANSIBLE_CMD="$ANSIBLE_CMD -e \"minio_api_port=$PORT_MINIO_API\""
         ANSIBLE_CMD="$ANSIBLE_CMD -e \"minio_console_port=$PORT_MINIO_CONSOLE\""
-        ANSIBLE_CMD="$ANSIBLE_CMD -e \"mailpit_smtp_port=$PORT_MAILPIT_SMTP\""
-        ANSIBLE_CMD="$ANSIBLE_CMD -e \"mailpit_web_port=$PORT_MAILPIT_WEB\""
     fi
 
     eval $ANSIBLE_CMD

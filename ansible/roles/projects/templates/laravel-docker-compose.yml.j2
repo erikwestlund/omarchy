@@ -147,18 +147,10 @@ services:
       - {{ project_name }}-network
 
 {% endif %}
-  # ===================
-  # Mail Testing
-  # ===================
-  mailpit:
-    image: axllent/mailpit:latest
-    container_name: {{ project_name }}-mailpit
-    restart: on-failure
-    ports:
-      - "127.0.0.1:{{ mailpit_smtp_port | default('1030') }}:1025"
-      - "127.0.0.1:{{ mailpit_web_port | default('8030') }}:8025"
-    networks:
-      - {{ project_name }}-network
+  # Mail Testing: Use shared mailpit instance
+  # SMTP: localhost:1025 (or host.docker.internal:1025 from containers)
+  # Web UI: http://mailpit.test
+  # Start with: mailpit-up
 
 networks:
   {{ project_name }}-network:
