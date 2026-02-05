@@ -182,5 +182,6 @@ projects:
   - name: career
     alias: career
     type: utility
+    github_repo: https://github.com/erikwestlund/career
     path: ~/Projects/career
 # END PROJECT career

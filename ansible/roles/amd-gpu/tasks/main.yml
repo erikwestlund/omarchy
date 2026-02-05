@@ -31,3 +31,29 @@
   ansible.builtin.debug:
     msg: "No AMD GPU detected, skipping driver installation"
   when: amd_gpu_check.rc != 0
+
+# AMD GPU kernel parameter for suspend/resume fix
+# Fixes stutter/lag after resume from suspend (DMCUB/PSR bug)
+# See: https://gitlab.freedesktop.org/drm/amd/-/issues/2708
+- name: Ensure limine drop-in directory exists
+  become: true
+  ansible.builtin.file:
+    path: /etc/limine-entry-tool.d
+    state: directory
+    mode: '0755'
+  when: amd_gpu_check.rc == 0
+
+- name: Add AMD GPU resume fix kernel parameter
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/limine-entry-tool.d/40-amdgpu.conf
+    mode: '0644'
+    content: |
+      # Managed by Ansible - do not edit directly
+      # Edit: ~/Omarchy/ansible/roles/amd-gpu/tasks/main.yml
+      #
+      # AMD GPU resume fix - prevents stutter/lag after suspend
+      # See: https://gitlab.freedesktop.org/drm/amd/-/issues/2708
+      KERNEL_CMDLINE[default]+=" amdgpu.dcdebugmask=0x10"
+  notify: Regenerate limine
+  when: amd_gpu_check.rc == 0

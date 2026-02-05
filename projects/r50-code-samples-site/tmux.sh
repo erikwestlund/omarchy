@@ -45,7 +45,7 @@ TABNO=$((TABNO+1))
 
 # --- codex-gpt (high reasoning) ---
 tmux new-window -t $SESSION:$TABNO -n "codex-gpt" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "codex --model gpt-5.1 -c model_reasoning_effort=\"high\"" C-m
+tmux send-keys -t $SESSION:$TABNO "codex --model gpt-5.2 -c model_reasoning_effort=\"high\"" C-m
 TABNO=$((TABNO+1))
 
 # --- project ---

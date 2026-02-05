@@ -1,0 +1,16 @@
+---
+- name: Regenerate limine
+  become: true
+  ansible.builtin.command: limine-update
+  changed_when: true
+
+- name: Regenerate initramfs
+  become: true
+  ansible.builtin.command: mkinitcpio -P
+  changed_when: true
+
+- name: Restart logind
+  become: true
+  ansible.builtin.systemd:
+    name: systemd-logind
+    state: restarted
