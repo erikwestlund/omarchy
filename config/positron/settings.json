@@ -5,7 +5,10 @@
     },
     "workbench.colorTheme": "Catppuccin Mocha",
     "terminal.integrated.commandsToSkipShell": [
-        "workbench.action.toggleSidebarVisibility"
+        "workbench.action.toggleSidebarVisibility",
+        "-workbench.action.closeWindow",
+        "-workbench.action.quit"
     ],
+    "terminal.integrated.enablePersistentSessions": false,
     "workbench.statusBar.visible": false
 }

@@ -2,8 +2,12 @@
 // Built from scratch
 [
     // Close window (not quit all) with Super+Q via keyd -> Ctrl+Q
+    // Unbind all defaults first
     { "key": "ctrl+q", "command": "-workbench.action.quit" },
-    { "key": "ctrl+q", "command": "workbench.action.closeWindow" },
+    { "key": "ctrl+q", "command": "-workbench.action.closeWindow" },
+    // Then add our bindings with when clauses
+    { "key": "ctrl+q", "command": "workbench.action.closeWindow", "when": "!terminalFocus" },
+    { "key": "ctrl+q", "command": "workbench.action.togglePanel", "when": "terminalFocus" },
 
     // Terminal toggle
     { "key": "ctrl+t", "command": "workbench.action.terminal.toggleTerminal" },
@@ -129,5 +133,7 @@
     { "key": "ctrl+o", "command": "workbench.action.terminal.sendSequence", "args": { "text": "\u000f" }, "when": "terminalFocus" },
 
     // Pass Shift+Tab to terminal (for Claude Code settings navigation)
-    { "key": "shift+tab", "command": "workbench.action.terminal.sendSequence", "args": { "text": "\u001b[Z" }, "when": "terminalFocus" }
+    { "key": "shift+tab", "command": "workbench.action.terminal.sendSequence", "args": { "text": "\u001b[Z" }, "when": "terminalFocus" },
+
+    // Ctrl+Q passthrough to terminal is handled at top of file
 ]
