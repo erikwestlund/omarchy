@@ -1,0 +1,19 @@
+#!/bin/bash
+# Bootstrap script for career
+# Runs ansible to ensure project is ready to run
+
+set -e
+
+OMARCHY_DIR="$HOME/Omarchy"
+MACHINE=$(cat ~/.machine 2>/dev/null || echo "laptop")
+
+echo "Bootstrapping career..."
+
+ANSIBLE_CONFIG="$OMARCHY_DIR/ansible/ansible.cfg" ansible-playbook \
+    "$OMARCHY_DIR/ansible/playbook.yml" \
+    --limit "$MACHINE" \
+    --tags bootstrap \
+    -e "project_name=career"
+
+echo ""
+echo "Bootstrap complete! Run 'lcareer' to launch."

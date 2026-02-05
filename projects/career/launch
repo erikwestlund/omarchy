@@ -1,24 +1,23 @@
 #!/bin/bash
-# Launch script for better-shoes
+# Launch script for career
 #
-# This script launches the better-shoes development environment with:
-# - Docker service orchestration (starts and waits for health checks)
-# - Editor and browser on the active workspace
+# This script launches the career development environment with:
+# - Editor and browser (if VIEW_URL set) on the active workspace
 # - Notification system (shows progress updates)
 
 # === Project Config ===
-PROJECT_NAME="better-shoes"
-PROJECT_DIR="/home/erik/Projects/better-shoes"
-WORKSPACE_FILE="$HOME/Omarchy/projects/better-shoes/better-shoes.code-workspace"
+PROJECT_NAME="career"
+PROJECT_DIR="$HOME/Projects/career"
+WORKSPACE_FILE="$HOME/Omarchy/projects/career/career.code-workspace"
 EDITOR="/usr/bin/code"
-DOCKER_COMPOSE=true
-VIEW_URL="http://better-shoes.test"
+DOCKER_COMPOSE=false
+VIEW_URL=""
 
 # === Launch ===
-notify-send -u low "Better Shoes" "Launching..." -t 5000
+notify-send -u low "Career" "Launching..." -t 5000
 
-# Start tmux session (if not already running)
-TMUX_SCRIPT="$HOME/Omarchy/projects/better-shoes/tmux.sh"
+# Start tmux session (if not already running) - run detached so it doesn't block
+TMUX_SCRIPT="$HOME/Omarchy/projects/career/tmux.sh"
 if [ -x "$TMUX_SCRIPT" ]; then
     "$TMUX_SCRIPT" </dev/null &
     sleep 0.5
@@ -31,11 +30,11 @@ if [ "$DOCKER_COMPOSE" = "true" ]; then
     fi
 fi
 
-# Start Docker services (docker-compose.yml = dev, docker-compose.prod.yml = prod)
-if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
-    notify-send -u low "Better Shoes" "Starting Docker services..." -t 4000
+# Start Docker services (if enabled)
+if [ "$DOCKER_COMPOSE" = "true" ] && [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+    notify-send -u low "Career" "Starting Docker services..." -t 4000
     (cd "$PROJECT_DIR" && docker compose up -d) || {
-        notify-send -u critical "Better Shoes" "Failed to start Docker services" -t 5000
+        notify-send -u critical "Career" "Failed to start Docker services" -t 5000
         exit 1
     }
 
@@ -54,7 +53,7 @@ if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
 
         # Only show waiting notification if it's taking more than 4 seconds
         if [ $ELAPSED -ge 4 ] && [ "$WAITING_NOTIFIED" = false ]; then
-            notify-send -u normal "Better Shoes" "Waiting for services..." -t 10000
+            notify-send -u normal "Career" "Waiting for services..." -t 10000
             WAITING_NOTIFIED=true
         fi
 
@@ -63,7 +62,7 @@ if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
     done
 
     if [ $ELAPSED -ge $MAX_WAIT ]; then
-        notify-send -u normal "Better Shoes" "Services slow, opening anyway..." -t 3000
+        notify-send -u normal "Career" "Services slow, opening anyway..." -t 3000
     fi
 fi
 
@@ -75,4 +74,4 @@ fi
 
 $EDITOR "$WORKSPACE_FILE" &
 
-notify-send -u low "Better Shoes" "Ready!" -t 3000
+notify-send -u low "Career" "Ready!" -t 3000

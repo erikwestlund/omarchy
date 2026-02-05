@@ -1,15 +1,13 @@
 #!/usr/bin/env bash
-# Launch github in isolated Chromium profile with 1Password
+# Launch Hetzner Console in isolated Chromium profile with 1Password
 
-PROFILE="$HOME/.config/chromium-github"
-URL="https://github.com"
+PROFILE="$HOME/.config/chromium-hetzner"
+URL="https://console.hetzner.cloud"
 
 # Find 1Password extension (latest version)
 ONEPASS_EXT=$(find ~/.config/chromium/Default/Extensions/aeblfdkhhhdcdjpifhhbdiojplfjncoa -maxdepth 1 -mindepth 1 -type d 2>/dev/null | head -1)
 
-# Match by class chrome-github.com__ (chromium app windows for github.com)
-# This won't match com.github.IsmaelMartinez.teams_for_linux
-window=$(hyprctl clients -j | jq -r '.[] | select(.class | startswith("chrome-github.com")) | .address' | head -1)
+window=$(hyprctl clients -j | jq -r '.[] | select(.class | test("hetzner"; "i")) | .address' | head -1)
 
 if [[ -n "$window" ]]; then
     hyprctl dispatch focuswindow "address:$window"

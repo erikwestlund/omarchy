@@ -275,6 +275,21 @@
       Categories=Network;
       StartupWMClass=chromium-instagram
 
+- name: Update Hetzner desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/hetzner.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Hetzner
+      Comment=Hetzner Cloud Console
+      Exec={{ ansible_facts.env.HOME }}/.bin/hetzner-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/hetzner.webp
+      Categories=Network;
+      StartupWMClass=chromium-hetzner
+
 # 1Password native messaging support for isolated profiles
 - name: Define isolated Chromium profiles
   ansible.builtin.set_fact:
@@ -293,6 +308,7 @@
       - chromium-wsj
       - chromium-facebook
       - chromium-instagram
+      - chromium-hetzner
 
 - name: Check if 1Password native messaging host exists
   ansible.builtin.stat:

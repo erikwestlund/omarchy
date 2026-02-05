@@ -10,24 +10,12 @@
 
 WORKSPACE="$1"
 
-# Workspace names
-declare -A SHORT_NAMES FULL_NAMES
-SHORT_NAMES[U]="U"    FULL_NAMES[U]="Utility"
-SHORT_NAMES[1]="P"    FULL_NAMES[1]="Pequod"
-SHORT_NAMES[2]="S"    FULL_NAMES[2]="Shoes"
-SHORT_NAMES[3]="F"    FULL_NAMES[3]="Framework"
-SHORT_NAMES[4]="N"    FULL_NAMES[4]="NA-Accord"
-SHORT_NAMES[5]="K"    FULL_NAMES[5]="ParkUKB"
-SHORT_NAMES[6]="L"    FULL_NAMES[6]="Flint"
-SHORT_NAMES[7]="S1"   FULL_NAMES[7]="Scratch"
-SHORT_NAMES[8]="S2"   FULL_NAMES[8]="Scratch"
-SHORT_NAMES[9]="C"    FULL_NAMES[9]="Computing"
-SHORT_NAMES[10]="C"   FULL_NAMES[10]="Comms"
-SHORT_NAMES[11]="W"   FULL_NAMES[11]="Work"
-SHORT_NAMES[12]="M"   FULL_NAMES[12]="Misc"
-
-SHORT_NAME="${SHORT_NAMES[$WORKSPACE]}"
-FULL_NAME="${FULL_NAMES[$WORKSPACE]}"
+# Workspace display name (just "Workspace N" for tooltips)
+if [[ "$WORKSPACE" == "U" ]]; then
+    FULL_NAME="Utility"
+else
+    FULL_NAME="Workspace $WORKSPACE"
+fi
 
 output_workspace() {
     # Get active workspace

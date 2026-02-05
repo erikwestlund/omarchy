@@ -39,8 +39,6 @@ projects:
     alias: fw
     type: rstats
     path: ~/Projects/framework
-    extras:
-      default_ws: 3
     ports:
       vite: 5175  # gui-dev vite server
 
@@ -71,7 +69,6 @@ projects:
     path: ~/Projects/naaccord-data-depot
     extras:
       view_url: http://naaccord.test
-      default_ws: 4
     ports:
       redis: 6393
       mariadb: 3310
@@ -85,8 +82,6 @@ projects:
     alias: hl
     type: utility
     path: ~/Projects/homelab
-    extras:
-      default_ws: 8
 # END PROJECT homelab
 # BEGIN PROJECT flint
   - name: flint
@@ -95,7 +90,6 @@ projects:
     path: ~/Projects/flint
     extras:
       view_url: http://flint.test
-      default_ws: 6
     ports:
       vite: 5177
       nginx: 8031
@@ -109,8 +103,6 @@ projects:
     alias: tnt
     type: rstats
     path: ~/Projects/tnt-syphilis
-    extras:
-      default_ws: 7
 # END PROJECT tnt-syphilis
 # BEGIN PROJECT ohdsi-diabetic-retinopathy-treatment-patterns
   - name: ohdsi-diabetic-retinopathy-treatment-patterns
@@ -118,7 +110,6 @@ projects:
     type: rstats
     path: ~/Projects/ohdsi-diabetic-retinopathy-treatment-patterns
     extras:
-      default_ws: 7
       editor: positron
 # END PROJECT ohdsi-diabetic-retinopathy-treatment-patterns
 # BEGIN PROJECT mh-missing-data
@@ -132,32 +123,24 @@ projects:
     alias: om
     type: utility
     path: ~/Omarchy
-    extras:
-      default_ws: 9
 # END PROJECT omarchy
 # BEGIN PROJECT r50-code-samples-site
   - name: r50-code-samples-site
     alias: r50code
     type: utility
     path: ~/Projects/r50-code-samples-site
-    extras:
-      default_ws: 8
 # END PROJECT r50-code-samples-site
 # BEGIN PROJECT r50-application
   - name: r50-application
     alias: r50
     type: utility
     path: ~/Projects/r50-application
-    extras:
-      default_ws: 8
 # END PROJECT r50-application
 # BEGIN PROJECT geu-legal-gender-recognition
   - name: geu-legal-gender-recognition
     alias: geulegal
     type: rstats
     path: ~/Projects/geu-legal-gender-recognition
-    extras:
-      default_ws: 7
 # END PROJECT geu-legal-gender-recognition
 # BEGIN PROJECT wordle-group
   - name: wordle-group
@@ -167,7 +150,6 @@ projects:
     github_repo: https://github.com/OnPequod/wordlegroup
     extras:
       view_url: http://wordlegroup.test
-      default_ws: 7
     ports:
       vite: 5178
       nginx: 8033
@@ -189,14 +171,16 @@ projects:
     type: rstats
     github_repo: https://github.com/OHDSI-JHU/ME.250.788.SP26
     path: ~/Projects/observational-research-methods-in-r
-    extras:
-      default_ws: 7
 # END PROJECT observational-research-methods-in-r
 # BEGIN PROJECT clinical-data-visualization
   - name: clinical-data-visualization
     alias: cdv
     type: rstats
     path: ~/Projects/clinical-data-visualization
-    extras:
-      default_ws: 8
 # END PROJECT clinical-data-visualization
+# BEGIN PROJECT career
+  - name: career
+    alias: career
+    type: utility
+    path: ~/Projects/career
+# END PROJECT career

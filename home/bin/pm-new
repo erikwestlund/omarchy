@@ -104,12 +104,7 @@ if [ "$PROJECT_TYPE" = "laravel" ] && [ "$DOCKER_COMPOSE" = true ]; then
     PORT_MINIO_CONSOLE=$(next_port minio_console 9011)
 fi
 
-# 6. Default workspace
-echo ""
-read -p "Default workspace [1]: " DEFAULT_WS
-DEFAULT_WS="${DEFAULT_WS:-1}"
-
-# 6b. View URL (for web projects)
+# 6. View URL (for web projects)
 VIEW_URL=""
 if [ "$PROJECT_TYPE" = "laravel" ]; then
     echo ""
@@ -183,7 +178,6 @@ echo "Name:     $DISPLAY_NAME"
 echo "Type:     $PROJECT_TYPE"
 echo "Editor:   $PROJECT_EDITOR"
 echo "Docker:   $DOCKER_COMPOSE"
-echo "Default WS: $DEFAULT_WS"
 if [ -n "$VIEW_URL" ]; then
     echo "View URL: $VIEW_URL"
 fi
@@ -223,8 +217,7 @@ ANSIBLE_CMD="ANSIBLE_CONFIG=$OMARCHY_DIR/ansible/ansible.cfg ansible-playbook \
     -e \"project_alias=$PROJECT_ALIAS\" \
     -e \"project_type=$PROJECT_TYPE\" \
     -e \"project_editor=$PROJECT_EDITOR\" \
-    -e \"docker_compose=$DOCKER_COMPOSE\" \
-    -e \"default_ws=$DEFAULT_WS\""
+    -e \"docker_compose=$DOCKER_COMPOSE\""
 
 if [ -n "$PROJECT_PATH" ]; then
     ANSIBLE_CMD="$ANSIBLE_CMD -e \"project_path=$PROJECT_PATH\""

@@ -580,6 +580,16 @@ alias vscdv="code ~/Omarchy/projects/clinical-data-visualization/clinical-data-v
 alias nvcdv="(cd /home/erik/Projects/clinical-data-visualization && nvim .)"
 alias pcdv="/usr/share/positron/bin/positron ~/Omarchy/projects/clinical-data-visualization/clinical-data-visualization.code-workspace"
 # END PROJECT clinical-data-visualization
+# BEGIN PROJECT career
+alias lcareer="~/Omarchy/projects/career/launch"
+alias kcareer="~/Omarchy/projects/career/kill"
+alias tmcareer="~/Omarchy/projects/career/tmux.sh"
+alias bcareer="~/Omarchy/projects/career/bootstrap"
+alias pmcareer="cd ~/Omarchy/projects/career"
+alias career="cd ~/Projects/career"
+alias vscareer="code ~/Omarchy/projects/career/career.code-workspace"
+alias nvcareer="(cd ~/Projects/career && nvim .)"
+# END PROJECT career
 # Auto-generated project aliases
 
 # Sync R2 media to local minio for better-shoes dev

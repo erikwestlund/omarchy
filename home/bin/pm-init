@@ -395,11 +395,6 @@ if [ "$NEEDS_YML" = true ]; then
         PORT_MINIO_CONSOLE=$(next_port minio_console 9011)
     fi
 
-    # Workspace
-    echo ""
-    read -p "Default workspace [1]: " DEFAULT_WS
-    DEFAULT_WS="${DEFAULT_WS:-1}"
-
     # View URL
     VIEW_URL=""
     if [ "$PROJECT_TYPE" = "laravel" ]; then
@@ -467,7 +462,6 @@ echo "Alias:      $ALIAS"
 [ -n "$GITHUB_REPO" ] && echo "GitHub:     $GITHUB_REPO"
 [ -n "$PROJECT_EDITOR" ] && echo "Editor:     $PROJECT_EDITOR"
 [ -n "$DOCKER_COMPOSE" ] && echo "Docker:     $DOCKER_COMPOSE"
-[ -n "$DEFAULT_WS" ] && echo "Workspace:  $DEFAULT_WS"
 [ -n "$VIEW_URL" ] && echo "View URL:   $VIEW_URL"
 echo ""
 echo "Will create/update:"
@@ -500,7 +494,6 @@ if [ "$NEEDS_YML" = true ] || [ "$NEEDS_PM_FILES" = true ]; then
         -e \"project_type=$PROJECT_TYPE\" \
         -e \"project_editor=${PROJECT_EDITOR:-vscode}\" \
         -e \"docker_compose=${DOCKER_COMPOSE:-false}\" \
-        -e \"default_ws=${DEFAULT_WS:-1}\" \
         -e \"project_path=$PROJECT_PATH\""
 
     [ -n "$GITHUB_REPO" ] && ANSIBLE_CMD="$ANSIBLE_CMD -e \"github_repo=$GITHUB_REPO\""

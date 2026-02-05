@@ -127,17 +127,12 @@
 - name: Add extras section if needed
   ansible.builtin.set_fact:
     project_yml_lines: "{{ project_yml_lines + ['    extras:'] }}"
-  when: (view_url is defined and view_url | length > 0) or (default_ws | default(1) | int != 1)
+  when: view_url is defined and view_url | length > 0
 
 - name: Add view_url to extras
   ansible.builtin.set_fact:
     project_yml_lines: "{{ project_yml_lines + ['      view_url: ' + view_url] }}"
   when: view_url is defined and view_url | length > 0
-
-- name: Add default_ws to extras
-  ansible.builtin.set_fact:
-    project_yml_lines: "{{ project_yml_lines + ['      default_ws: ' + (default_ws | string)] }}"
-  when: default_ws | default(1) | int != 1
 
 - name: Add ports section for Laravel with Docker
   ansible.builtin.set_fact:

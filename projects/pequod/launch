@@ -2,61 +2,33 @@
 # Launch script for pequod
 #
 # This script launches the pequod development environment with:
-# - Workspace management (switches to target workspace)
 # - Docker service orchestration (starts and waits for health checks)
-# - Window positioning (adapts based on desktop vs laptop mode)
+# - Editor and browser on the active workspace
 # - Notification system (shows progress updates)
-#
-# Desktop mode: Browser and editor on same workspace (browser right, editor left)
-# Laptop mode: Editor on WS N, browser on WS N+1, then return to WS N
-#
-# Race condition prevention: Waits for windows to actually appear before
-# switching workspaces to ensure correct positioning.
-
-# === Helper Functions ===
-# Check if a window of given class exists on a workspace
-has_window_on_ws() {
-    local ws="$1"
-    local class="$2"
-    hyprctl clients -j | jq -e --arg ws "$ws" --arg class "$class" \
-        '.[] | select(.workspace.id == ($ws | tonumber) and (.class | ascii_downcase | contains($class | ascii_downcase)))' > /dev/null 2>&1
-}
 
 # === Project Config ===
 PROJECT_NAME="pequod"
 PROJECT_DIR="/home/erik/Projects/pequod"
 WORKSPACE_FILE="$HOME/Omarchy/projects/pequod/pequod.code-workspace"
 EDITOR="/usr/bin/code"
-DEFAULT_WS=1
 DOCKER_COMPOSE=true
 VIEW_URL="http://academic.test/admin"
 
-# === Parse Arguments ===
-WS=${1:-$DEFAULT_WS}
-
-if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: launch [WORKSPACE]"
-    echo ""
-    echo "  WORKSPACE  Workspace number (default: $DEFAULT_WS)"
-    echo ""
-    echo "Examples:"
-    echo "  launch      # Opens in workspace $DEFAULT_WS"
-    echo "  launch 3    # Opens in workspace 3"
-    exit 0
-fi
-
 # === Launch ===
 notify-send -u low "Pequod" "Launching..." -t 5000
-
-# Switch to workspace and wait for it to complete
-hyprctl dispatch workspace $WS
-sleep 0.3
 
 # Start tmux session (if not already running)
 TMUX_SCRIPT="$HOME/Omarchy/projects/pequod/tmux.sh"
 if [ -x "$TMUX_SCRIPT" ]; then
     "$TMUX_SCRIPT" </dev/null 2>/dev/null &
     sleep 0.5
+fi
+
+# Ensure shared mailpit is running (for mail testing)
+if [ "$DOCKER_COMPOSE" = "true" ]; then
+    if ! docker ps --format '{{.Names}}' | grep -q '^mailpit$'; then
+        docker compose -f "$HOME/Omarchy/services/mailpit/docker-compose.yml" up -d 2>/dev/null
+    fi
 fi
 
 # Start Docker services (docker-compose.yml = dev, docker-compose.prod.yml = prod)
@@ -95,62 +67,12 @@ if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
     fi
 fi
 
-MACHINE=$(cat ~/.machine 2>/dev/null)
-
-if [ "$MACHINE" = "desktop" ]; then
-    # Desktop: open browser first (right), then editor (left), both on same workspace
-    if [ -n "$VIEW_URL" ] && ! has_window_on_ws "$WS" "chromium"; then
-        hyprctl dispatch exec "[workspace $WS silent]" "chromium --new-window '$VIEW_URL'"
-
-        # Wait for browser to appear before opening editor (ensures correct positioning)
-        for i in {1..10}; do
-            if has_window_on_ws "$WS" "chromium"; then
-                break
-            fi
-            sleep 0.2
-        done
-    fi
-
-    if ! has_window_on_ws "$WS" "code"; then
-        hyprctl dispatch exec "[workspace $WS silent]" "$EDITOR '$WORKSPACE_FILE'"
-    fi
-else
-    # Laptop: editor on WS, browser on WS+1
-    if ! has_window_on_ws "$WS" "code"; then
-        # Ensure we're on the right workspace, then open editor
-        hyprctl dispatch workspace $WS
-        sleep 0.3
-        $EDITOR "$WORKSPACE_FILE" &
-
-        # Wait for VS Code window to actually appear on this workspace
-        for i in {1..20}; do
-            if has_window_on_ws "$WS" "code"; then
-                break
-            fi
-            sleep 0.2
-        done
-    fi
-
-    if [ -n "$VIEW_URL" ]; then
-        BROWSER_WS=$((WS + 1))
-        if ! has_window_on_ws "$BROWSER_WS" "chromium"; then
-            # Switch to browser workspace, open browser, wait for it to appear
-            hyprctl dispatch workspace $BROWSER_WS
-            sleep 0.3
-            chromium --new-window "$VIEW_URL" 2>/dev/null &
-
-            # Wait for browser window to appear
-            for i in {1..20}; do
-                if has_window_on_ws "$BROWSER_WS" "chromium"; then
-                    break
-                fi
-                sleep 0.2
-            done
-
-            # Switch back to editor workspace
-            hyprctl dispatch workspace $WS
-        fi
-    fi
+# Open browser first (right side), then editor (left side)
+if [ -n "$VIEW_URL" ]; then
+    chromium --new-window "$VIEW_URL" 2>/dev/null &
+    sleep 0.3
 fi
 
-notify-send -u low "Pequod" "Ready! Workspace $WS" -t 3000
+$EDITOR "$WORKSPACE_FILE" &
+
+notify-send -u low "Pequod" "Ready!" -t 3000

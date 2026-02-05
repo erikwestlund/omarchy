@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-# Check for active meeting first
-if pgrep -x "teams" >/dev/null || pgrep -f "teams-for-linux" >/dev/null; then
+# Check for active Teams meeting (not just Teams running)
+# Look for Teams window with meeting-related title (not Activity/Chat)
+if hyprctl clients -j | jq -e '.[] | select(.class | test("teams"; "i")) | select(.title | test("Meeting|Call|Presenting"; "i"))' >/dev/null 2>&1; then
     echo '{"text": " Teams Meeting", "class": "teams"}'
     exit 0
 fi

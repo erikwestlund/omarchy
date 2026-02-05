@@ -26,3 +26,5 @@ dev_sites:
 dev_sites_extra:
   - domain: mailpit.test
     port: 8025
+  - domain: minio.test
+    port: 9001

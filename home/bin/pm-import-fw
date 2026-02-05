@@ -107,11 +107,7 @@ import_project() {
         3) project_editor="neovim" ;;
         *) project_editor="vscode" ;;
     esac
-    
-    # Ask for default workspace
-    read -p "Default workspace [1]: " default_ws
-    default_ws="${default_ws:-1}"
-    
+
     # Summary
     echo ""
     echo "=== Import Summary ==="
@@ -119,7 +115,6 @@ import_project() {
     echo "Type:      $project_type"
     echo "Editor:    $project_editor"
     echo "Alias:     $project_alias"
-    echo "Default WS: $default_ws"
     echo "PM dir:    ~/Omarchy/projects/$pm_name"
     echo "Project:   $project_path"
     echo ""
@@ -142,7 +137,6 @@ import_project() {
         -e \"project_type=$project_type\" \
         -e \"project_editor=$project_editor\" \
         -e \"docker_compose=$docker_compose\" \
-        -e \"default_ws=$default_ws\" \
         -e \"project_path=$project_path\""
     
     eval $ANSIBLE_CMD

@@ -68,15 +68,25 @@ MEILISEARCH_HOST=http://meilisearch:7700
 MEILISEARCH_KEY={{ project_name }}-dev-secret
 
 {% endif %}
-{% if include_minio | default(false) %}
-# MinIO S3-compatible Storage (in Docker)
-AWS_ACCESS_KEY_ID={{ project_name }}
-AWS_SECRET_ACCESS_KEY={{ project_name }}-dev-secret
-AWS_DEFAULT_REGION=us-east-1
-AWS_BUCKET={{ project_name }}-default
-AWS_ENDPOINT=http://minio:9000
-AWS_USE_PATH_STYLE_ENDPOINT=true
-AWS_URL=http://localhost:9000/{{ project_name }}-default
-{% endif %}
+# S3 Storage (default: local filesystem)
+# Uncomment ONE section below to use S3-compatible storage:
+#
+# --- Option 1: Shared local minio (minio-up) ---
+# AWS_ACCESS_KEY_ID=minio
+# AWS_SECRET_ACCESS_KEY=minio-dev-secret
+# AWS_DEFAULT_REGION=us-east-1
+# AWS_BUCKET={{ project_name | replace('-', '_') }}
+# AWS_ENDPOINT=http://host.docker.internal:9000
+# AWS_USE_PATH_STYLE_ENDPOINT=true
+# AWS_URL=http://localhost:9000/{{ project_name | replace('-', '_') }}
+#
+# --- Option 2: Homelab minio (minio-dev.lan) ---
+# AWS_ACCESS_KEY_ID=your-key
+# AWS_SECRET_ACCESS_KEY=your-secret
+# AWS_DEFAULT_REGION=us-east-1
+# AWS_BUCKET={{ project_name | replace('-', '_') }}
+# AWS_ENDPOINT=http://minio-dev.lan:9000
+# AWS_USE_PATH_STYLE_ENDPOINT=true
+# AWS_URL=http://minio-dev.lan:9000/{{ project_name | replace('-', '_') }}
 
 VITE_APP_NAME="${APP_NAME}"

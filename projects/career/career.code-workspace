@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "/home/erik/Projects/career"
+		}
+	],
+	"settings": {
+		"workbench.colorTheme": "Catppuccin Mocha",
+		"workbench.iconTheme": "catppuccin-mocha",
+		"terminal.integrated.env.linux": {
+			"TERM": "xterm-256color"
+		}
+	}
+}
