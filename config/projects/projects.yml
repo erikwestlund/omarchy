@@ -185,3 +185,9 @@ projects:
     github_repo: https://github.com/erikwestlund/career
     path: ~/Projects/career
 # END PROJECT career
+# BEGIN PROJECT cholera-data-management
+  - name: cholera-data-management
+    alias: cholera
+    type: rstats
+    path: ~/Projects/cholera-data-management
+# END PROJECT cholera-data-management

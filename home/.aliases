@@ -590,6 +590,17 @@ alias career="cd ~/Projects/career"
 alias vscareer="code ~/Omarchy/projects/career/career.code-workspace"
 alias nvcareer="(cd ~/Projects/career && nvim .)"
 # END PROJECT career
+# BEGIN PROJECT cholera-data-management
+alias lcholera="~/Omarchy/projects/cholera-data-management/launch"
+alias kcholera="~/Omarchy/projects/cholera-data-management/kill"
+alias tmcholera="~/Omarchy/projects/cholera-data-management/tmux.sh"
+alias bcholera="~/Omarchy/projects/cholera-data-management/bootstrap"
+alias pmcholera="cd ~/Omarchy/projects/cholera-data-management"
+alias cholera="cd /home/erik/Projects/cholera-data-management"
+alias vscholera="code ~/Omarchy/projects/cholera-data-management/cholera-data-management.code-workspace"
+alias nvcholera="(cd /home/erik/Projects/cholera-data-management && nvim .)"
+alias pcholera="/usr/share/positron/bin/positron ~/Omarchy/projects/cholera-data-management/cholera-data-management.code-workspace"
+# END PROJECT cholera-data-management
 # Auto-generated project aliases
 
 # Sync R2 media to local minio for better-shoes dev
