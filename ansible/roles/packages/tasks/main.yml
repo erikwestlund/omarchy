@@ -47,6 +47,14 @@
   loop: "{{ ruby_gems | default([]) }}"
   when: ruby_gems is defined and ruby_gems | length > 0
 
+- name: Install NPM global packages
+  community.general.npm:
+    name: "{{ item }}"
+    global: true
+    state: latest
+  loop: "{{ npm_global_packages | default([]) }}"
+  when: npm_global_packages is defined and npm_global_packages | length > 0
+
 - name: Set up NVM directory
   ansible.builtin.file:
     path: "{{ ansible_facts.env.HOME }}/.nvm"

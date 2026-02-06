@@ -1,0 +1,2 @@
+#!/bin/bash
+exec codex --model gpt-5.1-codex -c model_reasoning_effort="medium"

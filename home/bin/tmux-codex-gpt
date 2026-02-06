@@ -1,0 +1,2 @@
+#!/bin/bash
+exec codex --model gpt-5.2 -c model_reasoning_effort="high"

@@ -147,7 +147,6 @@ aur_packages:
   # Dev tools
   - sublime-text-4
   - visual-studio-code-bin
-  - openai-codex
   - opencode  # Use compiled version (opencode-bin conflicts)
   - stripe-cli
   - nvm
@@ -202,6 +201,10 @@ aur_packages:
 # Ruby gems (installed via gem install)
 ruby_gems:
   - kamal
+
+# NPM global packages (installed via npm install -g)
+npm_global_packages:
+  - "@openai/codex"
 
 # JHU VPN configuration
 jh_vpn_url: "vpn.jh.edu"
