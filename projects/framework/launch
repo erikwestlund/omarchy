@@ -21,13 +21,6 @@ if [ -x "$TMUX_SCRIPT" ]; then
     sleep 0.5
 fi
 
-# Start framework-site Docker services (Laravel backend)
-FRAMEWORK_SITE_DIR="$HOME/Projects/framework-site"
-if [ -f "$FRAMEWORK_SITE_DIR/docker-compose.yml" ]; then
-    notify-send -u low "Framework" "Starting Docker services..." -t 4000
-    (cd "$FRAMEWORK_SITE_DIR" && docker compose up -d)
-fi
-
 # Open browser first (right side), then editor (left side)
 if [ -n "$VIEW_URL" ]; then
     chromium --new-window "$VIEW_URL" &

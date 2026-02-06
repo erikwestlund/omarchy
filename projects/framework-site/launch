@@ -22,6 +22,12 @@ if [ -x "$TMUX_SCRIPT" ]; then
     sleep 0.5
 fi
 
+# Start Docker services
+if [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+    notify-send -u low "Framework Site" "Starting Docker services..." -t 4000
+    (cd "$PROJECT_DIR" && docker compose up -d)
+fi
+
 # Open browser first (right side), then editor (left side)
 if [ -n "$VIEW_URL" ]; then
     chromium --new-window "$VIEW_URL" &

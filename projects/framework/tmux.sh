@@ -3,7 +3,6 @@
 
 SESSION="fw"
 PROJECT_DIR="/home/erik/Projects/framework"
-SITE_DIR="/home/erik/Projects/framework-site"
 
 # Check if session already exists
 tmux has-session -t $SESSION 2>/dev/null
@@ -49,15 +48,6 @@ tmux new-window -t $SESSION:$TABNO -n "codex-gpt" -c "$PROJECT_DIR"
 tmux send-keys -t $SESSION:$TABNO "codex --model gpt-5.2 -c model_reasoning_effort=\"high\"" C-m
 TABNO=$((TABNO+1))
 
-# --- site (framework-site shell) ---
-tmux new-window -t $SESSION:$TABNO -n "site" -c "$SITE_DIR"
-TABNO=$((TABNO+1))
-
-# --- site-cl (claude in site dir) ---
-tmux new-window -t $SESSION:$TABNO -n "site-cl" -c "$SITE_DIR"
-tmux send-keys -t $SESSION:$TABNO "claude" C-m
-TABNO=$((TABNO+1))
-
 # --- R ---
 tmux new-window -t $SESSION:$TABNO -n "R" -c "$PROJECT_DIR"
 tmux send-keys -t $SESSION:$TABNO "cd $PROJECT_DIR && R" C-m
@@ -70,11 +60,6 @@ TABNO=$((TABNO+1))
 
 # --- gui-npm (vite dev server) ---
 tmux new-window -t $SESSION:$TABNO -n "gui-npm" -c "$PROJECT_DIR/gui-dev"
-tmux send-keys -t $SESSION:$TABNO "npm run dev" C-m
-TABNO=$((TABNO+1))
-
-# --- site-npm (site dev server) ---
-tmux new-window -t $SESSION:$TABNO -n "site-npm" -c "$SITE_DIR"
 tmux send-keys -t $SESSION:$TABNO "npm run dev" C-m
 TABNO=$((TABNO+1))
 
