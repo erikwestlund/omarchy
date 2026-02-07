@@ -1,0 +1,50 @@
+#!/bin/bash
+# View ansible vault secrets (read-only)
+# Checks for project-local vault first, falls back to main Omarchy vault
+
+set -e
+
+PROJECTS_DIR="$HOME/Projects"
+MAIN_VAULT="$HOME/Omarchy/ansible/vault/secrets.yml"
+
+# Determine which vault file to view
+vault_file=""
+
+# Check if we're in a project directory
+if [[ "$PWD" == "$PROJECTS_DIR"/* ]]; then
+    # Extract project name (first directory after Projects)
+    project_path="${PWD#$PROJECTS_DIR/}"
+    project_name="${project_path%%/*}"
+    project_root="$PROJECTS_DIR/$project_name"
+
+    # Check multiple possible vault locations
+    for path in \
+        "$project_root/ansible/vault/secrets.yml" \
+        "$project_root/vault/secrets.yml" \
+        "$PWD/vault/secrets.yml" \
+        "$PWD/secrets.yml"; do
+        if [[ -f "$path" ]]; then
+            vault_file="$path"
+            echo "Using project vault: $vault_file"
+            break
+        fi
+    done
+fi
+
+# Fall back to main vault
+if [[ -z "$vault_file" ]]; then
+    vault_file="$MAIN_VAULT"
+    echo "Using main vault: $vault_file"
+fi
+
+if [[ ! -f "$vault_file" ]]; then
+    echo "Error: Vault file not found: $vault_file"
+    exit 1
+fi
+
+VAULT_ARGS=()
+if [[ -f "$HOME/.vault_pass" ]]; then
+    VAULT_ARGS+=(--vault-password-file "$HOME/.vault_pass")
+fi
+
+ansible-vault view "${VAULT_ARGS[@]}" "$vault_file"
