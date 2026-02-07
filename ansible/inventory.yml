@@ -19,3 +19,6 @@ all:
     hatchery:
       ansible_host: hatchery.lan
       ansible_user: root
+    syncthing:
+      ansible_host: syncthing.lan
+      ansible_user: erik
