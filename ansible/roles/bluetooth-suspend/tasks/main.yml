@@ -1,4 +1,39 @@
 ---
+# Suspend management for laptop
+# - Optionally disables suspend entirely (disable_suspend: true in host_vars)
+# - Disables Bluetooth during suspend to prevent spurious wake events
+
+# Disable suspend entirely (temporary workaround for AMD GPU s2idle wake failures)
+- name: Ensure sleep.conf.d directory exists
+  ansible.builtin.file:
+    path: /etc/systemd/sleep.conf.d
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Disable suspend via sleep.conf drop-in
+  ansible.builtin.copy:
+    dest: /etc/systemd/sleep.conf.d/no-suspend.conf
+    mode: '0644'
+    content: |
+      # Managed by Ansible - do not edit directly
+      # Temporarily disable suspend to avoid AMD GPU s2idle wake failures
+      # To revert: set disable_suspend: false in host_vars/laptop.yml and re-run ansible
+      [Sleep]
+      AllowSuspend=no
+      AllowHibernation=no
+      AllowHybridSleep=no
+      AllowSuspendThenHibernate=no
+  become: true
+  when: disable_suspend | default(false)
+
+- name: Remove no-suspend drop-in when suspend is re-enabled
+  ansible.builtin.file:
+    path: /etc/systemd/sleep.conf.d/no-suspend.conf
+    state: absent
+  become: true
+  when: not (disable_suspend | default(false))
+
 # Disable Bluetooth during suspend to prevent spurious wake events
 # The Bluetooth controller triggers wake events every ~20 seconds during s2idle,
 # causing the system to fail to stay asleep.
