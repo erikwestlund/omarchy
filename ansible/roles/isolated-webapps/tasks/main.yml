@@ -309,6 +309,7 @@
       - chromium-facebook
       - chromium-instagram
       - chromium-hetzner
+      - chromium-pihole
 
 - name: Check if 1Password native messaging host exists
   ansible.builtin.stat:

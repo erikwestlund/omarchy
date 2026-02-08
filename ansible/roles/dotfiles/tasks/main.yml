@@ -153,6 +153,29 @@
     dest: "{{ ansible_facts.env.HOME }}/.config/opencode/opencode.json"
     mode: '0644'
 
+# Neovim plugin overrides (LazyVim owns the directory, we just add specific files)
+- name: Ensure nvim plugins directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/nvim/lua/plugins"
+    state: directory
+    mode: '0755'
+
+- name: Find nvim plugin override files in repo
+  ansible.builtin.find:
+    paths: "{{ config_src }}/nvim/lua/plugins"
+    patterns: "*.lua"
+  register: nvim_plugin_files
+
+- name: Symlink nvim plugin overrides
+  ansible.builtin.file:
+    src: "{{ item.path }}"
+    dest: "{{ ansible_facts.env.HOME }}/.config/nvim/lua/plugins/{{ item.path | basename }}"
+    state: link
+    force: true
+  loop: "{{ nvim_plugin_files.files }}"
+  loop_control:
+    label: "{{ item.path | basename }}"
+
 # Sublime Text config (nested path structure)
 - name: Ensure Sublime Text User config directory exists
   ansible.builtin.file:
