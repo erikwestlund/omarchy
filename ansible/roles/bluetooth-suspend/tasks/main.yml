@@ -88,3 +88,33 @@
     enabled: true
     daemon_reload: true
   become: true
+
+# Reset touchpad driver after resume
+# The i2c_hid_acpi driver loses track of the touchpad during s2idle,
+# causing the trackpad to be unresponsive after wake.
+# See: https://github.com/basecamp/omarchy/discussions/574
+
+- name: Create touchpad resume service
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/touchpad-resume.service
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=Reset touchpad driver after resume
+      After=suspend.target hibernate.target hybrid-sleep.target
+
+      [Service]
+      Type=oneshot
+      ExecStart=/bin/sh -c '/usr/bin/modprobe -r i2c_hid_acpi && /usr/bin/sleep 1 && /usr/bin/modprobe i2c_hid_acpi'
+
+      [Install]
+      WantedBy=suspend.target hibernate.target hybrid-sleep.target
+  become: true
+  notify: reload systemd
+
+- name: Enable touchpad resume service
+  ansible.builtin.systemd:
+    name: touchpad-resume.service
+    enabled: true
+    daemon_reload: true
+  become: true

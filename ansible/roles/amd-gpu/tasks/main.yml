@@ -52,8 +52,12 @@
       # Managed by Ansible - do not edit directly
       # Edit: ~/Omarchy/ansible/roles/amd-gpu/tasks/main.yml
       #
-      # AMD GPU resume fix - prevents stutter/lag after suspend
+      # AMD GPU suspend/resume mitigations
+      # dcdebugmask=0x810: Disable PSR (0x10) + IPS idle power state (0x800) - prevents black screen on resume
+      # gpu_recovery=1: Enable automatic GPU reset on hang instead of requiring reboot
+      # sg_display=0: Disable scatter-gather display - Framework 13 AMD flickering/corruption fix
       # See: https://gitlab.freedesktop.org/drm/amd/-/issues/2708
-      KERNEL_CMDLINE[default]+=" amdgpu.dcdebugmask=0x10"
+      # See: https://wiki.archlinux.org/title/Framework_Laptop_13_(AMD_Ryzen_7040_Series)
+      KERNEL_CMDLINE[default]+=" amdgpu.dcdebugmask=0x810 amdgpu.gpu_recovery=1 amdgpu.sg_display=0"
   notify: Regenerate limine
   when: amd_gpu_check.rc == 0
