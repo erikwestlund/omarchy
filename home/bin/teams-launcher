@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Launch Teams (Flatpak) or focus existing window
 
-teams_window=$(hyprctl clients -j | jq -r '.[] | select(.class | test("teams"; "i")) | .address' | head -1)
+teams_window=$(hyprctl clients -j | jq -r '.[] | select(.class == "com.github.IsmaelMartinez.teams_for_linux") | .address' | head -1)
 
 if [[ -n "$teams_window" ]]; then
     # Teams window exists, focus it

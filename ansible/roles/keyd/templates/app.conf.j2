@@ -2,6 +2,7 @@
 
 [chromium]
 meta.s = C-s
+meta.S-t = meta.S-t
 {% for shortcut in keyd_browser_shortcuts %}
 meta.{{ shortcut.key }} = {{ shortcut.action }}
 {% endfor %}
