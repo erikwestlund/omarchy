@@ -5,6 +5,21 @@
 # Desktop entries point to launchers in ~/.bin/ (managed by dotfiles role)
 # Launchers are in home/bin/ which is symlinked
 
+- name: Update Teams desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/Teams.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=Teams
+      Comment=Microsoft Teams
+      Exec={{ ansible_facts.env.HOME }}/.bin/teams-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/teams.png
+      Categories=Network;InstantMessaging;
+      StartupWMClass=chromium-teams
+
 - name: Update Outlook desktop entry
   ansible.builtin.copy:
     dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/Outlook.desktop"
@@ -294,6 +309,7 @@
 - name: Define isolated Chromium profiles
   ansible.builtin.set_fact:
     isolated_chromium_profiles:
+      - chromium-teams
       - chromium-outlook
       - chromium-youtube
       - chromium-chatgpt

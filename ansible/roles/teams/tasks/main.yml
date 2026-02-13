@@ -1,38 +1,13 @@
 ---
-# Install Teams for Linux (unofficial Electron wrapper) via Flatpak
-# Better screen sharing support than webapp
+# Clean up old Teams Flatpak (replaced by isolated Chromium webapp)
 
-- name: Install Teams Flatpak
+- name: Remove Teams Flatpak if installed
   community.general.flatpak:
     name: com.github.IsmaelMartinez.teams_for_linux
-    state: present
-    remote: flathub
+    state: absent
+  ignore_errors: true
 
-- name: Set HiDPI scale factor for Teams Flatpak
-  ansible.builtin.command:
-    cmd: flatpak override --user --env=ELECTRON_FORCE_DEVICE_SCALE_FACTOR=2 com.github.IsmaelMartinez.teams_for_linux
-  changed_when: true
-
-- name: Hide Flatpak's Teams desktop entry (use our custom launcher)
-  ansible.builtin.copy:
-    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/com.github.IsmaelMartinez.teams_for_linux.desktop"
-    mode: '0644'
-    content: |
-      [Desktop Entry]
-      NoDisplay=true
-      Hidden=true
-
-- name: Create Teams desktop entry
-  ansible.builtin.copy:
-    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/Teams.desktop"
-    mode: '0644'
-    content: |
-      [Desktop Entry]
-      Name=Teams
-      Comment=Microsoft Teams
-      Exec={{ ansible_facts.env.HOME }}/.bin/teams-launcher
-      Terminal=false
-      Type=Application
-      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/teams.png
-      Categories=Network;InstantMessaging;
-      StartupWMClass=teams-for-linux
+- name: Remove old Flatpak Teams desktop entry
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.local/share/applications/com.github.IsmaelMartinez.teams_for_linux.desktop"
+    state: absent

@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
-# Launch Teams (Flatpak) or focus existing window
+# Launch Teams in isolated Chromium profile with 1Password
 
-teams_window=$(hyprctl clients -j | jq -r '.[] | select(.class == "com.github.IsmaelMartinez.teams_for_linux") | .address' | head -1)
+PROFILE="$HOME/.config/chromium-teams"
+URL="https://teams.microsoft.com"
 
-if [[ -n "$teams_window" ]]; then
-    # Teams window exists, focus it
-    hyprctl dispatch focuswindow "address:$teams_window"
+# Find 1Password extension (latest version)
+ONEPASS_EXT=$(find ~/.config/chromium/Default/Extensions/aeblfdkhhhdcdjpifhhbdiojplfjncoa -maxdepth 1 -mindepth 1 -type d 2>/dev/null | head -1)
+
+window=$(hyprctl clients -j | jq -r '.[] | select(.class | test("teams"; "i")) | .address' | head -1)
+
+if [[ -n "$window" ]]; then
+    hyprctl dispatch focuswindow "address:$window"
 else
-    # No window, launch Teams
-    flatpak run com.github.IsmaelMartinez.teams_for_linux "$@" &
+    if [[ -n "$ONEPASS_EXT" ]]; then
+        chromium --user-data-dir="$PROFILE" --load-extension="$ONEPASS_EXT" --disable-popup-blocking --app="$URL" &
+    else
+        chromium --user-data-dir="$PROFILE" --disable-popup-blocking --app="$URL" &
+    fi
 fi
