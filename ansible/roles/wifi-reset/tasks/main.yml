@@ -1,0 +1,78 @@
+---
+# Reset WiFi (mt7925e) driver if connection fails at boot
+#
+# The MediaTek MT7925 firmware can initialize in a bad state after an unclean
+# shutdown, causing WPA3 SAE handshake timeouts. The driver sees networks but
+# never completes the 4-way handshake. A module reload resets the firmware and
+# fixes it - which is why a second reboot always works.
+
+- name: Deploy wifi-reset script
+  ansible.builtin.copy:
+    dest: /usr/local/bin/wifi-reset
+    mode: '0755'
+    content: |
+      #!/bin/sh
+      # Reset mt7925e WiFi driver if connection fails at boot.
+      # After unclean shutdown the firmware can initialize badly, causing
+      # WPA3 handshake timeouts. Reloading the module resets the firmware.
+
+      TIMEOUT=15
+      INTERVAL=1
+      elapsed=0
+
+      # Wait for initial connection
+      while [ $elapsed -lt $TIMEOUT ]; do
+          if ip addr show wlan0 2>/dev/null | grep -q 'inet '; then
+              echo "wifi-reset: connected OK"
+              exit 0
+          fi
+          sleep $INTERVAL
+          elapsed=$((elapsed + INTERVAL))
+      done
+
+      echo "wifi-reset: no connection after ${TIMEOUT}s, reloading mt7925e"
+      modprobe -r mt7925e
+      sleep 2
+      modprobe mt7925e
+
+      # Wait for reconnection after reload
+      elapsed=0
+      while [ $elapsed -lt $TIMEOUT ]; do
+          if ip addr show wlan0 2>/dev/null | grep -q 'inet '; then
+              echo "wifi-reset: connected after driver reload"
+              exit 0
+          fi
+          sleep $INTERVAL
+          elapsed=$((elapsed + INTERVAL))
+      done
+
+      echo "wifi-reset: still not connected after reload"
+      exit 1
+  become: true
+
+- name: Create wifi-reset service
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/wifi-reset.service
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=Reset WiFi driver if connection fails at boot
+      After=iwd.service systemd-networkd.service
+      Wants=iwd.service systemd-networkd.service
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/local/bin/wifi-reset
+      RemainAfterExit=no
+      TimeoutStartSec=60
+
+      [Install]
+      WantedBy=multi-user.target
+  become: true
+
+- name: Enable wifi-reset service
+  ansible.builtin.systemd:
+    name: wifi-reset.service
+    enabled: true
+    daemon_reload: true
+  become: true

@@ -79,6 +79,10 @@
       tags: bluetooth-suspend
       when: inventory_hostname == 'laptop'
 
+    - role: wifi-reset
+      tags: wifi-reset
+      when: inventory_hostname == 'laptop'
+
     - role: secrets
       tags: secrets
 
