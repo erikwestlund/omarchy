@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Emporia Energy
+Comment=Emporia Energy Monitor
+GenericName=Energy Monitor
+Exec=omarchy-launch-or-focus-webapp "Emporia" "https://web.emporiaenergy.com/"
+Icon=/home/erik/.local/share/icons/emporia.png
+Type=Application
+StartupNotify=false
+Categories=Network;Utility;
+Keywords=emporia;energy;power;electric;monitor;
