@@ -6,6 +6,8 @@ Wants=network-online.target
 [Service]
 Type=notify
 ExecStartPre=/usr/bin/mkdir -p %h/Work/OneDrive
+ExecStartPre=-/usr/bin/fusermount -u %h/Work/OneDrive
+ExecStartPre=/bin/sh -c 'for i in $(seq 1 30); do ip route | grep -q default && exit 0; sleep 1; done; exit 1'
 ExecStart=/usr/bin/rclone mount onedrive-jhu: %h/Work/OneDrive --vfs-cache-mode writes
 ExecStop=/usr/bin/fusermount -u %h/Work/OneDrive
 Restart=on-failure
