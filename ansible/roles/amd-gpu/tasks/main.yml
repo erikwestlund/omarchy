@@ -32,32 +32,28 @@
     msg: "No AMD GPU detected, skipping driver installation"
   when: amd_gpu_check.rc != 0
 
-# AMD GPU kernel parameter for suspend/resume fix
-# Fixes stutter/lag after resume from suspend (DMCUB/PSR bug)
+# AMD GPU kernel parameters
+# /etc/default/limine overrides drop-in configs, so flags must go there directly.
+#
+# dcdebugmask=0x810: Disable PSR (0x10) + IPS idle power state (0x800) - prevents black screen on resume
+# gpu_recovery=1: Enable automatic GPU reset on hang instead of requiring reboot
+# sg_display=0: Disable scatter-gather display - Framework 13 AMD flickering/corruption fix
+# cwsr_enable=0: Disable compute wave save/restore - fixes MES crashes/page faults on Strix Point
 # See: https://gitlab.freedesktop.org/drm/amd/-/issues/2708
-- name: Ensure limine drop-in directory exists
+# See: https://gitlab.freedesktop.org/drm/amd/-/issues/4749
+- name: Add AMD GPU kernel parameters to limine config
   become: true
-  ansible.builtin.file:
-    path: /etc/limine-entry-tool.d
-    state: directory
-    mode: '0755'
-  when: amd_gpu_check.rc == 0
-
-- name: Add AMD GPU resume fix kernel parameter
-  become: true
-  ansible.builtin.copy:
-    dest: /etc/limine-entry-tool.d/40-amdgpu.conf
-    mode: '0644'
-    content: |
-      # Managed by Ansible - do not edit directly
-      # Edit: ~/Omarchy/ansible/roles/amd-gpu/tasks/main.yml
-      #
-      # AMD GPU suspend/resume mitigations
-      # dcdebugmask=0x810: Disable PSR (0x10) + IPS idle power state (0x800) - prevents black screen on resume
-      # gpu_recovery=1: Enable automatic GPU reset on hang instead of requiring reboot
-      # sg_display=0: Disable scatter-gather display - Framework 13 AMD flickering/corruption fix
-      # See: https://gitlab.freedesktop.org/drm/amd/-/issues/2708
-      # See: https://wiki.archlinux.org/title/Framework_Laptop_13_(AMD_Ryzen_7040_Series)
-      KERNEL_CMDLINE[default]+=" amdgpu.dcdebugmask=0x810 amdgpu.gpu_recovery=1 amdgpu.sg_display=0"
+  ansible.builtin.lineinfile:
+    path: /etc/default/limine
+    regexp: '^KERNEL_CMDLINE\[default\]\+=".*amdgpu\.'
+    line: 'KERNEL_CMDLINE[default]+=" amdgpu.dcdebugmask=0x810 amdgpu.gpu_recovery=1 amdgpu.sg_display=0 amdgpu.cwsr_enable=0"'
+    insertafter: '^KERNEL_CMDLINE\[default\]\+="quiet'
   notify: Regenerate limine
   when: amd_gpu_check.rc == 0
+
+- name: Remove obsolete limine drop-in for amdgpu
+  become: true
+  ansible.builtin.file:
+    path: /etc/limine-entry-tool.d/40-amdgpu.conf
+    state: absent
+  notify: Regenerate limine

@@ -617,6 +617,8 @@ alias tasks='morgen-tasks'
 
 # Snapper (manual snapshots - auto disabled on laptop)
 alias snap='sudo snapper -c root create --description "manual" && sudo snapper -c home create --description "manual" && echo "Snapshots created for root and home"'
+alias trackpad-reset='sudo modprobe -r i2c_hid_acpi && sleep 1 && sudo modprobe i2c_hid_acpi && echo "Trackpad driver reloaded, wait a few seconds..."'
+
 alias snap-root='sudo snapper -c root create --description'
 alias snap-home='sudo snapper -c home create --description'
 alias snap-cleanup='sudo snapper -c root cleanup timeline && sudo snapper -c home cleanup timeline && echo "Cleanup complete"'
