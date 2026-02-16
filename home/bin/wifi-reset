@@ -1,0 +1,24 @@
+#!/bin/sh
+# Reset mt7925e WiFi driver when connection is flaky.
+# The MediaTek MT7925 firmware can get into a bad state, causing
+# WPA3 handshake timeouts. Reloading the module resets the firmware.
+
+echo "Reloading mt7925e driver..."
+sudo modprobe -r mt7925e
+sleep 2
+sudo modprobe mt7925e
+echo "Driver reloaded. Waiting for connection..."
+
+TIMEOUT=15
+elapsed=0
+while [ $elapsed -lt $TIMEOUT ]; do
+    if ip addr show wlan0 2>/dev/null | grep -q 'inet '; then
+        echo "Connected!"
+        exit 0
+    fi
+    sleep 1
+    elapsed=$((elapsed + 1))
+done
+
+echo "Not connected after ${TIMEOUT}s. You may need to wait longer or check iwd."
+exit 1
