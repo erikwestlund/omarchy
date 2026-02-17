@@ -7,7 +7,7 @@ set -e
 # === Project Config ===
 PROJECT_NAME="pequod"
 PROJECT_DIR="/home/erik/Projects/pequod"
-GIT_REPO="git@github.com:table1/pequod.git"
+GIT_REPO="git@github.com:onpequod/pequod.git"
 SECRETS_DIR="$HOME/.secrets/pequod"
 
 # Required secrets (relative to SECRETS_DIR -> PROJECT_DIR)

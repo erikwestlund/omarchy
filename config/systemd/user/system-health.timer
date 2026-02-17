@@ -1,0 +1,9 @@
+[Unit]
+Description=Collect system health snapshot every 15 minutes
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=15min
+
+[Install]
+WantedBy=timers.target

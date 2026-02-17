@@ -1,0 +1,467 @@
+#!/bin/bash
+
+# System health dashboard - quick snapshot of services, state, and resources
+# Modes:
+#   (default)    Show latest snapshot, fall back to live if none exists
+#   --live       Run live (collect fresh data)
+#   --snapshot   Collect and save to snapshot directory (called by timer)
+#   --history    Show state changes across recent snapshots
+
+SNAPSHOT_DIR="$HOME/.local/share/system-health"
+
+bold="\033[1m"
+dim="\033[2m"
+red="\033[31m"
+green="\033[32m"
+yellow="\033[33m"
+cyan="\033[36m"
+reset="\033[0m"
+
+section() { echo -e "\n${bold}$1${reset}"; }
+ok()      { echo -e "  ${green}OK${reset}  $1"; }
+warn()    { echo -e "  ${yellow}!!${reset}  $1"; }
+fail()    { echo -e "  ${red}XX${reset}  $1"; }
+info()    { echo -e "  ${dim}$1${reset}"; }
+
+# ── Collect report ────────────────────────────────────────────────────────────
+
+collect() {
+
+# ── Key Services ──────────────────────────────────────────────────────────────
+
+section "KEY SERVICES"
+services=(hypridle darkman syncthing pipewire wireplumber)
+
+# Check if onedrive-mount is a known unit before including it
+if systemctl --user list-unit-files onedrive-mount.service &>/dev/null; then
+  services+=(onedrive-mount)
+fi
+
+for svc in "${services[@]}"; do
+  state=$(systemctl --user show -p ActiveState --value "$svc" 2>/dev/null)
+  sub=$(systemctl --user show -p SubState --value "$svc" 2>/dev/null)
+  if [[ "$state" == "active" ]]; then
+    ts=$(systemctl --user show -p ActiveEnterTimestamp --value "$svc" 2>/dev/null)
+    if [[ -n "$ts" && "$ts" != "" ]]; then
+      since=$(date -d "$ts" +"%b %d %H:%M" 2>/dev/null)
+      # Calculate uptime
+      start_epoch=$(date -d "$ts" +%s 2>/dev/null)
+      now_epoch=$(date +%s)
+      if [[ -n "$start_epoch" ]]; then
+        diff=$(( now_epoch - start_epoch ))
+        if (( diff < 3600 )); then
+          uptime="$(( diff / 60 ))m"
+          # Flag recent restarts (under 30 min)
+          if (( diff < 1800 )); then
+            warn "${svc} (${sub}) since ${since} — ${yellow}restarted ${uptime} ago${reset}"
+            continue
+          fi
+        elif (( diff < 86400 )); then
+          uptime="$(( diff / 3600 ))h$(( (diff % 3600) / 60 ))m"
+        else
+          uptime="$(( diff / 86400 ))d$(( (diff % 86400) / 3600 ))h"
+        fi
+        ok "${svc} (${sub}) since ${since} — up ${uptime}"
+      else
+        ok "${svc} (${sub}) since ${since}"
+      fi
+    else
+      ok "${svc} (${sub})"
+    fi
+  elif [[ "$state" == "failed" ]]; then
+    fail "${svc} FAILED"
+  elif [[ "$state" == "inactive" ]]; then
+    warn "${svc} inactive"
+  else
+    warn "${svc} ${state:-unknown} (${sub:-?})"
+  fi
+done
+
+# Also check for failed user services
+failed=$(systemctl --user --failed --no-legend --no-pager 2>/dev/null)
+if [[ -n "$failed" ]]; then
+  section "FAILED SERVICES"
+  while IFS= read -r line; do
+    fail "$line"
+  done <<< "$failed"
+fi
+
+# ── Hyprland State ────────────────────────────────────────────────────────────
+
+section "HYPRLAND"
+if [[ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]]; then
+  hyprctl monitors -j 2>/dev/null | python3 -c "
+import json, sys
+try:
+    monitors = json.load(sys.stdin)
+    print(f'  Monitors: {len(monitors)}')
+    for m in monitors:
+        dpms = 'on' if m.get('dpmsStatus') else 'off'
+        active = ' (focused)' if m.get('focused') else ''
+        print(f'    {m[\"name\"]}: {m.get(\"width\",\"?\")}x{m.get(\"height\",\"?\")} dpms={dpms}{active}')
+except:
+    print('  (could not query monitors)')
+" 2>/dev/null
+
+  hyprctl clients -j 2>/dev/null | python3 -c "
+import json, sys
+try:
+    clients = json.load(sys.stdin)
+    fs = [c for c in clients if c.get('fullscreen', 0)]
+    print(f'  Windows: {len(clients)}, fullscreen: {len(fs)}')
+except:
+    pass
+" 2>/dev/null
+
+  active_ws=$(hyprctl activeworkspace -j 2>/dev/null | python3 -c "
+import json, sys
+try:
+    ws = json.load(sys.stdin)
+    print(f'  Active workspace: {ws.get(\"name\", ws.get(\"id\", \"?\"))}')
+except:
+    pass
+" 2>/dev/null)
+  echo "$active_ws"
+else
+  info "(hyprland not available)"
+fi
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+
+if command -v docker &>/dev/null && docker info &>/dev/null 2>&1; then
+  section "DOCKER"
+  running=$(docker ps --format '{{.Names}}' 2>/dev/null)
+  stopped=$(docker ps -a --filter "status=exited" --format '{{.Names}}' 2>/dev/null)
+  running_count=$(echo "$running" | grep -c . 2>/dev/null)
+  stopped_count=$(echo "$stopped" | grep -c . 2>/dev/null)
+  [[ -z "$running" ]] && running_count=0
+  [[ -z "$stopped" ]] && stopped_count=0
+
+  echo -e "  Containers: ${green}${running_count} running${reset}, ${dim}${stopped_count} stopped${reset}"
+
+  if [[ -n "$running" ]]; then
+    # Group by project (strip common suffixes)
+    echo "$running" | sed -E 's/-(php|redis|mysql|mariadb|postgres|nginx|node|web|app|worker|queue|scheduler|mailhog|meilisearch|vite)$//' | sort -u | while read -r project; do
+      containers=$(echo "$running" | grep "^${project}" | sed 's/^/    /')
+      echo -e "  ${cyan}${project}${reset}"
+      echo "$containers"
+    done
+  fi
+fi
+
+# ── Network ───────────────────────────────────────────────────────────────────
+
+section "NETWORK"
+
+# Physical/wireless interfaces (skip docker, veth, bridge, loopback)
+while IFS= read -r line; do
+  iface=$(echo "$line" | awk '{print $1}')
+  state=$(echo "$line" | awk '{print $2}')
+  addr=$(ip -4 addr show "$iface" 2>/dev/null | awk '/inet /{print $2; exit}')
+  if [[ "$state" == "UP" ]]; then
+    # Check if wireless
+    if [[ -d "/sys/class/net/$iface/wireless" ]]; then
+      ssid=$(iw dev "$iface" link 2>/dev/null | awk '/SSID:/{print $2}')
+      ok "${iface}: ${addr:-no ip} ${dim}(wifi: ${ssid:-?})${reset}"
+    else
+      ok "${iface}: ${addr:-no ip}"
+    fi
+  else
+    warn "${iface}: DOWN"
+  fi
+done < <(ip -br link show 2>/dev/null | grep -vE '^(lo|docker|br-|veth|virbr|tailscale)')
+
+# Tailscale
+if command -v tailscale &>/dev/null; then
+  ts_status=$(tailscale status --json 2>/dev/null | python3 -c "
+import json, sys
+try:
+    d = json.load(sys.stdin)
+    bp = d.get('BackendState','')
+    if bp == 'Running':
+        self_ip = d.get('TailscaleIPs',['?'])[0]
+        print(f'ok|Tailscale: {self_ip}')
+    elif bp == 'Stopped':
+        print(f'info|Tailscale: stopped')
+    else:
+        print(f'info|Tailscale: {bp}')
+except:
+    print('info|Tailscale: unknown')
+" 2>/dev/null)
+  case "${ts_status%%|*}" in
+    ok) ok "${ts_status#*|}" ;;
+    *) info "${ts_status#*|}" ;;
+  esac
+fi
+
+# Default gateway ping
+gw=$(ip route show default 2>/dev/null | awk '{print $3; exit}')
+if [[ -n "$gw" ]]; then
+  if ping -c1 -W1 "$gw" &>/dev/null; then
+    ok "Gateway ${gw} reachable"
+  else
+    fail "Gateway ${gw} unreachable"
+  fi
+fi
+
+# DNS check
+if host -W2 google.com &>/dev/null; then
+  ok "DNS resolving"
+else
+  fail "DNS not resolving"
+fi
+
+# ── Audio ─────────────────────────────────────────────────────────────────────
+
+section "AUDIO"
+
+# Default sink (output)
+default_sink=$(pactl get-default-sink 2>/dev/null)
+if [[ -n "$default_sink" ]]; then
+  sink_desc=$(pactl list sinks short 2>/dev/null | grep "$default_sink" | head -1)
+  # Get friendly name
+  sink_name=$(pactl -f json list sinks 2>/dev/null | python3 -c "
+import json, sys
+try:
+    for s in json.load(sys.stdin):
+        if s.get('name') == '$default_sink':
+            print(s.get('description', '$default_sink'))
+            break
+except:
+    print('$default_sink')
+" 2>/dev/null)
+  vol=$(pactl get-sink-volume @DEFAULT_SINK@ 2>/dev/null | grep -oP '\d+%' | head -1)
+  mute=$(pactl get-sink-mute @DEFAULT_SINK@ 2>/dev/null | grep -oP '(yes|no)')
+  if [[ "$mute" == "yes" ]]; then
+    warn "Output: ${sink_name} ${dim}(${vol} MUTED)${reset}"
+  else
+    ok "Output: ${sink_name} ${dim}(${vol})${reset}"
+  fi
+fi
+
+# Default source (input)
+default_source=$(pactl get-default-source 2>/dev/null)
+if [[ -n "$default_source" && "$default_source" != *".monitor" ]]; then
+  source_name=$(pactl -f json list sources 2>/dev/null | python3 -c "
+import json, sys
+try:
+    for s in json.load(sys.stdin):
+        if s.get('name') == '$default_source':
+            print(s.get('description', '$default_source'))
+            break
+except:
+    print('$default_source')
+" 2>/dev/null)
+  ok "Input: ${source_name}"
+fi
+
+# Active audio streams
+streams=$(pactl list sink-inputs short 2>/dev/null)
+if [[ -n "$streams" ]]; then
+  stream_count=$(echo "$streams" | wc -l)
+  echo -e "  ${yellow}Playing:${reset} ${stream_count} stream(s)"
+  pactl -f json list sink-inputs 2>/dev/null | python3 -c "
+import json, sys
+try:
+    for s in json.load(sys.stdin):
+        props = s.get('properties', {})
+        name = props.get('media.name', props.get('application.name', '?'))
+        app = props.get('application.name', '')
+        if app and app != name:
+            print(f'    {app}: {name}')
+        else:
+            print(f'    {name}')
+except:
+    pass
+" 2>/dev/null
+fi
+
+# ── Sleep/Wake ────────────────────────────────────────────────────────────────
+
+section "SLEEP/WAKE (24h)"
+sleep_events=$(journalctl -b --since "-24h" --no-pager -o short-precise \
+  --grep="(suspend|resume|sleep|wake)" 2>/dev/null | tail -5)
+if [[ -n "$sleep_events" ]]; then
+  while IFS= read -r line; do
+    info "$line"
+  done <<< "$sleep_events"
+else
+  ok "no sleep/wake events in last 24h"
+fi
+
+# Idle inhibitors
+inhibitors=$(systemd-inhibit --list --no-pager --no-legend 2>/dev/null | grep -i "idle\|sleep")
+if [[ -n "$inhibitors" ]]; then
+  echo -e "  ${yellow}Inhibitors:${reset}"
+  while IFS= read -r line; do
+    info "  $line"
+  done <<< "$inhibitors"
+fi
+
+# ── System Resources ──────────────────────────────────────────────────────────
+
+section "RESOURCES"
+
+# Memory
+mem_info=$(free -h | awk '/^Mem:/ {print $3 " / " $2 " (" int($3/$2*100) "%)"}')
+echo -e "  Memory: ${mem_info}"
+
+# Disk
+echo -e "  Disk:"
+df -h / /home 2>/dev/null | awk 'NR>1 {printf "    %-10s %s used of %s (%s)\n", $6, $3, $2, $5}'
+
+# Load
+load=$(awk '{print $1, $2, $3}' /proc/loadavg 2>/dev/null)
+cores=$(nproc 2>/dev/null)
+echo -e "  Load: ${load} (${cores} cores)"
+
+# CPU temp
+if [[ -f /sys/class/thermal/thermal_zone0/temp ]]; then
+  temp=$(awk '{printf "%.0f", $1/1000}' /sys/class/thermal/thermal_zone0/temp 2>/dev/null)
+  if (( temp > 80 )); then
+    warn "CPU temp: ${temp}°C"
+  else
+    echo -e "  CPU temp: ${temp}°C"
+  fi
+fi
+
+# ── Recent Errors ─────────────────────────────────────────────────────────────
+
+section "RECENT ERRORS (24h)"
+errors=$(journalctl --user -p 0..3 --since "-24h" --no-pager -o short --no-hostname 2>/dev/null | tail -5)
+if [[ -n "$errors" ]]; then
+  while IFS= read -r line; do
+    warn "$line"
+  done <<< "$errors"
+else
+  ok "no high-priority errors in last 24h"
+fi
+
+echo ""
+
+}
+
+# ── Snapshot management ───────────────────────────────────────────────────────
+
+snapshot_path() {
+  local dow=$(date +%u)  # 1=Mon .. 7=Sun
+  local hhmm=$(date +%H%M)
+  # Round to nearest 15 minutes
+  local h=${hhmm:0:2}
+  local m=${hhmm:2:2}
+  m=$(( (10#$m / 15) * 15 ))
+  printf "%s/%s/%02d%02d" "$SNAPSHOT_DIR" "$dow" "$((10#$h))" "$m"
+}
+
+save_snapshot() {
+  local path
+  path=$(snapshot_path)
+  mkdir -p "$(dirname "$path")"
+  collect > "$path" 2>&1
+}
+
+latest_snapshot() {
+  # Find the most recent snapshot file
+  local latest=""
+  local latest_mtime=0
+  for f in "$SNAPSHOT_DIR"/*/*; do
+    [[ -f "$f" ]] || continue
+    local mtime
+    mtime=$(stat -c %Y "$f" 2>/dev/null) || continue
+    if (( mtime > latest_mtime )); then
+      latest_mtime=$mtime
+      latest=$f
+    fi
+  done
+  echo "$latest"
+}
+
+show_latest() {
+  local latest
+  latest=$(latest_snapshot)
+  if [[ -n "$latest" && -f "$latest" ]]; then
+    local age
+    age=$(( $(date +%s) - $(stat -c %Y "$latest") ))
+    local age_str
+    if (( age < 60 )); then
+      age_str="${age}s ago"
+    elif (( age < 3600 )); then
+      age_str="$(( age / 60 ))m ago"
+    else
+      age_str="$(( age / 3600 ))h$(( (age % 3600) / 60 ))m ago"
+    fi
+    echo -e "${dim}Snapshot from ${age_str} ($(date -r "$latest" +"%a %H:%M"))  —  use --live for fresh data${reset}"
+    cat "$latest"
+  else
+    # No snapshots yet, run live
+    echo -e "${dim}No snapshots yet, running live...${reset}"
+    collect
+  fi
+}
+
+show_history() {
+  echo -e "${bold}SERVICE STATE CHANGES (last 7 days)${reset}\n"
+
+  # Collect all snapshots sorted by time
+  local files=()
+  while IFS= read -r f; do
+    [[ -f "$f" ]] && files+=("$f")
+  done < <(find "$SNAPSHOT_DIR" -type f 2>/dev/null | sort -t/ -k1,1n -k2,2)
+
+  if [[ ${#files[@]} -eq 0 ]]; then
+    info "No snapshots yet. History builds automatically every 15 minutes."
+    return
+  fi
+
+  # Track service state transitions
+  local prev_states=""
+  local prev_time=""
+  for f in "${files[@]}"; do
+    local ftime
+    ftime=$(date -r "$f" +"%a %H:%M" 2>/dev/null)
+    # Extract service lines (OK/!!/XX followed by service name)
+    local cur_states
+    cur_states=$(grep -oP '(OK|!!|XX)\s+\S+' "$f" | head -20)
+
+    if [[ -n "$prev_states" && "$cur_states" != "$prev_states" ]]; then
+      # Find differences
+      local changes
+      changes=$(diff <(echo "$prev_states") <(echo "$cur_states") 2>/dev/null | grep "^[<>]")
+      if [[ -n "$changes" ]]; then
+        echo -e "  ${cyan}${ftime}${reset}"
+        while IFS= read -r line; do
+          if [[ "$line" == ">"* ]]; then
+            echo -e "    ${green}+${reset} ${line:2}"
+          elif [[ "$line" == "<"* ]]; then
+            echo -e "    ${red}-${reset} ${line:2}"
+          fi
+        done <<< "$changes"
+      fi
+    fi
+    prev_states="$cur_states"
+    prev_time="$ftime"
+  done
+
+  local total=${#files[@]}
+  local oldest newest
+  oldest=$(date -r "${files[0]}" +"%a %b %d %H:%M" 2>/dev/null)
+  newest=$(date -r "${files[-1]}" +"%a %b %d %H:%M" 2>/dev/null)
+  echo -e "\n${dim}${total} snapshots from ${oldest} to ${newest}${reset}"
+}
+
+# ── Main ──────────────────────────────────────────────────────────────────────
+
+case "${1:-}" in
+  --live)
+    collect
+    ;;
+  --snapshot)
+    save_snapshot
+    ;;
+  --history)
+    show_history
+    ;;
+  *)
+    show_latest
+    ;;
+esac

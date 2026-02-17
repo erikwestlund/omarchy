@@ -452,6 +452,14 @@
     scope: user
     daemon_reload: true
 
+- name: Enable system health snapshot timer
+  ansible.builtin.systemd:
+    name: system-health.timer
+    enabled: true
+    state: started
+    scope: user
+    daemon_reload: true
+
 - name: Enable darkman for dark/light mode
   ansible.builtin.systemd:
     name: darkman.service

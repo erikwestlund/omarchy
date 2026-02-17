@@ -1,0 +1,6 @@
+[Unit]
+Description=Collect system health snapshot
+
+[Service]
+Type=oneshot
+ExecStart=/home/erik/.bin/system-health --snapshot
