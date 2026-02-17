@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Disable/enable USB and Thunderbolt controller wakeup for s2idle
+# Usage: usb-wakeup-toggle disable|enable
+
+action="${1:-disable}"
+devices=(XHC0 XHC1 XHC3 XHC4 NHI0 NHI1)
+
+for dev in "${devices[@]}"; do
+    if [[ "$action" == "disable" ]]; then
+        grep -q "${dev}.*enabled" /proc/acpi/wakeup && echo "$dev" > /proc/acpi/wakeup
+    else
+        grep -q "${dev}.*disabled" /proc/acpi/wakeup && echo "$dev" > /proc/acpi/wakeup
+    fi
+done

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Save running containers and stop them all
+running=$(docker ps -q)
+if [[ -z "$running" ]]; then
+    echo "No running containers"
+    exit 0
+fi
+
+echo "$running" > ~/.docker-paused
+docker stop $running
+echo "Paused $(wc -l < ~/.docker-paused) container(s)"

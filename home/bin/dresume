@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Restart containers that were saved by dpause
+if [[ ! -f ~/.docker-paused ]]; then
+    echo "Nothing to resume"
+    exit 0
+fi
+
+docker start $(cat ~/.docker-paused)
+rm ~/.docker-paused
+echo "Resumed"

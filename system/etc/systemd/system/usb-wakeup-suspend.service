@@ -1,0 +1,12 @@
+[Unit]
+Description=Disable USB/Thunderbolt wakeup before suspend
+Before=sleep.target
+
+[Service]
+Type=oneshot
+ExecStart=/home/erik/.bin/usb-wakeup-toggle disable
+ExecStop=/home/erik/.bin/usb-wakeup-toggle enable
+RemainAfterExit=yes
+
+[Install]
+WantedBy=sleep.target
