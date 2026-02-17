@@ -191,3 +191,9 @@ projects:
     type: rstats
     path: ~/Projects/cholera-data-management
 # END PROJECT cholera-data-management
+# BEGIN PROJECT ai-tools-for-data-science-and-statistics
+  - name: ai-tools-for-data-science-and-statistics
+    alias: aitools
+    type: rstats
+    path: ~/Projects/ai-tools-for-data-science-and-statistics
+# END PROJECT ai-tools-for-data-science-and-statistics

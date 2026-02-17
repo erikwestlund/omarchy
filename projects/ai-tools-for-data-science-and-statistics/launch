@@ -1,0 +1,77 @@
+#!/bin/bash
+# Launch script for ai-tools-for-data-science-and-statistics
+#
+# This script launches the ai-tools-for-data-science-and-statistics development environment with:
+# - Editor and browser (if VIEW_URL set) on the active workspace
+# - Notification system (shows progress updates)
+
+# === Project Config ===
+PROJECT_NAME="ai-tools-for-data-science-and-statistics"
+PROJECT_DIR="/home/erik/Projects/ai-tools-for-data-science-and-statistics"
+WORKSPACE_FILE="$HOME/Omarchy/projects/ai-tools-for-data-science-and-statistics/ai-tools-for-data-science-and-statistics.code-workspace"
+EDITOR="/usr/bin/code"
+DOCKER_COMPOSE=false
+VIEW_URL=""
+
+# === Launch ===
+notify-send -u low "Ai Tools For Data Science And Statistics" "Launching..." -t 5000
+
+# Start tmux session (if not already running) - run detached so it doesn't block
+TMUX_SCRIPT="$HOME/Omarchy/projects/ai-tools-for-data-science-and-statistics/tmux.sh"
+if [ -x "$TMUX_SCRIPT" ]; then
+    "$TMUX_SCRIPT" </dev/null &
+    sleep 0.5
+fi
+
+# Ensure shared mailpit is running (for mail testing)
+if [ "$DOCKER_COMPOSE" = "true" ]; then
+    if ! docker ps --format '{{.Names}}' | grep -q '^mailpit$'; then
+        docker compose -f "$HOME/Omarchy/services/mailpit/docker-compose.yml" up -d 2>/dev/null
+    fi
+fi
+
+# Start Docker services (if enabled)
+if [ "$DOCKER_COMPOSE" = "true" ] && [ -f "$PROJECT_DIR/docker-compose.yml" ]; then
+    notify-send -u low "Ai Tools For Data Science And Statistics" "Starting Docker services..." -t 4000
+    (cd "$PROJECT_DIR" && docker compose up -d) || {
+        notify-send -u critical "Ai Tools For Data Science And Statistics" "Failed to start Docker services" -t 5000
+        exit 1
+    }
+
+    # Wait for services to be healthy
+    MAX_WAIT=60  # Maximum wait time in seconds
+    ELAPSED=0
+    WAITING_NOTIFIED=false
+
+    while [ $ELAPSED -lt $MAX_WAIT ]; do
+        # Check if all services with health checks are healthy
+        UNHEALTHY=$(cd "$PROJECT_DIR" && docker compose ps --format json | jq -r 'select(.Health != "" and .Health != "healthy") | .Service' 2>/dev/null)
+
+        if [ -z "$UNHEALTHY" ]; then
+            break
+        fi
+
+        # Only show waiting notification if it's taking more than 4 seconds
+        if [ $ELAPSED -ge 4 ] && [ "$WAITING_NOTIFIED" = false ]; then
+            notify-send -u normal "Ai Tools For Data Science And Statistics" "Waiting for services..." -t 10000
+            WAITING_NOTIFIED=true
+        fi
+
+        sleep 2
+        ELAPSED=$((ELAPSED + 2))
+    done
+
+    if [ $ELAPSED -ge $MAX_WAIT ]; then
+        notify-send -u normal "Ai Tools For Data Science And Statistics" "Services slow, opening anyway..." -t 3000
+    fi
+fi
+
+# Open browser first (right side), then editor (left side)
+if [ -n "$VIEW_URL" ]; then
+    chromium --new-window "$VIEW_URL" &
+    sleep 0.3
+fi
+
+$EDITOR "$WORKSPACE_FILE" &
+
+notify-send -u low "Ai Tools For Data Science And Statistics" "Ready!" -t 3000

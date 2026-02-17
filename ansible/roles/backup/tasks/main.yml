@@ -39,21 +39,39 @@
     mode: '0644'
   when: backup_enabled | default(false)
 
+- name: Verify NAS backup share is accessible
+  ansible.builtin.command:
+    cmd: ls {{ backup_repository }}
+  changed_when: false
+  failed_when: false
+  register: nas_accessible
+  when: backup_enabled | default(false)
+
 - name: Check if restic repository is initialized
   ansible.builtin.command:
     cmd: restic -r {{ backup_repository }} --password-file {{ ansible_facts.env.HOME }}/.config/restic/password snapshots
   register: restic_check
   changed_when: false
   failed_when: false
-  when: backup_enabled | default(false)
+  when:
+    - backup_enabled | default(false)
+    - nas_accessible.rc == 0
 
 - name: Initialize restic repository
   ansible.builtin.command:
     cmd: restic -r {{ backup_repository }} --password-file {{ ansible_facts.env.HOME }}/.config/restic/password init
   when:
     - backup_enabled | default(false)
+    - nas_accessible.rc == 0
     - restic_check.rc != 0
     - "'Is there a repository at the following location' in restic_check.stderr or 'unable to open config file' in restic_check.stderr"
+
+- name: Warn if NAS backup share is not accessible
+  ansible.builtin.debug:
+    msg: "WARNING: NAS backup share at {{ backup_repository }} is not accessible. Skipping restic init. Ensure the share exists on the NAS and autofs is working."
+  when:
+    - backup_enabled | default(false)
+    - nas_accessible.rc != 0
 
 # Timer schedule is set via drop-in (base timer is in config/systemd/user/)
 - name: Create nas-backup timer drop-in directory

@@ -214,6 +214,13 @@
     mode: '0644'
   when: hypridle_after_sleep_delay is defined
 
+- name: Enable and start hypridle user service
+  ansible.builtin.systemd:
+    name: hypridle
+    scope: user
+    enabled: true
+    state: started
+
 - name: Deploy host-specific Waybar CSS
   ansible.builtin.template:
     src: waybar-host.css.j2

@@ -601,6 +601,17 @@ alias vscholera="code ~/Omarchy/projects/cholera-data-management/cholera-data-ma
 alias nvcholera="(cd /home/erik/Projects/cholera-data-management && nvim .)"
 alias pcholera="/usr/share/positron/bin/positron ~/Omarchy/projects/cholera-data-management/cholera-data-management.code-workspace"
 # END PROJECT cholera-data-management
+# BEGIN PROJECT ai-tools-for-data-science-and-statistics
+alias laitools="~/Omarchy/projects/ai-tools-for-data-science-and-statistics/launch"
+alias kaitools="~/Omarchy/projects/ai-tools-for-data-science-and-statistics/kill"
+alias tmaitools="~/Omarchy/projects/ai-tools-for-data-science-and-statistics/tmux.sh"
+alias baitools="~/Omarchy/projects/ai-tools-for-data-science-and-statistics/bootstrap"
+alias pmaitools="cd ~/Omarchy/projects/ai-tools-for-data-science-and-statistics"
+alias aitools="cd /home/erik/Projects/ai-tools-for-data-science-and-statistics"
+alias vsaitools="code ~/Omarchy/projects/ai-tools-for-data-science-and-statistics/ai-tools-for-data-science-and-statistics.code-workspace"
+alias nvaitools="(cd /home/erik/Projects/ai-tools-for-data-science-and-statistics && nvim .)"
+alias paitools="/usr/share/positron/bin/positron ~/Omarchy/projects/ai-tools-for-data-science-and-statistics/ai-tools-for-data-science-and-statistics.code-workspace"
+# END PROJECT ai-tools-for-data-science-and-statistics
 # Auto-generated project aliases
 
 # Sync R2 media to local minio for better-shoes dev

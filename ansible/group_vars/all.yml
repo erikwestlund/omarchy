@@ -89,6 +89,7 @@ pacman_packages:
   - texlive-fontsrecommended
   - texlive-xetex
   - texlive-bibtexextra
+  - texlive-luatex
 
   # Browsers
   - firefox

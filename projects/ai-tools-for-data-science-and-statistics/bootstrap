@@ -1,0 +1,19 @@
+#!/bin/bash
+# Bootstrap script for ai-tools-for-data-science-and-statistics
+# Runs ansible to ensure project is ready to run
+
+set -e
+
+OMARCHY_DIR="$HOME/Omarchy"
+MACHINE=$(cat ~/.machine 2>/dev/null || echo "laptop")
+
+echo "Bootstrapping ai-tools-for-data-science-and-statistics..."
+
+ANSIBLE_CONFIG="$OMARCHY_DIR/ansible/ansible.cfg" ansible-playbook \
+    "$OMARCHY_DIR/ansible/playbook.yml" \
+    --limit "$MACHINE" \
+    --tags bootstrap \
+    -e "project_name=ai-tools-for-data-science-and-statistics"
+
+echo ""
+echo "Bootstrap complete! Run 'laitools' to launch."

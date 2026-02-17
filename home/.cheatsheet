@@ -21,9 +21,10 @@
 │ Super+Alt+H    Cheatsht   │ Super+Ctrl+V VPN          │ Commands:  kill-app     │ Ctrl+T       Terminal    │ a      Create file      │ Ansible (om-*):         │
 │ Super+Alt+J    Cal+Agenda │ Super+Ctrl+J JHU VPN      │ free-av tasks           │ Ctrl+Sh+[/]  Tabs        │ A      Create dir       │ om           Full run   │
 ├─ Secrets ─────────────────┼───────────────────────────┼─────────────────────────┤ Super+Alt+N  New file    │ r      Rename           │ om-sync      Git sync   │
-│ vault-edit     Edit vault │ Ansible (om-*):           │ Common:                 │ Ctrl+1-9     Tabs        │ .      Toggle hidden    │ om-dotfiles  Configs    │
-│ secrets-push   Push B2    │ om-dotfiles  Configs      │ om-apps      Pkgs+webap │ Ctrl+J/Sh+J/K Panel      │ /      Search           │ om-packages  Packages   │
-│ secrets-pull   Pull B2    │ om-packages  Packages     │ om-cleanup   Cleanup    │ Super+D      Multi-sel   │ ~      Go home          │ om-keyd      Keyd       │
-│ S+A+Sh+K       Memory     │ om-keyd      Keyd remap   │ om-framework Laptop     │                          │                         │ om-secrets   Secrets    │
-│                           │ om-vscode    VS Code      │ om-nas       NAS mounts │                          │                         │ om-vscode    VS Code    │
+│ vault-edit     Edit vault │ System Scripts:           │ Common:                 │ Ctrl+1-9     Tabs        │ .      Toggle hidden    │ om-dotfiles  Configs    │
+│ secrets-push   Push B2    │ wifi-reset   Reload WiFi  │ om-apps      Pkgs+webap │ Ctrl+J/Sh+J/K Panel      │ /      Search           │ om-packages  Packages   │
+│ secrets-pull   Pull B2    │ reset-av     Fix A/V      │ om-cleanup   Cleanup    │ Super+D      Multi-sel   │ ~      Go home          │ om-keyd      Keyd       │
+│ S+A+Sh+K       Memory     │ dpause       Docker stop  │ om-framework Laptop     │                          │                         │ om-secrets   Secrets    │
+│                           │ dresume      Docker start │ om-nas       NAS mounts │                          │                         │ om-vscode    VS Code    │
+│                           │ idle-report  Idle diag    │ usb-wakeup-toggle Sleep │                          │                         │                         │
 └───────────────────────────┴───────────────────────────┴─────────────────────────┴──────────────────────────┴─────────────────────────┴─────────────────────────┘
