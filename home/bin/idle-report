@@ -1,0 +1,129 @@
+#!/bin/bash
+
+# Idle/DPMS diagnostic report
+
+bold="\033[1m"
+dim="\033[2m"
+red="\033[31m"
+green="\033[32m"
+yellow="\033[33m"
+reset="\033[0m"
+
+section() { echo -e "\n${bold}$1${reset}"; }
+ok()      { echo -e "  ${green}OK${reset}  $1"; }
+warn()    { echo -e "  ${yellow}!!${reset}  $1"; }
+fail()    { echo -e "  ${red}XX${reset}  $1"; }
+
+# Hypridle
+section "HYPRIDLE"
+if pgrep -x hypridle >/dev/null; then
+  ok "hypridle running (PID $(pgrep -x hypridle))"
+else
+  fail "hypridle is NOT running"
+fi
+
+# DPMS status
+section "DPMS"
+hyprctl monitors -j | python3 -c "
+import json, sys
+for m in json.load(sys.stdin):
+    status = 'on' if m.get('dpmsStatus') else 'off'
+    print(f'  {m[\"name\"]}: dpms={status}  {m.get(\"width\",\"?\")}x{m.get(\"height\",\"?\")}@{m.get(\"refreshRate\",\"?\")}Hz')
+"
+
+# Idle inhibitors (systemd)
+section "SYSTEM INHIBITORS"
+inhibitors=$(systemd-inhibit --list --no-pager --no-legend 2>/dev/null)
+count=$(echo "$inhibitors" | grep -c "idle\|sleep" 2>/dev/null)
+if [ "$count" -gt 0 ]; then
+  echo "$inhibitors" | while read -r line; do
+    echo -e "  ${dim}${line}${reset}"
+  done
+else
+  ok "no idle/sleep inhibitors"
+fi
+
+# Hyprland clients
+section "WINDOWS"
+hyprctl clients -j | python3 -c "
+import json, sys
+clients = json.load(sys.stdin)
+if not clients:
+    print('  (none)')
+    sys.exit()
+problems = False
+for c in clients:
+    cls = c.get('class', '?')
+    title = c.get('title', '?')
+    fs = c.get('fullscreen', 0)
+    flags = []
+    if fs: flags.append('FULLSCREEN')
+    if flags:
+        problems = True
+        print(f'  !! {cls}: {title}  [{', '.join(flags)}]')
+if not problems:
+    print(f'  {len(clients)} window(s), none fullscreen')
+"
+
+# Screensaver
+section "SCREENSAVER"
+if pgrep -f org.omarchy.screensaver >/dev/null; then
+  warn "screensaver is running"
+  if pgrep -x tte >/dev/null; then
+    warn "tte animation active (PID $(pgrep -x tte))"
+  fi
+else
+  ok "screensaver not running"
+fi
+
+# Audio
+section "AUDIO"
+sinks=$(pactl list sink-inputs short 2>/dev/null)
+if [ -n "$sinks" ]; then
+  warn "audio sink-inputs active (can inhibit idle):"
+  echo "$sinks" | while read -r line; do
+    idx=$(echo "$line" | awk '{print $1}')
+    name=$(pactl list sink-inputs 2>/dev/null | awk -v idx="$idx" '
+      /Sink Input #/{found=0} /Sink Input #'$idx'/{found=1}
+      found && /media.name/{gsub(/.*= "/,""); gsub(/"/,""); print; exit}
+    ')
+    echo -e "    ${dim}#${idx}: ${name:-unknown}${reset}"
+  done
+else
+  ok "no audio playing"
+fi
+
+# Hyprlock
+section "LOCK SCREEN"
+if pgrep -x hyprlock >/dev/null; then
+  warn "hyprlock is active"
+else
+  ok "hyprlock not running"
+fi
+
+# Config summary
+section "TIMEOUTS (from hypridle.conf)"
+conf="$HOME/.config/hypr/hypridle.conf"
+if [ -f "$conf" ]; then
+  grep -P '^\s*timeout\s*=' "$conf" | while read -r line; do
+    secs=$(echo "$line" | grep -oP 'timeout\s*=\s*\K[0-9]+')
+    mins=$(( secs / 60 ))
+    remainder=$(( secs % 60 ))
+    if [ "$remainder" -gt 0 ]; then
+      label="${mins}m${remainder}s"
+    else
+      label="${mins}m"
+    fi
+    # Get the on-timeout action from the next line in the listener block
+    action=$(grep -A1 "timeout\s*=\s*${secs}" "$conf" | grep "on-timeout" | sed 's/.*on-timeout\s*=\s*//' | sed 's/\s*#.*//')
+    comment=$(echo "$line" | sed -n 's/.*#\s*//p')
+    echo -e "  ${secs}s (${label}): ${dim}${action:-$comment}${reset}"
+  done
+  if ! grep -q "suspend\|sleep" "$conf"; then
+    warn "no suspend/sleep timeout configured"
+  fi
+else
+  fail "hypridle.conf not found"
+fi
+
+echo ""
