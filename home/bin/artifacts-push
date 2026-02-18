@@ -54,8 +54,12 @@ push_project() {
     # Exclude everything else
     RSYNC_ARGS+=(--exclude="*")
 
-    # Create project directory on NAS if needed
-    mkdir -p "$NAS_DIR/$PROJECT"
+    # Create project directory on NAS if needed (avoid mkdir -p which conflicts with autofs)
+    if [[ ! -d "$NAS_DIR" ]]; then
+        echo "Error: NAS not mounted at $NAS_DIR"
+        return 1
+    fi
+    [[ -d "$NAS_DIR/$PROJECT" ]] || mkdir "$NAS_DIR/$PROJECT"
 
     rsync -av --update --progress "${RSYNC_ARGS[@]}" "$PROJECT_DIR/" "$NAS_DIR/$PROJECT/"
     echo ""
@@ -67,8 +71,12 @@ has_artifacts() {
     [[ -f "$PROJECT_DIR/.artifacts" && -s "$PROJECT_DIR/.artifacts" ]] || [[ -f "$PROJECT_DIR/framework.db" ]]
 }
 
-# Trigger autofs mount
-ls "$NAS_DIR" > /dev/null 2>&1 || true
+# Trigger autofs mount (ls alone may not trigger with --browse; stat forces actual mount)
+stat "$NAS_DIR" > /dev/null 2>&1
+if ! mountpoint -q "$NAS_DIR" 2>/dev/null && ! ls "$NAS_DIR"/ > /dev/null 2>&1; then
+    echo "Error: Could not mount NAS at $NAS_DIR"
+    exit 1
+fi
 
 if [[ -n "$1" ]]; then
     # Single project specified

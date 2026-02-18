@@ -189,6 +189,7 @@ projects:
   - name: cholera-data-management
     alias: cholera
     type: rstats
+    github_repo: erikwestlund/cholera-data
     path: ~/Projects/cholera-data-management
 # END PROJECT cholera-data-management
 # BEGIN PROJECT ai-tools-for-data-science-and-statistics
