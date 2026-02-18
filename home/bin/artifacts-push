@@ -37,6 +37,15 @@ push_project() {
         while IFS= read -r pattern || [[ -n "$pattern" ]]; do
             # Skip empty lines and comments
             [[ -z "$pattern" || "$pattern" == \#* ]] && continue
+            # Include parent directories so rsync descends into nested paths
+            local parts=""
+            IFS='/' read -ra segments <<< "$pattern"
+            for ((i=0; i<${#segments[@]}-1; i++)); do
+                if [[ -n "${segments[$i]}" ]]; then
+                    parts+="${segments[$i]}/"
+                    RSYNC_ARGS+=(--include="$parts")
+                fi
+            done
             RSYNC_ARGS+=(--include="$pattern" --include="$pattern**")
         done < "$ARTIFACTS_FILE"
     # Auto-detect framework projects via framework.db
