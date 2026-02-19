@@ -1,14 +1,3 @@
 {
-    "workbench.iconTheme": "catppuccin-mocha",
-    "workbench.colorTheme": "null",
-    "quarto.render.renderOnSaveShiny": false,
-    "quarto.render.previewType": "external",
-    "makefile.configureOnOpen": true,
-    "editor.minimap.enabled": false,
-    "terminal.integrated.commandsToSkipShell": [
-        "workbench.action.toggleSidebarVisibility",
-        "-workbench.action.closeWindow",
-        "-workbench.action.quit"
-    ],
-    "terminal.integrated.enablePersistentSessions": false
+    "workbench.iconTheme": "catppuccin-mocha"
 }

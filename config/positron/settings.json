@@ -3,14 +3,5 @@
     "files.associations": {
         "renv.lock": "json"
     },
-    "workbench.colorTheme": "Catppuccin Mocha",
-    "terminal.integrated.commandsToSkipShell": [
-        "workbench.action.toggleSidebarVisibility",
-        "-workbench.action.closeWindow",
-        "-workbench.action.quit"
-    ],
-    "terminal.integrated.enablePersistentSessions": false,
-    "workbench.statusBar.visible": false,
-    "positron.assistant.enable": true,
-    "positron.assistant.alwaysEnableApplyInEditorAction": true
+    "workbench.colorTheme": "Catppuccin Mocha"
 }
