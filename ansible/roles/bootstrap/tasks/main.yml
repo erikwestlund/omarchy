@@ -72,6 +72,20 @@
     - github_repo | length > 0
     - project_dir_stat.stat.exists | default(false)
 
+- name: Pull latest changes (repo already cloned)
+  ansible.builtin.command:
+    cmd: git pull --ff-only
+    chdir: "{{ project_path }}"
+  register: git_pull_result
+  changed_when: "'Already up to date' not in git_pull_result.stdout"
+  failed_when: false
+  when:
+    - project_path | length > 0
+    - github_repo is defined
+    - github_repo | length > 0
+    - project_dir_stat.stat.exists | default(false)
+    - git_dir_stat.stat.exists | default(false)
+
 - name: Remove project directory before clone (no .git = not a repo yet)
   ansible.builtin.file:
     path: "{{ project_path }}"
@@ -92,6 +106,7 @@
     - project_path | length > 0
     - github_repo is defined
     - github_repo | length > 0
+    - not (git_dir_stat.stat.exists | default(false))
 
 - name: Ensure project directory exists
   ansible.builtin.file:

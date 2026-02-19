@@ -10,5 +10,7 @@
         "-workbench.action.quit"
     ],
     "terminal.integrated.enablePersistentSessions": false,
-    "workbench.statusBar.visible": false
+    "workbench.statusBar.visible": false,
+    "positron.assistant.enable": true,
+    "positron.assistant.alwaysEnableApplyInEditorAction": true
 }

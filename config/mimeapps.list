@@ -64,6 +64,11 @@ application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=onlyoffice-des
 application/vnd.ms-powerpoint=onlyoffice-desktopeditors.desktop
 application/vnd.openxmlformats-officedocument.presentationml.presentation=onlyoffice-desktopeditors.desktop
 
+# CSV/TSV - OnlyOffice
+text/csv=onlyoffice-desktopeditors.desktop
+application/csv=onlyoffice-desktopeditors.desktop
+text/tab-separated-values=onlyoffice-desktopeditors.desktop
+
 # OpenDocument formats - OnlyOffice
 application/vnd.oasis.opendocument.text=onlyoffice-desktopeditors.desktop
 application/vnd.oasis.opendocument.spreadsheet=onlyoffice-desktopeditors.desktop
