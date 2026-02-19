@@ -1,0 +1,128 @@
+---
+# Configure system-wide Java for R (rJava, DatabaseConnector, Strategus)
+#
+# Ensures libjvm.so is discoverable by the dynamic linker and R CMD javareconf
+# is run so R packages can find Java in non-interactive sessions.
+#
+# Usage:
+#   ansible-playbook playbook.yml -l laptop --tags java
+
+- name: Ensure JDK is installed
+  become: true
+  community.general.pacman:
+    name: jdk-openjdk
+    state: present
+
+- name: Detect JAVA_HOME
+  ansible.builtin.command:
+    cmd: readlink -f /usr/lib/jvm/default-runtime
+  register: java_home_detected
+  changed_when: false
+
+- name: Set java_home fact
+  ansible.builtin.set_fact:
+    java_home: "{{ java_home_detected.stdout }}"
+
+- name: Show detected JAVA_HOME
+  ansible.builtin.debug:
+    msg: "JAVA_HOME = {{ java_home }}"
+
+- name: Find libjvm.so
+  ansible.builtin.find:
+    paths: "{{ java_home }}/lib"
+    patterns: "libjvm.so"
+    recurse: true
+  register: libjvm_find
+
+- name: Fail if libjvm.so not found
+  ansible.builtin.fail:
+    msg: "libjvm.so not found under {{ java_home }}/lib"
+  when: libjvm_find.files | length == 0
+
+- name: Set libjvm directory fact
+  ansible.builtin.set_fact:
+    libjvm_dir: "{{ libjvm_find.files[0].path | dirname }}"
+
+- name: Show libjvm.so location
+  ansible.builtin.debug:
+    msg: "libjvm.so found at {{ libjvm_find.files[0].path }}"
+
+# System-wide linker config so libjvm.so is found in all contexts
+- name: Configure dynamic linker for Java
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/ld.so.conf.d/java.conf
+    mode: '0644'
+    content: |
+      {{ libjvm_dir }}
+  register: ld_conf
+
+- name: Run ldconfig
+  become: true
+  ansible.builtin.command:
+    cmd: ldconfig
+  when: ld_conf.changed
+  changed_when: true
+
+# System-wide environment so JAVA_HOME is set in all sessions
+- name: Set system-wide JAVA_HOME
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/profile.d/java.sh
+    mode: '0644'
+    content: |
+      export JAVA_HOME={{ java_home }}
+      export PATH=$JAVA_HOME/bin:$PATH
+
+# Configure R to find Java
+- name: Run R CMD javareconf
+  become: true
+  ansible.builtin.command:
+    cmd: R CMD javareconf
+  environment:
+    JAVA_HOME: "{{ java_home }}"
+    LD_LIBRARY_PATH: "{{ libjvm_dir }}"
+  register: javareconf
+  changed_when: "'writing new configuration' in javareconf.stderr or javareconf.rc == 0"
+
+# Verify
+- name: Verify rJava loads
+  ansible.builtin.command:
+    cmd: Rscript -e "library(rJava); .jinit(); cat('rJava OK\n')"
+  environment:
+    JAVA_HOME: "{{ java_home }}"
+    LD_LIBRARY_PATH: "{{ libjvm_dir }}"
+  register: rjava_check
+  changed_when: false
+  failed_when: "'rJava OK' not in rjava_check.stdout"
+
+- name: Verify DatabaseConnector loads
+  ansible.builtin.command:
+    cmd: Rscript -e "library(DatabaseConnector); cat('DatabaseConnector OK\n')"
+  environment:
+    JAVA_HOME: "{{ java_home }}"
+    LD_LIBRARY_PATH: "{{ libjvm_dir }}"
+  register: dbconnector_check
+  changed_when: false
+  failed_when: "'DatabaseConnector OK' not in dbconnector_check.stdout"
+
+- name: Verify Strategus loads
+  ansible.builtin.command:
+    cmd: Rscript -e "library(Strategus); cat('Strategus OK\n')"
+  environment:
+    JAVA_HOME: "{{ java_home }}"
+    LD_LIBRARY_PATH: "{{ libjvm_dir }}"
+  register: strategus_check
+  changed_when: false
+  failed_when: "'Strategus OK' not in strategus_check.stdout"
+
+- name: Summary
+  ansible.builtin.debug:
+    msg:
+      - "JAVA_HOME: {{ java_home }}"
+      - "libjvm.so: {{ libjvm_find.files[0].path }}"
+      - "Linker config: /etc/ld.so.conf.d/java.conf"
+      - "Profile config: /etc/profile.d/java.sh"
+      - "rJava: {{ 'OK' if rjava_check.rc == 0 else 'FAILED' }}"
+      - "DatabaseConnector: {{ 'OK' if dbconnector_check.rc == 0 else 'FAILED' }}"
+      - "Strategus: {{ 'OK' if strategus_check.rc == 0 else 'FAILED' }}"

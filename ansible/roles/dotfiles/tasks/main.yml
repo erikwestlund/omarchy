@@ -263,6 +263,19 @@
     replace: '"format": "󰍛   "'
   when: not (show_battery | default(false))
 
+- name: Ensure R config directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.R"
+    state: directory
+    mode: '0755'
+
+- name: Deploy R Makevars (parallel compilation)
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.R/Makevars"
+    mode: '0644'
+    content: |
+      MAKEFLAGS = -j{{ ansible_processor_vcpus }}
+
 - name: Check which home dotfiles exist
   ansible.builtin.stat:
     path: "{{ home_src }}/{{ item }}"
