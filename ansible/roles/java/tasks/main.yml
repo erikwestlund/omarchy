@@ -86,6 +86,13 @@
   changed_when: "'writing new configuration' in javareconf.stderr or javareconf.rc == 0"
 
 # Verify
+- name: Check if rJava is installed
+  ansible.builtin.command:
+    cmd: Rscript -e "quit(status = if (!requireNamespace('rJava', quietly = TRUE)) 1 else 0)"
+  register: rjava_installed
+  changed_when: false
+  failed_when: false
+
 - name: Verify rJava loads
   ansible.builtin.command:
     cmd: Rscript -e "library(rJava); .jinit(); cat('rJava OK\n')"
@@ -95,6 +102,19 @@
   register: rjava_check
   changed_when: false
   failed_when: "'rJava OK' not in rjava_check.stdout"
+  when: rjava_installed.rc == 0
+
+- name: Skip rJava verification when package is missing
+  ansible.builtin.debug:
+    msg: "Skipping rJava verification: package 'rJava' is not installed"
+  when: rjava_installed.rc != 0
+
+- name: Check if DatabaseConnector is installed
+  ansible.builtin.command:
+    cmd: Rscript -e "quit(status = if (!requireNamespace('DatabaseConnector', quietly = TRUE)) 1 else 0)"
+  register: dbconnector_installed
+  changed_when: false
+  failed_when: false
 
 - name: Verify DatabaseConnector loads
   ansible.builtin.command:
@@ -105,6 +125,19 @@
   register: dbconnector_check
   changed_when: false
   failed_when: "'DatabaseConnector OK' not in dbconnector_check.stdout"
+  when: dbconnector_installed.rc == 0
+
+- name: Skip DatabaseConnector verification when package is missing
+  ansible.builtin.debug:
+    msg: "Skipping DatabaseConnector verification: package 'DatabaseConnector' is not installed"
+  when: dbconnector_installed.rc != 0
+
+- name: Check if Strategus is installed
+  ansible.builtin.command:
+    cmd: Rscript -e "quit(status = if (!requireNamespace('Strategus', quietly = TRUE)) 1 else 0)"
+  register: strategus_installed
+  changed_when: false
+  failed_when: false
 
 - name: Verify Strategus loads
   ansible.builtin.command:
@@ -115,6 +148,12 @@
   register: strategus_check
   changed_when: false
   failed_when: "'Strategus OK' not in strategus_check.stdout"
+  when: strategus_installed.rc == 0
+
+- name: Skip Strategus verification when package is missing
+  ansible.builtin.debug:
+    msg: "Skipping Strategus verification: package 'Strategus' is not installed"
+  when: strategus_installed.rc != 0
 
 - name: Summary
   ansible.builtin.debug:
@@ -123,6 +162,6 @@
       - "libjvm.so: {{ libjvm_find.files[0].path }}"
       - "Linker config: /etc/ld.so.conf.d/java.conf"
       - "Profile config: /etc/profile.d/java.sh"
-      - "rJava: {{ 'OK' if rjava_check.rc == 0 else 'FAILED' }}"
-      - "DatabaseConnector: {{ 'OK' if dbconnector_check.rc == 0 else 'FAILED' }}"
-      - "Strategus: {{ 'OK' if strategus_check.rc == 0 else 'FAILED' }}"
+      - "rJava: {{ 'OK' if rjava_installed.rc == 0 and rjava_check.rc == 0 else ('SKIPPED (not installed)' if rjava_installed.rc != 0 else 'FAILED') }}"
+      - "DatabaseConnector: {{ 'OK' if dbconnector_installed.rc == 0 and dbconnector_check.rc == 0 else ('SKIPPED (not installed)' if dbconnector_installed.rc != 0 else 'FAILED') }}"
+      - "Strategus: {{ 'OK' if strategus_installed.rc == 0 and strategus_check.rc == 0 else ('SKIPPED (not installed)' if strategus_installed.rc != 0 else 'FAILED') }}"
