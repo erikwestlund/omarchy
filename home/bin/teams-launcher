@@ -5,16 +5,23 @@ PROFILE="$HOME/.config/chromium-teams"
 URL="https://teams.microsoft.com"
 
 # Find 1Password extension (latest version)
-ONEPASS_EXT=$(find ~/.config/chromium/Default/Extensions/aeblfdkhhhdcdjpifhhbdiojplfjncoa -maxdepth 1 -mindepth 1 -type d 2>/dev/null | head -1)
+ONEPASS_BASE="$HOME/.config/chromium/Default/Extensions/aeblfdkhhhdcdjpifhhbdiojplfjncoa"
+ONEPASS_EXT=""
+if [[ -d "$ONEPASS_BASE" ]]; then
+    ONEPASS_VERSION=$(ls -1 "$ONEPASS_BASE" 2>/dev/null | sort -V | tail -1)
+    if [[ -n "$ONEPASS_VERSION" ]]; then
+        ONEPASS_EXT="$ONEPASS_BASE/$ONEPASS_VERSION"
+    fi
+fi
 
 window=$(hyprctl clients -j | jq -r '.[] | select(.class | test("teams"; "i")) | .address' | head -1)
 
 if [[ -n "$window" ]]; then
     hyprctl dispatch focuswindow "address:$window"
 else
+    chromium_args=(--user-data-dir="$PROFILE" --disable-popup-blocking --app="$URL")
     if [[ -n "$ONEPASS_EXT" ]]; then
-        chromium --user-data-dir="$PROFILE" --load-extension="$ONEPASS_EXT" --disable-popup-blocking --app="$URL" &
-    else
-        chromium --user-data-dir="$PROFILE" --disable-popup-blocking --app="$URL" &
+        chromium_args+=(--load-extension="$ONEPASS_EXT")
     fi
+    chromium "${chromium_args[@]}" &
 fi
