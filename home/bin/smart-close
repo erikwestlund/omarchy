@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Smart close: hide Teams/Outlook to special workspace instead of killing them
+# so they don't lose their sessions. All other windows get killed normally.
+
+PROTECTED_CLASSES="teams|outlook"
+
+active=$(hyprctl activewindow -j)
+class=$(echo "$active" | jq -r '.class // ""')
+pid=$(echo "$active" | jq -r '.pid // ""')
+
+if echo "$class" | grep -qiE "$PROTECTED_CLASSES"; then
+    # Move to hidden special workspace instead of killing
+    hyprctl dispatch movetoworkspacesilent special:hidden
+else
+    # Kill normally
+    if [[ -n "$pid" && "$pid" != "null" ]]; then
+        kill -9 "$pid"
+    fi
+fi
