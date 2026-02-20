@@ -1,20 +1,17 @@
 #!/usr/bin/env bash
 # Smart close:
-# - Teams/Outlook: use normal window close (same as Super+W / killactive)
-# - Everything else: hard kill the active window process
+# - Teams/Outlook: hide to special workspace to preserve sessions
+# - Everything else: normal close (killactive)
 
 PROTECTED_CLASSES="teams|outlook"
 
 active=$(hyprctl activewindow -j)
 class=$(echo "$active" | jq -r '.class // ""')
-pid=$(echo "$active" | jq -r '.pid // ""')
 
 if echo "$class" | grep -qiE "$PROTECTED_CLASSES"; then
-    # Match Super+W behavior for Teams/Outlook only
-    hyprctl dispatch killactive
+    # Hide instead of closing to preserve auth/session state
+    hyprctl dispatch movetoworkspacesilent special:hidden
 else
-    # Kill normally
-    if [[ -n "$pid" && "$pid" != "null" ]]; then
-        kill -9 "$pid"
-    fi
+    # Normal close behavior
+    hyprctl dispatch killactive
 fi

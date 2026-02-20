@@ -14,9 +14,17 @@ if [[ -d "$ONEPASS_BASE" ]]; then
     fi
 fi
 
-window=$(hyprctl clients -j | jq -r '.[] | select(.class | test("teams"; "i")) | .address' | head -1)
+window_info=$(hyprctl clients -j | jq -r '.[] | select(.class | test("teams"; "i")) | "\(.address)\t\(.workspace.name // "")"' | head -1)
 
-if [[ -n "$window" ]]; then
+if [[ -n "$window_info" ]]; then
+    window="${window_info%%$'\t'*}"
+    window_workspace="${window_info#*$'\t'}"
+
+    if [[ "$window_workspace" == special:* ]]; then
+        active_workspace=$(hyprctl activeworkspace -j | jq -r '.name // "1"')
+        hyprctl dispatch movetoworkspacesilent "$active_workspace,address:$window"
+    fi
+
     hyprctl dispatch focuswindow "address:$window"
 else
     chromium_args=(--user-data-dir="$PROFILE" --disable-popup-blocking --app="$URL")
