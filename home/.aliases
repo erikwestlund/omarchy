@@ -67,7 +67,7 @@ alias vscode-sync='om --tags vscode'
 alias vscode-sync-ext='om --tags vscode -e "vscode_install_extensions=true"'
 
 # Project shortcuts
-alias seedpeqauth="docker compose exec -T php php artisan db:seed --class=Database\\Seeders\\WorkflowTestAccountSeeder"
+alias seedpeqauth='docker compose exec -T php php artisan db:seed --class=WorkflowTestAccountSeeder --force'
 
 # Ansible
 alias ap="ansible-playbook"
