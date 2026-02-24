@@ -1,16 +1,30 @@
 #!/usr/bin/env bash
 # Smart close:
-# - Teams/Outlook: hide to special workspace to preserve sessions
-# - Everything else: normal close (killactive)
+# - Default: Teams/Outlook hide to special workspace (session-preserving)
+# - --quit: Teams/Outlook fully quit; everything else normal close
 
 PROTECTED_CLASSES="teams|outlook"
+QUIT_MODE=0
+
+if [[ "$1" == "--quit" ]]; then
+    QUIT_MODE=1
+fi
 
 active=$(hyprctl activewindow -j)
 class=$(echo "$active" | jq -r '.class // ""')
 
 if echo "$class" | grep -qiE "$PROTECTED_CLASSES"; then
-    # Hide instead of closing to preserve auth/session state
-    hyprctl dispatch movetoworkspacesilent special:hidden
+    if [[ "$QUIT_MODE" -eq 1 ]]; then
+        # Fully quit isolated webapp profiles so popups/child windows also close
+        if echo "$class" | grep -qi "teams"; then
+            pkill -f -- "--user-data-dir=$HOME/.config/chromium-teams"
+        elif echo "$class" | grep -qi "outlook"; then
+            pkill -f -- "--user-data-dir=$HOME/.config/chromium-outlook"
+        fi
+    else
+        # Hide instead of closing to preserve auth/session state
+        hyprctl dispatch movetoworkspacesilent special:hidden
+    fi
 else
     # Normal close behavior
     hyprctl dispatch killactive
