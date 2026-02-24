@@ -3,13 +3,18 @@
 # This role just cleans up the old boot service.
 
 - name: Stop wifi-reset service
+  ansible.builtin.stat:
+    path: /etc/systemd/system/wifi-reset.service
+  register: wifi_reset_service_file
+
+- name: Stop wifi-reset service
   ansible.builtin.systemd:
     name: wifi-reset.service
     state: stopped
     enabled: false
     daemon_reload: true
   become: true
-  ignore_errors: true
+  when: wifi_reset_service_file.stat.exists
 
 - name: Remove wifi-reset service
   ansible.builtin.file:
