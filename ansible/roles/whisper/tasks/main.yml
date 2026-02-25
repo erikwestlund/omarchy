@@ -1,0 +1,66 @@
+---
+# Configure whisper.cpp for local speech-to-text
+
+- name: Install ffmpeg for audio processing
+  become: true
+  community.general.pacman:
+    name: ffmpeg
+    state: present
+
+- name: Clone whisper.cpp repository
+  ansible.builtin.git:
+    repo: https://github.com/ggerganov/whisper.cpp.git
+    dest: "{{ ansible_facts.env.HOME }}/.local/src/whisper.cpp"
+    depth: 1
+
+- name: Build whisper.cpp
+  ansible.builtin.shell:
+    cmd: make -j$(nproc)
+    chdir: "{{ ansible_facts.env.HOME }}/.local/src/whisper.cpp"
+  register: whisper_build
+  changed_when: whisper_build.rc == 0
+
+- name: Link whisper-cli to local bin
+  ansible.builtin.file:
+    src: "{{ ansible_facts.env.HOME }}/.local/src/whisper.cpp/build/bin/whisper-cli"
+    dest: "{{ ansible_facts.env.HOME }}/.local/bin/whisper-cli"
+    state: link
+    force: true
+
+- name: Ensure whisper models directory exists
+  ansible.builtin.file:
+    path: "{{ whisper_models_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Check if whisper model exists
+  ansible.builtin.stat:
+    path: "{{ whisper_models_dir }}/ggml-{{ whisper_model }}.bin"
+  register: whisper_model_file
+
+- name: Download whisper model
+  ansible.builtin.get_url:
+    url: "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-{{ whisper_model }}.bin"
+    dest: "{{ whisper_models_dir }}/ggml-{{ whisper_model }}.bin"
+    mode: '0644'
+  when: not whisper_model_file.stat.exists
+
+- name: Deploy whisper toggle script
+  ansible.builtin.template:
+    src: whisper-toggle.sh.j2
+    dest: "{{ whisper_script_path }}"
+    mode: '0755'
+
+- name: Verify whisper installation
+  ansible.builtin.command:
+    cmd: "{{ ansible_facts.env.HOME }}/.local/bin/whisper-cli --help"
+  register: whisper_help
+  changed_when: false
+
+- name: Whisper setup summary
+  ansible.builtin.debug:
+    msg:
+      - "Whisper.cpp installed: {{ whisper_help.rc == 0 }}"
+      - "Model: {{ whisper_model }}"
+      - "Toggle script: {{ whisper_script_path }}"
+      - "Press Super+I to start/stop voice transcription"

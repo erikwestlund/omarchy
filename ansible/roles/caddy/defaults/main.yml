@@ -7,6 +7,11 @@ dev_sites:
   - domain: academic.test
     port: 8010
     wildcard: true
+  - domain: erikwestlund.test
+    port: 8010
+    wildcard: true
+  - domain: erik-westlund.data-scientist.page
+    port: 8010
   - domain: better-shoes.test
     port: 8020
     wildcard: true

@@ -147,6 +147,16 @@
     - role: java
       tags: java
 
+    - role: ocr
+      tags: ocr
+
+    - role: whisper
+      tags: whisper
+
+    - role: ollama
+      tags: ollama
+      when: inventory_hostname == 'desktop'
+
     - role: v8
       tags: v8
       when: install_v8 | default(false)

@@ -1,0 +1,62 @@
+#!/bin/bash
+# Whisper.cpp voice transcription toggle
+# Managed by Ansible - do not edit directly
+
+PIDFILE="/tmp/whisper-recording.pid"
+MODEL="{{ whisper_models_dir }}/ggml-{{ whisper_model }}.bin"
+RAW_FILE="/tmp/whisper-recording.raw"
+WAV_FILE="/tmp/whisper-recording.wav"
+WHISPER_BIN="{{ ansible_facts.env.HOME }}/.local/bin/whisper-cli"
+
+# Use Insta360 webcam mic specifically
+MIC_SOURCE="alsa_input.usb-Insta360_Insta360_Link_2C-02.mono-fallback"
+
+if [ -f "$PIDFILE" ]; then
+    # Stop recording
+    PID=$(cat "$PIDFILE")
+    if kill -0 "$PID" 2>/dev/null; then
+        kill "$PID"
+        wait "$PID" 2>/dev/null
+    fi
+    rm -f "$PIDFILE"
+    
+    # Process audio
+    if [ -f "$RAW_FILE" ]; then
+        SIZE=$(stat -c%s "$RAW_FILE" 2>/dev/null || echo 0)
+        if [ "$SIZE" -lt 1000 ]; then
+            notify-send "Whisper Error" "Recording too short or silent" -t 3000
+            rm -f "$RAW_FILE"
+            exit 1
+        fi
+        
+        notify-send "Whisper" "Processing audio..." -t 2000
+        
+        # Convert with aggressive amplification (60dB) + high-pass filter to remove rumble
+        # then normalize to ensure consistent levels
+        ffmpeg -f s16le -ar 16000 -ac 1 -i "$RAW_FILE" \
+            -af "highpass=f=80,volume=60dB,loudnorm=I=-16:TP=-1.5:LRA=11" \
+            -ar 16000 -ac 1 -y "$WAV_FILE" 2>/dev/null
+        
+        rm -f "$RAW_FILE"
+        
+        if [ -f "$WAV_FILE" ]; then
+            notify-send "Whisper" "Transcribing..." -t 2000
+            TRANSCRIPTION=$("$WHISPER_BIN" -m "$MODEL" -f "$WAV_FILE" --no-prints 2>/dev/null | sed -E 's/^\[[0-9:.]+ --> [0-9:.]+\]//' | tr -s ' ' | sed 's/^ *//' | head -c 1000)
+            if [ -n "$TRANSCRIPTION" ]; then
+                echo "$TRANSCRIPTION" | wl-copy
+                notify-send "Whisper" "Transcribed and copied to clipboard" -t 3000
+            else
+                notify-send "Whisper" "No speech detected. Tips:\n• Speak louder\n• Check mic isn't muted" -t 5000
+            fi
+            rm -f "$WAV_FILE"
+        fi
+    fi
+else
+    # Start recording
+    notify-send "Whisper" "Recording... Press Super+I to stop" -t 4000
+    rm -f "$RAW_FILE" "$WAV_FILE"
+    
+    # Record from specific mic source at 16kHz mono
+    parec --rate=16000 --channels=1 --format=s16le -d "$MIC_SOURCE" > "$RAW_FILE" &
+    echo $! > "$PIDFILE"
+fi

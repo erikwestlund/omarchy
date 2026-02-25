@@ -1,0 +1,145 @@
+---
+# Ollama install and deterministic model bootstrap
+
+- name: Check if ollama package exists in pacman repositories
+  ansible.builtin.command:
+    cmd: pacman -Si ollama
+  register: ollama_package_check
+  changed_when: false
+  failed_when: false
+
+- name: Fail with fallback instructions when ollama package is unavailable
+  ansible.builtin.fail:
+    msg: >-
+      Package 'ollama' is not available in configured pacman repositories.
+      Fallback: install from AUR ('yay -S ollama') or upstream installer
+      ('curl -fsSL https://ollama.com/install.sh | sh'), then rerun this role.
+  when: ollama_package_check.rc != 0
+
+- name: Install ollama package
+  become: true
+  community.general.pacman:
+    name: ollama
+    state: present
+    update_cache: true
+
+- name: Ensure systemd override directory exists for ollama
+  become: true
+  ansible.builtin.file:
+    path: /etc/systemd/system/ollama.service.d
+    state: directory
+    mode: '0755'
+
+- name: Configure ollama API bind host and port
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/ollama.service.d/override.conf
+    mode: '0644'
+    content: |
+      [Service]
+      Environment="OLLAMA_HOST={{ ollama_host }}:{{ ollama_port }}"
+  notify: Restart ollama
+
+- name: Ensure ollama service is enabled and running
+  become: true
+  ansible.builtin.systemd:
+    name: ollama
+    enabled: true
+    state: started
+    daemon_reload: true
+
+- name: Check if UFW is installed
+  ansible.builtin.command:
+    cmd: which ufw
+  register: ufw_installed
+  changed_when: false
+  failed_when: false
+
+- name: Allow Docker subnet access to Ollama API through UFW
+  become: true
+  community.general.ufw:
+    rule: allow
+    from_ip: "{{ ollama_docker_subnet }}"
+    port: "{{ ollama_port | string }}"
+    proto: tcp
+    comment: "allow-docker-ollama"
+  when:
+    - ollama_allow_docker_access | bool
+    - ufw_installed.rc == 0
+
+- name: Wait for ollama API to respond
+  ansible.builtin.uri:
+    url: "http://{{ ollama_host }}:{{ ollama_port }}/api/tags"
+    method: GET
+    status_code: 200
+  register: ollama_tags_before
+  retries: 10
+  delay: 2
+  until: ollama_tags_before.status == 200
+
+- name: Check whether configured model is already present
+  ansible.builtin.set_fact:
+    ollama_model_present: >-
+      {{
+        (ollama_tags_before.json.models | default([])
+        | selectattr('name', 'equalto', ollama_model)
+        | list
+        | length) > 0
+      }}
+
+- name: Pull configured ollama model when missing
+  ansible.builtin.command:
+    cmd: "ollama pull {{ ollama_model }}"
+  register: ollama_pull
+  changed_when: true
+  retries: "{{ ollama_pull_retries }}"
+  delay: "{{ ollama_pull_delay_seconds }}"
+  until: ollama_pull.rc == 0
+  when: not ollama_model_present
+
+- name: Validate ollama CLI version
+  ansible.builtin.command:
+    cmd: ollama --version
+  register: ollama_version
+  changed_when: false
+
+- name: Validate ollama model list
+  ansible.builtin.command:
+    cmd: ollama list
+  register: ollama_list
+  changed_when: false
+
+- name: Validate ollama service status
+  ansible.builtin.command:
+    cmd: systemctl is-active ollama
+  register: ollama_service_status
+  changed_when: false
+
+- name: Validate ollama tags endpoint
+  ansible.builtin.command:
+    cmd: "curl -s http://{{ ollama_host }}:{{ ollama_port }}/api/tags"
+  register: ollama_tags_raw
+  changed_when: false
+
+- name: Parse ollama tags output
+  ansible.builtin.set_fact:
+    ollama_tags_json: "{{ ollama_tags_raw.stdout | from_json }}"
+
+- name: Confirm configured model appears in ollama tags output
+  ansible.builtin.assert:
+    that:
+      - >-
+        (ollama_tags_json.models | default([])
+        | selectattr('name', 'equalto', ollama_model)
+        | list
+        | length) > 0
+    fail_msg: "Configured model {{ ollama_model }} was not found in Ollama tags output"
+
+- name: Ollama setup summary
+  ansible.builtin.debug:
+    msg:
+      - "Ollama version: {{ ollama_version.stdout }}"
+      - "Service status: {{ ollama_service_status.stdout }}"
+      - "Endpoint: http://{{ ollama_host }}:{{ ollama_port }}"
+      - "Model present: yes ({{ ollama_model }})"
+      - "Model pinning note: Ollama supports tag pinning; digest pinning is not exposed via pull syntax"

@@ -1,0 +1,9 @@
+---
+# Whisper.cpp speech-to-text setup
+# Usage:
+#   om --tags whisper
+#   Super+I to toggle voice transcription
+
+whisper_model: base.en
+whisper_models_dir: "{{ ansible_facts.env.HOME }}/.local/share/whisper/models"
+whisper_script_path: "{{ ansible_facts.env.HOME }}/.local/bin/whisper-toggle"

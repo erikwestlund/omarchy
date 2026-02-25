@@ -1,0 +1,85 @@
+---
+# OCR stack setup (OCRmyPDF + Tesseract + PaddleOCR CPU)
+# Usage:
+#   om --tags ocr
+
+- name: Install OCR system dependencies (pacman)
+  become: true
+  community.general.pacman:
+    name: "{{ ocr_pacman_packages + (ocr_extra_pacman_packages | default([])) }}"
+    state: present
+    update_cache: true
+
+- name: Ensure PaddleOCR venv parent directory exists
+  ansible.builtin.file:
+    path: "{{ ocr_paddle_venv_path | dirname }}"
+    state: directory
+    mode: '0755'
+
+- name: Ensure ocrmypdf venv parent directory exists
+  ansible.builtin.file:
+    path: "{{ ocr_ocrmypdf_venv_path | dirname }}"
+    state: directory
+    mode: '0755'
+
+- name: Install ocrmypdf Python package in venv
+  ansible.builtin.pip:
+    name: "{{ ocr_ocrmypdf_python_packages + (ocr_extra_ocrmypdf_python_packages | default([])) }}"
+    state: present
+    virtualenv: "{{ ocr_ocrmypdf_venv_path }}"
+    virtualenv_command: "python -m venv"
+
+- name: Ensure local bin directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.local/bin"
+    state: directory
+    mode: '0755'
+
+- name: Link ocrmypdf executable into local bin
+  ansible.builtin.file:
+    src: "{{ ocr_ocrmypdf_venv_path }}/bin/ocrmypdf"
+    dest: "{{ ansible_facts.env.HOME }}/.local/bin/ocrmypdf"
+    state: link
+    force: true
+
+- name: Install PaddleOCR Python packages in venv
+  ansible.builtin.pip:
+    name: "{{ ocr_paddle_python_packages + (ocr_extra_python_packages | default([])) }}"
+    state: present
+    virtualenv: "{{ ocr_paddle_venv_path }}"
+    virtualenv_command: "python -m venv"
+
+- name: Verify OCRmyPDF installation
+  ansible.builtin.command:
+    cmd: "{{ ansible_facts.env.HOME }}/.local/bin/ocrmypdf --version"
+  register: ocrmypdf_version
+  changed_when: false
+
+- name: Verify Tesseract installation
+  ansible.builtin.command:
+    cmd: tesseract --version
+  register: tesseract_version
+  changed_when: false
+
+- name: Verify Tesseract English language pack
+  ansible.builtin.command:
+    cmd: tesseract --list-langs
+  register: tesseract_languages
+  changed_when: false
+  failed_when: "'eng' not in tesseract_languages.stdout_lines"
+
+- name: Verify PaddleOCR import in venv
+  ansible.builtin.command:
+    cmd: "{{ ocr_paddle_venv_path }}/bin/python -c \"import paddleocr; print('ok')\""
+  register: paddleocr_import
+  changed_when: false
+  failed_when: "'ok' not in paddleocr_import.stdout"
+
+- name: OCR setup summary
+  ansible.builtin.debug:
+    msg:
+      - "OCRmyPDF: {{ ocrmypdf_version.stdout }}"
+      - "Tesseract: {{ tesseract_version.stdout_lines[0] }}"
+      - "Tesseract languages include: eng"
+      - "PaddleOCR import: {{ paddleocr_import.stdout }}"
+      - "PaddleOCR venv: {{ ocr_paddle_venv_path }}"

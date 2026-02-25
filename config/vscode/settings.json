@@ -1,3 +1,4 @@
 { "workbench.colorTheme": "null",
-    "workbench.iconTheme": "catppuccin-mocha"
+    "workbench.iconTheme": "catppuccin-mocha",
+    "editor.minimap.enabled": false
 }

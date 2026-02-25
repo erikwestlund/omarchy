@@ -2,6 +2,6 @@
 # Managed by Ansible - do not edit directly
 
 [Resolve]
-# Forward .test and local.*.lan queries to local dnsmasq
+# Forward .test and selected exact domains to local dnsmasq
 DNS=127.0.0.1:{{ dnsmasq_port }}
 Domains=~test {% for domain in local_lan_domains | default([]) %}~{{ domain }} {% endfor %}

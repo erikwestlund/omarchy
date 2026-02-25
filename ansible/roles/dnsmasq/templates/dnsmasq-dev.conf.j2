@@ -14,7 +14,7 @@ no-poll
 # Resolve all .test domains to localhost
 address=/.test/127.0.0.1
 
-# Local service domains (local.*.lan -> localhost)
+# Additional exact domains -> localhost
 {% for domain in local_lan_domains | default([]) %}
 address=/{{ domain }}/127.0.0.1
 {% endfor %}

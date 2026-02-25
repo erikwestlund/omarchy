@@ -15,3 +15,4 @@ dev_domains:
 # Local LAN domains pointing to localhost (for local services)
 local_lan_domains:
   - local.syncthing.lan
+  - erik-westlund.data-scientist.page

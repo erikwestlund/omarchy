@@ -1,0 +1,10 @@
+---
+# Ollama defaults (desktop-only role wiring in playbook)
+
+ollama_model: "qwen2.5:7b-instruct"
+ollama_host: "0.0.0.0"
+ollama_port: 11434
+ollama_pull_retries: 5
+ollama_pull_delay_seconds: 20
+ollama_allow_docker_access: true
+ollama_docker_subnet: "172.16.0.0/12"

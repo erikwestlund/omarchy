@@ -157,6 +157,28 @@ To install:
 om-v8   # or: om --tags v8 -e install_v8=true
 ```
 
+### Ollama (desktop only)
+
+Ollama is managed by the `ollama` role and only runs on the `desktop` host.
+
+- Run only this role:
+  `ANSIBLE_CONFIG=~/Omarchy/ansible/ansible.cfg ansible-playbook ~/Omarchy/ansible/playbook.yml -l desktop --tags ollama`
+- Change model (default: `qwen2.5:7b-instruct`):
+  `... --tags ollama -e ollama_model=qwen2.5:7b-instruct`
+- Defaults are in `ansible/roles/ollama/defaults/main.yml` (`ollama_model`, `ollama_host`, `ollama_port`, `ollama_pull_retries`, `ollama_pull_delay_seconds`, `ollama_allow_docker_access`, `ollama_docker_subnet`)
+- Default bind is `0.0.0.0` (reachable from localhost and host-networked containers)
+- Local check endpoint:
+  `http://127.0.0.1:11434`
+- Containers should use:
+  `http://host.docker.internal:11434`
+
+Quick checks:
+
+```bash
+ollama list
+curl http://127.0.0.1:11434/api/tags
+```
+
 ## Waybar
 
 Status bar config in `config/waybar/`. Files: `config.jsonc` (modules), `style.css` (styling), `scripts/` (custom modules).
