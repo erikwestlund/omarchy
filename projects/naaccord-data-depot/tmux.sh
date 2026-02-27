@@ -34,12 +34,12 @@ tmux new-window -t $SESSION:$TABNO -n "opencode-2" -c "$PROJECT_DIR"
 tmux send-keys -t $SESSION:$TABNO "tmux-opencode"
 TABNO=$((TABNO+1))
 
-# --- claude-1 (opus) ---
+# --- claude-1 ---
 tmux new-window -t $SESSION:$TABNO -n "claude-1" -c "$PROJECT_DIR"
 tmux send-keys -t $SESSION:$TABNO "tmux-claude"
 TABNO=$((TABNO+1))
 
-# --- claude-2 (opus) ---
+# --- claude-2 ---
 tmux new-window -t $SESSION:$TABNO -n "claude-2" -c "$PROJECT_DIR"
 tmux send-keys -t $SESSION:$TABNO "tmux-claude"
 TABNO=$((TABNO+1))
