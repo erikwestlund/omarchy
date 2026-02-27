@@ -9,12 +9,18 @@
     done
   changed_when: false
 
+- name: System upgrade with overwrite for split packages
+  become: true
+  ansible.builtin.command:
+    cmd: pacman -Syu --noconfirm --overwrite '/usr/lib/libgcc_s*' --overwrite '/usr/lib/libstdc++*' --overwrite '/usr/share/licenses/gcc-libs/*' --overwrite '/usr/share/locale/*/LC_MESSAGES/libstdc++.mo'
+  register: syu_result
+  changed_when: "'installing' in syu_result.stdout or 'upgrading' in syu_result.stdout"
+
 - name: Install pacman packages
   become: true
   community.general.pacman:
     name: "{{ pacman_packages + (extra_pacman_packages | default([])) }}"
     state: present
-    update_cache: true
   retries: 3
   delay: 5
   register: pacman_result

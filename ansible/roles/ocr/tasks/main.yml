@@ -10,6 +10,23 @@
     state: present
     update_cache: true
 
+- name: Install Python 3.13 for PaddleOCR compatibility
+  kewlfft.aur.aur:
+    name: python313
+    use: yay
+    state: present
+
+- name: Check PaddleOCR venv Python version
+  ansible.builtin.stat:
+    path: "{{ ocr_paddle_venv_path }}/bin/{{ ocr_paddle_python }}"
+  register: paddle_venv_python
+
+- name: Recreate PaddleOCR venv if using wrong Python version
+  ansible.builtin.file:
+    path: "{{ ocr_paddle_venv_path }}"
+    state: absent
+  when: not paddle_venv_python.stat.exists
+
 - name: Ensure PaddleOCR venv parent directory exists
   ansible.builtin.file:
     path: "{{ ocr_paddle_venv_path | dirname }}"
@@ -47,7 +64,7 @@
     name: "{{ ocr_paddle_python_packages + (ocr_extra_python_packages | default([])) }}"
     state: present
     virtualenv: "{{ ocr_paddle_venv_path }}"
-    virtualenv_command: "python -m venv"
+    virtualenv_command: "{{ ocr_paddle_python }} -m venv"
 
 - name: Verify OCRmyPDF installation
   ansible.builtin.command:
