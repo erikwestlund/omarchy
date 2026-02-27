@@ -5,21 +5,41 @@
 
 PROTECTED_CLASSES="teams|outlook"
 QUIT_MODE=0
+TEAMS_PROFILE="$HOME/.config/chromium-teams"
+OUTLOOK_PROFILE="$HOME/.config/chromium-outlook"
 
 if [[ "$1" == "--quit" ]]; then
     QUIT_MODE=1
 fi
 
+window_matches_profile() {
+    local pid="$1"
+    local profile="$2"
+
+    [[ "$pid" =~ ^[0-9]+$ ]] || return 1
+    [[ -r "/proc/$pid/cmdline" ]] || return 1
+
+    tr '\0' '\n' < "/proc/$pid/cmdline" | grep -Fxq -- "--user-data-dir=$profile"
+}
+
 active=$(hyprctl activewindow -j)
 class=$(echo "$active" | jq -r '.class // ""')
+pid=$(echo "$active" | jq -r '.pid // ""')
 
-if echo "$class" | grep -qiE "$PROTECTED_CLASSES"; then
+app=""
+if window_matches_profile "$pid" "$TEAMS_PROFILE" || echo "$class" | grep -qi "teams"; then
+    app="teams"
+elif window_matches_profile "$pid" "$OUTLOOK_PROFILE" || echo "$class" | grep -qi "outlook"; then
+    app="outlook"
+fi
+
+if [[ -n "$app" ]] || echo "$class" | grep -qiE "$PROTECTED_CLASSES"; then
     if [[ "$QUIT_MODE" -eq 1 ]]; then
         # Fully quit isolated webapp profiles so popups/child windows also close
-        if echo "$class" | grep -qi "teams"; then
-            pkill -f -- "--user-data-dir=$HOME/.config/chromium-teams"
-        elif echo "$class" | grep -qi "outlook"; then
-            pkill -f -- "--user-data-dir=$HOME/.config/chromium-outlook"
+        if [[ "$app" == "teams" ]]; then
+            pkill -f -- "--user-data-dir=$TEAMS_PROFILE"
+        elif [[ "$app" == "outlook" ]]; then
+            pkill -f -- "--user-data-dir=$OUTLOOK_PROFILE"
         fi
     else
         # Hide instead of closing to preserve auth/session state

@@ -4,6 +4,28 @@
 PROFILE="$HOME/.config/chromium-outlook"
 URL="https://outlook.office.com/mail"
 
+find_window_for_profile() {
+    local profile="$1"
+    local result=""
+
+    while IFS=$'\t' read -r address workspace pid; do
+        [[ "$pid" =~ ^[0-9]+$ ]] || continue
+        [[ -r "/proc/$pid/cmdline" ]] || continue
+
+        if tr '\0' '\n' < "/proc/$pid/cmdline" | grep -Fxq -- "--user-data-dir=$profile"; then
+            result="$address"$'\t'"$workspace"
+            break
+        fi
+    done < <(hyprctl clients -j | jq -r '.[] | "\(.address)\t\(.workspace.name // "")\t\(.pid // "")"')
+
+    if [[ -n "$result" ]]; then
+        printf '%s\n' "$result"
+        return 0
+    fi
+
+    return 1
+}
+
 # Find 1Password extension (latest version)
 ONEPASS_BASE="$HOME/.config/chromium/Default/Extensions/aeblfdkhhhdcdjpifhhbdiojplfjncoa"
 ONEPASS_EXT=""
@@ -14,7 +36,11 @@ if [[ -d "$ONEPASS_BASE" ]]; then
     fi
 fi
 
-window_info=$(hyprctl clients -j | jq -r '.[] | select(.class | test("outlook"; "i")) | "\(.address)\t\(.workspace.name // "")"' | head -1)
+window_info=$(find_window_for_profile "$PROFILE")
+
+if [[ -z "$window_info" ]]; then
+    window_info=$(hyprctl clients -j | jq -r '.[] | select((.class | test("outlook"; "i")) or (.title | test("outlook"; "i"))) | "\(.address)\t\(.workspace.name // "")"' | head -1)
+fi
 
 if [[ -n "$window_info" ]]; then
     window="${window_info%%$'\t'*}"

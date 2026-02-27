@@ -23,6 +23,16 @@ TABNO=1
 tmux new-session -d -s $SESSION -n "bash" -c "$PROJECT_DIR"
 TABNO=$((TABNO+1))
 
+# --- opencode-1 ---
+tmux new-window -t $SESSION:$TABNO -n "opencode-1" -c "$PROJECT_DIR"
+tmux send-keys -t $SESSION:$TABNO "tmux-opencode"
+TABNO=$((TABNO+1))
+
+# --- opencode-2 ---
+tmux new-window -t $SESSION:$TABNO -n "opencode-2" -c "$PROJECT_DIR"
+tmux send-keys -t $SESSION:$TABNO "tmux-opencode"
+TABNO=$((TABNO+1))
+
 # --- claude-1 (opus) ---
 tmux new-window -t $SESSION:$TABNO -n "claude-1" -c "$PROJECT_DIR"
 tmux send-keys -t $SESSION:$TABNO "tmux-claude"
@@ -31,21 +41,6 @@ TABNO=$((TABNO+1))
 # --- claude-2 (opus) ---
 tmux new-window -t $SESSION:$TABNO -n "claude-2" -c "$PROJECT_DIR"
 tmux send-keys -t $SESSION:$TABNO "tmux-claude"
-TABNO=$((TABNO+1))
-
-# --- opencode ---
-tmux new-window -t $SESSION:$TABNO -n "opencode" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "tmux-opencode"
-TABNO=$((TABNO+1))
-
-# --- codex (medium reasoning) ---
-tmux new-window -t $SESSION:$TABNO -n "codex" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "tmux-codex"
-TABNO=$((TABNO+1))
-
-# --- codex-gpt (high reasoning) ---
-tmux new-window -t $SESSION:$TABNO -n "codex-gpt" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "tmux-codex-gpt"
 TABNO=$((TABNO+1))
 
 # --- docker ---

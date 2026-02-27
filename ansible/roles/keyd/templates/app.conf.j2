@@ -3,7 +3,12 @@
 [chromium]
 meta.s = C-s
 meta.f = C-f
-meta.S-t = meta.S-t
+meta+shift.s = M-S-s
+meta+shift.f = M-S-f
+meta+shift.w = M-S-w
+meta+shift.t = M-S-t
+meta+shift.r = M-S-r
+meta+shift.q = M-S-q
 {% for shortcut in keyd_browser_shortcuts %}
 meta.{{ shortcut.key }} = {{ shortcut.action }}
 {% endfor %}
@@ -11,7 +16,12 @@ meta.{{ shortcut.key }} = {{ shortcut.action }}
 [chrome-*]
 meta.s = C-s
 meta.f = C-f
-meta.S-t = meta.S-t
+meta+shift.s = M-S-s
+meta+shift.f = M-S-f
+meta+shift.w = M-S-w
+meta+shift.t = M-S-t
+meta+shift.r = M-S-r
+meta+shift.q = M-S-q
 {% for shortcut in keyd_browser_shortcuts %}
 meta.{{ shortcut.key }} = {{ shortcut.action }}
 {% endfor %}
