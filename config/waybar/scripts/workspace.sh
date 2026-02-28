@@ -82,8 +82,8 @@ output_workspace() {
     # Escape quotes for JSON
     TOOLTIP=$(echo "$TOOLTIP" | sed 's/"/\\"/g')
 
-    # Output JSON for Waybar
-    echo "{\"text\": \"$TEXT\", \"class\": \"$CLASS\", \"tooltip\": \"$TOOLTIP\"}"
+    # Output JSON for Waybar; exit quietly if consumer pipe is closed
+    { printf '{"text": "%s", "class": "%s", "tooltip": "%s"}\n' "$TEXT" "$CLASS" "$TOOLTIP"; } 2>/dev/null || exit 0
 }
 
 # Initial output
