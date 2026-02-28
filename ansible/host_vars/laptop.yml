@@ -63,6 +63,9 @@ backup_enabled: true
 backup_calendar: "hourly"
 backup_battery_threshold: 40  # Skip backup below this battery %
 
+# Whisper transcription mic source (analog stereo - higher volume)
+whisper_mic_source: alsa_input.pci-0000_c1_00.6.analog-stereo
+
 # Additional laptop-specific packages (merged with all.yml)
 extra_pacman_packages:
   - power-profiles-daemon

@@ -7,3 +7,8 @@
 whisper_model: base.en
 whisper_models_dir: "{{ ansible_facts.env.HOME }}/.local/share/whisper/models"
 whisper_script_path: "{{ ansible_facts.env.HOME }}/.local/bin/whisper-toggle"
+
+# Audio input source - varies by hardware (see: pactl list sources short)
+# Desktop: alsa_input.usb-Insta360_Insta360_Link_2C-02.mono-fallback
+# Laptop:  alsa_input.pci-0000_c1_00.5-platform-acp-pdm-mach.stereo-fallback
+whisper_mic_source: alsa_input.pci-0000_c1_00.5-platform-acp-pdm-mach.stereo-fallback

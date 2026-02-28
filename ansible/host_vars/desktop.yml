@@ -56,6 +56,9 @@ snapper_enabled: true
 backup_enabled: true
 backup_calendar: "*:0/15"
 
+# Whisper transcription mic source (Insta360 webcam)
+whisper_mic_source: alsa_input.usb-Insta360_Insta360_Link_2C-02.mono-fallback
+
 # Additional desktop-specific packages (merged with all.yml)
 extra_pacman_packages:
   - ddcutil

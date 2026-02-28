@@ -8,8 +8,8 @@ RAW_FILE="/tmp/whisper-recording.raw"
 WAV_FILE="/tmp/whisper-recording.wav"
 WHISPER_BIN="{{ ansible_facts.env.HOME }}/.local/bin/whisper-cli"
 
-# Use Insta360 webcam mic specifically
-MIC_SOURCE="alsa_input.usb-Insta360_Insta360_Link_2C-02.mono-fallback"
+# Audio input source (configured via ansible)
+MIC_SOURCE="{{ whisper_mic_source }}"
 
 if [ -f "$PIDFILE" ]; then
     # Stop recording
