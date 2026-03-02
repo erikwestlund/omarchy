@@ -39,6 +39,19 @@
     state: directory
     mode: '0755'
 
+- name: Check OCRmyPDF venv pip health
+  ansible.builtin.command:
+    cmd: "{{ ocr_ocrmypdf_venv_path }}/bin/python -m pip --version"
+  register: ocrmypdf_venv_pip
+  changed_when: false
+  failed_when: false
+
+- name: Recreate OCRmyPDF venv if pip is broken
+  ansible.builtin.file:
+    path: "{{ ocr_ocrmypdf_venv_path }}"
+    state: absent
+  when: ocrmypdf_venv_pip.rc != 0
+
 - name: Install ocrmypdf Python package in venv
   ansible.builtin.pip:
     name: "{{ ocr_ocrmypdf_python_packages + (ocr_extra_ocrmypdf_python_packages | default([])) }}"
@@ -58,6 +71,19 @@
     dest: "{{ ansible_facts.env.HOME }}/.local/bin/ocrmypdf"
     state: link
     force: true
+
+- name: Check PaddleOCR venv pip health
+  ansible.builtin.command:
+    cmd: "{{ ocr_paddle_venv_path }}/bin/python -m pip --version"
+  register: paddle_venv_pip
+  changed_when: false
+  failed_when: false
+
+- name: Recreate PaddleOCR venv if pip is broken
+  ansible.builtin.file:
+    path: "{{ ocr_paddle_venv_path }}"
+    state: absent
+  when: paddle_venv_pip.rc != 0
 
 - name: Install PaddleOCR Python packages in venv
   ansible.builtin.pip:
