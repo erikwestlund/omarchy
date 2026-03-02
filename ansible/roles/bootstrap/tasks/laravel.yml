@@ -31,6 +31,12 @@
     include_meilisearch: false
   when: project.ports is not defined
 
+- name: Set Laravel PHP compatibility version
+  ansible.builtin.set_fact:
+    laravel_php_version: "{{ project.extras.php_version | default('8.2') }}"
+    laravel_node_version: "{{ project.extras.node_version | default('') }}"
+    laravel_db_connection: "{{ project.extras.db_connection | default('pgsql') }}"
+
 # === Copy secrets (only if not already in project) ===
 - name: Check if secrets directory exists
   ansible.builtin.stat:
@@ -74,6 +80,60 @@
     - secrets_dir_stat.stat.isdir
     - secrets_auth_stat.stat.exists
     - not project_auth_stat.stat.exists
+
+- name: Check if .npmrc exists in secrets
+  ansible.builtin.stat:
+    path: "{{ secrets_dir }}/.npmrc"
+  register: secrets_npmrc_stat
+
+- name: Copy .npmrc from secrets for private npm packages
+  ansible.builtin.copy:
+    src: "{{ secrets_dir }}/.npmrc"
+    dest: "{{ project_path }}/.npmrc"
+    mode: '0600'
+    remote_src: true
+    force: true
+  when:
+    - secrets_dir_stat.stat.exists
+    - secrets_dir_stat.stat.isdir
+    - secrets_npmrc_stat.stat.exists
+
+- name: Check if .env exists after secrets sync
+  ansible.builtin.stat:
+    path: "{{ project_path }}/.env"
+  register: project_env_after_sync
+
+# === Normalize Laravel .env for Dockerized bootstrap ===
+- name: Ensure .env has Docker-compatible Laravel defaults
+  ansible.builtin.lineinfile:
+    path: "{{ project_path }}/.env"
+    regexp: "^#?{{ item.key }}="
+    line: "{{ item.key }}={{ item.value }}"
+    create: false
+  loop:
+    - { key: "APP_NAME", value: '"{{ project_name | replace("-", " ") | title }}"' }
+    - { key: "DB_CONNECTION", value: "{{ laravel_db_connection }}" }
+    - { key: "DB_HOST", value: "{{ 'mysql' if laravel_db_connection == 'mysql' else 'postgres' }}" }
+    - { key: "DB_PORT", value: "{{ '3306' if laravel_db_connection == 'mysql' else '5432' }}" }
+    - { key: "DB_DATABASE", value: "{{ project_name | replace('-', '_') }}" }
+    - { key: "DB_USERNAME", value: "{{ project_name | replace('-', '_') }}" }
+    - { key: "DB_PASSWORD", value: "{{ project_name }}-dev-secret" }
+    - { key: "SESSION_DRIVER", value: "redis" }
+    - { key: "QUEUE_CONNECTION", value: "redis" }
+    - { key: "CACHE_DRIVER", value: "redis" }
+    - { key: "CACHE_STORE", value: "redis" }
+    - { key: "REDIS_HOST", value: "redis" }
+    - { key: "REDIS_PORT", value: "6379" }
+    - { key: "REDIS_PASSWORD", value: "null" }
+    - { key: "MAIL_MAILER", value: "smtp" }
+    - { key: "MAIL_HOST", value: "host.docker.internal" }
+    - { key: "MAIL_PORT", value: "1025" }
+    - { key: "MAIL_USERNAME", value: "null" }
+    - { key: "MAIL_PASSWORD", value: "null" }
+    - { key: "MAIL_ENCRYPTION", value: "null" }
+    - { key: "MAIL_FROM_NAME", value: '"${APP_NAME}"' }
+  when:
+    - project_env_after_sync.stat.exists
 
 # === Docker compose ===
 - name: Check if docker-compose.yml exists
@@ -249,20 +309,184 @@
     chdir: "{{ project_path }}"
   register: composer_install
   changed_when: "'Installing' in composer_install.stdout or 'Updating' in composer_install.stdout"
+  failed_when: false
   when: composer_json.stat.exists and docker_compose_for_build.stat.exists
+
+- name: Check for project Dockerfile before PHP version fallback
+  ansible.builtin.stat:
+    path: "{{ project_path }}/docker/php/Dockerfile"
+  register: php_dockerfile_stat
+  when:
+    - composer_json.stat.exists
+    - docker_compose_for_build.stat.exists
+    - composer_install.rc != 0
+    - "'your php version' in composer_install.stderr"
+    - "'does not satisfy that requirement' in composer_install.stderr"
+
+- name: Pin PHP image version in Dockerfile for Composer compatibility
+  ansible.builtin.lineinfile:
+    path: "{{ project_path }}/docker/php/Dockerfile"
+    regexp: '^FROM php:'
+    line: "FROM php:{{ laravel_php_version }}-fpm-alpine"
+  when:
+    - composer_json.stat.exists
+    - docker_compose_for_build.stat.exists
+    - composer_install.rc != 0
+    - "'your php version' in composer_install.stderr"
+    - "'does not satisfy that requirement' in composer_install.stderr"
+    - php_dockerfile_stat.stat.exists
+
+- name: Rebuild PHP container after Dockerfile PHP version pin
+  ansible.builtin.command:
+    cmd: docker compose build php
+    chdir: "{{ project_path }}"
+  register: php_rebuild
+  changed_when: true
+  when:
+    - composer_json.stat.exists
+    - docker_compose_for_build.stat.exists
+    - composer_install.rc != 0
+    - "'your php version' in composer_install.stderr"
+    - "'does not satisfy that requirement' in composer_install.stderr"
+    - php_dockerfile_stat.stat.exists
+
+- name: Restart PHP service after rebuild
+  ansible.builtin.command:
+    cmd: docker compose up -d --force-recreate php
+    chdir: "{{ project_path }}"
+  register: php_restart
+  changed_when: true
+  when:
+    - composer_json.stat.exists
+    - docker_compose_for_build.stat.exists
+    - composer_install.rc != 0
+    - "'your php version' in composer_install.stderr"
+    - "'does not satisfy that requirement' in composer_install.stderr"
+    - php_dockerfile_stat.stat.exists
+
+- name: Retry Composer install after PHP image adjustment
+  ansible.builtin.command:
+    cmd: docker compose exec -T php composer install --no-interaction --prefer-dist --optimize-autoloader
+    chdir: "{{ project_path }}"
+  register: composer_install_after_php_fix
+  changed_when: "'Installing' in composer_install_after_php_fix.stdout or 'Updating' in composer_install_after_php_fix.stdout"
+  when:
+    - composer_json.stat.exists
+    - docker_compose_for_build.stat.exists
+    - composer_install.rc != 0
+    - "'your php version' in composer_install.stderr"
+    - "'does not satisfy that requirement' in composer_install.stderr"
+    - php_dockerfile_stat.stat.exists
+
+- name: Fail if Composer install still fails
+  ansible.builtin.fail:
+    msg: >-
+      Composer install failed.
+      Strict install rc={{ composer_install.rc }}.
+      Retry rc={{ composer_install_after_php_fix.rc | default('not-run') }}.
+      Check project dependencies and lockfile compatibility.
+  when:
+    - composer_json.stat.exists
+    - docker_compose_for_build.stat.exists
+    - composer_install.rc != 0
+    - (composer_install_after_php_fix.rc | default(1)) != 0
 
 - name: Check if package.json exists
   ansible.builtin.stat:
     path: "{{ project_path }}/package.json"
   register: package_json
 
+- name: Ensure .nvmrc exists when node_version is configured
+  ansible.builtin.copy:
+    dest: "{{ project_path }}/.nvmrc"
+    content: "{{ laravel_node_version }}\n"
+    mode: '0644'
+    force: false
+  when:
+    - package_json.stat.exists
+    - laravel_node_version | length > 0
+
 - name: Install Node dependencies via npm (locally, not in container)
-  ansible.builtin.command:
-    cmd: npm install
+  ansible.builtin.shell:
+    cmd: |
+      if [ -s "$HOME/.nvm/nvm.sh" ]; then
+        . "$HOME/.nvm/nvm.sh"
+        if [ -f .nvmrc ]; then
+          nvm install >/dev/null
+          nvm use >/dev/null
+        fi
+        npm install
+      elif command -v mise >/dev/null 2>&1 && [ -f .nvmrc ]; then
+        NODE_VERSION="$(tr -d '[:space:]' < .nvmrc)"
+        mise exec "node@${NODE_VERSION}" -- npm install
+      else
+        npm install
+      fi
     chdir: "{{ project_path }}"
   register: npm_install
   changed_when: "'added' in npm_install.stdout"
+  failed_when: false
   when: package_json.stat.exists
+
+- name: Retry npm install without lifecycle scripts for legacy frontend stacks
+  ansible.builtin.shell:
+    cmd: |
+      if [ -s "$HOME/.nvm/nvm.sh" ]; then
+        . "$HOME/.nvm/nvm.sh"
+        if [ -f .nvmrc ]; then
+          nvm install >/dev/null
+          nvm use >/dev/null
+        fi
+        npm install --legacy-peer-deps --ignore-scripts
+      elif command -v mise >/dev/null 2>&1 && [ -f .nvmrc ]; then
+        NODE_VERSION="$(tr -d '[:space:]' < .nvmrc)"
+        mise exec "node@${NODE_VERSION}" -- npm install --legacy-peer-deps --ignore-scripts
+      else
+        npm install --legacy-peer-deps --ignore-scripts
+      fi
+    chdir: "{{ project_path }}"
+  register: npm_install_no_scripts
+  changed_when: "'added' in npm_install_no_scripts.stdout"
+  failed_when: false
+  when:
+    - package_json.stat.exists
+    - npm_install.rc != 0
+    - "'node-sass' in npm_install.stderr or 'node-gyp' in npm_install.stderr or 'python2' in npm_install.stderr or 'gyp ERR!' in npm_install.stderr"
+
+- name: Fail npm install when error is not npm auth/private registry
+  ansible.builtin.fail:
+    msg: >-
+      npm install failed (rc={{ npm_install.rc }}).
+      no-scripts retry rc={{ npm_install_no_scripts.rc | default('not-run') }}.
+      stderr={{ npm_install.stderr | default('') }}
+  when:
+    - package_json.stat.exists
+    - npm_install.rc != 0
+    - "'E401' not in npm_install.stderr"
+    - "'Access token expired or revoked' not in npm_install.stderr"
+    - "'@fortawesome/pro-' not in npm_install.stderr"
+    - (npm_install_no_scripts.rc | default(1)) != 0
+
+- name: Warn when npm installed without lifecycle scripts
+  ansible.builtin.debug:
+    msg: >-
+      npm install succeeded only with --ignore-scripts (legacy node-sass/tooling).
+      Frontend assets may require an older Node toolchain to build cleanly.
+  when:
+    - package_json.stat.exists
+    - npm_install.rc != 0
+    - (npm_install_no_scripts.rc | default(1)) == 0
+
+- name: Warn when npm auth is required for private packages
+  ansible.builtin.debug:
+    msg: >-
+      npm install requires private npm auth (token missing/expired).
+      Ensure ~/.secrets/{{ project_name }}/.npmrc has a valid token,
+      or run npm login in {{ project_path }} and re-run bootstrap.
+  when:
+    - package_json.stat.exists
+    - npm_install.rc != 0
+    - "'E401' in npm_install.stderr or 'Access token expired or revoked' in npm_install.stderr or '@fortawesome/pro-' in npm_install.stderr"
 
 # === Clear and rebuild caches ===
 - name: Clear Laravel config cache

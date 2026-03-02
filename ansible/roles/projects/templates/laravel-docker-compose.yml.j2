@@ -15,8 +15,13 @@ services:
     networks:
       - {{ project_name }}-network
     depends_on:
+{% if project_db_connection | default('pgsql') == 'mysql' %}
+      mysql:
+        condition: service_healthy
+{% else %}
       postgres:
         condition: service_healthy
+{% endif %}
       redis:
         condition: service_healthy
     environment:
@@ -39,6 +44,31 @@ services:
   # ===================
   # Data Services
   # ===================
+{% if project_db_connection | default('pgsql') == 'mysql' %}
+  mysql:
+    image: mysql/mysql-server:8.0
+    container_name: {{ project_name }}-mysql
+    restart: on-failure
+    environment:
+      MYSQL_ROOT_PASSWORD: {{ project_name }}-dev-secret
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: {{ project_name | replace('-', '_') }}
+      MYSQL_USER: {{ project_name | replace('-', '_') }}
+      MYSQL_PASSWORD: {{ project_name }}-dev-secret
+      MYSQL_ALLOW_EMPTY_PASSWORD: 0
+    volumes:
+      - {{ project_name }}-mysql-data:/var/lib/mysql
+    ports:
+      - "127.0.0.1:{{ mysql_port | default('3310') }}:3306"
+    networks:
+      - {{ project_name }}-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p{{ project_name }}-dev-secret"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+{% else %}
   postgres:
     image: postgres:17-alpine
     container_name: {{ project_name }}-postgres
@@ -61,6 +91,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+{% endif %}
 
   redis:
     image: redis:7-alpine
@@ -114,7 +145,11 @@ networks:
     driver: bridge
 
 volumes:
+{% if project_db_connection | default('pgsql') == 'mysql' %}
+  {{ project_name }}-mysql-data:
+{% else %}
   {{ project_name }}-postgres-data:
+{% endif %}
   {{ project_name }}-redis-data:
 {% if include_meilisearch | default(false) %}
   {{ project_name }}-meilisearch-data:

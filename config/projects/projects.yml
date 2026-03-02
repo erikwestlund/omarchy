@@ -199,3 +199,24 @@ projects:
     github_repo: erikwestlund/aitools
     path: ~/Projects/ai-tools-for-data-science-and-statistics
 # END PROJECT ai-tools-for-data-science-and-statistics
+# BEGIN PROJECT letsrun
+  - name: letsrun
+    alias: lr
+    type: laravel
+    path: ~/Projects/letsrun
+    github_repo: letsrun/letsrun.com
+    extras:
+      view_url: http://letsrun.test
+      php_version: "8.2"
+      node_version: "13"
+      db_connection: mysql
+    ports:
+      vite: 5179
+      nginx: 8034
+      mysql: 3311
+      redis: 6395
+      minio_api: 9015
+      minio_console: 9016
+      mailpit_smtp: 1025
+      mailpit_web: 8025
+# END PROJECT letsrun

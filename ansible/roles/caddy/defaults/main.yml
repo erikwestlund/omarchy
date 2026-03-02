@@ -23,6 +23,9 @@ dev_sites:
     port: 8031
   - domain: wordlegroup.test
     port: 8033
+  - domain: letsrun.test
+    port: 8034
+    wildcard: true
   # Local services
   - domain: local.syncthing.lan
     port: 8384

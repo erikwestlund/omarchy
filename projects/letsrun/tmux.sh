@@ -1,12 +1,8 @@
 #!/bin/bash
-# Tmux session for {{ project_name }} (laravel)
+# Tmux session for letsrun (laravel)
 
-SESSION="{{ project_alias }}"
-{% if project_path | length > 0 %}
-PROJECT_DIR="{{ project_path }}"
-{% else %}
-PROJECT_DIR="$HOME/Omarchy/projects/{{ project_name }}"
-{% endif %}
+SESSION="lr"
+PROJECT_DIR="/home/erik/Projects/letsrun"
 
 # Check if session already exists
 tmux has-session -t $SESSION 2>/dev/null
@@ -63,7 +59,7 @@ TABNO=$((TABNO+1))
 
 # --- tinker ---
 tmux new-window -t $SESSION:$TABNO -n "tinker" -c "$PROJECT_DIR"
-tmux send-keys -t $SESSION:$TABNO "docker exec -it {{ project_name }}-php php artisan tinker" C-m
+tmux send-keys -t $SESSION:$TABNO "docker exec -it letsrun-php php artisan tinker" C-m
 TABNO=$((TABNO+1))
 
 # --- project ---

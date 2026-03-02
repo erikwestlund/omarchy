@@ -615,6 +615,19 @@ alias vsaitools="code ~/Omarchy/projects/ai-tools-for-data-science-and-statistic
 alias nvaitools="(cd /home/erik/Projects/ai-tools-for-data-science-and-statistics && nvim .)"
 alias paitools="/usr/share/positron/bin/positron ~/Omarchy/projects/ai-tools-for-data-science-and-statistics/ai-tools-for-data-science-and-statistics.code-workspace"
 # END PROJECT ai-tools-for-data-science-and-statistics
+# BEGIN PROJECT letsrun
+alias llr="~/Omarchy/projects/letsrun/launch"
+alias klr="~/Omarchy/projects/letsrun/kill"
+alias tmlr="~/Omarchy/projects/letsrun/tmux.sh"
+alias blr="~/Omarchy/projects/letsrun/bootstrap"
+alias pmlr="cd ~/Omarchy/projects/letsrun"
+alias lr="cd /home/erik/Projects/letsrun"
+alias vslr="code ~/Omarchy/projects/letsrun/letsrun.code-workspace"
+alias nvlr="(cd /home/erik/Projects/letsrun && nvim .)"
+alias plr="/usr/share/positron/bin/positron ~/Omarchy/projects/letsrun/letsrun.code-workspace"
+alias dlr="(cd /home/erik/Projects/letsrun && docker compose up -d)"
+alias ddlr="(cd /home/erik/Projects/letsrun && docker compose down)"
+# END PROJECT letsrun
 # Auto-generated project aliases
 
 # Sync R2 media to local minio for better-shoes dev
