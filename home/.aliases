@@ -166,7 +166,7 @@ alias pumpitup="pamixer --set-volume 100"
 
 # Waybar
 alias waybar-start="waybar &"
-alias waybar-restart="pkill waybar; waybar &"
+alias waybar-restart="pkill waybar; nohup waybar >/dev/null 2>&1 & disown"
 
 # keyd (keyboard remapping)
 restart-keyd() {
