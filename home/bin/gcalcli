@@ -1,0 +1,8 @@
+#!/bin/bash
+set -euo pipefail
+
+if [[ -x "$HOME/.local/bin/gcalcli" ]]; then
+    exec "$HOME/.local/bin/gcalcli" "$@"
+fi
+
+exec /usr/bin/gcalcli "$@"

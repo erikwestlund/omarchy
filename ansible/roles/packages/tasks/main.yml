@@ -61,6 +61,19 @@
   loop: "{{ npm_global_packages | default([]) }}"
   when: npm_global_packages is defined and npm_global_packages | length > 0
 
+- name: Ensure pipx path is configured
+  ansible.builtin.command:
+    cmd: pipx ensurepath
+  register: pipx_ensurepath
+  changed_when: "'added' in pipx_ensurepath.stdout or 'Success' in pipx_ensurepath.stdout"
+  when: "'gcalcli' in (pacman_packages + (extra_pacman_packages | default([])))"
+
+- name: Install gcalcli with pipx
+  community.general.pipx:
+    name: gcalcli
+    state: latest
+  when: "'gcalcli' in (pacman_packages + (extra_pacman_packages | default([])))"
+
 - name: Set up NVM directory
   ansible.builtin.file:
     path: "{{ ansible_facts.env.HOME }}/.nvm"

@@ -179,6 +179,7 @@ aur_packages:
   # Calendar
   - morgen-bin
   - gcalcli
+  - python-pipx
 
   # Benchmarking
   - geekbench
@@ -322,4 +323,3 @@ remmina_profiles: []
 
 # Remmina desktop launchers
 remmina_desktops: []
-

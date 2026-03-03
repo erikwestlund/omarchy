@@ -2,8 +2,13 @@
 # Sync agenda to cache file
 
 CACHE_FILE="$HOME/.cache/agenda"
+GCALCLI_BIN="$HOME/.bin/gcalcli"
 
-gcalcli agenda \
+if [[ ! -x "$GCALCLI_BIN" ]]; then
+    GCALCLI_BIN="/usr/bin/gcalcli"
+fi
+
+"$GCALCLI_BIN" agenda \
     --calendar "Family" \
     --calendar "JHU" \
     --calendar "Personal" \
