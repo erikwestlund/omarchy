@@ -37,9 +37,11 @@ if [[ -n "$app" ]] || echo "$class" | grep -qiE "$PROTECTED_CLASSES"; then
     if [[ "$QUIT_MODE" -eq 1 ]]; then
         # Fully quit isolated webapp profiles so popups/child windows also close
         if [[ "$app" == "teams" ]]; then
-            pkill -f -- "--user-data-dir=$TEAMS_PROFILE"
+            pkill -f -- "--user-data-dir=$TEAMS_PROFILE" || hyprctl dispatch killactive
         elif [[ "$app" == "outlook" ]]; then
-            pkill -f -- "--user-data-dir=$OUTLOOK_PROFILE"
+            pkill -f -- "--user-data-dir=$OUTLOOK_PROFILE" || hyprctl dispatch killactive
+        else
+            hyprctl dispatch killactive
         fi
     else
         # Hide instead of closing to preserve auth/session state
