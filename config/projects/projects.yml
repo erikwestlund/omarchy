@@ -215,7 +215,7 @@ projects:
         - wordpress
         - db17058c
     ports:
-      vite: 5179
+      vite: 5179  # avoid 5173 conflicts
       nginx: 8034
       mysql: 3311
       redis: 6395

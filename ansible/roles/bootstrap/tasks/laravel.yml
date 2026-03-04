@@ -5,6 +5,7 @@
 # Supports both postgres and mysql port keys
 - name: Set Laravel port defaults
   ansible.builtin.set_fact:
+    vite_port: "{{ project.ports.vite | default(5173) }}"
     nginx_port: "{{ project.ports.nginx | default(8010) }}"
     postgres_port: "{{ project.ports.postgres | default(project.ports.mysql | default(5440)) }}"
     mysql_port: "{{ project.ports.mysql | default(project.ports.postgres | default(3306)) }}"
@@ -19,6 +20,7 @@
 
 - name: Set Laravel port defaults (no ports defined)
   ansible.builtin.set_fact:
+    vite_port: 5173
     nginx_port: 8010
     postgres_port: 5440
     mysql_port: 3306
@@ -140,6 +142,7 @@
     - { key: "MAIL_PASSWORD", value: "null" }
     - { key: "MAIL_ENCRYPTION", value: "null" }
     - { key: "MAIL_FROM_NAME", value: '"${APP_NAME}"' }
+    - { key: "VITE_PORT", value: "{{ vite_port }}" }
   when:
     - project_env_after_sync.stat.exists
 
