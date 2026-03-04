@@ -210,6 +210,10 @@ projects:
       php_version: "8.2"
       node_version: "13"
       db_connection: mysql
+      mysql_additional_databases:
+        - letsrun_com
+        - wordpress
+        - db17058c
     ports:
       vite: 5179
       nginx: 8034

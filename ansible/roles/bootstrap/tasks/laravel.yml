@@ -36,6 +36,14 @@
     laravel_php_version: "{{ project.extras.php_version | default('8.2') }}"
     laravel_node_version: "{{ project.extras.node_version | default('') }}"
     laravel_db_connection: "{{ project.extras.db_connection | default('pgsql') }}"
+    laravel_mysql_username: "{{ project_name | replace('-', '_') }}"
+    laravel_mysql_additional_databases: >-
+      {{
+        (project.extras.mysql_additional_databases | default([]))
+        | unique
+        | reject('equalto', project_name | replace('-', '_'))
+        | list
+      }}
 
 # === Copy secrets (only if not already in project) ===
 - name: Check if secrets directory exists
@@ -378,6 +386,27 @@
     - docker_compose_for_build.stat.exists
     - php_container_check.stdout | length == 0
     - (docker_up.rc | default(0)) != 0
+
+- name: Ensure additional MySQL databases are created and granted
+  ansible.builtin.command:
+    argv:
+      - docker
+      - compose
+      - exec
+      - -T
+      - mysql
+      - mysql
+      - -uroot
+      - "-p{{ project_name }}-dev-secret"
+      - -e
+      - "CREATE DATABASE IF NOT EXISTS `{{ item }}`; GRANT ALL PRIVILEGES ON `{{ item }}`.* TO '{{ laravel_mysql_username }}'@'%';"
+    chdir: "{{ project_path }}"
+  loop: "{{ laravel_mysql_additional_databases }}"
+  changed_when: false
+  when:
+    - docker_compose_for_build.stat.exists
+    - laravel_db_connection == 'mysql'
+    - laravel_mysql_additional_databases | length > 0
 
 # === Fix storage permissions ===
 # Docker containers may create files as root, fix ownership first
