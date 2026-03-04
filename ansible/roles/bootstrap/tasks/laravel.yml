@@ -141,12 +141,28 @@
     path: "{{ project_path }}/docker-compose.yml"
   register: docker_compose_stat
 
+- name: Read existing docker-compose.yml when present
+  ansible.builtin.slurp:
+    path: "{{ project_path }}/docker-compose.yml"
+  register: docker_compose_existing
+  when: docker_compose_stat.stat.exists
+
+- name: Detect legacy Laravel Sail docker-compose config
+  ansible.builtin.set_fact:
+    docker_compose_uses_sail_runtime: >-
+      {{
+        (docker_compose_existing.content | b64decode)
+        is search('vendor/laravel/sail/runtimes')
+      }}
+  when: docker_compose_stat.stat.exists
+
 - name: Generate docker-compose.yml
   ansible.builtin.template:
     src: laravel-docker-compose.yml.j2
     dest: "{{ project_path }}/docker-compose.yml"
     mode: '0644'
-  when: not docker_compose_stat.stat.exists
+  when:
+    - not docker_compose_stat.stat.exists or (docker_compose_uses_sail_runtime | default(false))
 
 # === Copy Docker configs from reference project ===
 - name: Check if reference project has Docker configs
@@ -216,13 +232,119 @@
     path: "{{ project_path }}/docker-compose.yml"
   register: docker_compose_for_build
 
+- name: Check if composer.json exists before Docker build
+  ansible.builtin.stat:
+    path: "{{ project_path }}/composer.json"
+  register: composer_json_prebuild
+
+- name: Check if Laravel Sail runtime exists before Docker build
+  ansible.builtin.stat:
+    path: "{{ project_path }}/vendor/laravel/sail/runtimes/{{ laravel_php_version }}"
+  register: sail_runtime_prebuild
+  when:
+    - composer_json_prebuild.stat.exists
+    - docker_compose_uses_sail_runtime | default(false)
+
+- name: Install Composer dependencies locally when Sail runtime is missing
+  ansible.builtin.command:
+    cmd: composer install --no-interaction --prefer-dist --no-progress
+    chdir: "{{ project_path }}"
+  register: composer_install_local
+  changed_when: "'Installing' in composer_install_local.stdout or 'Updating' in composer_install_local.stdout"
+  failed_when: false
+  when:
+    - docker_compose_for_build.stat.exists
+    - composer_json_prebuild.stat.exists
+    - docker_compose_uses_sail_runtime | default(false)
+    - not sail_runtime_prebuild.stat.exists
+
+- name: Re-check Laravel Sail runtime after local Composer install
+  ansible.builtin.stat:
+    path: "{{ project_path }}/vendor/laravel/sail/runtimes/{{ laravel_php_version }}"
+  register: sail_runtime_after_local_composer
+  when:
+    - docker_compose_for_build.stat.exists
+    - composer_json_prebuild.stat.exists
+    - docker_compose_uses_sail_runtime | default(false)
+
+- name: Fail when Laravel Sail runtime is still missing before Docker build
+  ansible.builtin.fail:
+    msg: >-
+      Docker build requires Laravel Sail runtime at
+      {{ project_path }}/vendor/laravel/sail/runtimes/{{ laravel_php_version }},
+      but it is still missing after local composer install.
+      Local composer rc={{ composer_install_local.rc | default('not-run') }}.
+      stderr={{ composer_install_local.stderr | default('') }}
+  when:
+    - docker_compose_for_build.stat.exists
+    - composer_json_prebuild.stat.exists
+    - docker_compose_uses_sail_runtime | default(false)
+    - not sail_runtime_after_local_composer.stat.exists
+
 - name: Build Docker images
   ansible.builtin.command:
     cmd: docker compose build
     chdir: "{{ project_path }}"
   register: docker_build
   changed_when: "'Building' in docker_build.stdout or 'building' in docker_build.stderr"
+  failed_when: false
   when: docker_compose_for_build.stat.exists
+
+- name: Determine if Docker build failed due to missing Sail runtime
+  ansible.builtin.set_fact:
+    docker_build_missing_sail_runtime: >-
+      {{
+        docker_build.rc != 0 and
+        'vendor/laravel/sail/runtimes' in (docker_build.stderr | default(''))
+      }}
+  when: docker_compose_for_build.stat.exists
+
+- name: Retry Composer locally when Docker build fails from missing Sail runtime
+  ansible.builtin.command:
+    cmd: composer install --no-interaction --prefer-dist --no-progress
+    chdir: "{{ project_path }}"
+  register: composer_install_after_build_error
+  changed_when: "'Installing' in composer_install_after_build_error.stdout or 'Updating' in composer_install_after_build_error.stdout"
+  failed_when: false
+  when:
+    - docker_compose_for_build.stat.exists
+    - docker_build_missing_sail_runtime | default(false)
+    - composer_json_prebuild.stat.exists
+
+- name: Rebuild Docker images after Composer install fallback
+  ansible.builtin.command:
+    cmd: docker compose build
+    chdir: "{{ project_path }}"
+  register: docker_build_retry
+  changed_when: "'Building' in docker_build_retry.stdout or 'building' in docker_build_retry.stderr"
+  failed_when: false
+  when:
+    - docker_compose_for_build.stat.exists
+    - docker_build_missing_sail_runtime | default(false)
+    - composer_json_prebuild.stat.exists
+
+- name: Fail when Docker build still fails after Composer fallback
+  ansible.builtin.fail:
+    msg: >-
+      Docker build failed after Composer fallback.
+      First build rc={{ docker_build.rc }}.
+      Composer fallback rc={{ composer_install_after_build_error.rc | default('not-run') }}.
+      Retry build rc={{ docker_build_retry.rc | default('not-run') }}.
+      Retry stderr={{ docker_build_retry.stderr | default(docker_build.stderr | default('')) }}
+  when:
+    - docker_compose_for_build.stat.exists
+    - docker_build_missing_sail_runtime | default(false)
+    - (docker_build_retry.rc | default(1)) != 0
+
+- name: Fail when Docker build fails for non-Sail reason
+  ansible.builtin.fail:
+    msg: >-
+      Docker build failed (rc={{ docker_build.rc }}):
+      {{ docker_build.stderr | default('no stderr') }}
+  when:
+    - docker_compose_for_build.stat.exists
+    - docker_build.rc != 0
+    - not (docker_build_missing_sail_runtime | default(false))
 
 # === Start Docker services ===
 - name: Check if main container is running
@@ -237,10 +359,25 @@
     cmd: docker compose up -d
     chdir: "{{ project_path }}"
   register: docker_up
+  retries: 3
+  delay: 5
+  until: docker_up.rc == 0
+  failed_when: false
   changed_when: "'Started' in docker_up.stderr or 'Creating' in docker_up.stderr"
   when:
     - docker_compose_for_build.stat.exists
     - php_container_check.stdout | length == 0
+
+- name: Fail when Docker services cannot start
+  ansible.builtin.fail:
+    msg: >-
+      docker compose up -d failed (rc={{ docker_up.rc | default('not-run') }})
+      in {{ project_path }}.
+      stderr={{ docker_up.stderr | default('') }}
+  when:
+    - docker_compose_for_build.stat.exists
+    - php_container_check.stdout | length == 0
+    - (docker_up.rc | default(0)) != 0
 
 # === Fix storage permissions ===
 # Docker containers may create files as root, fix ownership first

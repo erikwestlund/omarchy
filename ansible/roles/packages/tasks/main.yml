@@ -66,13 +66,17 @@
     cmd: pipx ensurepath
   register: pipx_ensurepath
   changed_when: "'added' in pipx_ensurepath.stdout or 'Success' in pipx_ensurepath.stdout"
-  when: "'gcalcli' in (pacman_packages + (extra_pacman_packages | default([])))"
+  when: >-
+    'gcalcli' in ((pacman_packages | default([])) + (extra_pacman_packages | default([])) +
+    (aur_packages | default([])) + (extra_aur_packages | default([])))
 
 - name: Install gcalcli with pipx
   community.general.pipx:
     name: gcalcli
     state: latest
-  when: "'gcalcli' in (pacman_packages + (extra_pacman_packages | default([])))"
+  when: >-
+    'gcalcli' in ((pacman_packages | default([])) + (extra_pacman_packages | default([])) +
+    (aur_packages | default([])) + (extra_aur_packages | default([])))
 
 - name: Set up NVM directory
   ansible.builtin.file:
