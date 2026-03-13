@@ -1,7 +1,8 @@
 [Default Applications]
 # Text/code files
-text/plain=nvim.desktop
-text/english=nvim.desktop
+text/plain=dev.zed.Zed.desktop
+text/markdown=dev.zed.Zed.desktop
+text/english=dev.zed.Zed.desktop
 text/x-makefile=nvim.desktop
 text/x-c++hdr=nvim.desktop
 text/x-c++src=nvim.desktop
@@ -64,9 +65,9 @@ application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=onlyoffice-des
 application/vnd.ms-powerpoint=onlyoffice-desktopeditors.desktop
 application/vnd.openxmlformats-officedocument.presentationml.presentation=onlyoffice-desktopeditors.desktop
 
-# CSV/TSV - OnlyOffice
-text/csv=onlyoffice-desktopeditors.desktop
-application/csv=onlyoffice-desktopeditors.desktop
+# CSV/TSV
+text/csv=dev.zed.Zed.desktop
+application/csv=dev.zed.Zed.desktop
 text/tab-separated-values=onlyoffice-desktopeditors.desktop
 
 # OpenDocument formats - OnlyOffice

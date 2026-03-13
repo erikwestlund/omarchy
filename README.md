@@ -115,7 +115,7 @@ Packages and apps managed by ansible. See `ansible/group_vars/all.yml` for full 
 | Media | vlc, isoimagewriter |
 | Gaming | steam, lutris, gnutls, lib32-gnutls |
 | Desktop | flameshot, cliphist, wl-clipboard, wtype, bluez-utils, darkman, geoclue, wev |
-| Virtualization | libvirt, qemu-full, virt-manager, virt-viewer, dnsmasq, bridge-utils, edk2-ovmf, swtpm, freerdp, remmina, libvncserver, openbsd-netcat |
+| Virtualization | libvirt, qemu-full, virt-manager, virt-viewer, dnsmasq, bridge-utils, edk2-ovmf, swtpm, freerdp, openbsd-netcat |
 
 ### Installed via AUR
 
@@ -141,7 +141,7 @@ Installed as Chromium desktop entries: Outlook, Outlook Calendar (Day/Week views
 
 **Packages**: alacritty, kdenlive, signal-desktop, xournalpp
 
-**Web apps**: Figma, Fizzy, Google Contacts, Google Messages, Google Photos, Google Maps, HEY, WhatsApp, X
+**Web apps**: Figma, Fizzy, Google Contacts, Google Messages, Google Photos, Google Maps, HEY, X
 
 ### Optional (not installed by default)
 
@@ -314,7 +314,6 @@ After running ansible, these are available (defined in `home/.aliases`):
 | `om-chromium` | Deploy Chromium config |
 | `om-snapper` | Deploy Snapper snapshots |
 | `om-cleanup` | Run cleanup tasks |
-| `om-remotes` | Deploy remote configs |
 | `om-dnsmasq` | Deploy dnsmasq |
 | `om-caddy` | Deploy Caddy |
 | `om-vpn` | Deploy VPN config |

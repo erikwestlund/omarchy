@@ -275,6 +275,21 @@
       Categories=Network;
       StartupWMClass=chromium-facebook
 
+- name: Update WhatsApp desktop entry
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/whatsapp.desktop"
+    mode: '0644'
+    content: |
+      [Desktop Entry]
+      Name=WhatsApp
+      Comment=WhatsApp Messenger
+      Exec={{ ansible_facts.env.HOME }}/.bin/whatsapp-launcher
+      Terminal=false
+      Type=Application
+      Icon={{ ansible_facts.env.HOME }}/.local/share/icons/whatsapp.svg
+      Categories=Network;InstantMessaging;
+      StartupWMClass=chromium-whatsapp
+
 - name: Update Instagram desktop entry
   ansible.builtin.copy:
     dest: "{{ ansible_facts.env.HOME }}/.local/share/applications/instagram.desktop"
@@ -319,10 +334,12 @@
       - chromium-amazon
       - chromium-substack
       - chromium-cloudflare
+      - chromium-openclaw
       - chromium-office
       - chromium-unifi
       - chromium-wsj
       - chromium-facebook
+      - chromium-whatsapp
       - chromium-instagram
       - chromium-hetzner
       - chromium-pihole

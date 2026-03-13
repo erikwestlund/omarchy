@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=OpenClaw
+Comment=OpenClaw Control
+GenericName=Web App
+Exec=/home/erik/.bin/openclaw-launcher
+Icon=/home/erik/.local/share/icons/openclaw.svg
+Type=Application
+StartupNotify=false
+StartupWMClass=chromium-openclaw
+Categories=Network;Utility;
+Keywords=openclaw;claw;control;

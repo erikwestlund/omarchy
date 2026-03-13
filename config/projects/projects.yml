@@ -224,3 +224,10 @@ projects:
       mailpit_smtp: 1025
       mailpit_web: 8025
 # END PROJECT letsrun
+# BEGIN PROJECT letsrun-forge
+  - name: letsrun-forge
+    alias: lrf
+    type: utility
+    path: ~/Projects/letsrun-forge
+    github_repo: letsrun/forge
+# END PROJECT letsrun-forge

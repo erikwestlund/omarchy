@@ -52,7 +52,6 @@ alias om-printer='om --tags printer'
 alias om-chromium='om --tags chromium'
 alias om-snapper='om --tags snapper'
 alias om-cleanup='om --tags cleanup'
-alias om-remotes='om --tags remotes'
 alias om-dnsmasq='om --tags dnsmasq'
 alias om-caddy='om --tags caddy'
 alias om-vpn='om --tags pulsesecure'
@@ -173,7 +172,7 @@ restart-keyd() {
     sudo systemctl restart keyd
     pkill -f keyd-application-mapper
     sleep 1
-    nohup keyd-application-mapper &>/dev/null &
+    nohup /usr/bin/keyd-application-mapper -d &>/dev/null &
     echo "keyd and keyd-application-mapper restarted"
 }
 
@@ -628,6 +627,17 @@ alias plr="/usr/share/positron/bin/positron ~/Omarchy/projects/letsrun/letsrun.c
 alias dlr="(cd /home/erik/Projects/letsrun && docker compose up -d)"
 alias ddlr="(cd /home/erik/Projects/letsrun && docker compose down)"
 # END PROJECT letsrun
+# BEGIN PROJECT letsrun-forge
+alias llrf="~/Omarchy/projects/letsrun-forge/launch"
+alias klrf="~/Omarchy/projects/letsrun-forge/kill"
+alias tmlrf="~/Omarchy/projects/letsrun-forge/tmux.sh"
+alias blrf="~/Omarchy/projects/letsrun-forge/bootstrap"
+alias pmlrf="cd ~/Omarchy/projects/letsrun-forge"
+alias lrf="cd /home/erik/Projects/letsrun-forge"
+alias vslrf="code ~/Omarchy/projects/letsrun-forge/letsrun-forge.code-workspace"
+alias nvlrf="(cd /home/erik/Projects/letsrun-forge && nvim .)"
+alias plrf="/usr/share/positron/bin/positron ~/Omarchy/projects/letsrun-forge/letsrun-forge.code-workspace"
+# END PROJECT letsrun-forge
 # Auto-generated project aliases
 
 # Sync R2 media to local minio for better-shoes dev

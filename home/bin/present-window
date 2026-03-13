@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/present-window"
+STATE_FILE="$STATE_DIR/state"
+PRESENT_WORKSPACE="name:Present"
+
+usage() {
+    printf 'Usage: %s <on|off|toggle|status>\n' "${0##*/}"
+}
+
+have_state() {
+    [[ -f "$STATE_FILE" ]]
+}
+
+active_window_json() {
+    hyprctl activewindow -j
+}
+
+window_exists() {
+    local address="$1"
+    hyprctl clients -j | jq -e --arg address "$address" '.[] | select(.address == $address)' >/dev/null
+}
+
+save_state() {
+    local address="$1"
+    local window_workspace="$2"
+    local return_workspace="$3"
+    local toggled_fullscreen="$4"
+
+    mkdir -p "$STATE_DIR"
+    cat > "$STATE_FILE" <<EOF
+address=$address
+window_workspace=$window_workspace
+return_workspace=$return_workspace
+toggled_fullscreen=$toggled_fullscreen
+EOF
+}
+
+load_state() {
+    if ! have_state; then
+        return 1
+    fi
+
+    # shellcheck disable=SC1090
+    source "$STATE_FILE"
+}
+
+clear_state() {
+    rm -f "$STATE_FILE"
+}
+
+present_on() {
+    local active_json address window_workspace return_workspace fullscreen toggled_fullscreen
+
+    active_json=$(active_window_json)
+    address=$(printf '%s' "$active_json" | jq -r '.address // empty')
+    window_workspace=$(printf '%s' "$active_json" | jq -r '.workspace.name // empty')
+    return_workspace=$(hyprctl activeworkspace -j | jq -r '.name // empty')
+    fullscreen=$(printf '%s' "$active_json" | jq -r '.fullscreen // 0')
+
+    if [[ -z "$address" || "$address" == "0x0" || -z "$window_workspace" ]]; then
+        printf 'No active window to present.\n' >&2
+        exit 1
+    fi
+
+    toggled_fullscreen=0
+    save_state "$address" "$window_workspace" "$return_workspace" "$toggled_fullscreen"
+
+    hyprctl dispatch movetoworkspacesilent "$PRESENT_WORKSPACE,address:$address" >/dev/null
+    hyprctl dispatch workspace "$PRESENT_WORKSPACE" >/dev/null
+    hyprctl dispatch focuswindow "address:$address" >/dev/null
+
+    if [[ "$fullscreen" == "0" ]]; then
+        hyprctl dispatch fullscreen 0 >/dev/null
+        toggled_fullscreen=1
+        save_state "$address" "$window_workspace" "$return_workspace" "$toggled_fullscreen"
+    fi
+
+    printf 'Presented active window on workspace Present. Share the full screen for privacy.\n'
+}
+
+present_off() {
+    if ! load_state; then
+        printf 'No active presentation state.\n' >&2
+        exit 1
+    fi
+
+    if ! window_exists "$address"; then
+        clear_state
+        printf 'Presented window no longer exists; cleared saved state.\n' >&2
+        exit 1
+    fi
+
+    hyprctl dispatch workspace "$PRESENT_WORKSPACE" >/dev/null || true
+    hyprctl dispatch focuswindow "address:$address" >/dev/null || true
+
+    if [[ "${toggled_fullscreen:-0}" == "1" ]]; then
+        hyprctl dispatch fullscreen 0 >/dev/null || true
+    fi
+
+    hyprctl dispatch movetoworkspacesilent "$window_workspace,address:$address" >/dev/null
+    hyprctl dispatch workspace "$return_workspace" >/dev/null
+    hyprctl dispatch focuswindow "address:$address" >/dev/null || true
+
+    clear_state
+    printf 'Restored presented window to workspace %s.\n' "$window_workspace"
+}
+
+present_status() {
+    if load_state; then
+        printf 'Presenting %s from workspace %s via %s\n' "$address" "$window_workspace" "$PRESENT_WORKSPACE"
+    else
+        printf 'No active presentation state.\n'
+    fi
+}
+
+case "${1:-toggle}" in
+    on)
+        present_on
+        ;;
+    off)
+        present_off
+        ;;
+    toggle)
+        if have_state; then
+            present_off
+        else
+            present_on
+        fi
+        ;;
+    status)
+        present_status
+        ;;
+    *)
+        usage
+        exit 1
+        ;;
+esac

@@ -7,6 +7,6 @@
 	"theme": "Adaptive.sublime-theme",
 	"color_scheme": "Catppuccin Mocha.sublime-color-scheme",
 	"font_face": "JetBrains Mono",
-	"font_size": 13,
+	"font_size": 12,
 	"index_files": true,
 }

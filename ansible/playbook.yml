@@ -125,9 +125,6 @@
     - role: pulsesecure
       tags: pulsesecure
 
-    - role: remotes
-      tags: remotes
-
     - role: amd-gpu
       tags: amd-gpu
       when: inventory_hostname == 'laptop'

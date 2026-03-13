@@ -1,0 +1,20 @@
+[
+  {
+    "bindings": {
+      "ctrl-alt-e": "project_panel::Toggle",
+      "super-e": "project_panel::Toggle",
+      "ctrl-alt-n": "workspace::NewFile",
+      "super-n": "workspace::NewFile",
+      "ctrl-alt-t": "terminal_panel::Toggle",
+      "super-t": "terminal_panel::Toggle",
+      "ctrl-alt-p": "file_finder::Toggle",
+      "super-p": "file_finder::Toggle",
+      "ctrl-shift-p": "command_palette::Toggle",
+      "ctrl-alt-s": "workspace::Save",
+      "super-s": "workspace::Save",
+      "ctrl-alt-w": "pane::CloseActiveItem",
+      "ctrl-shift-w": "pane::CloseActiveItem",
+      "ctrl-alt-q": "workspace::CloseWindow"
+    }
+  }
+]

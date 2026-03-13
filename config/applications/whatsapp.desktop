@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=WhatsApp
+Comment=WhatsApp Messenger
+GenericName=Messenger
+Exec=/home/erik/.bin/whatsapp-launcher
+Icon=/home/erik/.local/share/icons/whatsapp.svg
+Type=Application
+StartupNotify=false
+Categories=Network;InstantMessaging;
+StartupWMClass=chromium-whatsapp
+Keywords=whatsapp;messaging;chat;

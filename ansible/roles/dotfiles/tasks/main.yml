@@ -140,6 +140,23 @@
     state: link
     force: true
 
+# Zed config (symlink selected files, not the whole directory)
+- name: Ensure Zed config directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.config/zed"
+    state: directory
+    mode: '0755'
+
+- name: Symlink Zed config files
+  ansible.builtin.file:
+    src: "{{ config_src }}/zed/{{ item }}"
+    dest: "{{ ansible_facts.env.HOME }}/.config/zed/{{ item }}"
+    state: link
+    force: true
+  loop:
+    - settings.json
+    - keymap.json
+
 # OpenCode config (copy file, not directory - OpenCode creates its own files there)
 - name: Ensure opencode config directory exists
   ansible.builtin.file:
