@@ -231,3 +231,9 @@ projects:
     path: ~/Projects/letsrun-forge
     github_repo: letsrun/forge
 # END PROJECT letsrun-forge
+# BEGIN PROJECT framework-app
+  - name: framework-app
+    alias: fwa
+    type: utility
+    path: ~/Projects/framework-app
+# END PROJECT framework-app

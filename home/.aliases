@@ -638,6 +638,17 @@ alias vslrf="code ~/Omarchy/projects/letsrun-forge/letsrun-forge.code-workspace"
 alias nvlrf="(cd /home/erik/Projects/letsrun-forge && nvim .)"
 alias plrf="/usr/share/positron/bin/positron ~/Omarchy/projects/letsrun-forge/letsrun-forge.code-workspace"
 # END PROJECT letsrun-forge
+# BEGIN PROJECT framework-app
+alias lfwa="~/Omarchy/projects/framework-app/launch"
+alias kfwa="~/Omarchy/projects/framework-app/kill"
+alias tmfwa="~/Omarchy/projects/framework-app/tmux.sh"
+alias bfwa="~/Omarchy/projects/framework-app/bootstrap"
+alias pmfwa="cd ~/Omarchy/projects/framework-app"
+alias fwa="cd /home/erik/Projects/framework-app"
+alias vsfwa="code ~/Omarchy/projects/framework-app/framework-app.code-workspace"
+alias nvfwa="(cd /home/erik/Projects/framework-app && nvim .)"
+alias pfwa="/usr/share/positron/bin/positron ~/Omarchy/projects/framework-app/framework-app.code-workspace"
+# END PROJECT framework-app
 # Auto-generated project aliases
 
 # Sync R2 media to local minio for better-shoes dev
