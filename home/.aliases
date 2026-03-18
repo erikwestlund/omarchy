@@ -649,6 +649,28 @@ alias vsfwa="code ~/Omarchy/projects/framework-app/framework-app.code-workspace"
 alias nvfwa="(cd /home/erik/Projects/framework-app && nvim .)"
 alias pfwa="/usr/share/positron/bin/positron ~/Omarchy/projects/framework-app/framework-app.code-workspace"
 # END PROJECT framework-app
+# BEGIN PROJECT cannabis-ehr
+alias lcanehr="~/Omarchy/projects/cannabis-ehr/launch"
+alias kcanehr="~/Omarchy/projects/cannabis-ehr/kill"
+alias tmcanehr="~/Omarchy/projects/cannabis-ehr/tmux.sh"
+alias bcanehr="~/Omarchy/projects/cannabis-ehr/bootstrap"
+alias pmcanehr="cd ~/Omarchy/projects/cannabis-ehr"
+alias canehr="cd /home/erik/Projects/cannabis-ehr"
+alias vscanehr="code ~/Omarchy/projects/cannabis-ehr/cannabis-ehr.code-workspace"
+alias nvcanehr="(cd /home/erik/Projects/cannabis-ehr && nvim .)"
+alias pcanehr="/usr/share/positron/bin/positron ~/Omarchy/projects/cannabis-ehr/cannabis-ehr.code-workspace"
+# END PROJECT cannabis-ehr
+# BEGIN PROJECT peanuts
+alias lpeanuts="~/Omarchy/projects/peanuts/launch"
+alias kpeanuts="~/Omarchy/projects/peanuts/kill"
+alias tmpeanuts="~/Omarchy/projects/peanuts/tmux.sh"
+alias bpeanuts="~/Omarchy/projects/peanuts/bootstrap"
+alias pmpeanuts="cd ~/Omarchy/projects/peanuts"
+alias peanuts="cd /home/erik/Projects/peanuts"
+alias vspeanuts="code ~/Omarchy/projects/peanuts/peanuts.code-workspace"
+alias nvpeanuts="(cd /home/erik/Projects/peanuts && nvim .)"
+alias ppeanuts="/usr/share/positron/bin/positron ~/Omarchy/projects/peanuts/peanuts.code-workspace"
+# END PROJECT peanuts
 # Auto-generated project aliases
 
 # Sync R2 media to local minio for better-shoes dev

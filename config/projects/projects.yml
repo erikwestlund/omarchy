@@ -237,3 +237,16 @@ projects:
     type: utility
     path: ~/Projects/framework-app
 # END PROJECT framework-app
+# BEGIN PROJECT cannabis-ehr
+  - name: cannabis-ehr
+    alias: canehr
+    type: rstats
+    path: ~/Projects/cannabis-ehr
+    github_repo: bernaljg/cannabis_ehr
+# END PROJECT cannabis-ehr
+# BEGIN PROJECT peanuts
+  - name: peanuts
+    alias: peanuts
+    type: rstats
+    path: ~/Projects/peanuts
+# END PROJECT peanuts
