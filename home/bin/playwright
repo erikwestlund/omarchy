@@ -1,0 +1,13 @@
+#!/bin/bash
+set -euo pipefail
+
+PLAYWRIGHT_CLI="$(npm root -g)/playwright/cli.js"
+
+if [[ ! -f "$PLAYWRIGHT_CLI" ]]; then
+    printf 'Playwright is not installed globally. Run the Ansible packages tag to install it.\n' >&2
+    exit 1
+fi
+
+export PLAYWRIGHT_BROWSERS_PATH="${PLAYWRIGHT_BROWSERS_PATH:-$HOME/.cache/ms-playwright}"
+
+exec node "$PLAYWRIGHT_CLI" "$@"

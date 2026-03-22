@@ -55,6 +55,19 @@ Docker installation includes Docker Compose and user group configurations enabli
 - Lazydocker: `Super + Shift + D`
 - Database setup: Install > Development > Docker DB
 
+## Playwright
+
+Playwright is installed globally through this repo's Ansible config, with Chromium pre-fetched for local automation.
+
+```bash
+playwright --version
+playwright install chromium
+```
+
+The `playwright` command resolves through `~/.bin/playwright`, so shells, scripts, and coding agents can use the same entrypoint.
+
+`pnpm` is also installed globally through Ansible for projects that use the pnpm package manager.
+
 ## GitHub CLI
 
 Authentication:

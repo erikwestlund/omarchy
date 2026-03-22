@@ -61,6 +61,30 @@
   loop: "{{ npm_global_packages | default([]) }}"
   when: npm_global_packages is defined and npm_global_packages | length > 0
 
+- name: Ensure Playwright browser cache directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.env.HOME }}/.cache/ms-playwright"
+    state: directory
+    mode: '0755'
+
+- name: Install Playwright Chromium browser
+  ansible.builtin.shell: |
+    set -euo pipefail
+    PLAYWRIGHT_CLI="$(npm root -g)/playwright/cli.js"
+    node "$PLAYWRIGHT_CLI" install chromium
+  args:
+    executable: /bin/bash
+  environment:
+    PLAYWRIGHT_BROWSERS_PATH: "{{ ansible_facts.env.HOME }}/.cache/ms-playwright"
+  register: playwright_browser_install
+  changed_when: >-
+    'Downloading Chromium' in (playwright_browser_install.stdout | default('')) or
+    'Downloading Chromium' in (playwright_browser_install.stderr | default('')) or
+    'Installing browsers' in (playwright_browser_install.stdout | default('')) or
+    'Installing browsers' in (playwright_browser_install.stderr | default(''))
+  when: >-
+    'playwright' in (npm_global_packages | default([]))
+
 - name: Ensure pipx path is configured
   ansible.builtin.command:
     cmd: pipx ensurepath

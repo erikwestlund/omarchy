@@ -207,6 +207,8 @@ ruby_gems:
 # NPM global packages (installed via npm install -g)
 npm_global_packages:
   - "@openai/codex"
+  - playwright
+  - pnpm
 
 # JHU VPN configuration
 jh_vpn_url: "vpn.jh.edu"

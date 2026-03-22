@@ -648,6 +648,8 @@ alias fwa="cd /home/erik/Projects/framework-app"
 alias vsfwa="code ~/Omarchy/projects/framework-app/framework-app.code-workspace"
 alias nvfwa="(cd /home/erik/Projects/framework-app && nvim .)"
 alias pfwa="/usr/share/positron/bin/positron ~/Omarchy/projects/framework-app/framework-app.code-workspace"
+alias rfwa="(cd /home/erik/Projects/framework-app && pnpm dev)"
+alias bfwa="(cd /home/erik/Projects/framework-app && pnpm build)"
 # END PROJECT framework-app
 # BEGIN PROJECT cannabis-ehr
 alias lcanehr="~/Omarchy/projects/cannabis-ehr/launch"

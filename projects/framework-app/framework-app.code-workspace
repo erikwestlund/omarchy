@@ -2,6 +2,9 @@
 	"folders": [
 		{
 			"path": "/home/erik/Projects/framework-app"
+		},
+		{
+			"path": "../../../Projects/framework"
 		}
 	],
 	"settings": {
