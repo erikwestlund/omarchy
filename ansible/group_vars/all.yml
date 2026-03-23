@@ -211,7 +211,7 @@ npm_global_packages:
   - pnpm
 
 # JHU VPN configuration
-jh_vpn_url: "vpn.jh.edu"
+jh_vpn_url: "https://vpn.jh.edu/Linux"
 jh_vpn_name: "JH"
 jh_vpn_user: "ewestlu1@jh.edu"
 

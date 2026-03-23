@@ -158,6 +158,7 @@
       alias b{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/bootstrap"
       alias pm{{ project_alias }}="cd ~/Omarchy/projects/{{ project_name }}"
       alias {{ project_alias }}="cd {{ project_path }}"
+      alias z{{ project_alias }}="zeditor {{ project_path }}"
       alias vs{{ project_alias }}="code ~/Omarchy/projects/{{ project_name }}/{{ workspace_filename }}.code-workspace"
       alias nv{{ project_alias }}="(cd {{ project_path }} && nvim .)"
       alias p{{ project_alias }}="/usr/share/positron/bin/positron ~/Omarchy/projects/{{ project_name }}/{{ workspace_filename }}.code-workspace"
@@ -177,6 +178,7 @@
       alias b{{ project_alias }}="~/Omarchy/projects/{{ project_name }}/bootstrap"
       alias pm{{ project_alias }}="cd ~/Omarchy/projects/{{ project_name }}"
       alias {{ project_alias }}="cd {{ project_path }}"
+      alias z{{ project_alias }}="zeditor {{ project_path }}"
       alias vs{{ project_alias }}="code ~/Omarchy/projects/{{ project_name }}/{{ workspace_filename }}.code-workspace"
       alias nv{{ project_alias }}="(cd {{ project_path }} && nvim .)"
       alias p{{ project_alias }}="/usr/share/positron/bin/positron ~/Omarchy/projects/{{ project_name }}/{{ workspace_filename }}.code-workspace"
@@ -207,6 +209,7 @@
         b{{ project_alias }}   - Bootstrap project (clone, secrets, build)
         pm{{ project_alias }}  - cd to project management dir
         {{ project_alias }}    - cd to {{ project_path }}
+        z{{ project_alias }}   - Open {{ project_path }} in Zed
         d{{ project_alias }}   - Docker compose up
         dd{{ project_alias }}  - Docker compose down
 
@@ -232,6 +235,7 @@
         b{{ project_alias }}   - Bootstrap project (clone, secrets, build)
         pm{{ project_alias }}  - cd to project management dir
         {{ project_alias }}    - cd to {{ project_path }}
+        z{{ project_alias }}   - Open {{ project_path }} in Zed
         d{{ project_alias }}   - Docker compose up
         dd{{ project_alias }}  - Docker compose down
   when: project_type != 'laravel' and docker_compose | default(false) | bool
@@ -248,4 +252,5 @@
         b{{ project_alias }}   - Bootstrap project (clone, secrets, build)
         pm{{ project_alias }}  - cd to project management dir
         {{ project_alias }}    - cd to {{ project_path }}
+        z{{ project_alias }}   - Open {{ project_path }} in Zed
   when: project_type != 'laravel' and not (docker_compose | default(false) | bool)

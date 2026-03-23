@@ -528,6 +528,7 @@ Each project gets aliases based on its short name (defined in `home/.aliases`):
 | `tm{alias}` | `tmfw` - tmux session |
 | `b{alias}` | `bfw` - bootstrap project |
 | `pm{alias}` | `pmfw` - cd to project management dir |
+| `z{alias}` | `zfw` - open in Zed |
 | `vs{alias}` | `vsfw` - open in VS Code |
 | `nv{alias}` | `nvfw` - open in NeoVim |
 | `p{alias}` | `pfw` - open in Positron (if applicable) |
