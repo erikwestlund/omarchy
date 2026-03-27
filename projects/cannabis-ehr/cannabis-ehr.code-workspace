@@ -2,6 +2,9 @@
 	"folders": [
 		{
 			"path": "/home/erik/Projects/cannabis-ehr"
+		},
+		{
+			"path": "../../../Code/ohdsi"
 		}
 	],
 	"settings": {

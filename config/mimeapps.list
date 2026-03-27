@@ -78,3 +78,4 @@ application/vnd.oasis.opendocument.presentation=onlyoffice-desktopeditors.deskto
 # Zoom
 x-scheme-handler/zoommtg=Zoom.desktop
 x-scheme-handler/zoomus=Zoom.desktop
+x-scheme-handler/claude-cli=claude-code-url-handler.desktop
